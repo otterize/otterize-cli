@@ -23,6 +23,8 @@ jobs:
           fetch-depth: 1
 
       - name: Build
+        env:
+          GITHUB_TOKEN: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
         run: |-
           go generate ./...
-          go build ./src/cmd
+          git config --global url."https://$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/" && go build ./src/cmd && && git config --global --unset url."https://$GITHUB_TOKEN@github.com/".insteadOf
