@@ -4,12 +4,13 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/intents"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
 
 var RootCmd = &cobra.Command{
-	Use:   "networkmapper",
+	Use:   filepath.Base(os.Args[0]),
 	Short: "",
 	Long:  ``,
 }
