@@ -1,6 +1,6 @@
 //go:build tools
 // +build tools
 
-package networkmapper
+package otterize_cli
 
 import _ "github.com/Khan/genqlient/generate"

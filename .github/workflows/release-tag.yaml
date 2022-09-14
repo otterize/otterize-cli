@@ -1,0 +1,27 @@
+name: Build
+concurrency:
+  group: "${{ github.repository }}${{ github.ref }}-release"
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  REGISTRY: 353146681200.dkr.ecr.us-east-1.amazonaws.com/otterize
+  REPOSITORY_NAME: otterize
+
+jobs:
+  publish-release:
+    name: Push to Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist
