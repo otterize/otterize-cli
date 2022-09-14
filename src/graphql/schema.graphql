@@ -1,0 +1,13 @@
+type OtterizeServiceIdentity {
+    name: String!
+    namespace: String!
+}
+
+type ServiceIntents {
+    client: OtterizeServiceIdentity!
+    intents: [OtterizeServiceIdentity!]!
+}
+
+type Query {
+    serviceIntents(namespaces: [String!]): [ServiceIntents!]!
+}
