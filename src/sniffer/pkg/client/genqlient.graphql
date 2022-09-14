@@ -1,8 +1,0 @@
-
-mutation reportCaptureResults($results: CaptureResults!) {
-    reportCaptureResults(results: $results)
-}
-
-mutation reportSocketScanResults($results: SocketScanResults!) {
-    reportSocketScanResults(results: $results)
-}
