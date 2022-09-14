@@ -24,6 +24,10 @@ jobs:
         with:
           go-version: '>=1.19.0'
 
+      - name: Config creds for private repo
+        run: |-
+          git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
       - uses: goreleaser/goreleaser-action@v2
         with:
           distribution: goreleaser
