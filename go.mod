@@ -1,4 +1,4 @@
-module github.com/otterize/otterize-cli/src
+module github.com/otterize/otterize-cli
 
 go 1.18
 

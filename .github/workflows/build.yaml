@@ -1,0 +1,34 @@
+name: Build
+concurrency:
+  group: "${{ github.repository }}${{ github.ref }}"
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.0'
+
+      - name: Build
+        run: |-
+          go generate ./...
+          git config --global url."https://$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/" && go build ./src/cmd && git config --global --unset url."https://$GITHUB_TOKEN@github.com/".insteadOf
+        env:
+          GITHUB_TOKEN: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
