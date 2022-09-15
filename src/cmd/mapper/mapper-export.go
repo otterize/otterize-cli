@@ -1,4 +1,4 @@
-package export
+package mapper
 
 import (
 	"bytes"
@@ -28,8 +28,6 @@ const OutputFormatKey = "format"
 const OutputFormatDefault = OutputFormatYAML
 const OutputFormatYAML = "yaml"
 const OutputFormatJSON = "json"
-const NamespacesKey = "namespaces"
-const NamespacesShorthand = "n"
 
 func writeIntentsFile(filePath string, intents []v1alpha1.ClientIntents) error {
 	f, err := os.Create(filePath)

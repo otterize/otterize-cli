@@ -8,6 +8,14 @@ import (
 	"github.com/Khan/genqlient/graphql"
 )
 
+// ResetCaptureResponse is returned by ResetCapture on success.
+type ResetCaptureResponse struct {
+	ResetCapture bool `json:"resetCapture"`
+}
+
+// GetResetCapture returns ResetCaptureResponse.ResetCapture, and is useful for accessing the field via an interface.
+func (v *ResetCaptureResponse) GetResetCapture() bool { return v.ResetCapture }
+
 // ServiceIntentsResponse is returned by ServiceIntents on success.
 type ServiceIntentsResponse struct {
 	ServiceIntents []ServiceIntentsServiceIntents `json:"serviceIntents"`
@@ -69,6 +77,32 @@ type __ServiceIntentsInput struct {
 
 // GetNamespaces returns __ServiceIntentsInput.Namespaces, and is useful for accessing the field via an interface.
 func (v *__ServiceIntentsInput) GetNamespaces() []string { return v.Namespaces }
+
+func ResetCapture(
+	ctx context.Context,
+	client graphql.Client,
+) (*ResetCaptureResponse, error) {
+	req := &graphql.Request{
+		OpName: "ResetCapture",
+		Query: `
+mutation ResetCapture {
+	resetCapture
+}
+`,
+	}
+	var err error
+
+	var data ResetCaptureResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
 
 func ServiceIntents(
 	ctx context.Context,
