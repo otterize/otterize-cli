@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/otterize/otterize-cli/src/cmd/intents"
+	"github.com/otterize/otterize-cli/src/cmd/mapper"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"os"
 	"path/filepath"
@@ -54,4 +55,5 @@ func init() {
 	RootCmd.PersistentFlags().Int(config.MapperServicePortKey, config.MapperServicePortDefault, "the port of the mapper service")
 
 	RootCmd.AddCommand(intents.IntentsCmd)
+	RootCmd.AddCommand(mapper.MapperCmd)
 }

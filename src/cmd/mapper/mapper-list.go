@@ -27,7 +27,7 @@ var ListCmd = &cobra.Command{
 						continue
 					}
 
-					output.PrintStdout("  - %s in same namespace", intent.Name)
+					output.PrintStdout("  - %s", intent.Name)
 				}
 
 			}
