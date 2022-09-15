@@ -41,3 +41,8 @@ func (c *Client) ServiceIntents(ctx context.Context, namespaces []string) ([]Ser
 	}
 	return res.ServiceIntents, nil
 }
+
+func (c *Client) ResetCapture(ctx context.Context) error {
+	_, err := ResetCapture(ctx, c.client)
+	return err
+}

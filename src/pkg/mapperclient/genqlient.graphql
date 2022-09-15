@@ -10,3 +10,7 @@ query ServiceIntents($namespaces: [String!]) {
         }
     }
 }
+
+mutation ResetCapture {
+    resetCapture
+}

@@ -1,3 +1,23 @@
+
+
+input CaptureResultForSrcIp {
+    srcIp: String!
+    destinations: [String!]!
+}
+
+input CaptureResults {
+    results: [CaptureResultForSrcIp!]!
+}
+
+input SocketScanResultForSrcIp {
+    srcIp: String!
+    destIps: [String!]!
+}
+
+input SocketScanResults {
+    results: [SocketScanResultForSrcIp!]!
+}
+
 type OtterizeServiceIdentity {
     name: String!
     namespace: String!
@@ -10,4 +30,10 @@ type ServiceIntents {
 
 type Query {
     serviceIntents(namespaces: [String!]): [ServiceIntents!]!
+}
+
+type Mutation {
+    resetCapture: Boolean!
+    reportCaptureResults(results: CaptureResults!): Boolean!
+    reportSocketScanResults(results: SocketScanResults!): Boolean!
 }

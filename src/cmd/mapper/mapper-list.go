@@ -1,4 +1,4 @@
-package list
+package mapper
 
 import (
 	"context"
@@ -7,9 +7,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
-
-const NamespacesKey = "namespaces"
-const NamespacesShorthand = "n"
 
 var ListCmd = &cobra.Command{
 	Use:   "list",
