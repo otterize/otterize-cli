@@ -7,7 +7,7 @@
 ![go report](https://img.shields.io/static/v1?label=go%20report&message=A%2B&color=success)
 [![community](https://img.shields.io/badge/slack-Otterize_Slack-orange.svg?logo=slack)](https://join.slack.com/t/otterizeworkspace/shared_invite/zt-1fnbnl1lf-ub6wler4QrW6ZzIn2U9x1A)
 
-[About](#about) | [Quickstart](https://docs.otterize.com/documentation/quick-tutorials/network-mapper) | [Contributing](#contributing) | [Slack](#slack)
+[About](#about) | [Quickstart with the network mapper](https://docs.otterize.com/documentation/quick-tutorials/network-mapper) | [Contributing](#contributing) | [Slack](#slack)
 
 ## About
 
