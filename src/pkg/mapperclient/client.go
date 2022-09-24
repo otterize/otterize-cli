@@ -7,6 +7,10 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/portforwarder"
 	"github.com/spf13/viper"
+	// This import makes it possible to authenticate with GKE with the new-style auth. For more info see:
+	// (1) https://github.com/kubernetes/client-go/issues/242
+	// (2) https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
+	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	"net/http"
 )
 
