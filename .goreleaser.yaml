@@ -73,7 +73,7 @@ brews:
       owner: otterize
       name: otterize-cli-packages
 
-    url_template: "https://github.com/otterize/otterize-cli/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    url_template: "https://get.otterize.com/{{ .ProjectName }}/{{ .Tag }}/{{ .ArtifactName }}"
 
     # Git author used to commit to the repository.
     # Defaults are shown.
@@ -111,7 +111,7 @@ scoop:
   # Default for github is "https://github.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
   # Default for gitlab is "https://gitlab.com/<repo_owner>/<repo_name>/-/releases/{{ .Tag }}/downloads/{{ .ArtifactName }}"
   # Default for gitea is "https://gitea.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-  url_template: "https://github.com/otterize/otterize-cli/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  url_template: "https://get.otterize.com/{{ .ProjectName }}/{{ .Tag }}/{{ .ArtifactName }}"
   name: otterize-cli
 
   # Repository to push the app manifest to.
@@ -147,3 +147,25 @@ scoop:
   # Your app's license
   # Default is empty.
   license: "Apache-2.0"
+
+blobs:
+  # You can have multiple blob configs
+  -
+    # Template for the cloud provider name
+    # s3 for AWS S3 Storage
+    # azblob for Azure Blob Storage
+    # gs for Google Cloud Storage
+    provider: s3
+
+    # Sets the bucket region.
+    # Requires provider to be `s3`
+    # Defaults to empty.
+    region: us-east-1
+
+    # Template for the bucket name
+    bucket: get.otterize.com
+
+    # IDs of the artifacts you want to upload.
+    ids:
+      - binary
+      - archives
