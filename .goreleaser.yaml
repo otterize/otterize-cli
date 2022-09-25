@@ -113,10 +113,6 @@ scoop:
     # Defaults to the default repository branch.
     branch: main
 
-  # Folder inside the repository to put the scoop.
-  # Default is the root folder.
-  folder: Scoops
-
   # Git author used to commit to the repository.
   # Defaults are shown.
   commit_author:
