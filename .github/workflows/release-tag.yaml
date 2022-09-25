@@ -28,6 +28,9 @@ jobs:
         run: |-
           git config --global url."https://${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
 
+      - name: Install UPX
+        run: sudo apt install -y upx
+
       - uses: goreleaser/goreleaser-action@v2
         with:
           distribution: goreleaser
