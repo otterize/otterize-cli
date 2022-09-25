@@ -71,7 +71,7 @@ brews:
     # Gitea is not supported yet, but the support coming
     tap:
       owner: otterize
-      name: otterize-cli-packages
+      name: homebrew-otterize-cli
 
     url_template: "https://get.otterize.com/{{ .ProjectName }}/{{ .Tag }}/{{ .ArtifactName }}"
 
@@ -96,16 +96,6 @@ brews:
     # Default is empty.
     license: "Apache-2.0"
 
-
-    # So you can `brew test` your formula.
-    # Default is empty.
-    test: |
-      system "#{bin}/program help"
-    # Custom install script for brew.
-    # Default is 'bin.install "program"'.
-    install: |
-      bin.install "program"
-
 scoop:
   # Template for the url which is determined by the given Token (github or gitlab)
   # Default for github is "https://github.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
@@ -117,7 +107,7 @@ scoop:
   # Repository to push the app manifest to.
   bucket:
     owner: otterize
-    name: otterize-cli-packages
+    name: scoop-otterize-cli
 
     # Optionally a branch can be provided.
     # Defaults to the default repository branch.
