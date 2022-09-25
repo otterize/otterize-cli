@@ -164,7 +164,7 @@ func getFormattedIntents(intentList []v1alpha1.ClientIntents) (string, error) {
 
 func init() {
 	ExportCmd.Flags().StringP(OutputLocationKey, OutputLocationShorthand, "", "file or dir path to write the output into")
-	ExportCmd.Flags().String(OutputTypeKey, OutputTypeDefault, fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
+	ExportCmd.Flags().String(OutputTypeKey, OutputTypeDefault, fmt.Sprintf("whether to write output to file or dir: %s/%s. ignored if --%s is not specified", OutputTypeSingleFile, OutputTypeDirectory, OutputLocationKey))
 	ExportCmd.Flags().String(OutputFormatKey, OutputFormatDefault, fmt.Sprintf("format to output the intents - %s/%s", OutputFormatYAML, OutputFormatJSON))
 	ExportCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
 }

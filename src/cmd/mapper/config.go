@@ -1,4 +1,6 @@
 package mapper
 
-const NamespacesKey = "namespaces"
-const NamespacesShorthand = "n"
+const (
+	NamespacesKey       = "namespaces"
+	NamespacesShorthand = "n"
+)

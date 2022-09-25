@@ -50,10 +50,6 @@ func Execute() {
 }
 
 func init() {
-	RootCmd.PersistentFlags().String(config.MapperServiceNameKey, config.MapperServiceNameDefault, "the name of the mapper service")
-	RootCmd.PersistentFlags().String(config.MapperNamespaceKey, config.MapperNamespaceDefault, "the namespace of the mapper service")
-	RootCmd.PersistentFlags().Int(config.MapperServicePortKey, config.MapperServicePortDefault, "the port of the mapper service")
-
 	RootCmd.AddCommand(intents.IntentsCmd)
 	RootCmd.AddCommand(mapper.MapperCmd)
 }
