@@ -14,7 +14,7 @@ env:
 jobs:
   publish-release:
     name: Publish Release
-    runs-on: ubuntu-latest
+    runs-on: macos-latest  # macOS is used for macOS notarization
 
     steps:
       - name: Checkout
@@ -23,6 +23,12 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: '>=1.19.0'
+
+      - name: Install dependencies
+        run: |-
+          brew install upx
+          brew install coreutils
+          brew install mitchellh/gon/gon
 
       - name: Config creds for private repo
         run: |-
@@ -35,6 +41,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Import Code-Signing Certificates
+        uses: apple-actions/import-codesign-certs@253ddeeac23f2bdad1646faac5c8c2832e800071
+        with:
+          # The certificates in a PKCS12 file encoded as a base64 string
+          p12-file-base64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          # The password used to import the PKCS12 file.
+          p12-password: ${{ secrets.P12_PASSWORD }}
+
       - uses: goreleaser/goreleaser-action@v2
         with:
           distribution: goreleaser
@@ -42,3 +56,35 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+
+
+      # This next bit checks out the homebrew repo
+      # and updates the formula to the latest version.
+      # For macOS, we need to modify the hashes for the zips ot match
+      # those of the notarized ZIPs, rather than the build output zips.
+      - name: Checkout homebrew-otterize
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
+          repository: otterize/homebrew-otterize
+          path: ./homebrew-otterize
+
+      - name: Update Homebrew formula
+        run: |-
+          cd ./homebrew-otterize
+          ARMSHAORIG=`sha256sum ../dist/otterize_macOS_arm64.zip | cut -f1 -d ' '`
+          ARMSHANOTARIZED=`sha256sum ../dist/macos-arm_darwin_arm64/otterize_macOS_arm64_notarized.zip | cut -f1 -d ' '`
+          AMDSHAORIG=`sha256sum ../dist/otterize_macOS_x86_64.zip | cut -f1 -d ' '`
+          AMDSHANOTARIZED=`sha256sum ../dist/macos-amd_darwin_amd64_v1/otterize_macOS_x86_64_notarized.zip | cut -f1 -d ' '`
+          sed -i.bak 's/macOS_arm64.zip/macOS_arm64_notarized.zip/' ../dist/otterize-cli.rb
+          sed -i.bak 's/macOS_x86_64.zip/macOS_x86_64_notarized.zip/' ../dist/otterize-cli.rb
+          sed -i.bak "s/$ARMSHAORIG/$ARMSHANOTARIZED/" ../dist/otterize-cli.rb
+          sed -i.bak "s/$AMDSHAORIG/$AMDSHANOTARIZED/" ../dist/otterize-cli.rb
+          cp -f ../dist/otterize-cli.rb ./Formula/otterize-cli.rb
+          git config --global user.name "otterizebot"
+          git config --global user.email "otterizebot@users.noreply.github.com"
+          git add ./Formula/otterize-cli.rb
+          git commit -m 'Brew formula update for otterize-cli version ${{ github.ref }}'
+          git push origin main
+

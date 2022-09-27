@@ -7,27 +7,58 @@ before:
     # you may remove this if you don't need go generate
     - go generate ./...
 builds:
-  - env:
+  - id: default
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
-      - darwin
       - windows
     main:
       ./src/cmd
     ignore:
-      - goos: darwin
-        goarch: "386"
       - goos: windows
         goarch: arm
       - goos: windows
         goarch: arm64
     binary: otterize
-#    hooks:
-#      post:
-#        - upx --lzma "{{ .Path }}"
+    hooks:
+      post:
+        - upx --lzma "{{ .Path }}"
+
+  - id: macos-amd
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+    goarch:
+      - amd64
+    main:
+      ./src/cmd
+    binary: otterize
+    hooks:
+      post:
+        - upx --lzma "{{ .Path }}"
+        - gon gon_amd64.hcl
+
+  - id: macos-arm
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+    goarch:
+      - arm64
+    main:
+      ./src/cmd
+    binary: otterize
+    hooks:
+      post:
+        - gon gon_arm64.hcl
+    # no upx for mac arm - causes invalid instructions
+
+
 archives:
   - id: binary
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 \"v1\") }}{{ .Amd64 }}{{ end }}"
     replacements:
       darwin: macOS
       linux: Linux
@@ -38,17 +69,19 @@ archives:
     files:
       - none* # binary only
   - id: archives
+    name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 \"v1\") }}{{ .Amd64 }}{{ end }}"
     replacements:
-      darwin: macOS
       linux: Linux
       windows: Windows
       386: i386
       amd64: x86_64
+      darwin: macOS
     format: tar.gz
     format_overrides:
       - goos: windows
         format: zip
-
+      - goos: darwin
+        format: zip
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -59,6 +92,11 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+
+release:
+  extra_files:
+    - glob: dist/macos-amd_darwin_amd64_v1/otterize*
+    - glob: dist/macos-arm_darwin_arm64/otterize*
 
 brews:
   - name: otterize-cli
@@ -71,7 +109,9 @@ brews:
     # Gitea is not supported yet, but the support coming
     tap:
       owner: otterize
-      name: homebrew-otterize-cli
+      name: homebrew-otterize
+
+    skip_upload: true
 
     url_template: "https://get.otterize.com/{{ .ProjectName }}/{{ .Tag }}/{{ .ArtifactName }}"
 
@@ -155,3 +195,6 @@ blobs:
     ids:
       - binary
       - archives
+    extra_files:
+      - glob: dist/macos-amd_darwin_amd64_v1/otterize*
+      - glob: dist/macos-arm_darwin_arm64/otterize*
