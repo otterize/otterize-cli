@@ -7,13 +7,49 @@
 ![go report](https://img.shields.io/static/v1?label=go%20report&message=A%2B&color=success)
 [![community](https://img.shields.io/badge/slack-Otterize_Slack-purple.svg?logo=slack)](https://joinslack.otterize.com)
 
-[About](#about) | [Docs](https://docs.otterize.com/cli/) | [Contributing](#contributing) | [Slack](#slack)
+[About](#about) | [Installation & usage with the network mapper](#installation-instructions--usage-with-the-network-mapper) | [Docs](https://docs.otterize.com/cli/) | [Contributing](#contributing) | [Slack](#slack)
 
 ## About
 
 The Otterize CLI is a command-line utility used to control and interact with the [Otterize network mapper](https://github.com/otterize/network-mapper), manipulate local intents files, and (coming soon!) interact with Otterize Cloud.
 
 See the [CLI command reference](https://docs.otterize.com/cli/) for how to use it.
+
+## Installation instructions & usage with the network mapper
+### Install the network mapper using Helm
+```bash
+helm repo add otterize https://helm.otterize.com
+helm repo update
+helm install network-mapper otterize/network-mapper -n otterize-system --create-namespace --wait
+```
+### Install Otterize CLI to query data from the network mapper
+Mac
+```bash
+brew install otterize/otterize/otterize-cli
+```
+Linux 64-bit
+```bash
+wget https://get.otterize.com/otterize-cli/v0.1.5/otterize_Linux_x86_64.tar.gz
+tar xf otterize_Linux_x86_64.tar.gz
+sudo cp otterize /usr/local/bin
+```
+Windows
+```bash
+scoop bucket add otterize-cli https://github.com/otterize/scoop-otterize-cli
+scoop update
+scoop install otterize-cli
+```
+For more platforms, see [the installation guide](https://docs.otterize.com/k8s-installation/#install-the-otterize-cli).
+
+Then display the network map:
+```bash
+$ otterize mapper list
+checkoutservice calls:
+  - orderservice
+
+orderservice calls:
+  - kafka
+```
 
 ## Contributing
 1. Feel free to fork and open a pull request! Include tests and document your code in [Godoc style](https://go.dev/blog/godoc)
