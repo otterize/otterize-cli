@@ -15,6 +15,30 @@ The Otterize CLI is a command-line utility used to control and interact with the
 
 See the [CLI command reference](https://docs.otterize.com/cli/) for how to use it.
 
+Example output from running the network mapper on the [Google Cloud microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo):
+```bash
+$ otterize mapper list
+cartservice in namespace ecommerce calls:
+  - redis-cart
+checkoutservice in namespace ecommerce calls:
+  - kafka-secure
+frontend in namespace ecommerce calls:
+  - adservice
+  - cartservice
+  - checkoutservice
+  - currencyservice
+  - productcatalogservice
+  - recommendationservice
+  - shippingservice
+kafka-secure in namespace ecommerce calls:
+  - kafka-secure
+  - lab-zookeeper
+paymentservice in namespace ecommerce calls:
+  - kafka-secure
+recommendationservice in namespace ecommerce calls:
+  - productcatalogservice
+```
+
 ## Installation instructions & usage with the network mapper
 ### Install the network mapper using Helm
 ```bash
@@ -41,15 +65,6 @@ scoop install otterize-cli
 ```
 For more platforms, see [the installation guide](https://docs.otterize.com/k8s-installation/#install-the-otterize-cli).
 
-Then display the network map:
-```bash
-$ otterize mapper list
-checkoutservice calls:
-  - orderservice
-
-orderservice calls:
-  - kafka
-```
 
 ## Contributing
 1. Feel free to fork and open a pull request! Include tests and document your code in [Godoc style](https://go.dev/blog/godoc)
