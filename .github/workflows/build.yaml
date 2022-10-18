@@ -29,6 +29,4 @@ jobs:
       - name: Build
         run: |-
           go generate ./...
-          git config --global url."https://$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/" && go build ./src/cmd && git config --global --unset url."https://$GITHUB_TOKEN@github.com/".insteadOf
-        env:
-          GITHUB_TOKEN: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
+          go build ./src/cmd
