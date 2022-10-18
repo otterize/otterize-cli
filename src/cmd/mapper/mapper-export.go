@@ -52,6 +52,10 @@ var ExportCmd = &cobra.Command{
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return mapperclient.WithClient(func(c *mapperclient.Client) error {
+			if viper.GetString(OutputLocationKey) == "" && viper.GetString(OutputTypeKey) != "" {
+				return fmt.Errorf("flag --%s requires --%s to specify output path", OutputTypeKey, OutputLocationKey)
+			}
+
 			ctxTimeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
 			namespacesFilter := viper.GetStringSlice(NamespacesKey)
@@ -164,7 +168,7 @@ func getFormattedIntents(intentList []v1alpha1.ClientIntents) (string, error) {
 
 func init() {
 	ExportCmd.Flags().StringP(OutputLocationKey, OutputLocationShorthand, "", "file or dir path to write the output into")
-	ExportCmd.Flags().String(OutputTypeKey, OutputTypeDefault, fmt.Sprintf("whether to write output to file or dir: %s/%s. ignored if --%s is not specified", OutputTypeSingleFile, OutputTypeDirectory, OutputLocationKey))
+	ExportCmd.Flags().String(OutputTypeKey, OutputTypeDefault, fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
 	ExportCmd.Flags().String(OutputFormatKey, OutputFormatDefault, fmt.Sprintf("format to output the intents - %s/%s", OutputFormatYAML, OutputFormatJSON))
 	ExportCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
 }
