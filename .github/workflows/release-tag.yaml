@@ -30,10 +30,6 @@ jobs:
           brew install coreutils
           brew install mitchellh/gon/gon
 
-      - name: Config creds for private repo
-        run: |-
-          git config --global url."https://${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
