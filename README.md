@@ -1,5 +1,7 @@
 # Otterize CLI
 
+Netanel is here
+
 ![build](https://github.com/otterize/network-mapper/actions/workflows/build.yaml/badge.svg)
 ![go report](https://img.shields.io/static/v1?label=go%20report&message=A%2B&color=success)
 [![community](https://img.shields.io/badge/slack-Otterize_Slack-purple.svg?logo=slack)](https://joinslack.otterize.com)
