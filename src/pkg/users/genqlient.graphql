@@ -1,0 +1,27 @@
+query GetUserByAuth0User {
+    userByAuth0User {
+        id
+        email
+        auth0UserId
+        organization {
+            id
+        }
+        auth0UserInfo {
+            name
+        }
+    }
+}
+
+mutation CreateUserFromAuth0User {
+    createUserFromAuth0User {
+        id
+        email
+        auth0UserId
+        organization {
+            id
+        }
+        auth0UserInfo {
+            name
+        }
+    }
+}
