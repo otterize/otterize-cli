@@ -17,12 +17,12 @@ import (
 const SwitchAccountFlagKey = "switch"
 
 func login(_ *cobra.Command, _ []string) error {
-	ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
+	getConfCtxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 	defer cancel()
 
 	otterizeAPIAddress := viper.GetString(config.OtterizeAPIAddressKey)
 	authClient := auth_api.NewClient(otterizeAPIAddress)
-	auth0Config, err := authClient.GetAuth0Config(ctxTimeout)
+	auth0Config, err := authClient.GetAuth0Config(getConfCtxTimeout)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,9 @@ func login(_ *cobra.Command, _ []string) error {
 	prints.PrintCliStderr("Registering user to Otterize server at %s", otterizeAPIAddress)
 	c := users.NewClientFromToken(otterizeAPIAddress, authResult.AccessToken)
 
-	user, err := c.RegisterAuth0User(ctxTimeout)
+	registerCtxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
+	defer cancel()
+	user, err := c.RegisterAuth0User(registerCtxTimeout)
 	if err != nil {
 		return err
 	}
@@ -48,7 +50,7 @@ func login(_ *cobra.Command, _ []string) error {
 
 	if user.OrganizationID == "" {
 		orgsClient := orgs.NewClientFromToken(otterizeAPIAddress, authResult.AccessToken)
-		org, err := orgsClient.CreateOrg(ctxTimeout)
+		org, err := orgsClient.CreateOrg(registerCtxTimeout)
 		if err != nil {
 			return err
 		}
