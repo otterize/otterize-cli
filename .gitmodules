@@ -1,3 +1,0 @@
-[submodule "src/graphql"]
-	path = src/graphql
-	url = https://github.com/otterize/api
