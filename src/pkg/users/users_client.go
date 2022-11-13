@@ -49,7 +49,7 @@ func (c *Client) RegisterAuth0User(ctx context.Context) (User, error) {
 		return User{}, err
 	}
 
-	gqlUser := createUserResponse.CreateUserFromAuth0User
+	gqlUser := createUserResponse.Me.RegisterUser
 	usr := User{
 		ID:             gqlUser.GetId(),
 		Email:          gqlUser.GetEmail(),
@@ -70,7 +70,7 @@ func (c *Client) GetCurrentUser(ctx context.Context) (User, error) {
 
 	}
 
-	gqlUser := getUserResponse.GetUserByAuth0User()
+	gqlUser := getUserResponse.Me.User
 	usr := User{
 		ID:             gqlUser.GetId(),
 		Email:          gqlUser.GetEmail(),
