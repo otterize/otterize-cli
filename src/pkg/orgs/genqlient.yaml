@@ -2,7 +2,8 @@
 # https://github.com/Khan/genqlient/blob/main/docs/genqlient.yaml
 schema:
   - ../../graphql/root.graphql
-  - ../../graphql/accounts/*.graphql
+  - ../../graphql/users.graphql
+  - ../../graphql/organizations.graphql
 operations:
 - genqlient.graphql
 generated: generated.go

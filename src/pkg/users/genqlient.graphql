@@ -1,27 +1,31 @@
 query GetUserByAuth0User {
-    userByAuth0User {
-        id
-        email
-        auth0UserId
-        organization {
+    me {
+        user {
             id
-        }
-        auth0UserInfo {
-            name
+            email
+            auth0UserId
+            organization {
+                id
+            }
+            auth0UserInfo {
+                name
+            }
         }
     }
 }
 
 mutation CreateUserFromAuth0User {
-    createUserFromAuth0User {
-        id
-        email
-        auth0UserId
-        organization {
+    me {
+        registerUser {
             id
-        }
-        auth0UserInfo {
-            name
+            email
+            auth0UserId
+            organization {
+                id
+            }
+            auth0UserInfo {
+                name
+            }
         }
     }
 }
