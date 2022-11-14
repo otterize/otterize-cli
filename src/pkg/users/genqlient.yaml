@@ -1,9 +1,8 @@
 # genqlient config; for full documentation see:
 # https://github.com/Khan/genqlient/blob/main/docs/genqlient.yaml
 schema:
-  - ../../graphql/root.graphql
-  - ../../graphql/users.graphql
-  - ../../graphql/organizations.graphql
+  - ../../cloudgraphql/root.graphql
+  - ../../cloudgraphql/users.graphql
 operations:
 - genqlient.graphql
 generated: generated.go
