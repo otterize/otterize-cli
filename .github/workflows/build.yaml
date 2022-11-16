@@ -21,6 +21,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
+          submodules: recursive
+          token: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }} # remove when the graphql schema repo becomes public
 
       - uses: actions/setup-go@v3
         with:

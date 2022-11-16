@@ -1,9 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"github.com/otterize/otterize-cli/src/cmd/intents"
+	"github.com/otterize/otterize-cli/src/cmd/login"
 	"github.com/otterize/otterize-cli/src/cmd/mapper"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"os"
 	"path/filepath"
 
@@ -50,6 +54,26 @@ func Execute() {
 }
 
 func init() {
+	cobra.OnInitialize(config.InitConfig, initLogger, config.LoadApiCredentialsFile)
+	RootCmd.PersistentFlags().StringVar(&config.CfgFile, "config", "", fmt.Sprintf("config file (default %s/%s)", config.OtterizeConfigDirName, config.OtterizeConfigFileName))
+	RootCmd.PersistentFlags().String(config.ApiUserTokenKey, "", "Otterize user token (optional)")
+	RootCmd.PersistentFlags().String(config.ApiClientIdKey, "", "Otterize client ID")
+	RootCmd.PersistentFlags().String(config.ApiClientSecretKey, "", "Otterize client secret")
+	RootCmd.PersistentFlags().String(config.OtterizeAPIAddressKey, config.OtterizeAPIAddressDefault, "The URL of the Otterize API")
+	RootCmd.PersistentFlags().BoolP(config.QuietModeKey, config.QuietModeShorthand, config.QuietModeDefault, "Suppress prints")
+	RootCmd.PersistentFlags().Bool(config.DebugKey, config.DebugDefault, "Debug logs")
+	RootCmd.PersistentFlags().Bool(config.InteractiveModeKey, true, "Whether to ask for missing flags interactively")
+	RootCmd.PersistentFlags().String(config.OutputKey, config.OutputDefault, "Output format - json/text")
+
 	RootCmd.AddCommand(intents.IntentsCmd)
 	RootCmd.AddCommand(mapper.MapperCmd)
+	RootCmd.AddCommand(login.LoginCmd)
+}
+
+func initLogger() {
+	if viper.GetBool(config.QuietModeKey) {
+		logrus.SetLevel(logrus.FatalLevel)
+	} else if viper.GetBool(config.DebugKey) {
+		logrus.SetLevel(logrus.DebugLevel)
+	}
 }

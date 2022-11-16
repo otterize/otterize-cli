@@ -1,0 +1,6 @@
+mutation CreateOrg {
+    createOrganization {
+        id
+        name
+    }
+}
