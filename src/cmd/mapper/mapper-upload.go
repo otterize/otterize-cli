@@ -11,8 +11,7 @@ import (
 
 var UploadCmd = &cobra.Command{
 	Use:   "upload",
-	Short: "",
-	Long:  ``,
+	Short: "reports the intents discovered by the network mapper to Otterize Cloud",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return mapperclient.WithClient(func(c *mapperclient.Client) error {
 			servicesIntents, err := c.ServiceIntents(context.Background(), nil)
