@@ -40,5 +40,5 @@ var UploadCmd = &cobra.Command{
 
 func init() {
 	config.RegisterStringArg(UploadCmd, EnvIDKey, "environment id", true)
-	config.RegisterStringArg(UploadCmd, SourceKey, "override the source name of the intents", true)
+	config.RegisterStringArg(UploadCmd, SourceKey, "override the default source name of the intents", true)
 }
