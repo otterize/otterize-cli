@@ -28,7 +28,7 @@ var UploadCmd = &cobra.Command{
 					discoveredIntentsToCloud = append(discoveredIntentsToCloud, intents.IntentInput{
 						Client: service.Client.Name,
 						Server: intent.Name,
-						Body:   intents.IntentBody{Type: intents.IntentTypeNone},
+						Body:   intents.IntentBody{Type: intents.IntentTypeHttp},
 					})
 				}
 			}

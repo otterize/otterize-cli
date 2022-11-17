@@ -69,7 +69,6 @@ const (
 	IntentTypeKafka IntentType = "Kafka"
 	IntentTypeGrpc  IntentType = "gRPC"
 	IntentTypeRedis IntentType = "Redis"
-	IntentTypeNone  IntentType = "None"
 )
 
 type KafkaConfigInput struct {
