@@ -19,4 +19,5 @@ func init() {
 	MapperCmd.AddCommand(ExportCmd)
 	MapperCmd.AddCommand(ListCmd)
 	MapperCmd.AddCommand(ResetCmd)
+	MapperCmd.AddCommand(UploadCmd)
 }
