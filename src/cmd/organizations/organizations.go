@@ -8,9 +8,10 @@ import (
 )
 
 var OrganizationsCmd = &cobra.Command{
-	Use:   "organizations",
-	Short: "orgs",
-	Long:  ``,
+	Use:     "organizations",
+	Aliases: []string{"orgs"},
+	Short:   "",
+	Long:    ``,
 }
 
 func init() {
