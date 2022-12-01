@@ -3,13 +3,11 @@ package orgs
 import (
 	"context"
 	"fmt"
-	"github.com/Khan/genqlient/graphql"
-	"golang.org/x/oauth2"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
 )
 
 type Client struct {
-	address string
-	client  graphql.Client
+	c *cloudclient.Client
 }
 
 type Organization struct {
@@ -18,25 +16,16 @@ type Organization struct {
 }
 
 func (o Organization) String() string {
-	return fmt.Sprintf(`OrganizationID=%s Name=%s`,
-		o.ID, o.Name)
+	return fmt.Sprintf(`OrganizationID=%s Name=%s`, o.ID, o.Name)
 }
 
 func NewClientFromToken(address string, token string) *Client {
-	oauth2Token := &oauth2.Token{AccessToken: token}
-	return NewClient(address, oauth2.StaticTokenSource(oauth2Token))
-}
-
-func NewClient(address string, tokenSrc oauth2.TokenSource) *Client {
-	address = address + "/accounts/query"
-	return &Client{
-		address: address,
-		client:  graphql.NewClient(address, oauth2.NewClient(context.Background(), tokenSrc)),
-	}
+	cloud := cloudclient.NewClientFromToken(address, token)
+	return &Client{c: cloud}
 }
 
 func (c *Client) CreateOrg(ctx context.Context) (Organization, error) {
-	resp, err := CreateOrg(ctx, c.client)
+	resp, err := CreateOrg(ctx, c.c.Client)
 	if err != nil {
 		return Organization{}, err
 	}

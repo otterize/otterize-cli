@@ -3,15 +3,13 @@ package users
 import (
 	"context"
 	"fmt"
-	"github.com/Khan/genqlient/graphql"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
 	"github.com/otterize/otterize-cli/src/pkg/orgs"
 	"github.com/samber/lo"
-	"golang.org/x/oauth2"
 )
 
 type Client struct {
-	address string
-	client  graphql.Client
+	c *cloudclient.Client
 }
 
 type AppMeta map[string]string
@@ -31,20 +29,12 @@ func (u User) String() string {
 }
 
 func NewClientFromToken(address string, token string) *Client {
-	oauth2Token := &oauth2.Token{AccessToken: token}
-	return NewClient(address, oauth2.StaticTokenSource(oauth2Token))
-}
-
-func NewClient(address string, tokenSrc oauth2.TokenSource) *Client {
-	address = address + "/accounts/query"
-	return &Client{
-		address: address,
-		client:  graphql.NewClient(address, oauth2.NewClient(context.Background(), tokenSrc)),
-	}
+	cloud := cloudclient.NewClientFromToken(address, token)
+	return &Client{c: cloud}
 }
 
 func (c *Client) RegisterAuth0User(ctx context.Context) (User, error) {
-	createUserResponse, err := CreateUserFromAuth0User(ctx, c.client)
+	createUserResponse, err := CreateUserFromAuth0User(ctx, c.c.Client)
 	if err != nil {
 		return User{}, err
 	}
@@ -64,7 +54,7 @@ func (c *Client) RegisterAuth0User(ctx context.Context) (User, error) {
 }
 
 func (c *Client) GetCurrentUser(ctx context.Context) (User, error) {
-	getUserResponse, err := GetUserByAuth0User(ctx, c.client)
+	getUserResponse, err := GetUserByAuth0User(ctx, c.c.Client)
 	if err != nil {
 		return User{}, err
 
