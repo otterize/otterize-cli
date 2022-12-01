@@ -6,6 +6,7 @@ require (
 	github.com/Khan/genqlient v0.5.0
 	github.com/amit7itz/goset v1.1.0
 	github.com/coreos/go-oidc/v3 v3.4.0
+	github.com/markkurossi/tabulate v0.0.0-20211112080948-67dabd3f2db2
 	github.com/otterize/intents-operator/src v0.0.0-20220904184811-c44f32f5e813
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/samber/lo v1.25.0

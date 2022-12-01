@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/otterize/otterize-cli/src/cmd/intents"
+	"github.com/otterize/otterize-cli/src/cmd/invites"
 	"github.com/otterize/otterize-cli/src/cmd/login"
 	"github.com/otterize/otterize-cli/src/cmd/mapper"
+	"github.com/otterize/otterize-cli/src/cmd/organizations"
+	"github.com/otterize/otterize-cli/src/cmd/users"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -66,8 +69,11 @@ func init() {
 	RootCmd.PersistentFlags().String(config.OutputKey, config.OutputDefault, "Output format - json/text")
 
 	RootCmd.AddCommand(intents.IntentsCmd)
-	RootCmd.AddCommand(mapper.MapperCmd)
+	RootCmd.AddCommand(invites.InvitesCmd)
 	RootCmd.AddCommand(login.LoginCmd)
+	RootCmd.AddCommand(mapper.MapperCmd)
+	RootCmd.AddCommand(organizations.OrganizationsCmd)
+	RootCmd.AddCommand(users.UsersCmd)
 }
 
 func initLogger() {
