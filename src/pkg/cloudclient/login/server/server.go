@@ -3,8 +3,8 @@ package server
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/login/auth_api"
-	"github.com/otterize/otterize-cli/src/pkg/login/authenticator"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/auth_api"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/authenticator"
 	"github.com/otterize/otterize-cli/src/pkg/utils/must"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/rand"

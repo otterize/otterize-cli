@@ -1,3 +1,52 @@
+query ListUsers {
+    users {
+        id
+        email
+        auth0UserId
+        organization {
+            id
+            name
+        }
+        auth0UserInfo {
+            name
+        }
+    }
+}
+
+mutation CreateUser($email: String!, $auth0_user_id: String!) {
+    createUser(email: $email, auth0UserId: $auth0_user_id) {
+        id
+        email
+        auth0UserId
+        organization {
+            id
+            name
+        }
+        auth0UserInfo {
+            name
+        }
+    }
+}
+
+query GetUser($id: ID!) {
+    user(id: $id) {
+        id
+        email
+        auth0UserId
+        organization {
+            id
+            name
+        }
+        auth0UserInfo {
+            name
+        }
+    }
+}
+
+mutation DeleteUser($id: ID!) {
+    deleteUser(id: $id)
+}
+
 query GetUserByAuth0User {
     me {
         user {
