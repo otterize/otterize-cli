@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
+	"github.com/samber/lo"
 )
 
 type Client struct {
@@ -23,6 +24,17 @@ func (o Organization) String() string {
 func NewClientFromToken(address string, token string) *Client {
 	cloud := cloudclient.NewClientFromToken(address, token)
 	return &Client{c: cloud}
+}
+
+func (c *Client) GetOrganizations(ctx context.Context) ([]Organization, error) {
+	listOrgsResponse, err := ListOrganizations(ctx, c.c.Client)
+	if err != nil {
+		return nil, err
+	}
+
+	return lo.Map(listOrgsResponse.Organizations, func(org ListOrganizationsOrganizationsOrganization, _ int) Organization {
+		return Organization{ID: org.GetId(), Name: org.GetName()}
+	}), nil
 }
 
 func (c *Client) GetOrgByID(ctx context.Context, orgID string) (Organization, error) {

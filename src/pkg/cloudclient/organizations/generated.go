@@ -52,6 +52,28 @@ func (v *GetOrganizationResponse) GetOrganization() GetOrganizationOrganization 
 	return v.Organization
 }
 
+// ListOrganizationsOrganizationsOrganization includes the requested fields of the GraphQL type Organization.
+type ListOrganizationsOrganizationsOrganization struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+}
+
+// GetId returns ListOrganizationsOrganizationsOrganization.Id, and is useful for accessing the field via an interface.
+func (v *ListOrganizationsOrganizationsOrganization) GetId() string { return v.Id }
+
+// GetName returns ListOrganizationsOrganizationsOrganization.Name, and is useful for accessing the field via an interface.
+func (v *ListOrganizationsOrganizationsOrganization) GetName() string { return v.Name }
+
+// ListOrganizationsResponse is returned by ListOrganizations on success.
+type ListOrganizationsResponse struct {
+	Organizations []ListOrganizationsOrganizationsOrganization `json:"organizations"`
+}
+
+// GetOrganizations returns ListOrganizationsResponse.Organizations, and is useful for accessing the field via an interface.
+func (v *ListOrganizationsResponse) GetOrganizations() []ListOrganizationsOrganizationsOrganization {
+	return v.Organizations
+}
+
 type OrganizationUpdate struct {
 	Name     string `json:"name"`
 	ImageURL string `json:"imageURL"`
@@ -156,6 +178,35 @@ query GetOrganization ($id: ID!) {
 	var err error
 
 	var data GetOrganizationResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
+
+func ListOrganizations(
+	ctx context.Context,
+	client graphql.Client,
+) (*ListOrganizationsResponse, error) {
+	req := &graphql.Request{
+		OpName: "ListOrganizations",
+		Query: `
+query ListOrganizations {
+	organizations {
+		id
+		name
+	}
+}
+`,
+	}
+	var err error
+
+	var data ListOrganizationsResponse
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(

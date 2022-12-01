@@ -1,3 +1,11 @@
+query ListOrganizations {
+    organizations {
+        id
+        name
+    }
+}
+
+
 query GetOrganization($id: ID!) {
     organization(id: $id) {
         id
