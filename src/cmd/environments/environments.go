@@ -10,9 +10,10 @@ import (
 )
 
 var EnvironmentsCmd = &cobra.Command{
-	Use:   "environments",
-	Short: "",
-	Long:  ``,
+	Use:     "environments",
+	Aliases: []string{"envs"},
+	Short:   "",
+	Long:    ``,
 }
 
 func init() {
