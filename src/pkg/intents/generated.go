@@ -134,7 +134,7 @@ func reportDiscoveredIntents(
 		OpName: "reportDiscoveredIntents",
 		Query: `
 mutation reportDiscoveredIntents ($envId: ID!, $source: String!, $intents: [IntentInput!]!) {
-	reportDiscoveredSourcedIntents(environment: $envId, source: $source, intents: $intents)
+	reportDiscoveredSourcedIntents(environmentId: $envId, source: $source, intents: $intents)
 }
 `,
 		Variables: &__reportDiscoveredIntentsInput{
