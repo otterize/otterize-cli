@@ -1,4 +1,4 @@
-package invite
+package delete
 
 import (
 	"context"
