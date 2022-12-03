@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var AddLabelsCMD = &cobra.Command{
+var AddLabelsCmd = &cobra.Command{
 	Use:          "add_labels",
 	Short:        `Adds labels to an existing Otterize environment and returns its ID`,
 	SilenceUsage: true,
@@ -52,11 +52,11 @@ var AddLabelsCMD = &cobra.Command{
 }
 
 func init() {
-	config.RegisterStringArg(AddLabelsCMD, IdKey, "environment ID", false)
-	config.RegisterStringArg(AddLabelsCMD, NameKey, "environment name", false)
-	config.MarkValidFlagCombinations(AddLabelsCMD,
+	config.RegisterStringArg(AddLabelsCmd, IdKey, "environment ID", false)
+	config.RegisterStringArg(AddLabelsCmd, NameKey, "environment name", false)
+	config.MarkValidFlagCombinations(AddLabelsCmd,
 		[]string{NameKey},
 		[]string{IdKey},
 	)
-	AddLabelsCMD.PersistentFlags().StringToStringP(LabelsKey, LabelsShorthand, make(map[string]string, 0), "Environment key value Labels (key=val,key2=val2=..)")
+	AddLabelsCmd.PersistentFlags().StringToStringP(LabelsKey, LabelsShorthand, make(map[string]string, 0), "Environment key value Labels (key=val,key2=val2=..)")
 }

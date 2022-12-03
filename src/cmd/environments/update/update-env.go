@@ -62,6 +62,6 @@ func init() {
 	config.RegisterStringArg(UpdateEnvCmd, NewNameKey, "new environment name", false)
 	UpdateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "Environment key value Labels (key=val,key2=val2=..)")
 
-	UpdateEnvCmd.AddCommand(RemoveLabelsCMD)
-	UpdateEnvCmd.AddCommand(AddLabelsCMD)
+	UpdateEnvCmd.AddCommand(RemoveLabelsCmd)
+	UpdateEnvCmd.AddCommand(AddLabelsCmd)
 }

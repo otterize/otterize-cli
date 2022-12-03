@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var RemoveLabelsCMD = &cobra.Command{
+var RemoveLabelsCmd = &cobra.Command{
 	Use:          "remove_labels",
 	Short:        `Removes labels to an existing Otterize environment and returns its ID`,
 	SilenceUsage: true,
@@ -51,11 +51,11 @@ var RemoveLabelsCMD = &cobra.Command{
 }
 
 func init() {
-	config.RegisterStringArg(RemoveLabelsCMD, IdKey, "environment ID", false)
-	config.RegisterStringArg(RemoveLabelsCMD, NameKey, "environment name", false)
-	config.MarkValidFlagCombinations(RemoveLabelsCMD,
+	config.RegisterStringArg(RemoveLabelsCmd, IdKey, "environment ID", false)
+	config.RegisterStringArg(RemoveLabelsCmd, NameKey, "environment name", false)
+	config.MarkValidFlagCombinations(RemoveLabelsCmd,
 		[]string{NameKey},
 		[]string{IdKey},
 	)
-	RemoveLabelsCMD.PersistentFlags().StringSliceP(LabelsKey, LabelsShorthand, make([]string, 0), "Environment label keys to delete")
+	RemoveLabelsCmd.PersistentFlags().StringSliceP(LabelsKey, LabelsShorthand, make([]string, 0), "Environment label keys to delete")
 }
