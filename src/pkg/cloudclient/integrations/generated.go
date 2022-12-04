@@ -258,67 +258,67 @@ type DeleteIntegrationResponse struct {
 // GetDeleteIntegration returns DeleteIntegrationResponse.DeleteIntegration, and is useful for accessing the field via an interface.
 func (v *DeleteIntegrationResponse) GetDeleteIntegration() string { return v.DeleteIntegration }
 
-// GetIntegrationByFilterOneIntegration includes the requested fields of the GraphQL type Integration.
-type GetIntegrationByFilterOneIntegration struct {
+// GetIntegrationByNameOneIntegration includes the requested fields of the GraphQL type Integration.
+type GetIntegrationByNameOneIntegration struct {
 	IntegrationWithStatus `json:"-"`
 }
 
-// GetStatus returns GetIntegrationByFilterOneIntegration.Status, and is useful for accessing the field via an interface.
-func (v *GetIntegrationByFilterOneIntegration) GetStatus() IntegrationStatusFields {
+// GetStatus returns GetIntegrationByNameOneIntegration.Status, and is useful for accessing the field via an interface.
+func (v *GetIntegrationByNameOneIntegration) GetStatus() IntegrationStatusFields {
 	return v.IntegrationWithStatus.Status
 }
 
-// GetId returns GetIntegrationByFilterOneIntegration.Id, and is useful for accessing the field via an interface.
-func (v *GetIntegrationByFilterOneIntegration) GetId() string {
+// GetId returns GetIntegrationByNameOneIntegration.Id, and is useful for accessing the field via an interface.
+func (v *GetIntegrationByNameOneIntegration) GetId() string {
 	return v.IntegrationWithStatus.IntegrationFields.Id
 }
 
-// GetOrganization returns GetIntegrationByFilterOneIntegration.Organization, and is useful for accessing the field via an interface.
-func (v *GetIntegrationByFilterOneIntegration) GetOrganization() IntegrationFieldsOrganization {
+// GetOrganization returns GetIntegrationByNameOneIntegration.Organization, and is useful for accessing the field via an interface.
+func (v *GetIntegrationByNameOneIntegration) GetOrganization() IntegrationFieldsOrganization {
 	return v.IntegrationWithStatus.IntegrationFields.Organization
 }
 
-// GetName returns GetIntegrationByFilterOneIntegration.Name, and is useful for accessing the field via an interface.
-func (v *GetIntegrationByFilterOneIntegration) GetName() string {
+// GetName returns GetIntegrationByNameOneIntegration.Name, and is useful for accessing the field via an interface.
+func (v *GetIntegrationByNameOneIntegration) GetName() string {
 	return v.IntegrationWithStatus.IntegrationFields.Name
 }
 
-// GetIntegrationType returns GetIntegrationByFilterOneIntegration.IntegrationType, and is useful for accessing the field via an interface.
-func (v *GetIntegrationByFilterOneIntegration) GetIntegrationType() IntegrationType {
+// GetIntegrationType returns GetIntegrationByNameOneIntegration.IntegrationType, and is useful for accessing the field via an interface.
+func (v *GetIntegrationByNameOneIntegration) GetIntegrationType() IntegrationType {
 	return v.IntegrationWithStatus.IntegrationFields.IntegrationType
 }
 
-// GetAllEnvsAllowed returns GetIntegrationByFilterOneIntegration.AllEnvsAllowed, and is useful for accessing the field via an interface.
-func (v *GetIntegrationByFilterOneIntegration) GetAllEnvsAllowed() bool {
+// GetAllEnvsAllowed returns GetIntegrationByNameOneIntegration.AllEnvsAllowed, and is useful for accessing the field via an interface.
+func (v *GetIntegrationByNameOneIntegration) GetAllEnvsAllowed() bool {
 	return v.IntegrationWithStatus.IntegrationFields.AllEnvsAllowed
 }
 
-// GetIdentity returns GetIntegrationByFilterOneIntegration.Identity, and is useful for accessing the field via an interface.
-func (v *GetIntegrationByFilterOneIntegration) GetIdentity() IntegrationFieldsIdentityIntegrationIdentity {
+// GetIdentity returns GetIntegrationByNameOneIntegration.Identity, and is useful for accessing the field via an interface.
+func (v *GetIntegrationByNameOneIntegration) GetIdentity() IntegrationFieldsIdentityIntegrationIdentity {
 	return v.IntegrationWithStatus.IntegrationFields.Identity
 }
 
-// GetEnvironments returns GetIntegrationByFilterOneIntegration.Environments, and is useful for accessing the field via an interface.
-func (v *GetIntegrationByFilterOneIntegration) GetEnvironments() []IntegrationFieldsEnvironmentsEnvironment {
+// GetEnvironments returns GetIntegrationByNameOneIntegration.Environments, and is useful for accessing the field via an interface.
+func (v *GetIntegrationByNameOneIntegration) GetEnvironments() []IntegrationFieldsEnvironmentsEnvironment {
 	return v.IntegrationWithStatus.IntegrationFields.Environments
 }
 
-// GetCredentials returns GetIntegrationByFilterOneIntegration.Credentials, and is useful for accessing the field via an interface.
-func (v *GetIntegrationByFilterOneIntegration) GetCredentials() IntegrationFieldsCredentialsIntegrationCredentials {
+// GetCredentials returns GetIntegrationByNameOneIntegration.Credentials, and is useful for accessing the field via an interface.
+func (v *GetIntegrationByNameOneIntegration) GetCredentials() IntegrationFieldsCredentialsIntegrationCredentials {
 	return v.IntegrationWithStatus.IntegrationFields.Credentials
 }
 
-func (v *GetIntegrationByFilterOneIntegration) UnmarshalJSON(b []byte) error {
+func (v *GetIntegrationByNameOneIntegration) UnmarshalJSON(b []byte) error {
 
 	if string(b) == "null" {
 		return nil
 	}
 
 	var firstPass struct {
-		*GetIntegrationByFilterOneIntegration
+		*GetIntegrationByNameOneIntegration
 		graphql.NoUnmarshalJSON
 	}
-	firstPass.GetIntegrationByFilterOneIntegration = v
+	firstPass.GetIntegrationByNameOneIntegration = v
 
 	err := json.Unmarshal(b, &firstPass)
 	if err != nil {
@@ -333,7 +333,7 @@ func (v *GetIntegrationByFilterOneIntegration) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-type __premarshalGetIntegrationByFilterOneIntegration struct {
+type __premarshalGetIntegrationByNameOneIntegration struct {
 	Status IntegrationStatusFields `json:"status"`
 
 	Id string `json:"id"`
@@ -353,7 +353,7 @@ type __premarshalGetIntegrationByFilterOneIntegration struct {
 	Credentials IntegrationFieldsCredentialsIntegrationCredentials `json:"credentials"`
 }
 
-func (v *GetIntegrationByFilterOneIntegration) MarshalJSON() ([]byte, error) {
+func (v *GetIntegrationByNameOneIntegration) MarshalJSON() ([]byte, error) {
 	premarshaled, err := v.__premarshalJSON()
 	if err != nil {
 		return nil, err
@@ -361,8 +361,8 @@ func (v *GetIntegrationByFilterOneIntegration) MarshalJSON() ([]byte, error) {
 	return json.Marshal(premarshaled)
 }
 
-func (v *GetIntegrationByFilterOneIntegration) __premarshalJSON() (*__premarshalGetIntegrationByFilterOneIntegration, error) {
-	var retval __premarshalGetIntegrationByFilterOneIntegration
+func (v *GetIntegrationByNameOneIntegration) __premarshalJSON() (*__premarshalGetIntegrationByNameOneIntegration, error) {
+	var retval __premarshalGetIntegrationByNameOneIntegration
 
 	retval.Status = v.IntegrationWithStatus.Status
 	retval.Id = v.IntegrationWithStatus.IntegrationFields.Id
@@ -376,13 +376,13 @@ func (v *GetIntegrationByFilterOneIntegration) __premarshalJSON() (*__premarshal
 	return &retval, nil
 }
 
-// GetIntegrationByFilterResponse is returned by GetIntegrationByFilter on success.
-type GetIntegrationByFilterResponse struct {
-	OneIntegration *GetIntegrationByFilterOneIntegration `json:"oneIntegration"`
+// GetIntegrationByNameResponse is returned by GetIntegrationByName on success.
+type GetIntegrationByNameResponse struct {
+	OneIntegration GetIntegrationByNameOneIntegration `json:"oneIntegration"`
 }
 
-// GetOneIntegration returns GetIntegrationByFilterResponse.OneIntegration, and is useful for accessing the field via an interface.
-func (v *GetIntegrationByFilterResponse) GetOneIntegration() *GetIntegrationByFilterOneIntegration {
+// GetOneIntegration returns GetIntegrationByNameResponse.OneIntegration, and is useful for accessing the field via an interface.
+func (v *GetIntegrationByNameResponse) GetOneIntegration() GetIntegrationByNameOneIntegration {
 	return v.OneIntegration
 }
 
@@ -1227,21 +1227,6 @@ func (v *IntegrationWithStatus) __premarshalJSON() (*__premarshalIntegrationWith
 	return &retval, nil
 }
 
-type IntegrationsFilter struct {
-	Name            *string          `json:"name"`
-	IntegrationType *IntegrationType `json:"integrationType"`
-	EnvironmentId   *string          `json:"environmentId"`
-}
-
-// GetName returns IntegrationsFilter.Name, and is useful for accessing the field via an interface.
-func (v *IntegrationsFilter) GetName() *string { return v.Name }
-
-// GetIntegrationType returns IntegrationsFilter.IntegrationType, and is useful for accessing the field via an interface.
-func (v *IntegrationsFilter) GetIntegrationType() *IntegrationType { return v.IntegrationType }
-
-// GetEnvironmentId returns IntegrationsFilter.EnvironmentId, and is useful for accessing the field via an interface.
-func (v *IntegrationsFilter) GetEnvironmentId() *string { return v.EnvironmentId }
-
 // UpdateIntegrationResponse is returned by UpdateIntegration on success.
 type UpdateIntegrationResponse struct {
 	UpdateIntegration *UpdateIntegrationUpdateIntegration `json:"updateIntegration"`
@@ -1400,13 +1385,13 @@ type __DeleteIntegrationInput struct {
 // GetId returns __DeleteIntegrationInput.Id, and is useful for accessing the field via an interface.
 func (v *__DeleteIntegrationInput) GetId() string { return v.Id }
 
-// __GetIntegrationByFilterInput is used internally by genqlient
-type __GetIntegrationByFilterInput struct {
-	Filter *IntegrationsFilter `json:"filter"`
+// __GetIntegrationByNameInput is used internally by genqlient
+type __GetIntegrationByNameInput struct {
+	Name string `json:"name"`
 }
 
-// GetFilter returns __GetIntegrationByFilterInput.Filter, and is useful for accessing the field via an interface.
-func (v *__GetIntegrationByFilterInput) GetFilter() *IntegrationsFilter { return v.Filter }
+// GetName returns __GetIntegrationByNameInput.Name, and is useful for accessing the field via an interface.
+func (v *__GetIntegrationByNameInput) GetName() string { return v.Name }
 
 // __GetIntegrationCredentialsInput is used internally by genqlient
 type __GetIntegrationCredentialsInput struct {
@@ -1418,19 +1403,37 @@ func (v *__GetIntegrationCredentialsInput) GetId() *string { return v.Id }
 
 // __GetIntegrationsInput is used internally by genqlient
 type __GetIntegrationsInput struct {
-	Filter *IntegrationsFilter `json:"filter"`
+	Name            *string          `json:"name"`
+	IntegrationType *IntegrationType `json:"integrationType"`
+	EnvironmentId   *string          `json:"environmentId"`
 }
 
-// GetFilter returns __GetIntegrationsInput.Filter, and is useful for accessing the field via an interface.
-func (v *__GetIntegrationsInput) GetFilter() *IntegrationsFilter { return v.Filter }
+// GetName returns __GetIntegrationsInput.Name, and is useful for accessing the field via an interface.
+func (v *__GetIntegrationsInput) GetName() *string { return v.Name }
+
+// GetIntegrationType returns __GetIntegrationsInput.IntegrationType, and is useful for accessing the field via an interface.
+func (v *__GetIntegrationsInput) GetIntegrationType() *IntegrationType { return v.IntegrationType }
+
+// GetEnvironmentId returns __GetIntegrationsInput.EnvironmentId, and is useful for accessing the field via an interface.
+func (v *__GetIntegrationsInput) GetEnvironmentId() *string { return v.EnvironmentId }
 
 // __GetIntegrationsWithCredentialsInput is used internally by genqlient
 type __GetIntegrationsWithCredentialsInput struct {
-	Filter *IntegrationsFilter `json:"filter"`
+	Name            *string          `json:"name"`
+	IntegrationType *IntegrationType `json:"integrationType"`
+	EnvironmentId   *string          `json:"environmentId"`
 }
 
-// GetFilter returns __GetIntegrationsWithCredentialsInput.Filter, and is useful for accessing the field via an interface.
-func (v *__GetIntegrationsWithCredentialsInput) GetFilter() *IntegrationsFilter { return v.Filter }
+// GetName returns __GetIntegrationsWithCredentialsInput.Name, and is useful for accessing the field via an interface.
+func (v *__GetIntegrationsWithCredentialsInput) GetName() *string { return v.Name }
+
+// GetIntegrationType returns __GetIntegrationsWithCredentialsInput.IntegrationType, and is useful for accessing the field via an interface.
+func (v *__GetIntegrationsWithCredentialsInput) GetIntegrationType() *IntegrationType {
+	return v.IntegrationType
+}
+
+// GetEnvironmentId returns __GetIntegrationsWithCredentialsInput.EnvironmentId, and is useful for accessing the field via an interface.
+func (v *__GetIntegrationsWithCredentialsInput) GetEnvironmentId() *string { return v.EnvironmentId }
 
 // __IntegrationInput is used internally by genqlient
 type __IntegrationInput struct {
@@ -1618,16 +1621,16 @@ mutation DeleteIntegration ($id: ID!) {
 	return &data, err
 }
 
-func GetIntegrationByFilter(
+func GetIntegrationByName(
 	ctx context.Context,
 	client graphql.Client,
-	filter *IntegrationsFilter,
-) (*GetIntegrationByFilterResponse, error) {
+	name string,
+) (*GetIntegrationByNameResponse, error) {
 	req := &graphql.Request{
-		OpName: "GetIntegrationByFilter",
+		OpName: "GetIntegrationByName",
 		Query: `
-query GetIntegrationByFilter ($filter: IntegrationsFilter!) {
-	oneIntegration(filter: $filter) {
+query GetIntegrationByName ($name: String!) {
+	oneIntegration(name: $name) {
 		... IntegrationWithStatus
 	}
 }
@@ -1669,13 +1672,13 @@ fragment IntegrationStatusFields on IntegrationStatus {
 	}
 }
 `,
-		Variables: &__GetIntegrationByFilterInput{
-			Filter: filter,
+		Variables: &__GetIntegrationByNameInput{
+			Name: name,
 		},
 	}
 	var err error
 
-	var data GetIntegrationByFilterResponse
+	var data GetIntegrationByNameResponse
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(
@@ -1728,13 +1731,15 @@ fragment IntegrationCredentialsFields on IntegrationCredentials {
 func GetIntegrations(
 	ctx context.Context,
 	client graphql.Client,
-	filter *IntegrationsFilter,
+	name *string,
+	integrationType *IntegrationType,
+	environmentId *string,
 ) (*GetIntegrationsResponse, error) {
 	req := &graphql.Request{
 		OpName: "GetIntegrations",
 		Query: `
-query GetIntegrations ($filter: IntegrationsFilter) {
-	integrations(filter: $filter) {
+query GetIntegrations ($name: String, $integrationType: IntegrationType, $environmentId: ID) {
+	integrations(name: $name, integrationType: $integrationType, environmentId: $environmentId) {
 		... IntegrationWithStatus
 	}
 }
@@ -1777,7 +1782,9 @@ fragment IntegrationStatusFields on IntegrationStatus {
 }
 `,
 		Variables: &__GetIntegrationsInput{
-			Filter: filter,
+			Name:            name,
+			IntegrationType: integrationType,
+			EnvironmentId:   environmentId,
 		},
 	}
 	var err error
@@ -1797,13 +1804,15 @@ fragment IntegrationStatusFields on IntegrationStatus {
 func GetIntegrationsWithCredentials(
 	ctx context.Context,
 	client graphql.Client,
-	filter *IntegrationsFilter,
+	name *string,
+	integrationType *IntegrationType,
+	environmentId *string,
 ) (*GetIntegrationsWithCredentialsResponse, error) {
 	req := &graphql.Request{
 		OpName: "GetIntegrationsWithCredentials",
 		Query: `
-query GetIntegrationsWithCredentials ($filter: IntegrationsFilter) {
-	integrations(filter: $filter) {
+query GetIntegrationsWithCredentials ($name: String, $integrationType: IntegrationType, $environmentId: ID) {
+	integrations(name: $name, integrationType: $integrationType, environmentId: $environmentId) {
 		... IntegrationWithCredentials
 	}
 }
@@ -1841,7 +1850,9 @@ fragment IntegrationCredentialsFields on IntegrationCredentials {
 }
 `,
 		Variables: &__GetIntegrationsWithCredentialsInput{
-			Filter: filter,
+			Name:            name,
+			IntegrationType: integrationType,
+			EnvironmentId:   environmentId,
 		},
 	}
 	var err error

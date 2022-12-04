@@ -47,27 +47,12 @@ type Filters struct {
 	EnvID           string
 }
 
-func (f Filters) asIntegrationFilter() IntegrationsFilter {
-	filter := IntegrationsFilter{}
-	if f.Name != "" {
-		filter.Name = &f.Name
-	}
-	if f.IntegrationType != "" {
-		integrationType := IntegrationType(f.IntegrationType)
-		filter.IntegrationType = &integrationType
-	}
-	if f.EnvID != "" {
-		filter.EnvironmentId = &f.EnvID
-	}
-
-	return filter
-}
-
 func (c *Client) GetIntegrations(ctx context.Context, filters Filters) ([]IntegrationWithStatus, error) {
+	name := lo.Ternary(filters.Name == "", nil, &filters.Name)
+	integrationType := lo.Ternary(filters.IntegrationType == "", nil, lo.ToPtr(IntegrationType(filters.IntegrationType)))
+	environmentId := lo.Ternary(filters.EnvID == "", nil, &filters.EnvID)
 
-	integrationFilter := filters.asIntegrationFilter()
-
-	integrationsResponse, err := GetIntegrations(ctx, c.c.Client, &integrationFilter)
+	integrationsResponse, err := GetIntegrations(ctx, c.c.Client, name, integrationType, environmentId)
 	if err != nil {
 		return nil, err
 	}
@@ -88,8 +73,7 @@ func (c *Client) GetIntegration(ctx context.Context, id string) (IntegrationWith
 }
 
 func (c *Client) GetIntegrationByName(ctx context.Context, name string) (IntegrationWithStatus, error) {
-	filter := IntegrationsFilter{Name: &name}
-	response, err := GetIntegrationByFilter(ctx, c.c.Client, &filter)
+	response, err := GetIntegrationByName(ctx, c.c.Client, name)
 	if err != nil {
 		return IntegrationWithStatus{}, err
 	}

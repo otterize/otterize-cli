@@ -53,8 +53,8 @@ fragment IntegrationWithStatus on Integration {
 }
 
 # @genqlient(pointer: true)
-query GetIntegrations($filter: IntegrationsFilter) {
-    integrations(filter: $filter){
+query GetIntegrations($name: String, $integrationType: IntegrationType, $environmentId: ID) {
+    integrations(name: $name, integrationType: $integrationType, environmentId: $environmentId){
         ...IntegrationWithStatus
     }
 }
@@ -99,15 +99,14 @@ query GetIntegrationCredentials($id: ID!) {
 }
 
 # @genqlient(pointer: true)
-query GetIntegrationsWithCredentials($filter: IntegrationsFilter) {
-    integrations(filter: $filter){
+query GetIntegrationsWithCredentials($name: String, $integrationType: IntegrationType, $environmentId: ID) {
+    integrations(name: $name, integrationType: $integrationType, environmentId: $environmentId){
         ...IntegrationWithCredentials
     }
 }
 
-# @genqlient(pointer: true)
-query GetIntegrationByFilter($filter: IntegrationsFilter!) {
-    oneIntegration(filter: $filter) {
+query GetIntegrationByName($name: String!) {
+    oneIntegration(name: $name) {
         ...IntegrationWithStatus
     }
 }

@@ -96,7 +96,7 @@ func (c *Client) GetEnvByID(ctx context.Context, envID string) (EnvFields, error
 }
 
 func (c *Client) GetEnvByName(ctx context.Context, envName string) (EnvFields, error) {
-	env, err := GetEnvByFilter(ctx, c.c.Client, &EnvironmentsFilter{Name: &envName})
+	env, err := GetEnvByName(ctx, c.c.Client, envName)
 	if err != nil {
 		return EnvFields{}, err
 	}
@@ -110,11 +110,11 @@ func (c *Client) GetEnvByLabels(ctx context.Context, labels map[string]string) (
 		labelsInput = append(labelsInput, &LabelInput{Key: &k, Value: &v})
 	}
 
-	envsResponse, err := GetEnvironmentsByFilter(ctx, c.c.Client, &EnvironmentsFilter{Labels: labelsInput})
+	envsResponse, err := GetEnvironmentsByLabels(ctx, c.c.Client, labelsInput)
 	if err != nil {
 		return nil, err
 	}
-	envs := lo.Map(envsResponse.Environments, func(env *GetEnvironmentsByFilterEnvironmentsEnvironment, i int) EnvFields {
+	envs := lo.Map(envsResponse.Environments, func(env *GetEnvironmentsByLabelsEnvironmentsEnvironment, i int) EnvFields {
 		return env.EnvFields
 	})
 

@@ -378,17 +378,6 @@ func (v *EnvironmentUpdate) GetName() *string { return v.Name }
 // GetLabels returns EnvironmentUpdate.Labels, and is useful for accessing the field via an interface.
 func (v *EnvironmentUpdate) GetLabels() []*LabelInput { return v.Labels }
 
-type EnvironmentsFilter struct {
-	Name   *string       `json:"name"`
-	Labels []*LabelInput `json:"labels"`
-}
-
-// GetName returns EnvironmentsFilter.Name, and is useful for accessing the field via an interface.
-func (v *EnvironmentsFilter) GetName() *string { return v.Name }
-
-// GetLabels returns EnvironmentsFilter.Labels, and is useful for accessing the field via an interface.
-func (v *EnvironmentsFilter) GetLabels() []*LabelInput { return v.Labels }
-
 // GetDevEnvMe includes the requested fields of the GraphQL type Me.
 type GetDevEnvMe struct {
 	UserEnvironment GetDevEnvMeUserEnvironment `json:"userEnvironment"`
@@ -489,100 +478,6 @@ type GetDevEnvResponse struct {
 // GetMe returns GetDevEnvResponse.Me, and is useful for accessing the field via an interface.
 func (v *GetDevEnvResponse) GetMe() GetDevEnvMe { return v.Me }
 
-// GetEnvByFilterOneEnvironment includes the requested fields of the GraphQL type Environment.
-type GetEnvByFilterOneEnvironment struct {
-	EnvFields `json:"-"`
-}
-
-// GetOrganization returns GetEnvByFilterOneEnvironment.Organization, and is useful for accessing the field via an interface.
-func (v *GetEnvByFilterOneEnvironment) GetOrganization() EnvFieldsOrganization {
-	return v.EnvFields.Organization
-}
-
-// GetId returns GetEnvByFilterOneEnvironment.Id, and is useful for accessing the field via an interface.
-func (v *GetEnvByFilterOneEnvironment) GetId() string { return v.EnvFields.Id }
-
-// GetName returns GetEnvByFilterOneEnvironment.Name, and is useful for accessing the field via an interface.
-func (v *GetEnvByFilterOneEnvironment) GetName() string { return v.EnvFields.Name }
-
-// GetLabels returns GetEnvByFilterOneEnvironment.Labels, and is useful for accessing the field via an interface.
-func (v *GetEnvByFilterOneEnvironment) GetLabels() []EnvFieldsLabelsLabel { return v.EnvFields.Labels }
-
-// GetIntentsCount returns GetEnvByFilterOneEnvironment.IntentsCount, and is useful for accessing the field via an interface.
-func (v *GetEnvByFilterOneEnvironment) GetIntentsCount() int { return v.EnvFields.IntentsCount }
-
-// GetIntegrationCount returns GetEnvByFilterOneEnvironment.IntegrationCount, and is useful for accessing the field via an interface.
-func (v *GetEnvByFilterOneEnvironment) GetIntegrationCount() int { return v.EnvFields.IntegrationCount }
-
-func (v *GetEnvByFilterOneEnvironment) UnmarshalJSON(b []byte) error {
-
-	if string(b) == "null" {
-		return nil
-	}
-
-	var firstPass struct {
-		*GetEnvByFilterOneEnvironment
-		graphql.NoUnmarshalJSON
-	}
-	firstPass.GetEnvByFilterOneEnvironment = v
-
-	err := json.Unmarshal(b, &firstPass)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(
-		b, &v.EnvFields)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type __premarshalGetEnvByFilterOneEnvironment struct {
-	Organization EnvFieldsOrganization `json:"organization"`
-
-	Id string `json:"id"`
-
-	Name string `json:"name"`
-
-	Labels []EnvFieldsLabelsLabel `json:"labels"`
-
-	IntentsCount int `json:"intentsCount"`
-
-	IntegrationCount int `json:"integrationCount"`
-}
-
-func (v *GetEnvByFilterOneEnvironment) MarshalJSON() ([]byte, error) {
-	premarshaled, err := v.__premarshalJSON()
-	if err != nil {
-		return nil, err
-	}
-	return json.Marshal(premarshaled)
-}
-
-func (v *GetEnvByFilterOneEnvironment) __premarshalJSON() (*__premarshalGetEnvByFilterOneEnvironment, error) {
-	var retval __premarshalGetEnvByFilterOneEnvironment
-
-	retval.Organization = v.EnvFields.Organization
-	retval.Id = v.EnvFields.Id
-	retval.Name = v.EnvFields.Name
-	retval.Labels = v.EnvFields.Labels
-	retval.IntentsCount = v.EnvFields.IntentsCount
-	retval.IntegrationCount = v.EnvFields.IntegrationCount
-	return &retval, nil
-}
-
-// GetEnvByFilterResponse is returned by GetEnvByFilter on success.
-type GetEnvByFilterResponse struct {
-	OneEnvironment *GetEnvByFilterOneEnvironment `json:"oneEnvironment"`
-}
-
-// GetOneEnvironment returns GetEnvByFilterResponse.OneEnvironment, and is useful for accessing the field via an interface.
-func (v *GetEnvByFilterResponse) GetOneEnvironment() *GetEnvByFilterOneEnvironment {
-	return v.OneEnvironment
-}
-
 // GetEnvByIDEnvironment includes the requested fields of the GraphQL type Environment.
 type GetEnvByIDEnvironment struct {
 	EnvFields `json:"-"`
@@ -675,48 +570,42 @@ type GetEnvByIDResponse struct {
 // GetEnvironment returns GetEnvByIDResponse.Environment, and is useful for accessing the field via an interface.
 func (v *GetEnvByIDResponse) GetEnvironment() GetEnvByIDEnvironment { return v.Environment }
 
-// GetEnvironmentsByFilterEnvironmentsEnvironment includes the requested fields of the GraphQL type Environment.
-type GetEnvironmentsByFilterEnvironmentsEnvironment struct {
+// GetEnvByNameOneEnvironment includes the requested fields of the GraphQL type Environment.
+type GetEnvByNameOneEnvironment struct {
 	EnvFields `json:"-"`
 }
 
-// GetOrganization returns GetEnvironmentsByFilterEnvironmentsEnvironment.Organization, and is useful for accessing the field via an interface.
-func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) GetOrganization() EnvFieldsOrganization {
+// GetOrganization returns GetEnvByNameOneEnvironment.Organization, and is useful for accessing the field via an interface.
+func (v *GetEnvByNameOneEnvironment) GetOrganization() EnvFieldsOrganization {
 	return v.EnvFields.Organization
 }
 
-// GetId returns GetEnvironmentsByFilterEnvironmentsEnvironment.Id, and is useful for accessing the field via an interface.
-func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) GetId() string { return v.EnvFields.Id }
+// GetId returns GetEnvByNameOneEnvironment.Id, and is useful for accessing the field via an interface.
+func (v *GetEnvByNameOneEnvironment) GetId() string { return v.EnvFields.Id }
 
-// GetName returns GetEnvironmentsByFilterEnvironmentsEnvironment.Name, and is useful for accessing the field via an interface.
-func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) GetName() string { return v.EnvFields.Name }
+// GetName returns GetEnvByNameOneEnvironment.Name, and is useful for accessing the field via an interface.
+func (v *GetEnvByNameOneEnvironment) GetName() string { return v.EnvFields.Name }
 
-// GetLabels returns GetEnvironmentsByFilterEnvironmentsEnvironment.Labels, and is useful for accessing the field via an interface.
-func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) GetLabels() []EnvFieldsLabelsLabel {
-	return v.EnvFields.Labels
-}
+// GetLabels returns GetEnvByNameOneEnvironment.Labels, and is useful for accessing the field via an interface.
+func (v *GetEnvByNameOneEnvironment) GetLabels() []EnvFieldsLabelsLabel { return v.EnvFields.Labels }
 
-// GetIntentsCount returns GetEnvironmentsByFilterEnvironmentsEnvironment.IntentsCount, and is useful for accessing the field via an interface.
-func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) GetIntentsCount() int {
-	return v.EnvFields.IntentsCount
-}
+// GetIntentsCount returns GetEnvByNameOneEnvironment.IntentsCount, and is useful for accessing the field via an interface.
+func (v *GetEnvByNameOneEnvironment) GetIntentsCount() int { return v.EnvFields.IntentsCount }
 
-// GetIntegrationCount returns GetEnvironmentsByFilterEnvironmentsEnvironment.IntegrationCount, and is useful for accessing the field via an interface.
-func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) GetIntegrationCount() int {
-	return v.EnvFields.IntegrationCount
-}
+// GetIntegrationCount returns GetEnvByNameOneEnvironment.IntegrationCount, and is useful for accessing the field via an interface.
+func (v *GetEnvByNameOneEnvironment) GetIntegrationCount() int { return v.EnvFields.IntegrationCount }
 
-func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) UnmarshalJSON(b []byte) error {
+func (v *GetEnvByNameOneEnvironment) UnmarshalJSON(b []byte) error {
 
 	if string(b) == "null" {
 		return nil
 	}
 
 	var firstPass struct {
-		*GetEnvironmentsByFilterEnvironmentsEnvironment
+		*GetEnvByNameOneEnvironment
 		graphql.NoUnmarshalJSON
 	}
-	firstPass.GetEnvironmentsByFilterEnvironmentsEnvironment = v
+	firstPass.GetEnvByNameOneEnvironment = v
 
 	err := json.Unmarshal(b, &firstPass)
 	if err != nil {
@@ -731,7 +620,7 @@ func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) UnmarshalJSON(b []byte)
 	return nil
 }
 
-type __premarshalGetEnvironmentsByFilterEnvironmentsEnvironment struct {
+type __premarshalGetEnvByNameOneEnvironment struct {
 	Organization EnvFieldsOrganization `json:"organization"`
 
 	Id string `json:"id"`
@@ -745,7 +634,7 @@ type __premarshalGetEnvironmentsByFilterEnvironmentsEnvironment struct {
 	IntegrationCount int `json:"integrationCount"`
 }
 
-func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) MarshalJSON() ([]byte, error) {
+func (v *GetEnvByNameOneEnvironment) MarshalJSON() ([]byte, error) {
 	premarshaled, err := v.__premarshalJSON()
 	if err != nil {
 		return nil, err
@@ -753,8 +642,8 @@ func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) MarshalJSON() ([]byte, 
 	return json.Marshal(premarshaled)
 }
 
-func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) __premarshalJSON() (*__premarshalGetEnvironmentsByFilterEnvironmentsEnvironment, error) {
-	var retval __premarshalGetEnvironmentsByFilterEnvironmentsEnvironment
+func (v *GetEnvByNameOneEnvironment) __premarshalJSON() (*__premarshalGetEnvByNameOneEnvironment, error) {
+	var retval __premarshalGetEnvByNameOneEnvironment
 
 	retval.Organization = v.EnvFields.Organization
 	retval.Id = v.EnvFields.Id
@@ -765,13 +654,113 @@ func (v *GetEnvironmentsByFilterEnvironmentsEnvironment) __premarshalJSON() (*__
 	return &retval, nil
 }
 
-// GetEnvironmentsByFilterResponse is returned by GetEnvironmentsByFilter on success.
-type GetEnvironmentsByFilterResponse struct {
-	Environments []*GetEnvironmentsByFilterEnvironmentsEnvironment `json:"environments"`
+// GetEnvByNameResponse is returned by GetEnvByName on success.
+type GetEnvByNameResponse struct {
+	OneEnvironment GetEnvByNameOneEnvironment `json:"oneEnvironment"`
 }
 
-// GetEnvironments returns GetEnvironmentsByFilterResponse.Environments, and is useful for accessing the field via an interface.
-func (v *GetEnvironmentsByFilterResponse) GetEnvironments() []*GetEnvironmentsByFilterEnvironmentsEnvironment {
+// GetOneEnvironment returns GetEnvByNameResponse.OneEnvironment, and is useful for accessing the field via an interface.
+func (v *GetEnvByNameResponse) GetOneEnvironment() GetEnvByNameOneEnvironment {
+	return v.OneEnvironment
+}
+
+// GetEnvironmentsByLabelsEnvironmentsEnvironment includes the requested fields of the GraphQL type Environment.
+type GetEnvironmentsByLabelsEnvironmentsEnvironment struct {
+	EnvFields `json:"-"`
+}
+
+// GetOrganization returns GetEnvironmentsByLabelsEnvironmentsEnvironment.Organization, and is useful for accessing the field via an interface.
+func (v *GetEnvironmentsByLabelsEnvironmentsEnvironment) GetOrganization() EnvFieldsOrganization {
+	return v.EnvFields.Organization
+}
+
+// GetId returns GetEnvironmentsByLabelsEnvironmentsEnvironment.Id, and is useful for accessing the field via an interface.
+func (v *GetEnvironmentsByLabelsEnvironmentsEnvironment) GetId() string { return v.EnvFields.Id }
+
+// GetName returns GetEnvironmentsByLabelsEnvironmentsEnvironment.Name, and is useful for accessing the field via an interface.
+func (v *GetEnvironmentsByLabelsEnvironmentsEnvironment) GetName() string { return v.EnvFields.Name }
+
+// GetLabels returns GetEnvironmentsByLabelsEnvironmentsEnvironment.Labels, and is useful for accessing the field via an interface.
+func (v *GetEnvironmentsByLabelsEnvironmentsEnvironment) GetLabels() []EnvFieldsLabelsLabel {
+	return v.EnvFields.Labels
+}
+
+// GetIntentsCount returns GetEnvironmentsByLabelsEnvironmentsEnvironment.IntentsCount, and is useful for accessing the field via an interface.
+func (v *GetEnvironmentsByLabelsEnvironmentsEnvironment) GetIntentsCount() int {
+	return v.EnvFields.IntentsCount
+}
+
+// GetIntegrationCount returns GetEnvironmentsByLabelsEnvironmentsEnvironment.IntegrationCount, and is useful for accessing the field via an interface.
+func (v *GetEnvironmentsByLabelsEnvironmentsEnvironment) GetIntegrationCount() int {
+	return v.EnvFields.IntegrationCount
+}
+
+func (v *GetEnvironmentsByLabelsEnvironmentsEnvironment) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*GetEnvironmentsByLabelsEnvironmentsEnvironment
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.GetEnvironmentsByLabelsEnvironmentsEnvironment = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.EnvFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalGetEnvironmentsByLabelsEnvironmentsEnvironment struct {
+	Organization EnvFieldsOrganization `json:"organization"`
+
+	Id string `json:"id"`
+
+	Name string `json:"name"`
+
+	Labels []EnvFieldsLabelsLabel `json:"labels"`
+
+	IntentsCount int `json:"intentsCount"`
+
+	IntegrationCount int `json:"integrationCount"`
+}
+
+func (v *GetEnvironmentsByLabelsEnvironmentsEnvironment) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *GetEnvironmentsByLabelsEnvironmentsEnvironment) __premarshalJSON() (*__premarshalGetEnvironmentsByLabelsEnvironmentsEnvironment, error) {
+	var retval __premarshalGetEnvironmentsByLabelsEnvironmentsEnvironment
+
+	retval.Organization = v.EnvFields.Organization
+	retval.Id = v.EnvFields.Id
+	retval.Name = v.EnvFields.Name
+	retval.Labels = v.EnvFields.Labels
+	retval.IntentsCount = v.EnvFields.IntentsCount
+	retval.IntegrationCount = v.EnvFields.IntegrationCount
+	return &retval, nil
+}
+
+// GetEnvironmentsByLabelsResponse is returned by GetEnvironmentsByLabels on success.
+type GetEnvironmentsByLabelsResponse struct {
+	Environments []*GetEnvironmentsByLabelsEnvironmentsEnvironment `json:"environments"`
+}
+
+// GetEnvironments returns GetEnvironmentsByLabelsResponse.Environments, and is useful for accessing the field via an interface.
+func (v *GetEnvironmentsByLabelsResponse) GetEnvironments() []*GetEnvironmentsByLabelsEnvironmentsEnvironment {
 	return v.Environments
 }
 
@@ -1120,14 +1109,6 @@ func (v *__DeleteEnvInput) GetId() *string { return v.Id }
 // GetForce returns __DeleteEnvInput.Force, and is useful for accessing the field via an interface.
 func (v *__DeleteEnvInput) GetForce() *bool { return v.Force }
 
-// __GetEnvByFilterInput is used internally by genqlient
-type __GetEnvByFilterInput struct {
-	Filter *EnvironmentsFilter `json:"filter"`
-}
-
-// GetFilter returns __GetEnvByFilterInput.Filter, and is useful for accessing the field via an interface.
-func (v *__GetEnvByFilterInput) GetFilter() *EnvironmentsFilter { return v.Filter }
-
 // __GetEnvByIDInput is used internally by genqlient
 type __GetEnvByIDInput struct {
 	Id string `json:"id"`
@@ -1136,13 +1117,21 @@ type __GetEnvByIDInput struct {
 // GetId returns __GetEnvByIDInput.Id, and is useful for accessing the field via an interface.
 func (v *__GetEnvByIDInput) GetId() string { return v.Id }
 
-// __GetEnvironmentsByFilterInput is used internally by genqlient
-type __GetEnvironmentsByFilterInput struct {
-	Filter *EnvironmentsFilter `json:"filter"`
+// __GetEnvByNameInput is used internally by genqlient
+type __GetEnvByNameInput struct {
+	Name string `json:"name"`
 }
 
-// GetFilter returns __GetEnvironmentsByFilterInput.Filter, and is useful for accessing the field via an interface.
-func (v *__GetEnvironmentsByFilterInput) GetFilter() *EnvironmentsFilter { return v.Filter }
+// GetName returns __GetEnvByNameInput.Name, and is useful for accessing the field via an interface.
+func (v *__GetEnvByNameInput) GetName() string { return v.Name }
+
+// __GetEnvironmentsByLabelsInput is used internally by genqlient
+type __GetEnvironmentsByLabelsInput struct {
+	Labels []*LabelInput `json:"labels"`
+}
+
+// GetLabels returns __GetEnvironmentsByLabelsInput.Labels, and is useful for accessing the field via an interface.
+func (v *__GetEnvironmentsByLabelsInput) GetLabels() []*LabelInput { return v.Labels }
 
 // __RemoveEnvLabelsInput is used internally by genqlient
 type __RemoveEnvLabelsInput struct {
@@ -1380,51 +1369,6 @@ fragment EnvFields on Environment {
 	return &data, err
 }
 
-func GetEnvByFilter(
-	ctx context.Context,
-	client graphql.Client,
-	filter *EnvironmentsFilter,
-) (*GetEnvByFilterResponse, error) {
-	req := &graphql.Request{
-		OpName: "GetEnvByFilter",
-		Query: `
-query GetEnvByFilter ($filter: EnvironmentsFilter!) {
-	oneEnvironment(filter: $filter) {
-		... EnvFields
-	}
-}
-fragment EnvFields on Environment {
-	organization {
-		id
-	}
-	id
-	name
-	labels {
-		key
-		value
-	}
-	intentsCount
-	integrationCount
-}
-`,
-		Variables: &__GetEnvByFilterInput{
-			Filter: filter,
-		},
-	}
-	var err error
-
-	var data GetEnvByFilterResponse
-	resp := &graphql.Response{Data: &data}
-
-	err = client.MakeRequest(
-		ctx,
-		req,
-		resp,
-	)
-
-	return &data, err
-}
-
 func GetEnvByID(
 	ctx context.Context,
 	client graphql.Client,
@@ -1459,6 +1403,51 @@ fragment EnvFields on Environment {
 	var err error
 
 	var data GetEnvByIDResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
+
+func GetEnvByName(
+	ctx context.Context,
+	client graphql.Client,
+	name string,
+) (*GetEnvByNameResponse, error) {
+	req := &graphql.Request{
+		OpName: "GetEnvByName",
+		Query: `
+query GetEnvByName ($name: String!) {
+	oneEnvironment(name: $name) {
+		... EnvFields
+	}
+}
+fragment EnvFields on Environment {
+	organization {
+		id
+	}
+	id
+	name
+	labels {
+		key
+		value
+	}
+	intentsCount
+	integrationCount
+}
+`,
+		Variables: &__GetEnvByNameInput{
+			Name: name,
+		},
+	}
+	var err error
+
+	var data GetEnvByNameResponse
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(
@@ -1511,16 +1500,16 @@ fragment EnvFields on Environment {
 	return &data, err
 }
 
-func GetEnvironmentsByFilter(
+func GetEnvironmentsByLabels(
 	ctx context.Context,
 	client graphql.Client,
-	filter *EnvironmentsFilter,
-) (*GetEnvironmentsByFilterResponse, error) {
+	labels []*LabelInput,
+) (*GetEnvironmentsByLabelsResponse, error) {
 	req := &graphql.Request{
-		OpName: "GetEnvironmentsByFilter",
+		OpName: "GetEnvironmentsByLabels",
 		Query: `
-query GetEnvironmentsByFilter ($filter: EnvironmentsFilter) {
-	environments(filter: $filter) {
+query GetEnvironmentsByLabels ($labels: [LabelInput!]) {
+	environments(labels: $labels) {
 		... EnvFields
 	}
 }
@@ -1538,13 +1527,13 @@ fragment EnvFields on Environment {
 	integrationCount
 }
 `,
-		Variables: &__GetEnvironmentsByFilterInput{
-			Filter: filter,
+		Variables: &__GetEnvironmentsByLabelsInput{
+			Labels: labels,
 		},
 	}
 	var err error
 
-	var data GetEnvironmentsByFilterResponse
+	var data GetEnvironmentsByLabelsResponse
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(
