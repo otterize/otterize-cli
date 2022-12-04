@@ -2,11 +2,12 @@ package login
 
 import (
 	"context"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/environments"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/auth_api"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/server"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/organizations"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/users"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/login/auth_api"
-	"github.com/otterize/otterize-cli/src/pkg/login/server"
-	"github.com/otterize/otterize-cli/src/pkg/orgs"
-	"github.com/otterize/otterize-cli/src/pkg/users"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/pkg/browser"
 	"github.com/sirupsen/logrus"
@@ -49,7 +50,7 @@ func login(_ *cobra.Command, _ []string) error {
 	prints.PrintCliStderr("User registered with user ID: %s", user.ID)
 
 	if user.OrganizationID == "" {
-		orgsClient := orgs.NewClientFromToken(otterizeAPIAddress, authResult.AccessToken)
+		orgsClient := organizations.NewClientFromToken(otterizeAPIAddress, authResult.AccessToken)
 		org, err := orgsClient.CreateOrg(registerCtxTimeout)
 		if err != nil {
 			return err
@@ -59,10 +60,31 @@ func login(_ *cobra.Command, _ []string) error {
 		prints.PrintCliStderr("User is part of organization %s", user.OrganizationID)
 	}
 
-	return config.SaveSecretConfig(config.SecretConfig{
+	if err := config.SaveSecretConfig(config.SecretConfig{
 		UserToken: authResult.AccessToken,
-	})
+	}); err != nil {
+		return err
+	}
 
+	if err = createDevEnv(authResult.AccessToken); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func createDevEnv(token string) error {
+	c := environments.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), token)
+	ctx, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
+	defer cancel()
+
+	env, err := c.GetOrCreateDevEnv(ctx)
+	if err != nil {
+		return err
+	}
+
+	prints.PrintCliStderr("User dev env created: %s (%s)", env.Id, env.Name)
+	return nil
 }
 
 var LoginCmd = &cobra.Command{

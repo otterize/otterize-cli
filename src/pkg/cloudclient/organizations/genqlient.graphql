@@ -1,0 +1,28 @@
+query ListOrganizations {
+    organizations {
+        id
+        name
+    }
+}
+
+
+query GetOrganization($id: ID!) {
+    organization(id: $id) {
+        id
+        name
+    }
+}
+
+mutation UpdateOrg($id: ID!, $update: OrganizationUpdate!) {
+    updateOrganization(id: $id, update: $update) {
+        id
+        name
+    }
+}
+
+mutation CreateOrg {
+    createOrganization {
+        id
+        name
+    }
+}

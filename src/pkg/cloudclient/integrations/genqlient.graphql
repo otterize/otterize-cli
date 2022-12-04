@@ -1,0 +1,113 @@
+fragment IntegrationFields on Integration {
+    id
+    organization {
+        id
+    }
+    name
+    integrationType
+    allEnvsAllowed
+    identity {
+        other {
+            key
+            value
+        }
+    }
+    environments {
+        id
+        name
+    }
+    credentials {
+        clientId
+    }
+}
+
+fragment IntegrationStatusFields on IntegrationStatus {
+    id
+    lastSeen
+    intentsStatus {
+        appliedAt
+        applyError
+        revisionNumber
+    }
+}
+
+fragment IntegrationCredentialsFields on IntegrationCredentials {
+    clientId
+    secret
+}
+
+# @genqlient(flatten: true)
+fragment IntegrationWithCredentials on Integration {
+    ...IntegrationFields
+    credentials {
+        ...IntegrationCredentialsFields
+    }
+}
+
+# @genqlient(flatten: true)
+fragment IntegrationWithStatus on Integration {
+    ...IntegrationFields
+    status {
+        ...IntegrationStatusFields
+    }
+}
+
+# @genqlient(pointer: true)
+query GetIntegrations($filter: IntegrationsFilter) {
+    integrations(filter: $filter){
+        ...IntegrationWithStatus
+    }
+}
+
+mutation CreateDevIntegration($name: String!, $integrationType: IntegrationType!, $environments: IntegrationEnvironments!) {
+    createDevIntegration(name: $name, integrationType: $integrationType, environments: $environments){
+        ...IntegrationWithCredentials
+    }
+}
+
+mutation CreateIntegration($name: String!, $integrationType: IntegrationType!, $environments: IntegrationEnvironments!) {
+    createIntegration(name: $name, integrationType: $integrationType, environments: $environments){
+        ...IntegrationWithCredentials
+    }
+}
+
+# @genqlient(pointer: true)
+query Integration($id: ID!) {
+    integration(id: $id){
+        ...IntegrationWithStatus
+    }
+}
+
+# @genqlient(pointer: true)
+mutation UpdateIntegration($id: ID!, $update: IntegrationUpdate!) {
+    updateIntegration(id: $id, update: $update){
+        ...IntegrationFields
+    }
+}
+
+mutation DeleteIntegration($id: ID!) {
+    deleteIntegration(id: $id)
+}
+
+# @genqlient(pointer: true)
+query GetIntegrationCredentials($id: ID!) {
+    integration(id: $id) {
+        credentials {
+            ...IntegrationCredentialsFields
+        }
+    }
+}
+
+# @genqlient(pointer: true)
+query GetIntegrationsWithCredentials($filter: IntegrationsFilter) {
+    integrations(filter: $filter){
+        ...IntegrationWithCredentials
+    }
+}
+
+# @genqlient(pointer: true)
+query GetIntegrationByFilter($filter: IntegrationsFilter!) {
+    oneIntegration(filter: $filter) {
+        ...IntegrationWithStatus
+    }
+}

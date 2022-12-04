@@ -2,8 +2,8 @@ package mapper
 
 import (
 	"context"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/intents"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/intents"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
