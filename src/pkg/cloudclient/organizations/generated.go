@@ -22,6 +22,7 @@ func (v *CreateOrgCreateOrganization) GetName() string { return v.Name }
 
 // CreateOrgResponse is returned by CreateOrg on success.
 type CreateOrgResponse struct {
+	// Create a new organization
 	CreateOrganization CreateOrgCreateOrganization `json:"createOrganization"`
 }
 
@@ -44,6 +45,7 @@ func (v *GetOrganizationOrganization) GetName() string { return v.Name }
 
 // GetOrganizationResponse is returned by GetOrganization on success.
 type GetOrganizationResponse struct {
+	// Get organization
 	Organization GetOrganizationOrganization `json:"organization"`
 }
 
@@ -66,6 +68,7 @@ func (v *ListOrganizationsOrganizationsOrganization) GetName() string { return v
 
 // ListOrganizationsResponse is returned by ListOrganizations on success.
 type ListOrganizationsResponse struct {
+	// List organizations
 	Organizations []ListOrganizationsOrganizationsOrganization `json:"organizations"`
 }
 
@@ -87,6 +90,7 @@ func (v *OrganizationUpdate) GetImageURL() string { return v.ImageURL }
 
 // UpdateOrgResponse is returned by UpdateOrg on success.
 type UpdateOrgResponse struct {
+	// Update organization
 	UpdateOrganization UpdateOrgUpdateOrganization `json:"updateOrganization"`
 }
 

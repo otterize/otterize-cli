@@ -101,6 +101,7 @@ func (v *AddEnvLabelsAddEnvironmentLabelsEnvironment) __premarshalJSON() (*__pre
 
 // AddEnvLabelsResponse is returned by AddEnvLabels on success.
 type AddEnvLabelsResponse struct {
+	// Add labels to environment
 	AddEnvironmentLabels *AddEnvLabelsAddEnvironmentLabelsEnvironment `json:"addEnvironmentLabels"`
 }
 
@@ -303,6 +304,7 @@ func (v *CreateEnvCreateEnvironment) __premarshalJSON() (*__premarshalCreateEnvC
 
 // CreateEnvResponse is returned by CreateEnv on success.
 type CreateEnvResponse struct {
+	// Create a new environment
 	CreateEnvironment CreateEnvCreateEnvironment `json:"createEnvironment"`
 }
 
@@ -313,6 +315,7 @@ func (v *CreateEnvResponse) GetCreateEnvironment() CreateEnvCreateEnvironment {
 
 // DeleteEnvResponse is returned by DeleteEnv on success.
 type DeleteEnvResponse struct {
+	// Delete environment
 	DeleteEnvironment *string `json:"deleteEnvironment"`
 }
 
@@ -472,6 +475,7 @@ func (v *GetDevEnvMeUserEnvironment) __premarshalJSON() (*__premarshalGetDevEnvM
 
 // GetDevEnvResponse is returned by GetDevEnv on success.
 type GetDevEnvResponse struct {
+	// Get current user info
 	Me GetDevEnvMe `json:"me"`
 }
 
@@ -564,6 +568,7 @@ func (v *GetEnvByIDEnvironment) __premarshalJSON() (*__premarshalGetEnvByIDEnvir
 
 // GetEnvByIDResponse is returned by GetEnvByID on success.
 type GetEnvByIDResponse struct {
+	// Get environment
 	Environment GetEnvByIDEnvironment `json:"environment"`
 }
 
@@ -656,6 +661,7 @@ func (v *GetEnvByNameOneEnvironment) __premarshalJSON() (*__premarshalGetEnvByNa
 
 // GetEnvByNameResponse is returned by GetEnvByName on success.
 type GetEnvByNameResponse struct {
+	// Get environment by filters
 	OneEnvironment GetEnvByNameOneEnvironment `json:"oneEnvironment"`
 }
 
@@ -756,6 +762,7 @@ func (v *GetEnvironmentsByLabelsEnvironmentsEnvironment) __premarshalJSON() (*__
 
 // GetEnvironmentsByLabelsResponse is returned by GetEnvironmentsByLabels on success.
 type GetEnvironmentsByLabelsResponse struct {
+	// List environments
 	Environments []*GetEnvironmentsByLabelsEnvironmentsEnvironment `json:"environments"`
 }
 
@@ -856,6 +863,7 @@ func (v *GetEnvironmentsEnvironmentsEnvironment) __premarshalJSON() (*__premarsh
 
 // GetEnvironmentsResponse is returned by GetEnvironments on success.
 type GetEnvironmentsResponse struct {
+	// List environments
 	Environments []GetEnvironmentsEnvironmentsEnvironment `json:"environments"`
 }
 
@@ -967,6 +975,7 @@ func (v *RemoveEnvLabelsDeleteEnvironmentLabelsEnvironment) __premarshalJSON() (
 
 // RemoveEnvLabelsResponse is returned by RemoveEnvLabels on success.
 type RemoveEnvLabelsResponse struct {
+	// Remove labels from environment
 	DeleteEnvironmentLabels *RemoveEnvLabelsDeleteEnvironmentLabelsEnvironment `json:"deleteEnvironmentLabels"`
 }
 
@@ -977,6 +986,7 @@ func (v *RemoveEnvLabelsResponse) GetDeleteEnvironmentLabels() *RemoveEnvLabelsD
 
 // UpdateEnvironmentResponse is returned by UpdateEnvironment on success.
 type UpdateEnvironmentResponse struct {
+	// Update environment
 	UpdateEnvironment *UpdateEnvironmentUpdateEnvironment `json:"updateEnvironment"`
 }
 

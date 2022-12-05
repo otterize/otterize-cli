@@ -242,6 +242,7 @@ func (v *CreateIntegrationCreateIntegration) __premarshalJSON() (*__premarshalCr
 
 // CreateIntegrationResponse is returned by CreateIntegration on success.
 type CreateIntegrationResponse struct {
+	// Create a new integration
 	CreateIntegration CreateIntegrationCreateIntegration `json:"createIntegration"`
 }
 
@@ -252,6 +253,7 @@ func (v *CreateIntegrationResponse) GetCreateIntegration() CreateIntegrationCrea
 
 // DeleteIntegrationResponse is returned by DeleteIntegration on success.
 type DeleteIntegrationResponse struct {
+	// Delete integration
 	DeleteIntegration string `json:"deleteIntegration"`
 }
 
@@ -378,6 +380,7 @@ func (v *GetIntegrationByNameOneIntegration) __premarshalJSON() (*__premarshalGe
 
 // GetIntegrationByNameResponse is returned by GetIntegrationByName on success.
 type GetIntegrationByNameResponse struct {
+	// Get integration by filters
 	OneIntegration GetIntegrationByNameOneIntegration `json:"oneIntegration"`
 }
 
@@ -460,6 +463,7 @@ func (v *GetIntegrationCredentialsIntegrationCredentials) __premarshalJSON() (*_
 
 // GetIntegrationCredentialsResponse is returned by GetIntegrationCredentials on success.
 type GetIntegrationCredentialsResponse struct {
+	// Get integration
 	Integration *GetIntegrationCredentialsIntegration `json:"integration"`
 }
 
@@ -588,6 +592,7 @@ func (v *GetIntegrationsIntegrationsIntegration) __premarshalJSON() (*__premarsh
 
 // GetIntegrationsResponse is returned by GetIntegrations on success.
 type GetIntegrationsResponse struct {
+	// List integrations
 	Integrations []*GetIntegrationsIntegrationsIntegration `json:"integrations"`
 }
 
@@ -708,6 +713,7 @@ func (v *GetIntegrationsWithCredentialsIntegrationsIntegration) __premarshalJSON
 
 // GetIntegrationsWithCredentialsResponse is returned by GetIntegrationsWithCredentials on success.
 type GetIntegrationsWithCredentialsResponse struct {
+	// List integrations
 	Integrations []*GetIntegrationsWithCredentialsIntegrationsIntegration `json:"integrations"`
 }
 
@@ -953,6 +959,7 @@ func (v *IntegrationIntegration) __premarshalJSON() (*__premarshalIntegrationInt
 
 // IntegrationResponse is returned by Integration on success.
 type IntegrationResponse struct {
+	// Get integration
 	Integration *IntegrationIntegration `json:"integration"`
 }
 
@@ -1229,6 +1236,7 @@ func (v *IntegrationWithStatus) __premarshalJSON() (*__premarshalIntegrationWith
 
 // UpdateIntegrationResponse is returned by UpdateIntegration on success.
 type UpdateIntegrationResponse struct {
+	// Update integration
 	UpdateIntegration *UpdateIntegrationUpdateIntegration `json:"updateIntegration"`
 }
 

@@ -10,6 +10,7 @@ import (
 
 // AcceptInviteResponse is returned by AcceptInvite on success.
 type AcceptInviteResponse struct {
+	// Accept user invite
 	AcceptInvite string `json:"acceptInvite"`
 }
 
@@ -48,6 +49,7 @@ func (v *CreateInviteCreateInviteOrganization) GetName() string { return v.Name 
 
 // CreateInviteResponse is returned by CreateInvite on success.
 type CreateInviteResponse struct {
+	// Create user invite
 	CreateInvite CreateInviteCreateInvite `json:"createInvite"`
 }
 
@@ -56,6 +58,7 @@ func (v *CreateInviteResponse) GetCreateInvite() CreateInviteCreateInvite { retu
 
 // DeleteInviteResponse is returned by DeleteInvite on success.
 type DeleteInviteResponse struct {
+	// Delete user invite
 	DeleteInvite string `json:"deleteInvite"`
 }
 
@@ -92,6 +95,7 @@ func (v *GetInviteInviteOrganization) GetName() string { return v.Name }
 
 // GetInviteResponse is returned by GetInvite on success.
 type GetInviteResponse struct {
+	// Get user invite
 	Invite GetInviteInvite `json:"invite"`
 }
 
@@ -130,6 +134,7 @@ func (v *ListInvitesInvitesInviteOrganization) GetName() string { return v.Name 
 
 // ListInvitesResponse is returned by ListInvites on success.
 type ListInvitesResponse struct {
+	// List user invites
 	Invites []ListInvitesInvitesInvite `json:"invites"`
 }
 

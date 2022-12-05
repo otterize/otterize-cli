@@ -124,6 +124,7 @@ func (v *CreateUserFromAuth0UserResponse) GetMe() CreateUserFromAuth0UserMeMeMut
 
 // CreateUserResponse is returned by CreateUser on success.
 type CreateUserResponse struct {
+	// Create a new user
 	CreateUser CreateUserCreateUser `json:"createUser"`
 }
 
@@ -132,6 +133,7 @@ func (v *CreateUserResponse) GetCreateUser() CreateUserCreateUser { return v.Cre
 
 // DeleteUserResponse is returned by DeleteUser on success.
 type DeleteUserResponse struct {
+	// Delete a user
 	DeleteUser string `json:"deleteUser"`
 }
 
@@ -192,6 +194,7 @@ func (v *GetUserByAuth0UserMeUserOrganization) GetId() string { return v.Id }
 
 // GetUserByAuth0UserResponse is returned by GetUserByAuth0User on success.
 type GetUserByAuth0UserResponse struct {
+	// Get current user info
 	Me GetUserByAuth0UserMe `json:"me"`
 }
 
@@ -200,6 +203,7 @@ func (v *GetUserByAuth0UserResponse) GetMe() GetUserByAuth0UserMe { return v.Me 
 
 // GetUserResponse is returned by GetUser on success.
 type GetUserResponse struct {
+	// Get user
 	User GetUserUser `json:"user"`
 }
 
@@ -252,6 +256,7 @@ func (v *GetUserUserOrganization) GetName() string { return v.Name }
 
 // ListUsersResponse is returned by ListUsers on success.
 type ListUsersResponse struct {
+	// List users
 	Users []ListUsersUsersUser `json:"users"`
 }
 
