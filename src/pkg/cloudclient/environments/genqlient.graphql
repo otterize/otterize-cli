@@ -19,8 +19,8 @@ query GetEnvironments {
 }
 
 # @genqlient(pointer: true)
-query GetEnvironmentsByFilter($filter: EnvironmentsFilter) {
-    environments(filter: $filter) {
+query GetEnvironmentsByLabels($labels: [LabelInput!]) {
+    environments(labels: $labels) {
         ...EnvFields
     }
 }
@@ -79,9 +79,8 @@ query GetEnvByID($id: ID!) {
     }
 }
 
-# @genqlient(pointer: true)
-query GetEnvByFilter($filter: EnvironmentsFilter!) {
-    oneEnvironment(filter: $filter) {
+query GetEnvByName($name: String!) {
+    oneEnvironment(name: $name) {
         ...EnvFields
     }
 }
