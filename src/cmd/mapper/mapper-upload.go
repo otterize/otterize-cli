@@ -5,6 +5,7 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/intents"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -26,9 +27,8 @@ var UploadCmd = &cobra.Command{
 			for _, service := range servicesIntents {
 				for _, intent := range service.Intents {
 					discoveredIntentsToCloud = append(discoveredIntentsToCloud, intents.IntentInput{
-						Client: service.Client.Name,
-						Server: intent.Name,
-						Body:   intents.IntentBody{Type: intents.IntentTypeHttp},
+						Client: lo.ToPtr(service.Client.Name),
+						Server: lo.ToPtr(intent.Name),
 					})
 				}
 			}
