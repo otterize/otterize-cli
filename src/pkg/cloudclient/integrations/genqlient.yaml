@@ -3,7 +3,6 @@
 schema:
   - ../../../cloudgraphql/*.graphql
   - ../../../cloudgraphql/federation/*.graphql
-  - ../../../cloudgraphql/deprecated/*.graphql
 operations:
 - genqlient.graphql
 generated: generated.go
