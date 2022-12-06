@@ -31,22 +31,6 @@ mutation CreateEnv($name: String!, $labels: [LabelInput!]) {
     }
 }
 
-mutation CreateDevEnv {
-    me {
-        createUserEnvironment {
-            ...EnvFields
-        }
-    }
-}
-
-query GetDevEnv {
-    me {
-        userEnvironment {
-            ...EnvFields
-        }
-    }
-}
-
 # @genqlient(pointer: true)
 mutation AddEnvLabels($id: ID!, $labels: [LabelInput!]!) {
     addEnvironmentLabels(id: $id, labels: $labels) {

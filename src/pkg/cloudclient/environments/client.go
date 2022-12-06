@@ -165,43 +165,6 @@ func (c *Client) GetOrCreateEnv(ctx context.Context, envName string, labels EnvL
 
 }
 
-func (c *Client) GetOrCreateDevEnv(
-	ctx context.Context) (EnvFields, error) {
-
-	env, err := c.getDevEnv(ctx)
-	envMissing := err != nil && (strings.Contains(err.Error(), EnvNotFound.Error()) || strings.Contains(err.Error(), ErrEnvMissing.Error()))
-
-	if envMissing {
-		return c.createDevEnv(ctx)
-	}
-
-	if err != nil {
-		return EnvFields{}, err
-	}
-
-	return env, nil
-}
-
-func (c *Client) getDevEnv(ctx context.Context) (EnvFields, error) {
-	envResponse, err := GetDevEnv(ctx, c.c.Client)
-	if err != nil {
-		return EnvFields{}, err
-	}
-
-	return envResponse.Me.UserEnvironment.EnvFields, nil
-}
-
-func (c *Client) createDevEnv(
-	ctx context.Context) (EnvFields, error) {
-
-	env, err := CreateDevEnv(ctx, c.c.Client)
-	if err != nil {
-		return EnvFields{}, err
-	}
-
-	return env.Me.CreateUserEnvironment.EnvFields, nil
-}
-
 func (c *Client) DeleteEnv(ctx context.Context, envID string, force bool) error {
 	_, err := DeleteEnv(ctx, c.c.Client, &envID, &force)
 	if err != nil {
