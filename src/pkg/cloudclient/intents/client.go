@@ -3,6 +3,7 @@ package intents
 import (
 	"context"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
+	"github.com/samber/lo"
 )
 
 type Client struct {
@@ -15,6 +16,6 @@ func NewClientFromToken(address string, token string) *Client {
 }
 
 func (c *Client) ReportDiscoveredIntents(ctx context.Context, envId string, source string, intents []IntentInput) error {
-	_, err := reportDiscoveredIntents(ctx, c.c.Client, envId, source, intents)
+	_, err := reportDiscoveredIntents(ctx, c.c.Client, lo.ToPtr(envId), lo.ToPtr(source), lo.ToSlicePtr(intents))
 	return err
 }
