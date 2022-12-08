@@ -79,8 +79,8 @@ query Integration($id: ID!) {
 }
 
 # @genqlient(pointer: true)
-mutation UpdateIntegration($id: ID!, $update: IntegrationUpdate!) {
-    updateIntegration(id: $id, update: $update){
+mutation UpdateIntegration($id: ID!, $name: String) {
+    updateIntegration(id: $id, name: $name){
         ...IntegrationFields
     }
 }

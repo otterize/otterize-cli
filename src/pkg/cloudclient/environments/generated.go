@@ -262,17 +262,6 @@ type EnvFieldsOrganization struct {
 // GetId returns EnvFieldsOrganization.Id, and is useful for accessing the field via an interface.
 func (v *EnvFieldsOrganization) GetId() string { return v.Id }
 
-type EnvironmentUpdate struct {
-	Name   *string       `json:"name"`
-	Labels []*LabelInput `json:"labels"`
-}
-
-// GetName returns EnvironmentUpdate.Name, and is useful for accessing the field via an interface.
-func (v *EnvironmentUpdate) GetName() *string { return v.Name }
-
-// GetLabels returns EnvironmentUpdate.Labels, and is useful for accessing the field via an interface.
-func (v *EnvironmentUpdate) GetLabels() []*LabelInput { return v.Labels }
-
 // GetEnvByIDEnvironment includes the requested fields of the GraphQL type Environment.
 type GetEnvByIDEnvironment struct {
 	EnvFields `json:"-"`
@@ -948,15 +937,19 @@ func (v *__RemoveEnvLabelsInput) GetLabels() []*string { return v.Labels }
 
 // __UpdateEnvironmentInput is used internally by genqlient
 type __UpdateEnvironmentInput struct {
-	Id     *string            `json:"id"`
-	Update *EnvironmentUpdate `json:"update"`
+	Id     *string       `json:"id"`
+	Name   *string       `json:"name"`
+	Labels []*LabelInput `json:"labels"`
 }
 
 // GetId returns __UpdateEnvironmentInput.Id, and is useful for accessing the field via an interface.
 func (v *__UpdateEnvironmentInput) GetId() *string { return v.Id }
 
-// GetUpdate returns __UpdateEnvironmentInput.Update, and is useful for accessing the field via an interface.
-func (v *__UpdateEnvironmentInput) GetUpdate() *EnvironmentUpdate { return v.Update }
+// GetName returns __UpdateEnvironmentInput.Name, and is useful for accessing the field via an interface.
+func (v *__UpdateEnvironmentInput) GetName() *string { return v.Name }
+
+// GetLabels returns __UpdateEnvironmentInput.Labels, and is useful for accessing the field via an interface.
+func (v *__UpdateEnvironmentInput) GetLabels() []*LabelInput { return v.Labels }
 
 func AddEnvLabels(
 	ctx context.Context,
@@ -1311,13 +1304,14 @@ func UpdateEnvironment(
 	ctx context.Context,
 	client graphql.Client,
 	id *string,
-	update *EnvironmentUpdate,
+	name *string,
+	labels []*LabelInput,
 ) (*UpdateEnvironmentResponse, error) {
 	req := &graphql.Request{
 		OpName: "UpdateEnvironment",
 		Query: `
-mutation UpdateEnvironment ($id: ID!, $update: EnvironmentUpdate!) {
-	updateEnvironment(id: $id, update: $update) {
+mutation UpdateEnvironment ($id: ID!, $name: String, $labels: [LabelInput!]) {
+	updateEnvironment(id: $id, name: $name, labels: $labels) {
 		... EnvFields
 	}
 }
@@ -1337,7 +1331,8 @@ fragment EnvFields on Environment {
 `,
 		Variables: &__UpdateEnvironmentInput{
 			Id:     id,
-			Update: update,
+			Name:   name,
+			Labels: labels,
 		},
 	}
 	var err error
