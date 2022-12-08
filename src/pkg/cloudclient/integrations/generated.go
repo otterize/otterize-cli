@@ -1009,13 +1009,6 @@ const (
 	IntegrationTypeKubernetes IntegrationType = "Kubernetes"
 )
 
-type IntegrationUpdate struct {
-	Name *string `json:"name"`
-}
-
-// GetName returns IntegrationUpdate.Name, and is useful for accessing the field via an interface.
-func (v *IntegrationUpdate) GetName() *string { return v.Name }
-
 // IntegrationWithCredentials includes the GraphQL fields of Integration requested by the fragment IntegrationWithCredentials.
 type IntegrationWithCredentials struct {
 	IntegrationFields `json:"-"`
@@ -1453,15 +1446,15 @@ func (v *__IntegrationInput) GetId() *string { return v.Id }
 
 // __UpdateIntegrationInput is used internally by genqlient
 type __UpdateIntegrationInput struct {
-	Id     *string            `json:"id"`
-	Update *IntegrationUpdate `json:"update"`
+	Id   *string `json:"id"`
+	Name *string `json:"name"`
 }
 
 // GetId returns __UpdateIntegrationInput.Id, and is useful for accessing the field via an interface.
 func (v *__UpdateIntegrationInput) GetId() *string { return v.Id }
 
-// GetUpdate returns __UpdateIntegrationInput.Update, and is useful for accessing the field via an interface.
-func (v *__UpdateIntegrationInput) GetUpdate() *IntegrationUpdate { return v.Update }
+// GetName returns __UpdateIntegrationInput.Name, and is useful for accessing the field via an interface.
+func (v *__UpdateIntegrationInput) GetName() *string { return v.Name }
 
 func CreateDevIntegration(
 	ctx context.Context,
@@ -1950,13 +1943,13 @@ func UpdateIntegration(
 	ctx context.Context,
 	client graphql.Client,
 	id *string,
-	update *IntegrationUpdate,
+	name *string,
 ) (*UpdateIntegrationResponse, error) {
 	req := &graphql.Request{
 		OpName: "UpdateIntegration",
 		Query: `
-mutation UpdateIntegration ($id: ID!, $update: IntegrationUpdate!) {
-	updateIntegration(id: $id, update: $update) {
+mutation UpdateIntegration ($id: ID!, $name: String) {
+	updateIntegration(id: $id, name: $name) {
 		... IntegrationFields
 	}
 }
@@ -1984,8 +1977,8 @@ fragment IntegrationFields on Integration {
 }
 `,
 		Variables: &__UpdateIntegrationInput{
-			Id:     id,
-			Update: update,
+			Id:   id,
+			Name: name,
 		},
 	}
 	var err error

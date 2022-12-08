@@ -77,39 +77,28 @@ func (v *ListOrganizationsResponse) GetOrganizations() []ListOrganizationsOrgani
 	return v.Organizations
 }
 
-type OrganizationUpdate struct {
-	Name     string `json:"name"`
-	ImageURL string `json:"imageURL"`
-}
-
-// GetName returns OrganizationUpdate.Name, and is useful for accessing the field via an interface.
-func (v *OrganizationUpdate) GetName() string { return v.Name }
-
-// GetImageURL returns OrganizationUpdate.ImageURL, and is useful for accessing the field via an interface.
-func (v *OrganizationUpdate) GetImageURL() string { return v.ImageURL }
-
-// UpdateOrgResponse is returned by UpdateOrg on success.
-type UpdateOrgResponse struct {
+// UpdateOrgNameResponse is returned by UpdateOrgName on success.
+type UpdateOrgNameResponse struct {
 	// Update organization
-	UpdateOrganization UpdateOrgUpdateOrganization `json:"updateOrganization"`
+	UpdateOrganization UpdateOrgNameUpdateOrganization `json:"updateOrganization"`
 }
 
-// GetUpdateOrganization returns UpdateOrgResponse.UpdateOrganization, and is useful for accessing the field via an interface.
-func (v *UpdateOrgResponse) GetUpdateOrganization() UpdateOrgUpdateOrganization {
+// GetUpdateOrganization returns UpdateOrgNameResponse.UpdateOrganization, and is useful for accessing the field via an interface.
+func (v *UpdateOrgNameResponse) GetUpdateOrganization() UpdateOrgNameUpdateOrganization {
 	return v.UpdateOrganization
 }
 
-// UpdateOrgUpdateOrganization includes the requested fields of the GraphQL type Organization.
-type UpdateOrgUpdateOrganization struct {
+// UpdateOrgNameUpdateOrganization includes the requested fields of the GraphQL type Organization.
+type UpdateOrgNameUpdateOrganization struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
 }
 
-// GetId returns UpdateOrgUpdateOrganization.Id, and is useful for accessing the field via an interface.
-func (v *UpdateOrgUpdateOrganization) GetId() string { return v.Id }
+// GetId returns UpdateOrgNameUpdateOrganization.Id, and is useful for accessing the field via an interface.
+func (v *UpdateOrgNameUpdateOrganization) GetId() string { return v.Id }
 
-// GetName returns UpdateOrgUpdateOrganization.Name, and is useful for accessing the field via an interface.
-func (v *UpdateOrgUpdateOrganization) GetName() string { return v.Name }
+// GetName returns UpdateOrgNameUpdateOrganization.Name, and is useful for accessing the field via an interface.
+func (v *UpdateOrgNameUpdateOrganization) GetName() string { return v.Name }
 
 // __GetOrganizationInput is used internally by genqlient
 type __GetOrganizationInput struct {
@@ -119,17 +108,17 @@ type __GetOrganizationInput struct {
 // GetId returns __GetOrganizationInput.Id, and is useful for accessing the field via an interface.
 func (v *__GetOrganizationInput) GetId() string { return v.Id }
 
-// __UpdateOrgInput is used internally by genqlient
-type __UpdateOrgInput struct {
-	Id     string             `json:"id"`
-	Update OrganizationUpdate `json:"update"`
+// __UpdateOrgNameInput is used internally by genqlient
+type __UpdateOrgNameInput struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
 }
 
-// GetId returns __UpdateOrgInput.Id, and is useful for accessing the field via an interface.
-func (v *__UpdateOrgInput) GetId() string { return v.Id }
+// GetId returns __UpdateOrgNameInput.Id, and is useful for accessing the field via an interface.
+func (v *__UpdateOrgNameInput) GetId() string { return v.Id }
 
-// GetUpdate returns __UpdateOrgInput.Update, and is useful for accessing the field via an interface.
-func (v *__UpdateOrgInput) GetUpdate() OrganizationUpdate { return v.Update }
+// GetName returns __UpdateOrgNameInput.Name, and is useful for accessing the field via an interface.
+func (v *__UpdateOrgNameInput) GetName() string { return v.Name }
 
 func CreateOrg(
 	ctx context.Context,
@@ -222,30 +211,30 @@ query ListOrganizations {
 	return &data, err
 }
 
-func UpdateOrg(
+func UpdateOrgName(
 	ctx context.Context,
 	client graphql.Client,
 	id string,
-	update OrganizationUpdate,
-) (*UpdateOrgResponse, error) {
+	name string,
+) (*UpdateOrgNameResponse, error) {
 	req := &graphql.Request{
-		OpName: "UpdateOrg",
+		OpName: "UpdateOrgName",
 		Query: `
-mutation UpdateOrg ($id: ID!, $update: OrganizationUpdate!) {
-	updateOrganization(id: $id, update: $update) {
+mutation UpdateOrgName ($id: ID!, $name: String) {
+	updateOrganization(id: $id, name: $name) {
 		id
 		name
 	}
 }
 `,
-		Variables: &__UpdateOrgInput{
-			Id:     id,
-			Update: update,
+		Variables: &__UpdateOrgNameInput{
+			Id:   id,
+			Name: name,
 		},
 	}
 	var err error
 
-	var data UpdateOrgResponse
+	var data UpdateOrgNameResponse
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(

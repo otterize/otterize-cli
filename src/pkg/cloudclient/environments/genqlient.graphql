@@ -46,8 +46,8 @@ mutation RemoveEnvLabels($id: ID!, $labels: [String!]!) {
 }
 
 # @genqlient(pointer: true)
-mutation UpdateEnvironment($id: ID!, $update: EnvironmentUpdate!) {
-    updateEnvironment(id: $id, update: $update) {
+mutation UpdateEnvironment($id: ID!, $name: String, $labels: [LabelInput!]) {
+    updateEnvironment(id: $id, name: $name, labels: $labels) {
         ...EnvFields
     }
 }

@@ -110,9 +110,7 @@ func (c *Client) CreateIntegration(
 }
 
 func (c *Client) UpdateIntegration(ctx context.Context, id string, name string) (IntegrationFields, error) {
-	body := IntegrationUpdate{Name: &name}
-
-	updateIntegrationResponse, err := UpdateIntegration(ctx, c.c.Client, &id, &body)
+	updateIntegrationResponse, err := UpdateIntegration(ctx, c.c.Client, &id, &name)
 	if err != nil {
 		return IntegrationFields{}, err
 	}

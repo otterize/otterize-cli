@@ -13,8 +13,8 @@ query GetOrganization($id: ID!) {
     }
 }
 
-mutation UpdateOrg($id: ID!, $update: OrganizationUpdate!) {
-    updateOrganization(id: $id, update: $update) {
+mutation UpdateOrgName($id: ID!, $name: String) {
+    updateOrganization(id: $id, name: $name) {
         id
         name
     }

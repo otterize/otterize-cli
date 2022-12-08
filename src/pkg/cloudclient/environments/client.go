@@ -135,9 +135,7 @@ func (c *Client) CreateEnv(ctx context.Context, envName string, labels EnvLabels
 }
 
 func (c *Client) UpdateEnv(ctx context.Context, envID string, newName string, labels EnvLabels) (EnvFields, error) {
-	body := EnvironmentUpdate{Name: &newName, Labels: labels.AsPtrLabelsInput()}
-
-	env, err := UpdateEnvironment(ctx, c.c.Client, &envID, &body)
+	env, err := UpdateEnvironment(ctx, c.c.Client, &envID, &newName, labels.AsPtrLabelsInput())
 	if err != nil {
 		return EnvFields{}, err
 	}

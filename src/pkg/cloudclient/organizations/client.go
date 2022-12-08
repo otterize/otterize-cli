@@ -47,7 +47,7 @@ func (c *Client) GetOrgByID(ctx context.Context, orgID string) (Organization, er
 }
 
 func (c *Client) UpdateOrgName(ctx context.Context, orgID string, orgName string) (Organization, error) {
-	resp, err := UpdateOrg(ctx, c.c.Client, orgID, OrganizationUpdate{Name: orgName})
+	resp, err := UpdateOrgName(ctx, c.c.Client, orgID, orgName)
 	if err != nil {
 		return Organization{}, err
 	}
