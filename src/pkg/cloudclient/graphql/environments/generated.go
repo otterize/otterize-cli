@@ -216,11 +216,11 @@ func (v *DeleteEnvResponse) GetDeleteEnvironment() *string { return v.DeleteEnvi
 
 // EnvFields includes the GraphQL fields of Environment requested by the fragment EnvFields.
 type EnvFields struct {
-	Organization     EnvFieldsOrganization  `json:"organization"`
-	Id               string                 `json:"id"`
-	Name             string                 `json:"name"`
-	Labels           []EnvFieldsLabelsLabel `json:"labels"`
-	IntentsCount     int                    `json:"intentsCount"`
+	Organization EnvFieldsOrganization  `json:"organization"`
+	Id           string                 `json:"id"`
+	Name         string                 `json:"name"`
+	Labels       []EnvFieldsLabelsLabel `json:"labels"`
+	IntentsCount int                    `json:"intentsCount"`
 	IntegrationCount int                    `json:"integrationCount"`
 }
 

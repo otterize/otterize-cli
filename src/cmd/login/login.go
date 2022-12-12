@@ -2,10 +2,10 @@ package login
 
 import (
 	"context"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/auth_api"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/server"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/organizations"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/users"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/login/auth_api"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/login/server"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/organizations"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/users"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/pkg/browser"

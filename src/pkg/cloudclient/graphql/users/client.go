@@ -3,13 +3,13 @@ package users
 import (
 	"context"
 	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/organizations"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/organizations"
 	"github.com/samber/lo"
 )
 
 type Client struct {
-	c *cloudclient.Client
+	c *graphql.Client
 }
 
 type AppMeta map[string]string
@@ -29,7 +29,7 @@ func (u User) String() string {
 }
 
 func NewClientFromToken(address string, token string) *Client {
-	cloud := cloudclient.NewClientFromToken(address, token)
+	cloud := graphql.NewClientFromToken(address, token)
 	return &Client{c: cloud}
 }
 

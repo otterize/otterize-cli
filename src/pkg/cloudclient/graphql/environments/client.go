@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
 	"github.com/samber/lo"
 	"reflect"
 	"strings"
 )
 
 type Client struct {
-	c *cloudclient.Client
+	c *graphql.Client
 }
 
 var EnvNotFound = errors.New("environment not found")
@@ -72,7 +72,7 @@ func GraphLabelListToEnvLabels(labels []EnvFieldsLabelsLabel) EnvLabels {
 }
 
 func NewClientFromToken(address string, token string) *Client {
-	cloud := cloudclient.NewClientFromToken(address, token)
+	cloud := graphql.NewClientFromToken(address, token)
 	return &Client{c: cloud}
 }
 

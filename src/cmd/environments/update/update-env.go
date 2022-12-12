@@ -2,47 +2,50 @@ package update
 
 import (
 	"context"
-	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/environments"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var UpdateEnvCmd = &cobra.Command{
-	Use:          "update",
-	Short:        `Updates an Otterize environment and returns its ID`,
+	Use:          "update <envid>",
+	Short:        `Updates an Otterize environment`,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		envsClient := environments.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
-		id := viper.GetString(IdKey)
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+
+		id := args[0]
 		name := viper.GetString(NameKey)
-		if name != "" {
-			env, err := envsClient.GetEnvByName(ctxTimeout, name)
-			if err != nil {
-				return fmt.Errorf("failed to query env: %w", err)
-			}
-			id = env.Id
-		}
-
-		envNewName := viper.GetString(NewNameKey)
 		labels := viper.GetStringMapString(LabelsKey)
+		labelsInput := lo.Ternary(len(labels) == 0, nil, lo.ToPtr(cloudclient.LabelsToLabelInput(labels)))
 
-		env, err := envsClient.UpdateEnv(ctxTimeout, id, envNewName, labels)
+		r, err := c.Client.UpdateEnvironmentMutationWithResponse(ctxTimeout,
+			cloudapi.UpdateEnvironmentMutationJSONRequestBody{
+				Id:     id,
+				Labels: labelsInput,
+				Name:   lo.Ternary(name != "", &name, nil),
+			},
+		)
 		if err != nil {
 			return err
 		}
 
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
+		}
+
 		prints.PrintCliStderr("Environment updated")
 
-		formatted, err := output.FormatItem(env, func(env environments.EnvFields) string {
-			return env.String()
-		})
+		env := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatEnvs([]cloudapi.Environment{env})
 		if err != nil {
 			return err
 		}
@@ -53,14 +56,8 @@ var UpdateEnvCmd = &cobra.Command{
 }
 
 func init() {
-	config.RegisterStringArg(UpdateEnvCmd, IdKey, "environment ID", false)
-	config.RegisterStringArg(UpdateEnvCmd, NameKey, "environment name", false)
-	config.MarkValidFlagCombinations(UpdateEnvCmd,
-		[]string{NameKey},
-		[]string{IdKey},
-	)
-	config.RegisterStringArg(UpdateEnvCmd, NewNameKey, "new environment name", false)
-	UpdateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "Environment key value Labels (key=val,key2=val2=..)")
+	UpdateEnvCmd.Flags().StringP(NameKey, NameShorthand, "", "New environment name")
+	UpdateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "New environment key value Labels (key=val,key2=val2=..)")
 
 	UpdateEnvCmd.AddCommand(RemoveLabelsCmd)
 	UpdateEnvCmd.AddCommand(AddLabelsCmd)

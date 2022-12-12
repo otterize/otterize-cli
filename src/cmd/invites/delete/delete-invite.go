@@ -3,7 +3,7 @@ package delete
 import (
 	"context"
 	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/invites"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/invites"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"

@@ -2,7 +2,7 @@ package get
 
 import (
 	"context"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/organizations"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/organizations"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"

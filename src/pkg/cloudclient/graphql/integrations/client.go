@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
 	"github.com/samber/lo"
 	"strings"
 	"time"
 )
 
 type Client struct {
-	c *cloudclient.Client
+	c *graphql.Client
 }
 
 type IntentsStatus struct {
@@ -37,7 +37,7 @@ type IntegrationRequest struct {
 }
 
 func NewClientFromToken(address string, token string) *Client {
-	cloud := cloudclient.NewClientFromToken(address, token)
+	cloud := graphql.NewClientFromToken(address, token)
 	return &Client{c: cloud}
 }
 
