@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
 )
@@ -162,9 +163,9 @@ type IntegrationIdentityOtherFields struct {
 
 // IntegrationStatus defines model for IntegrationStatus.
 type IntegrationStatus struct {
-	Id            string                 `json:"id"`
-	IntentsStatus IntentsStatus          `json:"intentsStatus"`
-	LastSeen      map[string]interface{} `json:"lastSeen"`
+	Id            string        `json:"id"`
+	IntentsStatus IntentsStatus `json:"intentsStatus"`
+	LastSeen      time.Time     `json:"lastSeen"`
 }
 
 // Intent defines model for Intent.
@@ -185,19 +186,19 @@ type IntentType string
 
 // IntentsStatus defines model for IntentsStatus.
 type IntentsStatus struct {
-	AppliedAt      map[string]interface{} `json:"appliedAt"`
-	ApplyError     *string                `json:"applyError,omitempty"`
-	RevisionNumber int32                  `json:"revisionNumber"`
+	AppliedAt      time.Time `json:"appliedAt"`
+	ApplyError     *string   `json:"applyError,omitempty"`
+	RevisionNumber int32     `json:"revisionNumber"`
 }
 
 // Invite defines model for Invite.
 type Invite struct {
-	Accepted     *map[string]interface{} `json:"accepted,omitempty"`
-	Created      map[string]interface{}  `json:"created"`
-	Email        string                  `json:"email"`
-	Id           string                  `json:"id"`
-	InviterEmail *string                 `json:"inviterEmail,omitempty"`
-	Organization Organization            `json:"organization"`
+	Accepted     *time.Time   `json:"accepted,omitempty"`
+	Created      time.Time    `json:"created"`
+	Email        string       `json:"email"`
+	Id           string       `json:"id"`
+	InviterEmail *string      `json:"inviterEmail,omitempty"`
+	Organization Organization `json:"organization"`
 }
 
 // KafkaConfig defines model for KafkaConfig.

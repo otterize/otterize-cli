@@ -98,3 +98,19 @@ func FormatOrganizations(organizations []cloudapi.Organization) (string, error) 
 
 	return FormatList(organizations, columns, getColumnData)
 }
+
+func FormatUsers(users []cloudapi.User) (string, error) {
+	columns := []string{"id", "email", "name", "auth0_user_id", "organization_id", "organization_name"}
+	getColumnData := func(u cloudapi.User) []map[string]string {
+		return []map[string]string{{
+			"id":                u.Id,
+			"email":             u.Email,
+			"name":              u.Auth0UserInfo.Name,
+			"auth0_user_id":     u.Auth0UserId,
+			"organization_id":   u.Organization.Id,
+			"organization_name": lo.FromPtr(u.Organization.Name),
+		}}
+	}
+
+	return FormatList(users, columns, getColumnData)
+}
