@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/organizations"
 	"github.com/samber/lo"
 )
 
@@ -15,12 +14,11 @@ type Client struct {
 type AppMeta map[string]string
 
 type User struct {
-	ID             string                     `json:"id"`
-	Email          string                     `json:"email"`
-	Auth0UserID    string                     `json:"auth0_user_id"`
-	Name           string                     `json:"name"`
-	OrganizationID string                     `json:"organization_id"`
-	Organization   organizations.Organization `json:"organization"`
+	ID             string `json:"id"`
+	Email          string `json:"email"`
+	Auth0UserID    string `json:"auth0_user_id"`
+	Name           string `json:"name"`
+	OrganizationID string `json:"organization_id"`
 }
 
 func (u User) String() string {
@@ -46,9 +44,6 @@ func (c *Client) RegisterAuth0User(ctx context.Context) (User, error) {
 		Name:           lo.ToPtr(gqlUser.GetAuth0UserInfo()).GetName(),
 		Auth0UserID:    gqlUser.GetAuth0UserId(),
 		OrganizationID: gqlUser.Organization.GetId(),
-		Organization: organizations.Organization{
-			ID: gqlUser.Organization.GetId(),
-		},
 	}
 	return usr, nil
 }
