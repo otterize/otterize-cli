@@ -16,6 +16,7 @@ var AddLabelsCmd = &cobra.Command{
 	Use:          "add_labels <envid>",
 	Short:        `Adds labels to an existing Otterize environment`,
 	SilenceUsage: true,
+	Args:         cobra.ExactArgs(1),
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()

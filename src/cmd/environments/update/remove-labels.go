@@ -16,6 +16,7 @@ var RemoveLabelsCmd = &cobra.Command{
 	Use:          "remove_labels <envid>",
 	Short:        `Removes labels from an existing Otterize environmentD`,
 	SilenceUsage: true,
+	Args:         cobra.ExactArgs(1),
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()

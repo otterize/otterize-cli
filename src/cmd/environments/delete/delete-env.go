@@ -16,6 +16,7 @@ import (
 var DeleteEnvCmd = &cobra.Command{
 	Use:          "delete <envid>",
 	Short:        `Delete an environment.`,
+	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

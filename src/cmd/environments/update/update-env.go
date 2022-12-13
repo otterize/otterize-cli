@@ -16,6 +16,7 @@ var UpdateEnvCmd = &cobra.Command{
 	Use:          "update <envid>",
 	Short:        `Updates an Otterize environment`,
 	SilenceUsage: true,
+	Args:         cobra.ExactArgs(1),
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()

@@ -2,16 +2,14 @@ package list
 
 import (
 	"context"
-	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/environments"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/integrations"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 var ListIntegrationsCmd = &cobra.Command{
@@ -22,51 +20,29 @@ var ListIntegrationsCmd = &cobra.Command{
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c := integrations.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
 		envId := viper.GetString(EnvironmentIDKey)
-		envName := viper.GetString(EnvNameKey)
+		name := viper.GetString(NameKey)
+		integrationType := viper.GetString(IntegrationTypeKey)
 
-		if envName != "" {
-			envsClient := environments.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
-			env, err := envsClient.GetEnvByName(ctxTimeout, envName)
-			if err != nil {
-				return fmt.Errorf("failed to query env: %w", err)
-			}
-			envId = env.Id
-		}
-
-		filters := integrations.Filters{
-			Name:            viper.GetString(NameKey),
-			IntegrationType: viper.GetString(IntegrationTypeKey),
-			EnvID:           envId,
-		}
-		integrationsList, err := c.GetIntegrations(ctxTimeout, filters)
+		r, err := c.Client.IntegrationsQueryWithResponse(ctxTimeout,
+			&cloudapi.IntegrationsQueryParams{
+				Name:            lo.Ternary(name != "", &name, nil),
+				IntegrationType: lo.Ternary(integrationType != "", lo.ToPtr(cloudapi.IntegrationsQueryParamsIntegrationType(integrationType)), nil),
+				EnvironmentId:   lo.Ternary(envId != "", lo.ToPtr(envId), nil),
+			},
+		)
 		if err != nil {
 			return err
 		}
 
-		columns := []string{"id", "type", "name", "env", "controller last seen", "intents last applied"}
-		getColumnData := func(integration integrations.IntegrationWithStatus) []map[string]string {
-			envNames := lo.Map(integration.Environments, func(env integrations.IntegrationFieldsEnvironmentsEnvironment, i int) string {
-				return env.Name
-			})
-
-			integrationColumns := map[string]string{
-				"id":   integration.Id,
-				"type": string(integration.IntegrationType),
-				"name": integration.Name,
-				"env":  strings.Join(envNames, ", "),
-			}
-
-			if integration.Status.Id != "" {
-				integrationColumns["controller last seen"] = integration.Status.LastSeen.String()
-				integrationColumns["intents last applied"] = integration.Status.IntentsStatus.AppliedAt.String()
-			}
-
-			return []map[string]string{integrationColumns}
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
 		}
-		formatted, err := output.FormatList(integrationsList, columns, getColumnData)
+
+		integrations := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatIntegrations(integrations, false)
 		if err != nil {
 			return err
 		}
@@ -80,5 +56,4 @@ func init() {
 	ListIntegrationsCmd.Flags().StringP(NameKey, NameShorthand, "", "integration name")
 	ListIntegrationsCmd.Flags().StringP(IntegrationTypeKey, IntegrationTypeShorthand, "", "integration type")
 	ListIntegrationsCmd.Flags().StringP(EnvironmentIDKey, EnvironmentIDShorthand, "", "environment id")
-	ListIntegrationsCmd.Flags().String(EnvNameKey, "", "environment name")
 }

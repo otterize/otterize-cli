@@ -3,50 +3,38 @@ package delete
 import (
 	"context"
 	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/integrations"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-type deleteIntegrationSelector struct {
-	id   string
-	name string
-}
-
 var DeleteIntegrationCmd = &cobra.Command{
-	Use:          "delete",
+	Use:          "delete <integration-id>",
 	Short:        `Delete an integration.`,
-	Args:         cobra.NoArgs,
+	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		integrationsClient := integrations.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
-		id := viper.GetString(IdKey)
-		name := viper.GetString(NameKey)
-		if name != "" {
-			integration, err := integrationsClient.GetIntegrationByName(ctxTimeout, name)
-			if err != nil {
-				return fmt.Errorf("failed to query integration: %w", err)
-			}
-			id = integration.Id
-		}
+		id := args[0]
 
-		err := integrationsClient.DeleteIntegration(ctxTimeout, id)
+		r, err := c.Client.DeleteIntegrationMutationWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err
 		}
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
+		}
 
-		formatted, err := output.FormatItem(deleteIntegrationSelector{id, name}, func(selector deleteIntegrationSelector) string {
-			if selector.id != "" {
-				return fmt.Sprintf("Deleted integration with id %s", selector.id)
-			} else {
-				return fmt.Sprintf("Deleted integration with name %s", selector.name)
-			}
+		integrationID := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatItem(integrationID, func(integrationID string) string {
+			return fmt.Sprintf("Deleted integration with id %s", integrationID)
 		})
 		if err != nil {
 			return err
@@ -55,13 +43,4 @@ var DeleteIntegrationCmd = &cobra.Command{
 		prints.PrintCliStderr(formatted)
 		return nil
 	},
-}
-
-func init() {
-	config.RegisterStringArg(DeleteIntegrationCmd, IdKey, "integration ID", false)
-	config.RegisterStringArg(DeleteIntegrationCmd, NameKey, "integration name", false)
-	config.MarkValidFlagCombinations(DeleteIntegrationCmd,
-		[]string{NameKey},
-		[]string{IdKey},
-	)
 }

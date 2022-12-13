@@ -34,3 +34,42 @@ func FormatEnvs(envs []cloudapi.Environment) (string, error) {
 	}
 	return FormatList(envs, columns, getColumnData)
 }
+
+func FormatIntegrations(integrations []cloudapi.Integration, includeSecrets bool) (string, error) {
+	columns := []string{"id", "type", "name", "environments", "controller last seen", "intents last applied"}
+	if includeSecrets {
+		columns = append(columns, "client id", "client secret")
+	}
+
+	getColumnData := func(integration cloudapi.Integration) []map[string]string {
+		var envNames []string
+		if integration.Environments != nil {
+			envNames = lo.Map(*integration.Environments, func(env cloudapi.Environment, _ int) string {
+				return lo.FromPtr(env.Name)
+			})
+		} else if integration.AllEnvsAllowed {
+			envNames = []string{"All environments allowed"}
+		}
+
+		integrationColumns := map[string]string{
+			"id":   integration.Id,
+			"type": string(integration.IntegrationType),
+			"name": integration.Name,
+			"env":  strings.Join(envNames, ", "),
+		}
+
+		if includeSecrets {
+			integrationColumns["client id"] = integration.Credentials.ClientId
+			integrationColumns["client secret"] = integration.Credentials.Secret
+		}
+
+		if integration.Status.Id != "" {
+			integrationColumns["controller last seen"] = fmt.Sprintf("%v", integration.Status.LastSeen)
+			integrationColumns["intents last applied"] = fmt.Sprintf("%v", integration.Status.IntentsStatus.AppliedAt)
+		}
+
+		return []map[string]string{integrationColumns}
+	}
+
+	return FormatList(integrations, columns, getColumnData)
+}
