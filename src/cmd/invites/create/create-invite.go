@@ -2,11 +2,12 @@ package create
 
 import (
 	"context"
-	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/invites"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -18,18 +19,24 @@ var CreateInviteCmd = &cobra.Command{
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c := invites.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
 		email := viper.GetString(EmailKey)
 
-		i, err := c.CreateInvite(ctxTimeout, email)
+		r, err := c.Client.CreateInviteMutationWithResponse(ctxTimeout,
+			cloudapi.CreateInviteMutationJSONRequestBody{Email: email},
+		)
 		if err != nil {
 			return err
 		}
 
-		formatted, err := output.FormatItem(i, func(invite invites.Invite) string {
-			return fmt.Sprintf("Invite created with invite ID: %s", i.ID)
-		})
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
+		}
+
+		i := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatInvites([]cloudapi.Invite{i})
 		if err != nil {
 			return err
 		}
