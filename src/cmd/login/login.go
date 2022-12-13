@@ -4,11 +4,14 @@ import (
 	"context"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/login/auth_api"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/login/server"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/organizations"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/users"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/pkg/browser"
+	"github.com/samber/lo"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -49,12 +52,21 @@ func login(_ *cobra.Command, _ []string) error {
 	prints.PrintCliStderr("User registered with user ID: %s", user.ID)
 
 	if user.OrganizationID == "" {
-		orgsClient := organizations.NewClientFromToken(otterizeAPIAddress, authResult.AccessToken)
-		org, err := orgsClient.CreateOrg(registerCtxTimeout)
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), authResult.AccessToken)
+
+		r, err := c.Client.CreateOrganizationMutationWithResponse(registerCtxTimeout,
+			cloudapi.CreateOrganizationMutationJSONRequestBody{},
+		)
 		if err != nil {
 			return err
 		}
-		prints.PrintCliStderr("User auto-assigned to organization %s", org.ID)
+
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
+		}
+
+		org := lo.FromPtr(r.JSON200)
+		prints.PrintCliStderr("User auto-assigned to organization %s", org.Id)
 	} else {
 		prints.PrintCliStderr("User is part of organization %s", user.OrganizationID)
 	}
