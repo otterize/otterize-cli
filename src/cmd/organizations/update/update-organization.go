@@ -2,10 +2,12 @@ package update
 
 import (
 	"context"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/organizations"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -18,21 +20,29 @@ var UpdateOrganizationCmd = &cobra.Command{
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c := organizations.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
-		orgID := args[0]
-		orgName := viper.GetString(OrgNameKey)
+		id := args[0]
+		name := viper.GetString(NameKey)
 
-		org, err := c.UpdateOrgName(ctxTimeout, orgID, orgName)
+		r, err := c.Client.UpdateOrganizationMutationWithResponse(ctxTimeout,
+			cloudapi.UpdateOrganizationMutationJSONRequestBody{
+				Id:   id,
+				Name: lo.Ternary(name != "", &name, nil),
+			},
+		)
 		if err != nil {
 			return err
 		}
 
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
+		}
+
 		prints.PrintCliStderr("Organization updated")
 
-		formatted, err := output.FormatItem(org, func(org organizations.Organization) string {
-			return org.String()
-		})
+		org := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatOrganizations([]cloudapi.Organization{org})
 		if err != nil {
 			return err
 		}
@@ -43,5 +53,5 @@ var UpdateOrganizationCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateOrganizationCmd.PersistentFlags().StringP(OrgNameKey, OrgNameShorthand, "", "organization name")
+	UpdateOrganizationCmd.PersistentFlags().StringP(NameKey, NameShorthand, "", "New organization name")
 }

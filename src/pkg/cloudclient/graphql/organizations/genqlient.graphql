@@ -1,25 +1,3 @@
-query ListOrganizations {
-    organizations {
-        id
-        name
-    }
-}
-
-
-query GetOrganization($id: ID!) {
-    organization(id: $id) {
-        id
-        name
-    }
-}
-
-mutation UpdateOrgName($id: ID!, $name: String) {
-    updateOrganization(id: $id, name: $name) {
-        id
-        name
-    }
-}
-
 mutation CreateOrg {
     createOrganization {
         id

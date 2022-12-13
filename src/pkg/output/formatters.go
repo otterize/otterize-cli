@@ -86,3 +86,15 @@ func FormatInvites(invites []cloudapi.Invite) (string, error) {
 	}
 	return FormatList(invites, columns, getColumnData)
 }
+
+func FormatOrganizations(organizations []cloudapi.Organization) (string, error) {
+	columns := []string{"id", "name"}
+	getColumnData := func(org cloudapi.Organization) []map[string]string {
+		return []map[string]string{{
+			"id":   org.Id,
+			"name": lo.FromPtr(org.Name),
+		}}
+	}
+
+	return FormatList(organizations, columns, getColumnData)
+}

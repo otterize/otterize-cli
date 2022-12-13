@@ -2,10 +2,12 @@ package get
 
 import (
 	"context"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/organizations"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -19,18 +21,21 @@ var GetOrganizationCmd = &cobra.Command{
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c := organizations.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
-		orgID := args[0]
+		id := args[0]
 
-		org, err := c.GetOrgByID(ctxTimeout, orgID)
+		r, err := c.Client.OrganizationQueryWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err
 		}
 
-		formatted, err := output.FormatItem(org, func(org organizations.Organization) string {
-			return org.String()
-		})
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
+		}
+
+		org := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatOrganizations([]cloudapi.Organization{org})
 		if err != nil {
 			return err
 		}
