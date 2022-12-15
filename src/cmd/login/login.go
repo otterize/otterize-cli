@@ -6,7 +6,6 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/auth_api"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/server"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
@@ -15,6 +14,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"net/http"
 )
 
 const SwitchAccountFlagKey = "switch"
@@ -38,43 +38,59 @@ func login(_ *cobra.Command, _ []string) error {
 	}
 	prints.PrintCliStderr("Please login to Otterize using your browser: %s", url)
 	authResult := <-loginServer.GetAuthResultChannel()
-	prints.PrintCliStderr("Login completed successfully! logged in as: %s", authResult.Profile["name"])
-
-	prints.PrintCliStderr("Registering user to Otterize server at %s", otterizeAPIAddress)
-	c := users.NewClientFromToken(otterizeAPIAddress, authResult.AccessToken)
-
-	registerCtxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
-	defer cancel()
-	user, err := c.RegisterAuth0User(registerCtxTimeout)
-	if err != nil {
-		return err
-	}
-	prints.PrintCliStderr("User registered with user ID: %s", user.ID)
-
-	if user.OrganizationID == "" {
-		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), authResult.AccessToken)
-
-		r, err := c.Client.CreateOrganizationMutationWithResponse(registerCtxTimeout,
-			cloudapi.CreateOrganizationMutationJSONRequestBody{},
-		)
-		if err != nil {
-			return err
-		}
-
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
-		org := lo.FromPtr(r.JSON200)
-		prints.PrintCliStderr("User auto-assigned to organization %s", org.Id)
-	} else {
-		prints.PrintCliStderr("User is part of organization %s", user.OrganizationID)
-	}
+	prints.PrintCliStderr("Login completed successfully! logged in as: %s", authResult.Profile["email"])
 
 	if err := config.SaveSecretConfig(config.SecretConfig{
 		UserToken: authResult.AccessToken,
 	}); err != nil {
 		return err
+	}
+
+	prints.PrintCliStderr("Querying user info from Otterize server at %s", otterizeAPIAddress)
+
+	registerCtxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
+	defer cancel()
+
+	apiAddress := viper.GetString(config.OtterizeAPIAddressKey)
+	c := cloudclient.NewClientFromToken(apiAddress, authResult.AccessToken)
+	meResponse, err := c.Client.MeQueryWithResponse(registerCtxTimeout)
+	if err != nil {
+		return err
+	}
+
+	userId := ""
+	if meResponse.StatusCode() == http.StatusNotFound {
+		prints.PrintCliStderr("Registering user with Otterize backend for the first time")
+		// This is currently not exposed by REST API
+		usersClient := users.NewClientFromToken(apiAddress, authResult.AccessToken)
+		user, err := usersClient.RegisterAuth0User(registerCtxTimeout)
+		if err != nil {
+			return err
+		}
+		prints.PrintCliStderr("User registered as Otterize user with user ID: %s", user.ID)
+		userId = user.ID
+	} else if cloudclient.IsErrorStatus(meResponse.StatusCode()) {
+		return output.FormatHTTPError(meResponse)
+	} else {
+		userId = meResponse.JSON200.User.Id
+	}
+
+	// query user to get full user info
+	userResponse, err := c.Client.UserQueryWithResponse(registerCtxTimeout, userId)
+	if err != nil {
+		return err
+	}
+
+	if cloudclient.IsErrorStatus(userResponse.StatusCode()) {
+		return output.FormatHTTPError(userResponse)
+	}
+
+	user := lo.FromPtr(userResponse.JSON200)
+	prints.PrintCliStderr("Logged in as Otterize user %s (%s)", user.Id, user.Email)
+	if user.Organization != nil && user.Organization.Id != "" {
+		prints.PrintCliStderr("User is registered with organization %s", user.Organization.Id)
+	} else {
+		prints.PrintCliStderr("User is not registered with any organization, please use the Otterize CLI or UI to create or join an organization")
 	}
 
 	return nil

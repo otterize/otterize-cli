@@ -1,4 +1,4 @@
-package update
+package create
 
 import (
 	"context"
@@ -12,25 +12,17 @@ import (
 	"github.com/spf13/viper"
 )
 
-var UpdateOrganizationCmd = &cobra.Command{
-	Use:          "update <orgid>",
-	Aliases:      []string{"org"},
-	Short:        `Updates an Otterize organization.`,
-	Args:         cobra.ExactArgs(1),
+var CreateOrganizationCmd = &cobra.Command{
+	Use:          "create",
+	Short:        `Creates a new Otterize organization.`,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
-		id := args[0]
-		name := viper.GetString(NameKey)
-
-		r, err := c.Client.UpdateOrganizationMutationWithResponse(ctxTimeout,
-			cloudapi.UpdateOrganizationMutationJSONRequestBody{
-				Id:   id,
-				Name: lo.Ternary(name != "", &name, nil),
-			},
+		r, err := c.Client.CreateOrganizationMutationWithResponse(ctxTimeout,
+			cloudapi.CreateOrganizationMutationJSONRequestBody{},
 		)
 		if err != nil {
 			return err
@@ -39,8 +31,6 @@ var UpdateOrganizationCmd = &cobra.Command{
 		if cloudclient.IsErrorStatus(r.StatusCode()) {
 			return output.FormatHTTPError(r)
 		}
-
-		prints.PrintCliStderr("Organization updated")
 
 		org := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatOrganizations([]cloudapi.Organization{org})
@@ -51,8 +41,4 @@ var UpdateOrganizationCmd = &cobra.Command{
 		prints.PrintCliOutput(formatted)
 		return nil
 	},
-}
-
-func init() {
-	UpdateOrganizationCmd.PersistentFlags().StringP(NameKey, NameShorthand, "", "New organization name")
 }
