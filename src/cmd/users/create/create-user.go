@@ -23,12 +23,12 @@ var CreateUserCmd = &cobra.Command{
 		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
 		email := viper.GetString(EmailKey)
-		auth0UserID := viper.GetString(Auth0UserIDKey)
+		authProviderUserId := viper.GetString(AuthProviderUserId)
 
 		r, err := c.Client.CreateUserMutationWithResponse(ctxTimeout,
 			cloudapi.CreateUserMutationJSONRequestBody{
-				Auth0UserId: auth0UserID,
-				Email:       email,
+				AuthProviderUserId: authProviderUserId,
+				Email:              email,
 			},
 		)
 		if err != nil {
@@ -52,5 +52,5 @@ var CreateUserCmd = &cobra.Command{
 
 func init() {
 	CreateUserCmd.PersistentFlags().String(EmailKey, "", "Email address")
-	CreateUserCmd.PersistentFlags().String(Auth0UserIDKey, "", "Auth0 user ID")
+	CreateUserCmd.PersistentFlags().String(AuthProviderUserId, "", "Auth provider user ID")
 }

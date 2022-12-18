@@ -89,8 +89,8 @@ const (
 	Pending  InvitesQueryParamsStatus = "Pending"
 )
 
-// Auth0UserInfo defines model for Auth0UserInfo.
-type Auth0UserInfo struct {
+// AuthProviderUserInfo defines model for AuthProviderUserInfo.
+type AuthProviderUserInfo struct {
 	EmailVerified bool   `json:"emailVerified"`
 	Name          string `json:"name"`
 	PictureURL    string `json:"pictureURL"`
@@ -248,11 +248,11 @@ type Service struct {
 
 // User defines model for User.
 type User struct {
-	Auth0UserId   string        `json:"auth0UserId"`
-	Auth0UserInfo Auth0UserInfo `json:"auth0UserInfo"`
-	Email         string        `json:"email"`
-	Id            string        `json:"id"`
-	Organization  *Organization `json:"organization,omitempty"`
+	AuthProviderUserId   string               `json:"authProviderUserId"`
+	AuthProviderUserInfo AuthProviderUserInfo `json:"authProviderUserInfo"`
+	Email                string               `json:"email"`
+	Id                   string               `json:"id"`
+	Organization         *Organization        `json:"organization,omitempty"`
 }
 
 // EnvironmentsQueryParams defines parameters for EnvironmentsQuery.
@@ -382,8 +382,8 @@ type OneServiceQueryParams struct {
 
 // CreateUserMutationJSONBody defines parameters for CreateUserMutation.
 type CreateUserMutationJSONBody struct {
-	Auth0UserId string `json:"auth0UserId"`
-	Email       string `json:"email"`
+	AuthProviderUserId string `json:"authProviderUserId"`
+	Email              string `json:"email"`
 }
 
 // UpdateEnvironmentMutationJSONRequestBody defines body for UpdateEnvironmentMutation for application/json ContentType.
