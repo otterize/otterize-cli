@@ -2,45 +2,47 @@ package update
 
 import (
 	"context"
-	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/environments"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var RemoveLabelsCmd = &cobra.Command{
-	Use:          "remove_labels",
-	Short:        `Removes labels to an existing Otterize environment and returns its ID`,
+	Use:          "remove_labels <envid>",
+	Short:        `Removes labels from an existing Otterize environmentD`,
 	SilenceUsage: true,
+	Args:         cobra.ExactArgs(1),
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		envsClient := environments.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
-		labels := viper.GetStringSlice(LabelsKey)
-		id := viper.GetString(IdKey)
-		name := viper.GetString(NameKey)
-		if name != "" {
-			env, err := envsClient.GetEnvByName(ctxTimeout, name)
-			if err != nil {
-				return fmt.Errorf("failed to query env: %w", err)
-			}
-			id = env.Id
-		}
+		id := args[0]
+		labelKeys := viper.GetStringSlice(LabelsKey)
 
-		env, err := envsClient.RemoveEnvLabels(ctxTimeout, id, labels)
+		r, err := c.Client.DeleteEnvironmentLabelsMutationWithResponse(ctxTimeout,
+			&cloudapi.DeleteEnvironmentLabelsMutationParams{
+				Id:     id,
+				Labels: labelKeys,
+			},
+		)
 		if err != nil {
 			return err
 		}
 
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
+		}
+
 		prints.PrintCliStderr("Environment updated")
 
-		formatted, err := output.FormatItem(env, func(env environments.EnvFields) string {
-			return env.String()
-		})
+		env := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatEnvs([]cloudapi.Environment{env})
 		if err != nil {
 			return err
 		}
@@ -51,11 +53,5 @@ var RemoveLabelsCmd = &cobra.Command{
 }
 
 func init() {
-	config.RegisterStringArg(RemoveLabelsCmd, IdKey, "environment ID", false)
-	config.RegisterStringArg(RemoveLabelsCmd, NameKey, "environment name", false)
-	config.MarkValidFlagCombinations(RemoveLabelsCmd,
-		[]string{NameKey},
-		[]string{IdKey},
-	)
 	RemoveLabelsCmd.PersistentFlags().StringSliceP(LabelsKey, LabelsShorthand, make([]string, 0), "Environment label keys to delete")
 }

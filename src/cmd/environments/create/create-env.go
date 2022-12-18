@@ -2,11 +2,12 @@ package create
 
 import (
 	"context"
-	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/environments"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -19,27 +20,29 @@ var CreateEnvCmd = &cobra.Command{
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		envsClient := environments.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
 		name := viper.GetString(NameKey)
 		labels := viper.GetStringMapString(LabelsKey)
+		labelsInput := lo.Ternary(len(labels) == 0, nil, lo.ToPtr(cloudclient.LabelsToLabelInput(labels)))
 
-		var env environments.EnvFields
-		var err error
-
-		if viper.GetBool(ExistsOkKey) {
-			env, err = envsClient.GetOrCreateEnv(ctxTimeout, name, labels)
-		} else {
-			env, err = envsClient.CreateEnv(ctxTimeout, name, labels)
-		}
-
+		r, err := c.Client.CreateEnvironmentMutationWithResponse(ctxTimeout,
+			cloudapi.CreateEnvironmentMutationJSONRequestBody{
+				Name:   name,
+				Labels: labelsInput,
+			},
+		)
 		if err != nil {
 			return err
 		}
 
-		formatted, err := output.FormatItem(env, func(env environments.EnvFields) string {
-			return fmt.Sprintf("Environment created with ID: %s", env.Id)
-		})
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
+		}
+
+		env := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatEnvs([]cloudapi.Environment{env})
 		if err != nil {
 			return err
 		}
@@ -52,5 +55,4 @@ var CreateEnvCmd = &cobra.Command{
 func init() {
 	CreateEnvCmd.Flags().StringP(NameKey, NameShorthand, "", "environment name")
 	CreateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, make(map[string]string, 0), "Environment labels in key value format: key=val,key2=val2,... Value is optional - specify no value to skip it, e.g. key=,key2=value2")
-	CreateEnvCmd.Flags().Bool(ExistsOkKey, false, "Get environment if already exists")
 }

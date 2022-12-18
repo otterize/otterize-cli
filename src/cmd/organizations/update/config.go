@@ -1,4 +1,4 @@
 package update
 
-const OrgNameKey = "org_name"
-const OrgNameShorthand = "n"
+const NameKey = "name"
+const NameShorthand = "n"

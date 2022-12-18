@@ -2,9 +2,10 @@ package accept
 
 import (
 	"context"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/invites"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/users"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 
 	"github.com/spf13/cobra"
@@ -19,22 +20,37 @@ var AcceptInviteCmd = &cobra.Command{
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		usersClient := users.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
-		invitesClient := invites.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
 		inviteID := args[0]
 
-		err := invitesClient.AcceptInvite(ctxTimeout, inviteID)
+		acceptResponse, err := c.Client.AcceptInviteMutationWithResponse(ctxTimeout,
+			cloudapi.AcceptInviteMutationJSONRequestBody{
+				Id: inviteID,
+			},
+		)
+
 		if err != nil {
 			return err
 		}
 
-		user, err := usersClient.GetCurrentUser(ctxTimeout)
+		if cloudclient.IsErrorStatus(acceptResponse.StatusCode()) {
+			return output.FormatHTTPError(acceptResponse)
+		}
+
+		userResponse, err := c.Client.MeQueryWithResponse(ctxTimeout)
 		if err != nil {
 			return err
 		}
-		prints.PrintCliStderr("User ID %s joined to organization %s",
-			user.ID, user.OrganizationID)
+
+		if cloudclient.IsErrorStatus(userResponse.StatusCode()) {
+			return output.FormatHTTPError(userResponse)
+		}
+
+		user := userResponse.JSON200.User
+		prints.PrintCliStderr("User ID %s joined organization %s",
+			user.Id, user.Organization.Id)
 
 		return nil
 	},

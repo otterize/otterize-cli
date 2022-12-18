@@ -29,6 +29,5 @@ jobs:
           go-version: '>=1.19.0'
 
       - name: Build
-        run: |-
-          go generate ./...
-          go build ./src/cmd
+        run: go build ./src/cmd
+

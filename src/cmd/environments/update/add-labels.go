@@ -2,46 +2,47 @@ package update
 
 import (
 	"context"
-	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/environments"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var AddLabelsCmd = &cobra.Command{
-	Use:          "add_labels",
-	Short:        `Adds labels to an existing Otterize environment and returns its ID`,
+	Use:          "add_labels <envid>",
+	Short:        `Adds labels to an existing Otterize environment`,
 	SilenceUsage: true,
+	Args:         cobra.ExactArgs(1),
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		envsClient := environments.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
+		id := args[0]
 		labels := viper.GetStringMapString(LabelsKey)
 
-		id := viper.GetString(IdKey)
-		name := viper.GetString(NameKey)
-		if name != "" {
-			env, err := envsClient.GetEnvByName(ctxTimeout, name)
-			if err != nil {
-				return fmt.Errorf("failed to query env: %w", err)
-			}
-			id = env.Id
-		}
-
-		env, err := envsClient.AddEnvLabels(ctxTimeout, id, labels)
+		r, err := c.Client.AddEnvironmentLabelsMutationWithResponse(ctxTimeout,
+			cloudapi.AddEnvironmentLabelsMutationJSONRequestBody{
+				Id:     id,
+				Labels: cloudclient.LabelsToLabelInput(labels),
+			},
+		)
 		if err != nil {
 			return err
 		}
 
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
+		}
+
 		prints.PrintCliStderr("Environment updated")
 
-		formatted, err := output.FormatItem(env, func(env environments.EnvFields) string {
-			return env.String()
-		})
+		env := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatEnvs([]cloudapi.Environment{env})
 		if err != nil {
 			return err
 		}
@@ -52,11 +53,5 @@ var AddLabelsCmd = &cobra.Command{
 }
 
 func init() {
-	config.RegisterStringArg(AddLabelsCmd, IdKey, "environment ID", false)
-	config.RegisterStringArg(AddLabelsCmd, NameKey, "environment name", false)
-	config.MarkValidFlagCombinations(AddLabelsCmd,
-		[]string{NameKey},
-		[]string{IdKey},
-	)
 	AddLabelsCmd.PersistentFlags().StringToStringP(LabelsKey, LabelsShorthand, make(map[string]string, 0), "Environment key value Labels (key=val,key2=val2=..)")
 }

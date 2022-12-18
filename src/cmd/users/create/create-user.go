@@ -2,11 +2,12 @@ package create
 
 import (
 	"context"
-	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/users"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -18,21 +19,30 @@ var CreateUserCmd = &cobra.Command{
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c := users.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), viper.GetString(config.GetAPIToken(ctxTimeout)))
+
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
 		email := viper.GetString(EmailKey)
 		auth0UserID := viper.GetString(Auth0UserIDKey)
 
-		user, err := c.CreateUser(ctxTimeout, email, auth0UserID)
+		r, err := c.Client.CreateUserMutationWithResponse(ctxTimeout,
+			cloudapi.CreateUserMutationJSONRequestBody{
+				Auth0UserId: auth0UserID,
+				Email:       email,
+			},
+		)
 		if err != nil {
 			return err
 		}
 
-		formatted, err := output.FormatItem(user, func(user users.User) string {
-			return fmt.Sprintf("User created with user ID: %s", user.ID)
-		})
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
+		}
+
+		user := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatUsers([]cloudapi.User{user})
 		if err != nil {
-			return nil
+			return err
 		}
 
 		prints.PrintCliOutput(formatted)

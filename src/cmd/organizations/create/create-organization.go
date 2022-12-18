@@ -1,4 +1,4 @@
-package get
+package create
 
 import (
 	"context"
@@ -12,18 +12,18 @@ import (
 	"github.com/spf13/viper"
 )
 
-var GetUserCmd = &cobra.Command{
-	Use:          "get <userid>",
-	Short:        `Gets details for a user.`,
-	Args:         cobra.ExactArgs(1),
+var CreateOrganizationCmd = &cobra.Command{
+	Use:          "create",
+	Short:        `Creates a new Otterize organization.`,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
-		id := args[0]
-		r, err := c.Client.UserQueryWithResponse(ctxTimeout, id)
+		r, err := c.Client.CreateOrganizationMutationWithResponse(ctxTimeout,
+			cloudapi.CreateOrganizationMutationJSONRequestBody{},
+		)
 		if err != nil {
 			return err
 		}
@@ -32,8 +32,8 @@ var GetUserCmd = &cobra.Command{
 			return output.FormatHTTPError(r)
 		}
 
-		user := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatUsers([]cloudapi.User{user})
+		org := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatOrganizations([]cloudapi.Organization{org})
 		if err != nil {
 			return err
 		}

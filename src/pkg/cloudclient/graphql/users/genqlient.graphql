@@ -1,0 +1,16 @@
+
+mutation CreateUserFromAuth0User {
+    me {
+        registerUser {
+            id
+            email
+            auth0UserId
+            organization {
+                id
+            }
+            auth0UserInfo {
+                name
+            }
+        }
+    }
+}

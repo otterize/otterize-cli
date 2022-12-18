@@ -3,50 +3,43 @@ package delete
 import (
 	"context"
 	"fmt"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/environments"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-type deleteEnvSelector struct {
-	id   string
-	name string
-}
-
 var DeleteEnvCmd = &cobra.Command{
-	Use:          "delete",
+	Use:          "delete <envid>",
 	Short:        `Delete an environment.`,
+	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c := environments.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
+		id := args[0]
 		force := viper.GetBool(ForceKey)
 
-		id := viper.GetString(IdKey)
-		name := viper.GetString(NameKey)
-		if name != "" {
-			env, err := c.GetEnvByName(ctxTimeout, name)
-			if err != nil {
-				return fmt.Errorf("failed to query env: %w", err)
-			}
-			id = env.Id
-		}
-		err := c.DeleteEnv(ctxTimeout, id, force)
+		r, err := c.Client.DeleteEnvironmentMutationWithResponse(ctxTimeout, id,
+			&cloudapi.DeleteEnvironmentMutationParams{Force: &force},
+		)
 		if err != nil {
 			return err
 		}
 
-		formatted, err := output.FormatItem(deleteEnvSelector{id, name}, func(selector deleteEnvSelector) string {
-			if selector.id != "" {
-				return fmt.Sprintf("Deleted environment with id %s", selector.id)
-			} else {
-				return fmt.Sprintf("Deleted environment with name %s", selector.name)
-			}
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
+		}
+
+		envID := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatItem(envID, func(envID string) string {
+			return fmt.Sprintf("Deleted environment with id %s", envID)
 		})
 		if err != nil {
 			return err
@@ -58,11 +51,5 @@ var DeleteEnvCmd = &cobra.Command{
 }
 
 func init() {
-	config.RegisterStringArg(DeleteEnvCmd, IdKey, "environment ID", false)
-	config.RegisterStringArg(DeleteEnvCmd, NameKey, "environment name", false)
-	config.MarkValidFlagCombinations(DeleteEnvCmd,
-		[]string{NameKey},
-		[]string{IdKey},
-	)
 	DeleteEnvCmd.Flags().Bool(ForceKey, false, "force delete environment")
 }

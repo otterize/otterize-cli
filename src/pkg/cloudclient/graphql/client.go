@@ -1,14 +1,14 @@
-package cloudclient
+package graphql
 
 import (
 	"context"
-	"github.com/Khan/genqlient/graphql"
+	genqlientgraphql "github.com/Khan/genqlient/graphql"
 	"golang.org/x/oauth2"
 )
 
 type Client struct {
 	Address string
-	Client  graphql.Client
+	Client  genqlientgraphql.Client
 }
 
 func NewClientFromToken(address string, token string) *Client {
@@ -20,6 +20,6 @@ func NewClient(address string, tokenSrc oauth2.TokenSource) *Client {
 	address = address + "/graphql/v1"
 	return &Client{
 		Address: address,
-		Client:  graphql.NewClient(address, oauth2.NewClient(context.Background(), tokenSrc)),
+		Client:  genqlientgraphql.NewClient(address, oauth2.NewClient(context.Background(), tokenSrc)),
 	}
 }

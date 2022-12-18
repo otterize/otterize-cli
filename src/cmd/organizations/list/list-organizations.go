@@ -2,10 +2,11 @@ package list
 
 import (
 	"context"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/organizations"
+	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -18,21 +19,19 @@ var ListOrganizationsCmd = &cobra.Command{
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c := organizations.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
-		usersList, err := c.GetOrganizations(ctxTimeout)
+		r, err := c.Client.OrganizationsQueryWithResponse(ctxTimeout)
 		if err != nil {
 			return err
 		}
 
-		columns := []string{"id", "name"}
-		getColumnData := func(org organizations.Organization) []map[string]string {
-			return []map[string]string{{
-				"id":   org.ID,
-				"name": org.Name,
-			}}
+		if cloudclient.IsErrorStatus(r.StatusCode()) {
+			return output.FormatHTTPError(r)
 		}
-		formatted, err := output.FormatList(usersList, columns, getColumnData)
+
+		organizations := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatOrganizations(organizations)
 		if err != nil {
 			return err
 		}
