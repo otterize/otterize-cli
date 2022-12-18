@@ -67,8 +67,8 @@ func login(_ *cobra.Command, _ []string) error {
 		if err != nil {
 			return err
 		}
-		prints.PrintCliStderr("User registered as Otterize user with user ID: %s", user.ID)
-		userId = user.ID
+		prints.PrintCliStderr("User registered as Otterize user with user ID: %s", user.Id)
+		userId = user.Id
 	} else if cloudclient.IsErrorStatus(meResponse.StatusCode()) {
 		return output.FormatHTTPError(meResponse)
 	} else {

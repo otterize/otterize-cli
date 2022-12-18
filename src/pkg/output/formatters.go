@@ -105,8 +105,8 @@ func FormatUsers(users []cloudapi.User) (string, error) {
 		return []map[string]string{{
 			"id":                u.Id,
 			"email":             u.Email,
-			"name":              u.Auth0UserInfo.Name,
-			"auth0_user_id":     u.Auth0UserId,
+			"name":              u.AuthProviderUserInfo.Name,
+			"auth0_user_id":     u.AuthProviderUserId,
 			"organization_id":   u.Organization.Id,
 			"organization_name": lo.FromPtr(u.Organization.Name),
 		}}
