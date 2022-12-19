@@ -20,12 +20,15 @@ var CreateUserCmd = &cobra.Command{
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		if err != nil {
+			return err
+		}
 
 		email := viper.GetString(EmailKey)
 		authProviderUserId := viper.GetString(AuthProviderUserId)
 
-		r, err := c.Client.CreateUserMutationWithResponse(ctxTimeout,
+		r, err := c.CreateUserMutationWithResponse(ctxTimeout,
 			cloudapi.CreateUserMutationJSONRequestBody{
 				AuthProviderUserId: authProviderUserId,
 				Email:              email,

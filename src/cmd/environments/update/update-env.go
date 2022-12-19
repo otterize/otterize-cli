@@ -21,14 +21,17 @@ var UpdateEnvCmd = &cobra.Command{
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		if err != nil {
+			return err
+		}
 
 		id := args[0]
 		name := viper.GetString(NameKey)
 		labels := viper.GetStringMapString(LabelsKey)
 		labelsInput := lo.Ternary(len(labels) == 0, nil, lo.ToPtr(cloudclient.LabelsToLabelInput(labels)))
 
-		r, err := c.Client.UpdateEnvironmentMutationWithResponse(ctxTimeout,
+		r, err := c.UpdateEnvironmentMutationWithResponse(ctxTimeout,
 			cloudapi.UpdateEnvironmentMutationJSONRequestBody{
 				Id:     id,
 				Labels: labelsInput,

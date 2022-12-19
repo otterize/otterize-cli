@@ -20,9 +20,12 @@ var ListInvitesCmd = &cobra.Command{
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		if err != nil {
+			return err
+		}
 
-		r, err := c.Client.InvitesQueryWithResponse(ctxTimeout, &cloudapi.InvitesQueryParams{})
+		r, err := c.InvitesQueryWithResponse(ctxTimeout, &cloudapi.InvitesQueryParams{})
 		if err != nil {
 			return err
 		}

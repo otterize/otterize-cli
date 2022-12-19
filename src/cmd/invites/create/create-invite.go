@@ -20,11 +20,14 @@ var CreateInviteCmd = &cobra.Command{
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		if err != nil {
+			return err
+		}
 
 		email := viper.GetString(EmailKey)
 
-		r, err := c.Client.CreateInviteMutationWithResponse(ctxTimeout,
+		r, err := c.CreateInviteMutationWithResponse(ctxTimeout,
 			cloudapi.CreateInviteMutationJSONRequestBody{Email: email},
 		)
 		if err != nil {

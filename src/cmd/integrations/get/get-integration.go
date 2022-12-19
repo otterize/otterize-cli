@@ -20,11 +20,14 @@ var GetIntegrationCmd = &cobra.Command{
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		if err != nil {
+			return err
+		}
 
 		id := args[0]
 
-		r, err := c.Client.IntegrationQueryWithResponse(ctxTimeout, id)
+		r, err := c.IntegrationQueryWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err
 		}

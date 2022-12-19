@@ -17,6 +17,10 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
 )
 
+const (
+	BearerAuthScopes = "bearerAuth.Scopes"
+)
+
 // Defines values for HTTPConfigMethod.
 const (
 	CONNECT HTTPConfigMethod = "CONNECT"
@@ -59,6 +63,14 @@ const (
 	Produce         KafkaConfigOperation = "produce"
 )
 
+// Defines values for OneIntegrationQueryParamsIntegrationType.
+const (
+	OneIntegrationQueryParamsIntegrationTypeCICD       OneIntegrationQueryParamsIntegrationType = "CICD"
+	OneIntegrationQueryParamsIntegrationTypeKafka      OneIntegrationQueryParamsIntegrationType = "Kafka"
+	OneIntegrationQueryParamsIntegrationTypeKubernetes OneIntegrationQueryParamsIntegrationType = "Kubernetes"
+	OneIntegrationQueryParamsIntegrationTypeService    OneIntegrationQueryParamsIntegrationType = "Service"
+)
+
 // Defines values for IntegrationsQueryParamsIntegrationType.
 const (
 	IntegrationsQueryParamsIntegrationTypeCICD       IntegrationsQueryParamsIntegrationType = "CICD"
@@ -73,14 +85,6 @@ const (
 	CreateIntegrationMutationJSONBodyIntegrationTypeKafka      CreateIntegrationMutationJSONBodyIntegrationType = "Kafka"
 	CreateIntegrationMutationJSONBodyIntegrationTypeKubernetes CreateIntegrationMutationJSONBodyIntegrationType = "Kubernetes"
 	CreateIntegrationMutationJSONBodyIntegrationTypeService    CreateIntegrationMutationJSONBodyIntegrationType = "Service"
-)
-
-// Defines values for OneIntegrationQueryParamsIntegrationType.
-const (
-	OneIntegrationQueryParamsIntegrationTypeCICD       OneIntegrationQueryParamsIntegrationType = "CICD"
-	OneIntegrationQueryParamsIntegrationTypeKafka      OneIntegrationQueryParamsIntegrationType = "Kafka"
-	OneIntegrationQueryParamsIntegrationTypeKubernetes OneIntegrationQueryParamsIntegrationType = "Kubernetes"
-	OneIntegrationQueryParamsIntegrationTypeService    OneIntegrationQueryParamsIntegrationType = "Service"
 )
 
 // Defines values for InvitesQueryParamsStatus.
@@ -255,6 +259,11 @@ type User struct {
 	Organization         *Organization        `json:"organization,omitempty"`
 }
 
+// OneEnvironmentQueryParams defines parameters for OneEnvironmentQuery.
+type OneEnvironmentQueryParams struct {
+	Name string `form:"name" json:"name"`
+}
+
 // EnvironmentsQueryParams defines parameters for EnvironmentsQuery.
 type EnvironmentsQueryParams struct {
 	Name   *string       `form:"name,omitempty" json:"name,omitempty"`
@@ -286,15 +295,20 @@ type AddEnvironmentLabelsMutationJSONBody struct {
 	Labels []LabelInput `json:"labels"`
 }
 
-// OneEnvironmentQueryParams defines parameters for OneEnvironmentQuery.
-type OneEnvironmentQueryParams struct {
-	Name string `form:"name" json:"name"`
-}
-
 // DeleteEnvironmentMutationParams defines parameters for DeleteEnvironmentMutation.
 type DeleteEnvironmentMutationParams struct {
 	Force *bool `form:"force,omitempty" json:"force,omitempty"`
 }
+
+// OneIntegrationQueryParams defines parameters for OneIntegrationQuery.
+type OneIntegrationQueryParams struct {
+	Name            *string                                   `form:"name,omitempty" json:"name,omitempty"`
+	IntegrationType *OneIntegrationQueryParamsIntegrationType `form:"integrationType,omitempty" json:"integrationType,omitempty"`
+	EnvironmentId   *string                                   `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+}
+
+// OneIntegrationQueryParamsIntegrationType defines parameters for OneIntegrationQuery.
+type OneIntegrationQueryParamsIntegrationType string
 
 // IntegrationsQueryParams defines parameters for IntegrationsQuery.
 type IntegrationsQueryParams struct {
@@ -321,16 +335,6 @@ type CreateIntegrationMutationJSONBody struct {
 
 // CreateIntegrationMutationJSONBodyIntegrationType defines parameters for CreateIntegrationMutation.
 type CreateIntegrationMutationJSONBodyIntegrationType string
-
-// OneIntegrationQueryParams defines parameters for OneIntegrationQuery.
-type OneIntegrationQueryParams struct {
-	Name            *string                                   `form:"name,omitempty" json:"name,omitempty"`
-	IntegrationType *OneIntegrationQueryParamsIntegrationType `form:"integrationType,omitempty" json:"integrationType,omitempty"`
-	EnvironmentId   *string                                   `form:"environmentId,omitempty" json:"environmentId,omitempty"`
-}
-
-// OneIntegrationQueryParamsIntegrationType defines parameters for OneIntegrationQuery.
-type OneIntegrationQueryParamsIntegrationType string
 
 // IntentsQueryParams defines parameters for IntentsQuery.
 type IntentsQueryParams struct {
@@ -368,16 +372,16 @@ type UpdateOrganizationMutationJSONBody struct {
 // CreateOrganizationMutationJSONBody defines parameters for CreateOrganizationMutation.
 type CreateOrganizationMutationJSONBody = map[string]interface{}
 
-// ServicesQueryParams defines parameters for ServicesQuery.
-type ServicesQueryParams struct {
-	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
-	Name          *string `form:"name,omitempty" json:"name,omitempty"`
-}
-
 // OneServiceQueryParams defines parameters for OneServiceQuery.
 type OneServiceQueryParams struct {
 	EnvironmentId string `form:"environmentId" json:"environmentId"`
 	Name          string `form:"name" json:"name"`
+}
+
+// ServicesQueryParams defines parameters for ServicesQuery.
+type ServicesQueryParams struct {
+	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	Name          *string `form:"name,omitempty" json:"name,omitempty"`
 }
 
 // CreateUserMutationJSONBody defines parameters for CreateUserMutation.
@@ -489,6 +493,9 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// OneEnvironmentQuery request
+	OneEnvironmentQuery(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// EnvironmentsQuery request
 	EnvironmentsQuery(ctx context.Context, params *EnvironmentsQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -510,14 +517,14 @@ type ClientInterface interface {
 
 	AddEnvironmentLabelsMutation(ctx context.Context, body AddEnvironmentLabelsMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// OneEnvironmentQuery request
-	OneEnvironmentQuery(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// DeleteEnvironmentMutation request
 	DeleteEnvironmentMutation(ctx context.Context, id string, params *DeleteEnvironmentMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// EnvironmentQuery request
 	EnvironmentQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// OneIntegrationQuery request
+	OneIntegrationQuery(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// IntegrationsQuery request
 	IntegrationsQuery(ctx context.Context, params *IntegrationsQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -531,9 +538,6 @@ type ClientInterface interface {
 	CreateIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	CreateIntegrationMutation(ctx context.Context, body CreateIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// OneIntegrationQuery request
-	OneIntegrationQuery(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteIntegrationMutation request
 	DeleteIntegrationMutation(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -585,11 +589,11 @@ type ClientInterface interface {
 	// OrganizationQuery request
 	OrganizationQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ServicesQuery request
-	ServicesQuery(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// OneServiceQuery request
 	OneServiceQuery(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ServicesQuery request
+	ServicesQuery(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ServiceQuery request
 	ServiceQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -607,6 +611,18 @@ type ClientInterface interface {
 
 	// UserQuery request
 	UserQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) OneEnvironmentQuery(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOneEnvironmentQueryRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) EnvironmentsQuery(ctx context.Context, params *EnvironmentsQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -705,18 +721,6 @@ func (c *Client) AddEnvironmentLabelsMutation(ctx context.Context, body AddEnvir
 	return c.Client.Do(req)
 }
 
-func (c *Client) OneEnvironmentQuery(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewOneEnvironmentQueryRequest(c.Server, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 func (c *Client) DeleteEnvironmentMutation(ctx context.Context, id string, params *DeleteEnvironmentMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeleteEnvironmentMutationRequest(c.Server, id, params)
 	if err != nil {
@@ -731,6 +735,18 @@ func (c *Client) DeleteEnvironmentMutation(ctx context.Context, id string, param
 
 func (c *Client) EnvironmentQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewEnvironmentQueryRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) OneIntegrationQuery(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOneIntegrationQueryRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -791,18 +807,6 @@ func (c *Client) CreateIntegrationMutationWithBody(ctx context.Context, contentT
 
 func (c *Client) CreateIntegrationMutation(ctx context.Context, body CreateIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateIntegrationMutationRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) OneIntegrationQuery(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewOneIntegrationQueryRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1029,8 +1033,8 @@ func (c *Client) OrganizationQuery(ctx context.Context, id string, reqEditors ..
 	return c.Client.Do(req)
 }
 
-func (c *Client) ServicesQuery(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewServicesQueryRequest(c.Server, params)
+func (c *Client) OneServiceQuery(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOneServiceQueryRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1041,8 +1045,8 @@ func (c *Client) ServicesQuery(ctx context.Context, params *ServicesQueryParams,
 	return c.Client.Do(req)
 }
 
-func (c *Client) OneServiceQuery(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewOneServiceQueryRequest(c.Server, params)
+func (c *Client) ServicesQuery(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewServicesQueryRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1123,6 +1127,49 @@ func (c *Client) UserQuery(ctx context.Context, id string, reqEditors ...Request
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewOneEnvironmentQueryRequest generates requests for OneEnvironmentQuery
+func NewOneEnvironmentQueryRequest(server string, params *OneEnvironmentQueryParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/environment")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 // NewEnvironmentsQueryRequest generates requests for EnvironmentsQuery
@@ -1363,49 +1410,6 @@ func NewAddEnvironmentLabelsMutationRequestWithBody(server string, contentType s
 	return req, nil
 }
 
-// NewOneEnvironmentQueryRequest generates requests for OneEnvironmentQuery
-func NewOneEnvironmentQueryRequest(server string, params *OneEnvironmentQueryParams) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/environments/one")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	queryValues := queryURL.Query()
-
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
-		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
-	}
-
-	queryURL.RawQuery = queryValues.Encode()
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewDeleteEnvironmentMutationRequest generates requests for DeleteEnvironmentMutation
 func NewDeleteEnvironmentMutationRequest(server string, id string, params *DeleteEnvironmentMutationParams) (*http.Request, error) {
 	var err error
@@ -1485,6 +1489,85 @@ func NewEnvironmentQueryRequest(server string, id string) (*http.Request, error)
 	if err != nil {
 		return nil, err
 	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewOneIntegrationQueryRequest generates requests for OneIntegrationQuery
+func NewOneIntegrationQueryRequest(server string, params *OneIntegrationQueryParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integration")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Name != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.IntegrationType != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "integrationType", runtime.ParamLocationQuery, *params.IntegrationType); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.EnvironmentId != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environmentId", runtime.ParamLocationQuery, *params.EnvironmentId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
@@ -1649,85 +1732,6 @@ func NewCreateIntegrationMutationRequestWithBody(server string, contentType stri
 	}
 
 	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewOneIntegrationQueryRequest generates requests for OneIntegrationQuery
-func NewOneIntegrationQueryRequest(server string, params *OneIntegrationQueryParams) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/integrations/one")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	queryValues := queryURL.Query()
-
-	if params.Name != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	if params.IntegrationType != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "integrationType", runtime.ParamLocationQuery, *params.IntegrationType); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	if params.EnvironmentId != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environmentId", runtime.ParamLocationQuery, *params.EnvironmentId); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	queryURL.RawQuery = queryValues.Encode()
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
 
 	return req, nil
 }
@@ -2292,6 +2296,61 @@ func NewOrganizationQueryRequest(server string, id string) (*http.Request, error
 	return req, nil
 }
 
+// NewOneServiceQueryRequest generates requests for OneServiceQuery
+func NewOneServiceQueryRequest(server string, params *OneServiceQueryParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/service")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environmentId", runtime.ParamLocationQuery, params.EnvironmentId); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewServicesQueryRequest generates requests for ServicesQuery
 func NewServicesQueryRequest(server string, params *ServicesQueryParams) (*http.Request, error) {
 	var err error
@@ -2343,61 +2402,6 @@ func NewServicesQueryRequest(server string, params *ServicesQueryParams) (*http.
 			}
 		}
 
-	}
-
-	queryURL.RawQuery = queryValues.Encode()
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewOneServiceQueryRequest generates requests for OneServiceQuery
-func NewOneServiceQueryRequest(server string, params *OneServiceQueryParams) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/services/one")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	queryValues := queryURL.Query()
-
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environmentId", runtime.ParamLocationQuery, params.EnvironmentId); err != nil {
-		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
-	}
-
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
-		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -2622,6 +2626,9 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// OneEnvironmentQuery request
+	OneEnvironmentQueryWithResponse(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*OneEnvironmentQueryResponse, error)
+
 	// EnvironmentsQuery request
 	EnvironmentsQueryWithResponse(ctx context.Context, params *EnvironmentsQueryParams, reqEditors ...RequestEditorFn) (*EnvironmentsQueryResponse, error)
 
@@ -2643,14 +2650,14 @@ type ClientWithResponsesInterface interface {
 
 	AddEnvironmentLabelsMutationWithResponse(ctx context.Context, body AddEnvironmentLabelsMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AddEnvironmentLabelsMutationResponse, error)
 
-	// OneEnvironmentQuery request
-	OneEnvironmentQueryWithResponse(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*OneEnvironmentQueryResponse, error)
-
 	// DeleteEnvironmentMutation request
 	DeleteEnvironmentMutationWithResponse(ctx context.Context, id string, params *DeleteEnvironmentMutationParams, reqEditors ...RequestEditorFn) (*DeleteEnvironmentMutationResponse, error)
 
 	// EnvironmentQuery request
 	EnvironmentQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*EnvironmentQueryResponse, error)
+
+	// OneIntegrationQuery request
+	OneIntegrationQueryWithResponse(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*OneIntegrationQueryResponse, error)
 
 	// IntegrationsQuery request
 	IntegrationsQueryWithResponse(ctx context.Context, params *IntegrationsQueryParams, reqEditors ...RequestEditorFn) (*IntegrationsQueryResponse, error)
@@ -2664,9 +2671,6 @@ type ClientWithResponsesInterface interface {
 	CreateIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateIntegrationMutationResponse, error)
 
 	CreateIntegrationMutationWithResponse(ctx context.Context, body CreateIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateIntegrationMutationResponse, error)
-
-	// OneIntegrationQuery request
-	OneIntegrationQueryWithResponse(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*OneIntegrationQueryResponse, error)
 
 	// DeleteIntegrationMutation request
 	DeleteIntegrationMutationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteIntegrationMutationResponse, error)
@@ -2718,11 +2722,11 @@ type ClientWithResponsesInterface interface {
 	// OrganizationQuery request
 	OrganizationQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*OrganizationQueryResponse, error)
 
-	// ServicesQuery request
-	ServicesQueryWithResponse(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*ServicesQueryResponse, error)
-
 	// OneServiceQuery request
 	OneServiceQueryWithResponse(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*OneServiceQueryResponse, error)
+
+	// ServicesQuery request
+	ServicesQueryWithResponse(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*ServicesQueryResponse, error)
 
 	// ServiceQuery request
 	ServiceQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ServiceQueryResponse, error)
@@ -2740,6 +2744,28 @@ type ClientWithResponsesInterface interface {
 
 	// UserQuery request
 	UserQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*UserQueryResponse, error)
+}
+
+type OneEnvironmentQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Environment
+}
+
+// Status returns HTTPResponse.Status
+func (r OneEnvironmentQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r OneEnvironmentQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type EnvironmentsQueryResponse struct {
@@ -2852,28 +2878,6 @@ func (r AddEnvironmentLabelsMutationResponse) StatusCode() int {
 	return 0
 }
 
-type OneEnvironmentQueryResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Environment
-}
-
-// Status returns HTTPResponse.Status
-func (r OneEnvironmentQueryResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r OneEnvironmentQueryResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type DeleteEnvironmentMutationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -2912,6 +2916,28 @@ func (r EnvironmentQueryResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r EnvironmentQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type OneIntegrationQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+}
+
+// Status returns HTTPResponse.Status
+func (r OneIntegrationQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r OneIntegrationQueryResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -2978,28 +3004,6 @@ func (r CreateIntegrationMutationResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreateIntegrationMutationResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type OneIntegrationQueryResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Integration
-}
-
-// Status returns HTTPResponse.Status
-func (r OneIntegrationQueryResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r OneIntegrationQueryResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3314,28 +3318,6 @@ func (r OrganizationQueryResponse) StatusCode() int {
 	return 0
 }
 
-type ServicesQueryResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]Service
-}
-
-// Status returns HTTPResponse.Status
-func (r ServicesQueryResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ServicesQueryResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type OneServiceQueryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3352,6 +3334,28 @@ func (r OneServiceQueryResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r OneServiceQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ServicesQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Service
+}
+
+// Status returns HTTPResponse.Status
+func (r ServicesQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ServicesQueryResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3468,6 +3472,15 @@ func (r UserQueryResponse) StatusCode() int {
 	return 0
 }
 
+// OneEnvironmentQueryWithResponse request returning *OneEnvironmentQueryResponse
+func (c *ClientWithResponses) OneEnvironmentQueryWithResponse(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*OneEnvironmentQueryResponse, error) {
+	rsp, err := c.OneEnvironmentQuery(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseOneEnvironmentQueryResponse(rsp)
+}
+
 // EnvironmentsQueryWithResponse request returning *EnvironmentsQueryResponse
 func (c *ClientWithResponses) EnvironmentsQueryWithResponse(ctx context.Context, params *EnvironmentsQueryParams, reqEditors ...RequestEditorFn) (*EnvironmentsQueryResponse, error) {
 	rsp, err := c.EnvironmentsQuery(ctx, params, reqEditors...)
@@ -3537,15 +3550,6 @@ func (c *ClientWithResponses) AddEnvironmentLabelsMutationWithResponse(ctx conte
 	return ParseAddEnvironmentLabelsMutationResponse(rsp)
 }
 
-// OneEnvironmentQueryWithResponse request returning *OneEnvironmentQueryResponse
-func (c *ClientWithResponses) OneEnvironmentQueryWithResponse(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*OneEnvironmentQueryResponse, error) {
-	rsp, err := c.OneEnvironmentQuery(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseOneEnvironmentQueryResponse(rsp)
-}
-
 // DeleteEnvironmentMutationWithResponse request returning *DeleteEnvironmentMutationResponse
 func (c *ClientWithResponses) DeleteEnvironmentMutationWithResponse(ctx context.Context, id string, params *DeleteEnvironmentMutationParams, reqEditors ...RequestEditorFn) (*DeleteEnvironmentMutationResponse, error) {
 	rsp, err := c.DeleteEnvironmentMutation(ctx, id, params, reqEditors...)
@@ -3562,6 +3566,15 @@ func (c *ClientWithResponses) EnvironmentQueryWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseEnvironmentQueryResponse(rsp)
+}
+
+// OneIntegrationQueryWithResponse request returning *OneIntegrationQueryResponse
+func (c *ClientWithResponses) OneIntegrationQueryWithResponse(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*OneIntegrationQueryResponse, error) {
+	rsp, err := c.OneIntegrationQuery(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseOneIntegrationQueryResponse(rsp)
 }
 
 // IntegrationsQueryWithResponse request returning *IntegrationsQueryResponse
@@ -3605,15 +3618,6 @@ func (c *ClientWithResponses) CreateIntegrationMutationWithResponse(ctx context.
 		return nil, err
 	}
 	return ParseCreateIntegrationMutationResponse(rsp)
-}
-
-// OneIntegrationQueryWithResponse request returning *OneIntegrationQueryResponse
-func (c *ClientWithResponses) OneIntegrationQueryWithResponse(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*OneIntegrationQueryResponse, error) {
-	rsp, err := c.OneIntegrationQuery(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseOneIntegrationQueryResponse(rsp)
 }
 
 // DeleteIntegrationMutationWithResponse request returning *DeleteIntegrationMutationResponse
@@ -3774,15 +3778,6 @@ func (c *ClientWithResponses) OrganizationQueryWithResponse(ctx context.Context,
 	return ParseOrganizationQueryResponse(rsp)
 }
 
-// ServicesQueryWithResponse request returning *ServicesQueryResponse
-func (c *ClientWithResponses) ServicesQueryWithResponse(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*ServicesQueryResponse, error) {
-	rsp, err := c.ServicesQuery(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseServicesQueryResponse(rsp)
-}
-
 // OneServiceQueryWithResponse request returning *OneServiceQueryResponse
 func (c *ClientWithResponses) OneServiceQueryWithResponse(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*OneServiceQueryResponse, error) {
 	rsp, err := c.OneServiceQuery(ctx, params, reqEditors...)
@@ -3790,6 +3785,15 @@ func (c *ClientWithResponses) OneServiceQueryWithResponse(ctx context.Context, p
 		return nil, err
 	}
 	return ParseOneServiceQueryResponse(rsp)
+}
+
+// ServicesQueryWithResponse request returning *ServicesQueryResponse
+func (c *ClientWithResponses) ServicesQueryWithResponse(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*ServicesQueryResponse, error) {
+	rsp, err := c.ServicesQuery(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseServicesQueryResponse(rsp)
 }
 
 // ServiceQueryWithResponse request returning *ServiceQueryResponse
@@ -3843,6 +3847,32 @@ func (c *ClientWithResponses) UserQueryWithResponse(ctx context.Context, id stri
 		return nil, err
 	}
 	return ParseUserQueryResponse(rsp)
+}
+
+// ParseOneEnvironmentQueryResponse parses an HTTP response from a OneEnvironmentQueryWithResponse call
+func ParseOneEnvironmentQueryResponse(rsp *http.Response) (*OneEnvironmentQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &OneEnvironmentQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Environment
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
 }
 
 // ParseEnvironmentsQueryResponse parses an HTTP response from a EnvironmentsQueryWithResponse call
@@ -3975,32 +4005,6 @@ func ParseAddEnvironmentLabelsMutationResponse(rsp *http.Response) (*AddEnvironm
 	return response, nil
 }
 
-// ParseOneEnvironmentQueryResponse parses an HTTP response from a OneEnvironmentQueryWithResponse call
-func ParseOneEnvironmentQueryResponse(rsp *http.Response) (*OneEnvironmentQueryResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &OneEnvironmentQueryResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Environment
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
 // ParseDeleteEnvironmentMutationResponse parses an HTTP response from a DeleteEnvironmentMutationWithResponse call
 func ParseDeleteEnvironmentMutationResponse(rsp *http.Response) (*DeleteEnvironmentMutationResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4043,6 +4047,32 @@ func ParseEnvironmentQueryResponse(rsp *http.Response) (*EnvironmentQueryRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Environment
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseOneIntegrationQueryResponse parses an HTTP response from a OneIntegrationQueryWithResponse call
+func ParseOneIntegrationQueryResponse(rsp *http.Response) (*OneIntegrationQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &OneIntegrationQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4114,32 +4144,6 @@ func ParseCreateIntegrationMutationResponse(rsp *http.Response) (*CreateIntegrat
 	}
 
 	response := &CreateIntegrationMutationResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Integration
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseOneIntegrationQueryResponse parses an HTTP response from a OneIntegrationQueryWithResponse call
-func ParseOneIntegrationQueryResponse(rsp *http.Response) (*OneIntegrationQueryResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &OneIntegrationQueryResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -4521,32 +4525,6 @@ func ParseOrganizationQueryResponse(rsp *http.Response) (*OrganizationQueryRespo
 	return response, nil
 }
 
-// ParseServicesQueryResponse parses an HTTP response from a ServicesQueryWithResponse call
-func ParseServicesQueryResponse(rsp *http.Response) (*ServicesQueryResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ServicesQueryResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []Service
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
 // ParseOneServiceQueryResponse parses an HTTP response from a OneServiceQueryWithResponse call
 func ParseOneServiceQueryResponse(rsp *http.Response) (*OneServiceQueryResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4563,6 +4541,32 @@ func ParseOneServiceQueryResponse(rsp *http.Response) (*OneServiceQueryResponse,
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Service
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseServicesQueryResponse parses an HTTP response from a ServicesQueryWithResponse call
+func ParseServicesQueryResponse(rsp *http.Response) (*ServicesQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ServicesQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Service
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
