@@ -20,13 +20,16 @@ var ListIntegrationsCmd = &cobra.Command{
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		if err != nil {
+			return err
+		}
 
 		envId := viper.GetString(EnvironmentIDKey)
 		name := viper.GetString(NameKey)
 		integrationType := viper.GetString(IntegrationTypeKey)
 
-		r, err := c.Client.IntegrationsQueryWithResponse(ctxTimeout,
+		r, err := c.IntegrationsQueryWithResponse(ctxTimeout,
 			&cloudapi.IntegrationsQueryParams{
 				Name:            lo.Ternary(name != "", &name, nil),
 				IntegrationType: lo.Ternary(integrationType != "", lo.ToPtr(cloudapi.IntegrationsQueryParamsIntegrationType(integrationType)), nil),

@@ -20,13 +20,16 @@ var ListEnvsCmd = &cobra.Command{
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		if err != nil {
+			return err
+		}
 
 		name := viper.GetString(NameKey)
 		labels := viper.GetStringMapString(LabelsKey)
 		labelsInput := lo.Ternary(len(labels) == 0, nil, lo.ToPtr(cloudclient.LabelsToLabelInput(labels)))
 
-		r, err := c.Client.EnvironmentsQueryWithResponse(ctxTimeout,
+		r, err := c.EnvironmentsQueryWithResponse(ctxTimeout,
 			&cloudapi.EnvironmentsQueryParams{
 				Name:   lo.Ternary(name != "", &name, nil),
 				Labels: labelsInput,

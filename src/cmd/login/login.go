@@ -52,8 +52,11 @@ func login(_ *cobra.Command, _ []string) error {
 	defer cancel()
 
 	apiAddress := viper.GetString(config.OtterizeAPIAddressKey)
-	c := cloudclient.NewClientFromToken(apiAddress, authResult.AccessToken)
-	meResponse, err := c.Client.MeQueryWithResponse(registerCtxTimeout)
+	c, err := cloudclient.NewClientFromToken(apiAddress, authResult.AccessToken)
+	if err != nil {
+		return err
+	}
+	meResponse, err := c.MeQueryWithResponse(registerCtxTimeout)
 	if err != nil {
 		return err
 	}
@@ -76,7 +79,7 @@ func login(_ *cobra.Command, _ []string) error {
 	}
 
 	// query user to get full user info
-	userResponse, err := c.Client.UserQueryWithResponse(registerCtxTimeout, userId)
+	userResponse, err := c.UserQueryWithResponse(registerCtxTimeout, userId)
 	if err != nil {
 		return err
 	}

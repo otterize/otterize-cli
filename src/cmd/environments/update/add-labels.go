@@ -20,12 +20,16 @@ var AddLabelsCmd = &cobra.Command{
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+
+		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		if err != nil {
+			return err
+		}
 
 		id := args[0]
 		labels := viper.GetStringMapString(LabelsKey)
 
-		r, err := c.Client.AddEnvironmentLabelsMutationWithResponse(ctxTimeout,
+		r, err := c.AddEnvironmentLabelsMutationWithResponse(ctxTimeout,
 			cloudapi.AddEnvironmentLabelsMutationJSONRequestBody{
 				Id:     id,
 				Labels: cloudclient.LabelsToLabelInput(labels),

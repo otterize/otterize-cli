@@ -21,11 +21,14 @@ var AcceptInviteCmd = &cobra.Command{
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		if err != nil {
+			return err
+		}
 
 		inviteID := args[0]
 
-		acceptResponse, err := c.Client.AcceptInviteMutationWithResponse(ctxTimeout,
+		acceptResponse, err := c.AcceptInviteMutationWithResponse(ctxTimeout,
 			cloudapi.AcceptInviteMutationJSONRequestBody{
 				Id: inviteID,
 			},
@@ -39,7 +42,7 @@ var AcceptInviteCmd = &cobra.Command{
 			return output.FormatHTTPError(acceptResponse)
 		}
 
-		userResponse, err := c.Client.MeQueryWithResponse(ctxTimeout)
+		userResponse, err := c.MeQueryWithResponse(ctxTimeout)
 		if err != nil {
 			return err
 		}

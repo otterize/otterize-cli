@@ -17,6 +17,10 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
 )
 
+const (
+	BearerAuthScopes = "bearerAuth.Scopes"
+)
+
 // Defines values for HTTPConfigMethod.
 const (
 	CONNECT HTTPConfigMethod = "CONNECT"
