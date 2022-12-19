@@ -30,8 +30,8 @@ var AddLabelsCmd = &cobra.Command{
 		labels := viper.GetStringMapString(LabelsKey)
 
 		r, err := c.AddEnvironmentLabelsMutationWithResponse(ctxTimeout,
+			id,
 			cloudapi.AddEnvironmentLabelsMutationJSONRequestBody{
-				Id:     id,
 				Labels: cloudclient.LabelsToLabelInput(labels),
 			},
 		)

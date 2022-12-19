@@ -30,8 +30,8 @@ var UpdateOrganizationCmd = &cobra.Command{
 		name := viper.GetString(NameKey)
 
 		r, err := c.UpdateOrganizationMutationWithResponse(ctxTimeout,
+			id,
 			cloudapi.UpdateOrganizationMutationJSONRequestBody{
-				Id:   id,
 				Name: lo.Ternary(name != "", &name, nil),
 			},
 		)

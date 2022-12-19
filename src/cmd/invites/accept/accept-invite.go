@@ -3,7 +3,6 @@ package accept
 import (
 	"context"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
@@ -29,9 +28,7 @@ var AcceptInviteCmd = &cobra.Command{
 		inviteID := args[0]
 
 		acceptResponse, err := c.AcceptInviteMutationWithResponse(ctxTimeout,
-			cloudapi.AcceptInviteMutationJSONRequestBody{
-				Id: inviteID,
-			},
+			inviteID,
 		)
 
 		if err != nil {
