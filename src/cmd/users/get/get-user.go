@@ -26,13 +26,14 @@ var GetUserCmd = &cobra.Command{
 		}
 
 		id := args[0]
-		r, err := c.UserQueryWithResponse(ctxTimeout, id)
+
+		r, err := cloudclient.WithStatusCheck(
+			func() (*cloudapi.UserQueryResponse, error) {
+				return c.UserQueryWithResponse(ctxTimeout, id)
+			},
+		)
 		if err != nil {
 			return err
-		}
-
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
 		}
 
 		user := lo.FromPtr(r.JSON200)
