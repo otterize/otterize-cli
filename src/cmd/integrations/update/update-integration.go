@@ -29,8 +29,8 @@ var UpdateIntegrationlicationCmd = &cobra.Command{
 		name := viper.GetString(NameKey)
 
 		r, err := c.UpdateIntegrationMutationWithResponse(ctxTimeout,
+			id,
 			cloudapi.UpdateIntegrationMutationJSONRequestBody{
-				Id:   id,
 				Name: lo.Ternary(name != "", &name, nil),
 			},
 		)

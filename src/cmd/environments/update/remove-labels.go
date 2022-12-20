@@ -30,8 +30,8 @@ var RemoveLabelsCmd = &cobra.Command{
 		labelKeys := viper.GetStringSlice(LabelsKey)
 
 		r, err := c.DeleteEnvironmentLabelsMutationWithResponse(ctxTimeout,
+			id,
 			&cloudapi.DeleteEnvironmentLabelsMutationParams{
-				Id:     id,
 				Labels: labelKeys,
 			},
 		)

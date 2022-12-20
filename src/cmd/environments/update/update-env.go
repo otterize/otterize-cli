@@ -32,8 +32,8 @@ var UpdateEnvCmd = &cobra.Command{
 		labelsInput := lo.Ternary(len(labels) == 0, nil, lo.ToPtr(cloudclient.LabelsToLabelInput(labels)))
 
 		r, err := c.UpdateEnvironmentMutationWithResponse(ctxTimeout,
+			id,
 			cloudapi.UpdateEnvironmentMutationJSONRequestBody{
-				Id:     id,
 				Labels: labelsInput,
 				Name:   lo.Ternary(name != "", &name, nil),
 			},
