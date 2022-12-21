@@ -2,12 +2,12 @@ package login
 
 import (
 	"context"
+	"errors"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/users"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/auth_api"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/server"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/pkg/browser"
 	"github.com/samber/lo"
@@ -57,12 +57,9 @@ func login(_ *cobra.Command, _ []string) error {
 		return err
 	}
 	meResponse, err := c.MeQueryWithResponse(registerCtxTimeout)
-	if err != nil {
-		return err
-	}
-
+	var httpError *cloudclient.HttpError
 	userId := ""
-	if meResponse.StatusCode() == http.StatusNotFound {
+	if err != nil && errors.As(err, &httpError) && httpError.StatusCode == http.StatusNotFound {
 		prints.PrintCliStderr("Registering user with Otterize backend for the first time")
 		// This is currently not exposed by REST API
 		usersClient := users.NewClientFromToken(apiAddress, authResult.AccessToken)
@@ -72,8 +69,8 @@ func login(_ *cobra.Command, _ []string) error {
 		}
 		prints.PrintCliStderr("User registered as Otterize user with user ID: %s", user.Id)
 		userId = user.Id
-	} else if cloudclient.IsErrorStatus(meResponse.StatusCode()) {
-		return output.FormatHTTPError(meResponse)
+	} else if err != nil {
+		return err
 	} else {
 		userId = meResponse.JSON200.User.Id
 	}
@@ -82,10 +79,6 @@ func login(_ *cobra.Command, _ []string) error {
 	userResponse, err := c.UserQueryWithResponse(registerCtxTimeout, userId)
 	if err != nil {
 		return err
-	}
-
-	if cloudclient.IsErrorStatus(userResponse.StatusCode()) {
-		return output.FormatHTTPError(userResponse)
 	}
 
 	user := lo.FromPtr(userResponse.JSON200)

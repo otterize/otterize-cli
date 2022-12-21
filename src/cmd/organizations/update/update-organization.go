@@ -39,10 +39,6 @@ var UpdateOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		prints.PrintCliStderr("Organization updated")
 
 		org := lo.FromPtr(r.JSON200)

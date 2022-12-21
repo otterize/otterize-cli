@@ -4,7 +4,6 @@ import (
 	"context"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 
 	"github.com/spf13/cobra"
@@ -27,25 +26,13 @@ var AcceptInviteCmd = &cobra.Command{
 
 		inviteID := args[0]
 
-		acceptResponse, err := c.AcceptInviteMutationWithResponse(ctxTimeout,
-			inviteID,
-		)
-
-		if err != nil {
+		if _, err := c.AcceptInviteMutationWithResponse(ctxTimeout, inviteID); err != nil {
 			return err
-		}
-
-		if cloudclient.IsErrorStatus(acceptResponse.StatusCode()) {
-			return output.FormatHTTPError(acceptResponse)
 		}
 
 		userResponse, err := c.MeQueryWithResponse(ctxTimeout)
 		if err != nil {
 			return err
-		}
-
-		if cloudclient.IsErrorStatus(userResponse.StatusCode()) {
-			return output.FormatHTTPError(userResponse)
 		}
 
 		user := userResponse.JSON200.User

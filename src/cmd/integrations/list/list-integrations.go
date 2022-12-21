@@ -40,10 +40,6 @@ var ListIntegrationsCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		integrations := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatIntegrations(integrations, false)
 		if err != nil {

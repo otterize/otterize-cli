@@ -36,10 +36,6 @@ var DeleteEnvCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		envID := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatItem(envID, func(envID string) string {
 			return fmt.Sprintf("Deleted environment with id %s", envID)

@@ -38,10 +38,6 @@ var UpdateIntegrationlicationCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		prints.PrintCliStderr("Integration updated")
 
 		integration := lo.FromPtr(r.JSON200)

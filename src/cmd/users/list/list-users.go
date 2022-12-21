@@ -29,10 +29,6 @@ var ListUsersCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		users := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatUsers(users)
 		if err != nil {

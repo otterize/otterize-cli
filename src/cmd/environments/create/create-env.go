@@ -40,10 +40,6 @@ var CreateEnvCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		env := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatEnvs([]cloudapi.Environment{env})
 		if err != nil {

@@ -29,10 +29,6 @@ var ListOrganizationsCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		organizations := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatOrganizations(organizations)
 		if err != nil {
