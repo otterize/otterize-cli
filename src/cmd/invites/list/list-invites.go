@@ -30,10 +30,6 @@ var ListInvitesCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		invites := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatInvites(invites)
 		if err != nil {

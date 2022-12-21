@@ -31,10 +31,6 @@ var GetUserCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		user := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatUsers([]cloudapi.User{user})
 		if err != nil {

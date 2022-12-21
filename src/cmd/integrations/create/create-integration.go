@@ -44,10 +44,6 @@ var CreateIntegrationCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		integration := lo.FromPtr(r.JSON200)
 
 		formatted, err := output.FormatIntegrations([]cloudapi.Integration{integration}, true)

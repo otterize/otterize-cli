@@ -33,10 +33,6 @@ var DeleteInviteCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		inviteID := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatItem(inviteID, func(id string) string {
 			return fmt.Sprintf("Deleted invite with id %s", id)

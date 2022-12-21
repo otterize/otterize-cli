@@ -29,10 +29,6 @@ var CreateOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		org := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatOrganizations([]cloudapi.Organization{org})
 		if err != nil {

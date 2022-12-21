@@ -2,10 +2,8 @@ package output
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/markkurossi/tabulate"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-
 	"github.com/spf13/viper"
 	"reflect"
 )
@@ -81,8 +79,4 @@ func FormatItem[T any](item T, getTextData func(T) string) (string, error) {
 type HttpErrorResponse interface {
 	Status() string
 	StatusCode() int
-}
-
-func FormatHTTPError(r HttpErrorResponse) error {
-	return fmt.Errorf("HTTP error %s", r.Status())
 }

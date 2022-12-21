@@ -31,9 +31,6 @@ var DeleteIntegrationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
 
 		integrationID := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatItem(integrationID, func(integrationID string) string {

@@ -39,10 +39,6 @@ var ListEnvsCmd = &cobra.Command{
 			return err
 		}
 
-		if cloudclient.IsErrorStatus(r.StatusCode()) {
-			return output.FormatHTTPError(r)
-		}
-
 		envs := lo.FromPtr(r.JSON200)
 		formatted, err := output.FormatEnvs(envs)
 		if err != nil {
