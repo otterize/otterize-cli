@@ -4,7 +4,12 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/output"
+	"net/http"
 )
+
+type Doer interface {
+	Do(req *http.Request) (*http.Response, error)
+}
 
 func NewClientFromToken(address string, token string) (*cloudapi.ClientWithResponses, error) {
 	address = address + "/rest/v1"
@@ -13,22 +18,27 @@ func NewClientFromToken(address string, token string) (*cloudapi.ClientWithRespo
 		return nil, err
 	}
 
-	return cloudapi.NewClientWithResponses(address, cloudapi.WithRequestEditorFn(bearerTokenProvider.Intercept))
+	client := &doerWithErrorCheck{doer: &http.Client{}}
+
+	return cloudapi.NewClientWithResponses(address, cloudapi.WithRequestEditorFn(bearerTokenProvider.Intercept), cloudapi.WithHTTPClient(client))
 }
 
 func IsErrorStatus(statusCode int) bool {
-	return statusCode < 200 || statusCode >= 300
+	return statusCode < 200 || statusCode >= 400
 }
 
-func WithStatusCheck[T output.HttpErrorResponse](callback func() (T, error)) (T, error) {
-	r, err := callback()
+type doerWithErrorCheck struct {
+	doer Doer
+}
+
+func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
+	resp, err := d.doer.Do(req)
 	if err != nil {
-		return r, err
+		return resp, err
+	}
+	if IsErrorStatus(resp.StatusCode) {
+		return resp, output.FormatHTTPErrorFromCode(resp.StatusCode)
 	}
 
-	if IsErrorStatus(r.StatusCode()) {
-		return r, output.FormatHTTPError(r)
-	}
-
-	return r, nil
+	return resp, nil
 }

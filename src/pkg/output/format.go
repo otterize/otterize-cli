@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/markkurossi/tabulate"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"net/http"
 
 	"github.com/spf13/viper"
 	"reflect"
@@ -84,5 +85,10 @@ type HttpErrorResponse interface {
 }
 
 func FormatHTTPError(r HttpErrorResponse) error {
-	return fmt.Errorf("HTTP error %s", r.Status())
+	return FormatHTTPErrorFromCode(r.StatusCode())
+}
+
+func FormatHTTPErrorFromCode(statusCode int) error {
+	return fmt.Errorf("HTTP error %s", http.StatusText(statusCode))
+
 }
