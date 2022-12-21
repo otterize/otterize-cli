@@ -65,7 +65,6 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeSecrets bool
 
 		if integration.Status.Id != "" {
 			integrationColumns["controller last seen"] = fmt.Sprintf("%v", integration.Status.LastSeen)
-			integrationColumns["intents last applied"] = fmt.Sprintf("%v", integration.Status.IntentsStatus.AppliedAt)
 		}
 
 		return []map[string]string{integrationColumns}

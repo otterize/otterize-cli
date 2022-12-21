@@ -36,17 +36,13 @@ const (
 // Defines values for IntegrationIntegrationType.
 const (
 	IntegrationIntegrationTypeCICD       IntegrationIntegrationType = "CICD"
-	IntegrationIntegrationTypeKafka      IntegrationIntegrationType = "Kafka"
 	IntegrationIntegrationTypeKubernetes IntegrationIntegrationType = "Kubernetes"
-	IntegrationIntegrationTypeService    IntegrationIntegrationType = "Service"
 )
 
 // Defines values for IntegrationType.
 const (
 	IntegrationTypeCICD       IntegrationType = "CICD"
-	IntegrationTypeKafka      IntegrationType = "Kafka"
 	IntegrationTypeKubernetes IntegrationType = "Kubernetes"
-	IntegrationTypeService    IntegrationType = "Service"
 )
 
 // Defines values for IntentType.
@@ -156,9 +152,8 @@ type IntegrationIdentityOtherFields struct {
 
 // IntegrationStatus defines model for IntegrationStatus.
 type IntegrationStatus struct {
-	Id            string        `json:"id"`
-	IntentsStatus IntentsStatus `json:"intentsStatus"`
-	LastSeen      time.Time     `json:"lastSeen"`
+	Id       string    `json:"id"`
+	LastSeen time.Time `json:"lastSeen"`
 }
 
 // IntegrationType defines model for IntegrationType.
@@ -179,13 +174,6 @@ type Intent struct {
 
 // IntentType defines model for Intent.Type.
 type IntentType string
-
-// IntentsStatus defines model for IntentsStatus.
-type IntentsStatus struct {
-	AppliedAt      time.Time `json:"appliedAt"`
-	ApplyError     *string   `json:"applyError,omitempty"`
-	RevisionNumber int32     `json:"revisionNumber"`
-}
 
 // Invite defines model for Invite.
 type Invite struct {
