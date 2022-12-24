@@ -185,7 +185,7 @@ func LoadSelectedOrganizationFile() {
 
 	err = json.NewDecoder(file).Decode(&orgConfig)
 	if err != nil {
-		must.Must(fmt.Errorf("failed to decode secret config: %w", err))
+		must.Must(fmt.Errorf("failed to decode org config: %w", err))
 		return
 	}
 
