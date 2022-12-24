@@ -26,18 +26,14 @@ var AcceptInviteCmd = &cobra.Command{
 
 		inviteID := args[0]
 
-		if _, err := c.AcceptInviteMutationWithResponse(ctxTimeout, inviteID); err != nil {
-			return err
-		}
-
-		userResponse, err := c.MeQueryWithResponse(ctxTimeout)
+		resp, err := c.AcceptInviteMutationWithResponse(ctxTimeout, inviteID)
 		if err != nil {
 			return err
 		}
 
-		user := userResponse.JSON200.User
-		prints.PrintCliStderr("User ID %s joined organization %s",
-			user.Id, user.Organization.Id)
+		org := resp.JSON200.Organization
+		prints.PrintCliStderr("Joined organization %s",
+			org.Id)
 
 		return nil
 	},

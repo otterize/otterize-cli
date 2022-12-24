@@ -211,9 +211,9 @@ type LabelInput struct {
 
 // Me defines model for Me.
 type Me struct {
-	Invites      *[]Invite    `json:"invites,omitempty"`
-	Organization Organization `json:"organization"`
-	User         User         `json:"user"`
+	Invites              *[]Invite    `json:"invites,omitempty"`
+	SelectedOrganization Organization `json:"selectedOrganization"`
+	User                 User         `json:"user"`
 }
 
 // Organization defines model for Organization.
@@ -240,6 +240,7 @@ type User struct {
 	Email                string               `json:"email"`
 	Id                   string               `json:"id"`
 	Organization         *Organization        `json:"organization,omitempty"`
+	Organizations        *[]Organization      `json:"organizations,omitempty"`
 }
 
 // BadRequest defines model for BadRequest.
@@ -3251,7 +3252,7 @@ func (r InviteQueryResponse) StatusCode() int {
 type AcceptInviteMutationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *string
+	JSON200      *Invite
 	JSON400      *Error
 	JSON403      *Error
 	JSON404      *Error
@@ -5348,7 +5349,7 @@ func ParseAcceptInviteMutationResponse(rsp *http.Response) (*AcceptInviteMutatio
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest string
+		var dest Invite
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
