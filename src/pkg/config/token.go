@@ -21,6 +21,10 @@ type SecretConfig struct {
 	UserToken    string `json:"user_token,omitempty"`
 }
 
+type OrganizationConfig struct {
+	OrganizationId string `json:"organization_id"`
+}
+
 func GetAPITokenSource(ctx context.Context) oauth2.TokenSource {
 	if viper.IsSet(ApiUserTokenKey) {
 		return oauth2.StaticTokenSource(&oauth2.Token{AccessToken: viper.GetString(ApiUserTokenKey)})
@@ -42,6 +46,7 @@ func GetAPIToken(ctx context.Context) string {
 }
 
 const ApiCredentialsFilename = "credentials"
+const ApiOrganizationFilename = "organization"
 
 func LoadApiCredentialsFile() {
 	if viper.InConfig(ApiClientIdKey) || viper.InConfig(ApiClientSecretKey) {
@@ -120,4 +125,72 @@ func SaveSecretConfig(conf SecretConfig) error {
 	}
 
 	return nil
+}
+
+func SaveSelectedOrganization(orgConf OrganizationConfig) error {
+	dirPath, err := OtterizeConfigDirPath()
+	if err != nil {
+		return fmt.Errorf("unable to get config dir path: %w", err)
+	}
+
+	err = os.MkdirAll(dirPath, 0700)
+	if err != nil {
+		return fmt.Errorf("unable to create config path: %w", err)
+	}
+
+	tokenPath := path.Join(dirPath, ApiOrganizationFilename)
+	file, err := os.OpenFile(tokenPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+	if err != nil {
+		return fmt.Errorf("open file %s failed: %w", tokenPath, err)
+	}
+	defer file.Close()
+
+	err = json.NewEncoder(file).Encode(&orgConf)
+	if err != nil {
+		return fmt.Errorf("unable to write auth to path %s: %w", tokenPath, err)
+	}
+
+	return nil
+}
+
+func LoadSelectedOrganizationFile() {
+	if viper.IsSet(ApiSelectedOrganizationId) {
+		// org ID was provided as a flag or env var
+		return
+	}
+
+	// try to read the auth from file
+	configDir, err := OtterizeConfigDirPath()
+	if errors.Is(err, os.ErrNotExist) {
+		// no home dir probably
+		return
+	} else if err != nil {
+		logrus.Warningf("Failed to find otterize config dir: %s", err)
+		return
+	}
+
+	orgFilePath := filepath.Join(configDir, ApiSelectedOrganizationId)
+	file, err := os.Open(orgFilePath)
+	if errors.Is(err, os.ErrNotExist) {
+		// no auth file
+		return
+	}
+
+	if err != nil {
+		must.Must(fmt.Errorf("failed reading otterize selected org ID file: %w", err))
+		return
+	}
+
+	var orgConfig OrganizationConfig
+
+	err = json.NewDecoder(file).Decode(&orgConfig)
+	if err != nil {
+		must.Must(fmt.Errorf("failed to decode secret config: %w", err))
+		return
+	}
+
+	if orgConfig.OrganizationId != "" {
+		viper.Set(ApiSelectedOrganizationId, orgConfig.OrganizationId)
+		return
+	}
 }
