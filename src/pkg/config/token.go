@@ -150,6 +150,8 @@ func SaveSelectedOrganization(orgConf OrganizationConfig) error {
 		return fmt.Errorf("unable to write auth to path %s: %w", tokenPath, err)
 	}
 
+	viper.Set(ApiSelectedOrganizationId, orgConf.OrganizationId)
+
 	return nil
 }
 

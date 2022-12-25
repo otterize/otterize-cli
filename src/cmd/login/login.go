@@ -16,6 +16,7 @@ import (
 	"github.com/spf13/viper"
 	"net/http"
 	"os"
+	"strings"
 )
 
 const SwitchAccountFlagKey = "switch"
@@ -76,13 +77,14 @@ func login(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
+	// FIXME: create task to
 	user := meResponse.JSON200.User
 	prints.PrintCliStderr("Logged in as Otterize user %s (%s)", user.Id, user.Email)
 	if len(*user.Organizations) != 0 {
 		prints.PrintCliStderr("You belong to the following organizations:")
 		for _, org := range *user.Organizations {
 			if org.Name != nil {
-				prints.PrintCliStderr("ID: %s, Name: %s", org.Id, org.Name)
+				prints.PrintCliStderr("ID: %s | Name: %s", org.Id, *org.Name)
 			} else {
 				prints.PrintCliStderr("ID: %s", org.Id)
 			}
@@ -90,11 +92,15 @@ func login(_ *cobra.Command, _ []string) error {
 		if len(*user.Organizations) == 1 {
 			prints.PrintCliStderr("Only 1 organization found - auto-selecting this organization for use. To change, join another organization and log in again.")
 		} else {
-			prints.PrintCliStderr("More than 1 organization found, input org ID (to change, log-in again): ")
+			prints.PrintCliStderr("More than 1 organization found, input org ID (to change, log-in again, blank to select first org): ")
 			reader := bufio.NewReader(os.Stdin)
 			orgId, err := reader.ReadString('\n')
 			if err != nil {
 				return err
+			}
+
+			if strings.TrimSpace(orgId) == "" {
+				orgId = (*user.Organizations)[0].Id
 			}
 
 			err = config.SaveSelectedOrganization(config.OrganizationConfig{OrganizationId: orgId})
@@ -102,7 +108,7 @@ func login(_ *cobra.Command, _ []string) error {
 				return err
 			}
 		}
-		prints.PrintCliStderr("User is registered with organization %s", user.Organization.Id)
+		prints.PrintCliStderr("User is registered with organization %s", viper.GetString(config.ApiSelectedOrganizationId))
 	} else {
 		prints.PrintCliStderr("User has no organization, automatically creating one for you.")
 		resp, err := c.CreateOrganizationMutationWithResponse(registerCtxTimeout)
