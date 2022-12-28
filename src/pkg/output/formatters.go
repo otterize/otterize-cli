@@ -24,12 +24,11 @@ func FormatEnvs(envs []cloudapi.Environment) (string, error) {
 
 	getColumnData := func(e cloudapi.Environment) []map[string]string {
 		return []map[string]string{{
-			"id":                 e.Id,
-			"name":               lo.FromPtr(e.Name),
-			"organization_id":    e.Organization.Id,
-			"integrations_count": fmt.Sprintf("%d", e.IntegrationCount),
-			"intents_count":      fmt.Sprintf("%d", e.IntentsCount),
-			"labels":             formatLabels(e.Labels),
+			"id":              e.Id,
+			"name":            lo.FromPtr(e.Name),
+			"organization_id": e.Organization.Id,
+			"intents_count":   fmt.Sprintf("%d", e.IntentsCount),
+			"labels":          formatLabels(e.Labels),
 		}}
 	}
 	return FormatList(envs, columns, getColumnData)
@@ -42,20 +41,10 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeSecrets bool
 	}
 
 	getColumnData := func(integration cloudapi.Integration) []map[string]string {
-		var envNames []string
-		if integration.Environments != nil {
-			envNames = lo.Map(*integration.Environments, func(env cloudapi.Environment, _ int) string {
-				return lo.FromPtr(env.Name)
-			})
-		} else if integration.AllEnvsAllowed {
-			envNames = []string{"All environments allowed"}
-		}
-
 		integrationColumns := map[string]string{
 			"id":   integration.Id,
 			"type": string(integration.IntegrationType),
 			"name": integration.Name,
-			"env":  strings.Join(envNames, ", "),
 		}
 
 		if includeSecrets {

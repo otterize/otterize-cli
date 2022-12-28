@@ -26,18 +26,14 @@ var CreateIntegrationCmd = &cobra.Command{
 		}
 
 		name := viper.GetString(NameKey)
-		environmentIDS := viper.GetStringSlice(EnvironmentIDKey)
-		allEnvsAllowed := viper.GetBool(AllEnvsAllowKey)
+		environmentID := viper.GetString(EnvironmentIDKey)
 		integrationType := viper.GetString(IntegrationTypeKey)
 
 		r, err := c.CreateIntegrationMutationWithResponse(ctxTimeout,
 			cloudapi.CreateIntegrationMutationJSONRequestBody{
 				Name:            name,
 				IntegrationType: cloudapi.IntegrationType(integrationType),
-				Environments: cloudapi.IntegrationEnvironments{
-					AllEnvsAllowed: &allEnvsAllowed,
-					EnvironmentIds: lo.Ternary(len(environmentIDS) > 0, &environmentIDS, nil),
-				},
+				EnvironmentInfo: cloudapi.IntegrationEnvironments{EnvironmentId: lo.Ternary(environmentID == "", nil, &environmentID)},
 			},
 		)
 		if err != nil {
@@ -59,7 +55,7 @@ var CreateIntegrationCmd = &cobra.Command{
 func init() {
 	CreateIntegrationCmd.Flags().StringP(NameKey, NameShorthand, "", "integration name")
 	cobra.CheckErr(CreateIntegrationCmd.MarkFlagRequired(NameKey))
-	CreateIntegrationCmd.Flags().StringSlice(EnvironmentIDKey, make([]string, 0), "allowed environment ids")
+	CreateIntegrationCmd.Flags().String(EnvironmentIDKey, "", "default environment id")
 	CreateIntegrationCmd.Flags().StringP(IntegrationTypeKey, IntegrationTypeShorthand, "", "integration type")
 	cobra.CheckErr(CreateIntegrationCmd.MarkFlagRequired(IntegrationTypeKey))
 	CreateIntegrationCmd.Flags().Bool(AllEnvsAllowKey, false, "this integration will be able to operate in all the environments (Only for CICD integration)")
