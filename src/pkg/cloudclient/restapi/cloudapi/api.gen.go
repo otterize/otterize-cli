@@ -21,56 +21,72 @@ const (
 	BearerAuthScopes = "bearerAuth.Scopes"
 )
 
+// Defines values for ClusterClusterStatus.
+const (
+	ClusterClusterStatusCONNECTED          ClusterClusterStatus = "CONNECTED"
+	ClusterClusterStatusDISCONNECTED       ClusterClusterStatus = "DISCONNECTED"
+	ClusterClusterStatusNEVERCONNECTED     ClusterClusterStatus = "NEVER_CONNECTED"
+	ClusterClusterStatusPARTIALLYCONNECTED ClusterClusterStatus = "PARTIALLY_CONNECTED"
+)
+
+// Defines values for ClusterComponentStatus.
+const (
+	ClusterComponentStatusCONNECTED          ClusterComponentStatus = "CONNECTED"
+	ClusterComponentStatusDISCONNECTED       ClusterComponentStatus = "DISCONNECTED"
+	ClusterComponentStatusNEVERCONNECTED     ClusterComponentStatus = "NEVER_CONNECTED"
+	ClusterComponentStatusPARTIALLYCONNECTED ClusterComponentStatus = "PARTIALLY_CONNECTED"
+)
+
 // Defines values for HTTPConfigMethod.
 const (
-	CONNECT HTTPConfigMethod = "CONNECT"
-	DELETE  HTTPConfigMethod = "DELETE"
-	GET     HTTPConfigMethod = "GET"
-	OPTIONS HTTPConfigMethod = "OPTIONS"
-	PATCH   HTTPConfigMethod = "PATCH"
-	POST    HTTPConfigMethod = "POST"
-	PUT     HTTPConfigMethod = "PUT"
-	TRACE   HTTPConfigMethod = "TRACE"
+	HTTPConfigMethodCONNECT HTTPConfigMethod = "CONNECT"
+	HTTPConfigMethodDELETE  HTTPConfigMethod = "DELETE"
+	HTTPConfigMethodGET     HTTPConfigMethod = "GET"
+	HTTPConfigMethodOPTIONS HTTPConfigMethod = "OPTIONS"
+	HTTPConfigMethodPATCH   HTTPConfigMethod = "PATCH"
+	HTTPConfigMethodPOST    HTTPConfigMethod = "POST"
+	HTTPConfigMethodPUT     HTTPConfigMethod = "PUT"
+	HTTPConfigMethodTRACE   HTTPConfigMethod = "TRACE"
 )
 
 // Defines values for IntegrationIntegrationType.
 const (
 	IntegrationIntegrationTypeCICD       IntegrationIntegrationType = "CICD"
-	IntegrationIntegrationTypeKubernetes IntegrationIntegrationType = "Kubernetes"
+	IntegrationIntegrationTypeKUBERNETES IntegrationIntegrationType = "KUBERNETES"
 )
 
 // Defines values for IntegrationType.
 const (
 	IntegrationTypeCICD       IntegrationType = "CICD"
-	IntegrationTypeKubernetes IntegrationType = "Kubernetes"
+	IntegrationTypeKUBERNETES IntegrationType = "KUBERNETES"
 )
 
 // Defines values for IntentType.
 const (
-	GRPC  IntentType = "gRPC"
+	GRPC  IntentType = "GRPC"
 	HTTP  IntentType = "HTTP"
-	Kafka IntentType = "Kafka"
-	Redis IntentType = "Redis"
+	KAFKA IntentType = "KAFKA"
+	REDIS IntentType = "REDIS"
 )
 
 // Defines values for InviteStatus.
 const (
-	Accepted InviteStatus = "Accepted"
-	Pending  InviteStatus = "Pending"
+	ACCEPTED InviteStatus = "ACCEPTED"
+	PENDING  InviteStatus = "PENDING"
 )
 
-// Defines values for KafkaConfigOperation.
+// Defines values for KafkaConfigOperations.
 const (
-	Alter           KafkaConfigOperation = "alter"
-	AlterConfigs    KafkaConfigOperation = "AlterConfigs"
-	ClusterAction   KafkaConfigOperation = "ClusterAction"
-	Consume         KafkaConfigOperation = "consume"
-	Create          KafkaConfigOperation = "create"
-	Delete          KafkaConfigOperation = "delete"
-	Describe        KafkaConfigOperation = "describe"
-	DescribeConfigs KafkaConfigOperation = "DescribeConfigs"
-	IdempotentWrite KafkaConfigOperation = "IdempotentWrite"
-	Produce         KafkaConfigOperation = "produce"
+	KafkaConfigOperationsALTER           KafkaConfigOperations = "ALTER"
+	KafkaConfigOperationsALTERCONFIGS    KafkaConfigOperations = "ALTER_CONFIGS"
+	KafkaConfigOperationsCLUSTERACTION   KafkaConfigOperations = "CLUSTER_ACTION"
+	KafkaConfigOperationsCONSUME         KafkaConfigOperations = "CONSUME"
+	KafkaConfigOperationsCREATE          KafkaConfigOperations = "CREATE"
+	KafkaConfigOperationsDELETE          KafkaConfigOperations = "DELETE"
+	KafkaConfigOperationsDESCRIBE        KafkaConfigOperations = "DESCRIBE"
+	KafkaConfigOperationsDESCRIBECONFIGS KafkaConfigOperations = "DESCRIBE_CONFIGS"
+	KafkaConfigOperationsIDEMPOTENTWRITE KafkaConfigOperations = "IDEMPOTENT_WRITE"
+	KafkaConfigOperationsPRODUCE         KafkaConfigOperations = "PRODUCE"
 )
 
 // AuthProviderUserInfo defines model for AuthProviderUserInfo.
@@ -80,6 +96,27 @@ type AuthProviderUserInfo struct {
 	PictureURL    string `json:"pictureURL"`
 }
 
+// Cluster defines model for Cluster.
+type Cluster struct {
+	ClusterStatus *ClusterClusterStatus `json:"clusterStatus,omitempty"`
+	Components    *[]ClusterComponent   `json:"components,omitempty"`
+	Id            string                `json:"id"`
+	IntegrationID string                `json:"integrationID"`
+	Name          string                `json:"name"`
+}
+
+// ClusterClusterStatus defines model for Cluster.ClusterStatus.
+type ClusterClusterStatus string
+
+// ClusterComponent defines model for ClusterComponent.
+type ClusterComponent struct {
+	Name   string                  `json:"name"`
+	Status *ClusterComponentStatus `json:"status,omitempty"`
+}
+
+// ClusterComponentStatus defines model for ClusterComponent.Status.
+type ClusterComponentStatus string
+
 // ClusterNamespacesPair defines model for ClusterNamespacesPair.
 type ClusterNamespacesPair struct {
 	Cluster    string    `json:"cluster"`
@@ -88,13 +125,12 @@ type ClusterNamespacesPair struct {
 
 // Environment defines model for Environment.
 type Environment struct {
-	Id               string                   `json:"id"`
-	IntegrationCount int32                    `json:"integrationCount"`
-	IntentsCount     int32                    `json:"intentsCount"`
-	Labels           *[]Label                 `json:"labels,omitempty"`
-	Name             *string                  `json:"name,omitempty"`
-	Namespaces       *[]ClusterNamespacesPair `json:"namespaces,omitempty"`
-	Organization     Organization             `json:"organization"`
+	Id           string                   `json:"id"`
+	IntentsCount int32                    `json:"intentsCount"`
+	Labels       *[]Label                 `json:"labels,omitempty"`
+	Name         *string                  `json:"name,omitempty"`
+	Namespaces   *[]ClusterNamespacesPair `json:"namespaces,omitempty"`
+	Organization Organization             `json:"organization"`
 }
 
 // Error defines model for Error.
@@ -113,15 +149,14 @@ type HTTPConfigMethod string
 
 // Integration defines model for Integration.
 type Integration struct {
-	AllEnvsAllowed  bool                       `json:"allEnvsAllowed"`
-	Credentials     IntegrationCredentials     `json:"credentials"`
-	Environments    *[]Environment             `json:"environments,omitempty"`
-	Id              string                     `json:"id"`
-	Identity        IntegrationIdentity        `json:"identity"`
-	IntegrationType IntegrationIntegrationType `json:"integrationType"`
-	Name            string                     `json:"name"`
-	Organization    Organization               `json:"organization"`
-	Status          *IntegrationStatus         `json:"status,omitempty"`
+	Credentials                  IntegrationCredentials     `json:"credentials"`
+	Id                           string                     `json:"id"`
+	Identity                     IntegrationIdentity        `json:"identity"`
+	IntegrationType              IntegrationIntegrationType `json:"integrationType"`
+	KubernetesDefaultEnvironment Environment                `json:"kubernetesDefaultEnvironment"`
+	Name                         string                     `json:"name"`
+	Organization                 Organization               `json:"organization"`
+	Status                       *IntegrationStatus         `json:"status,omitempty"`
 }
 
 // IntegrationIntegrationType defines model for Integration.IntegrationType.
@@ -135,8 +170,7 @@ type IntegrationCredentials struct {
 
 // IntegrationEnvironments defines model for IntegrationEnvironments.
 type IntegrationEnvironments struct {
-	AllEnvsAllowed *bool     `json:"allEnvsAllowed,omitempty"`
-	EnvironmentIds *[]string `json:"environmentIds,omitempty"`
+	EnvironmentId *string `json:"environmentId,omitempty"`
 }
 
 // IntegrationIdentity defines model for IntegrationIdentity.
@@ -161,13 +195,12 @@ type IntegrationType string
 
 // Intent defines model for Intent.
 type Intent struct {
-	Client                    string         `json:"client"`
-	Environment               Environment    `json:"environment"`
+	Client                    Service        `json:"client"`
 	FullyQualifiedServiceName string         `json:"fullyQualifiedServiceName"`
 	HttpResources             *[]HTTPConfig  `json:"httpResources,omitempty"`
 	Id                        string         `json:"id"`
 	KafkaResources            *[]KafkaConfig `json:"kafkaResources,omitempty"`
-	Server                    string         `json:"server"`
+	Server                    Service        `json:"server"`
 	Source                    string         `json:"source"`
 	Type                      *IntentType    `json:"type,omitempty"`
 }
@@ -190,12 +223,12 @@ type InviteStatus string
 
 // KafkaConfig defines model for KafkaConfig.
 type KafkaConfig struct {
-	Operation KafkaConfigOperation `json:"operation"`
-	Topic     string               `json:"topic"`
+	Name       string                   `json:"name"`
+	Operations *[]KafkaConfigOperations `json:"operations,omitempty"`
 }
 
-// KafkaConfigOperation defines model for KafkaConfig.Operation.
-type KafkaConfigOperation string
+// KafkaConfigOperations defines model for KafkaConfig.Operations.
+type KafkaConfigOperations string
 
 // Label defines model for Label.
 type Label struct {
@@ -216,6 +249,12 @@ type Me struct {
 	User         User         `json:"user"`
 }
 
+// Namespace defines model for Namespace.
+type Namespace struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+}
+
 // Organization defines model for Organization.
 type Organization struct {
 	Id       string  `json:"id"`
@@ -229,6 +268,7 @@ type Service struct {
 	Id                            string      `json:"id"`
 	IntegrationId                 string      `json:"integrationId"`
 	Name                          string      `json:"name"`
+	Namespace                     *Namespace  `json:"namespace,omitempty"`
 	ReferencedByIntents           bool        `json:"referencedByIntents"`
 	ReferencedByKafkaServerConfig bool        `json:"referencedByKafkaServerConfig"`
 }
@@ -242,23 +282,35 @@ type User struct {
 	Organization         *Organization        `json:"organization,omitempty"`
 }
 
-// BadRequest defines model for BadRequest.
-type BadRequest = Error
+// BADREQUEST defines model for BAD_REQUEST.
+type BADREQUEST = Error
 
-// Conflict defines model for Conflict.
-type Conflict = Error
+// CONFLICT defines model for CONFLICT.
+type CONFLICT = Error
 
-// Forbidden defines model for Forbidden.
-type Forbidden = Error
+// FORBIDDEN defines model for FORBIDDEN.
+type FORBIDDEN = Error
 
-// InternalServerError defines model for InternalServerError.
-type InternalServerError = Error
+// INTERNALSERVERERROR defines model for INTERNAL_SERVER_ERROR.
+type INTERNALSERVERERROR = Error
 
-// NotFound defines model for NotFound.
-type NotFound = Error
+// NOTFOUND defines model for NOT_FOUND.
+type NOTFOUND = Error
 
-// UnexpectedError defines model for UnexpectedError.
-type UnexpectedError = Error
+// UNEXPECTEDERROR defines model for UNEXPECTED_ERROR.
+type UNEXPECTEDERROR = Error
+
+// OneClusterQueryParams defines parameters for OneClusterQuery.
+type OneClusterQueryParams struct {
+	IntegrationId string `form:"integrationId" json:"integrationId"`
+	Name          string `form:"name" json:"name"`
+}
+
+// ClustersQueryParams defines parameters for ClustersQuery.
+type ClustersQueryParams struct {
+	ClusterId *string `form:"clusterId,omitempty" json:"clusterId,omitempty"`
+	Name      *string `form:"name,omitempty" json:"name,omitempty"`
+}
 
 // OneEnvironmentQueryParams defines parameters for OneEnvironmentQuery.
 type OneEnvironmentQueryParams struct {
@@ -314,7 +366,7 @@ type IntegrationsQueryParams struct {
 
 // CreateIntegrationMutationJSONBody defines parameters for CreateIntegrationMutation.
 type CreateIntegrationMutationJSONBody struct {
-	Environments    IntegrationEnvironments `json:"environments"`
+	EnvironmentInfo IntegrationEnvironments `json:"environmentInfo"`
 	IntegrationType IntegrationType         `json:"integrationType"`
 	Name            string                  `json:"name"`
 }
@@ -463,6 +515,15 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// OneClusterQuery request
+	OneClusterQuery(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ClustersQuery request
+	ClustersQuery(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ClusterQuery request
+	ClusterQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// OneEnvironmentQuery request
 	OneEnvironmentQuery(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -577,6 +638,42 @@ type ClientInterface interface {
 
 	// UserQuery request
 	UserQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) OneClusterQuery(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOneClusterQueryRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ClustersQuery(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewClustersQueryRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ClusterQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewClusterQueryRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) OneEnvironmentQuery(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -1069,6 +1166,158 @@ func (c *Client) UserQuery(ctx context.Context, id string, reqEditors ...Request
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewOneClusterQueryRequest generates requests for OneClusterQuery
+func NewOneClusterQueryRequest(server string, params *OneClusterQueryParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/cluster")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "integrationId", runtime.ParamLocationQuery, params.IntegrationId); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewClustersQueryRequest generates requests for ClustersQuery
+func NewClustersQueryRequest(server string, params *ClustersQueryParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/clusters")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.ClusterId != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "clusterId", runtime.ParamLocationQuery, *params.ClusterId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Name != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewClusterQueryRequest generates requests for ClusterQuery
+func NewClusterQueryRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/clusters/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 // NewOneEnvironmentQueryRequest generates requests for OneEnvironmentQuery
@@ -2572,6 +2821,15 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// OneClusterQuery request
+	OneClusterQueryWithResponse(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*OneClusterQueryResponse, error)
+
+	// ClustersQuery request
+	ClustersQueryWithResponse(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*ClustersQueryResponse, error)
+
+	// ClusterQuery request
+	ClusterQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ClusterQueryResponse, error)
+
 	// OneEnvironmentQuery request
 	OneEnvironmentQueryWithResponse(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*OneEnvironmentQueryResponse, error)
 
@@ -2686,6 +2944,90 @@ type ClientWithResponsesInterface interface {
 
 	// UserQuery request
 	UserQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*UserQueryResponse, error)
+}
+
+type OneClusterQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Cluster
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r OneClusterQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r OneClusterQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ClustersQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Cluster
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ClustersQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ClustersQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ClusterQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Cluster
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ClusterQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ClusterQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type OneEnvironmentQueryResponse struct {
@@ -3612,6 +3954,33 @@ func (r UserQueryResponse) StatusCode() int {
 	return 0
 }
 
+// OneClusterQueryWithResponse request returning *OneClusterQueryResponse
+func (c *ClientWithResponses) OneClusterQueryWithResponse(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*OneClusterQueryResponse, error) {
+	rsp, err := c.OneClusterQuery(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseOneClusterQueryResponse(rsp)
+}
+
+// ClustersQueryWithResponse request returning *ClustersQueryResponse
+func (c *ClientWithResponses) ClustersQueryWithResponse(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*ClustersQueryResponse, error) {
+	rsp, err := c.ClustersQuery(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseClustersQueryResponse(rsp)
+}
+
+// ClusterQueryWithResponse request returning *ClusterQueryResponse
+func (c *ClientWithResponses) ClusterQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ClusterQueryResponse, error) {
+	rsp, err := c.ClusterQuery(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseClusterQueryResponse(rsp)
+}
+
 // OneEnvironmentQueryWithResponse request returning *OneEnvironmentQueryResponse
 func (c *ClientWithResponses) OneEnvironmentQueryWithResponse(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*OneEnvironmentQueryResponse, error) {
 	rsp, err := c.OneEnvironmentQuery(ctx, params, reqEditors...)
@@ -3971,6 +4340,210 @@ func (c *ClientWithResponses) UserQueryWithResponse(ctx context.Context, id stri
 		return nil, err
 	}
 	return ParseUserQueryResponse(rsp)
+}
+
+// ParseOneClusterQueryResponse parses an HTTP response from a OneClusterQueryWithResponse call
+func ParseOneClusterQueryResponse(rsp *http.Response) (*OneClusterQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &OneClusterQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Cluster
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseClustersQueryResponse parses an HTTP response from a ClustersQueryWithResponse call
+func ParseClustersQueryResponse(rsp *http.Response) (*ClustersQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ClustersQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Cluster
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseClusterQueryResponse parses an HTTP response from a ClusterQueryWithResponse call
+func ParseClusterQueryResponse(rsp *http.Response) (*ClusterQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ClusterQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Cluster
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
 }
 
 // ParseOneEnvironmentQueryResponse parses an HTTP response from a OneEnvironmentQueryWithResponse call
