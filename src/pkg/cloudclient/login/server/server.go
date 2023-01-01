@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/auth_api"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/authenticator"
@@ -66,6 +67,14 @@ func (l *LoginServer) GetLoginUrl(forceRelogin bool) string {
 func (l *LoginServer) callback(w http.ResponseWriter, req *http.Request) {
 	if req.URL.Query().Get("state") != l.state {
 		http.Error(w, "Invalid state parameter.", http.StatusBadRequest)
+		return
+	}
+
+	if req.URL.Query().Get("code") == "" {
+		logrus.Errorf("Request is missing auth code. Request params: %s", req.URL.Query())
+		queryJson, err := json.MarshalIndent(req.URL.Query(), "", "    ")
+		must.Must(err)
+		http.Error(w, fmt.Sprintf("Invalid response code: %s", queryJson), http.StatusBadRequest)
 		return
 	}
 
