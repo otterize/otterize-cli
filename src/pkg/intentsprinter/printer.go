@@ -25,7 +25,9 @@ spec:
   calls:
 {{- range $intent := .Spec.Calls }}
     - name: {{ $intent.Name }}
+{{- if $intent.Type }}
       type: {{ $intent.Type }}
+{{- end }}
 {{- if ne $intent.Namespace "" }}
       namespace: {{ $intent.Namespace }}
 {{- end -}}
