@@ -56,7 +56,7 @@ func (p *PortForwarder) Start(ctx context.Context) (localPort int, err error) {
 	mapperPod := podList.Items[0]
 	path := fmt.Sprintf("/api/v1/namespaces/%s/pods/%s/portforward",
 		p.namespace, mapperPod.Name)
-	hostIP := strings.TrimLeft(config.Host, "https://")
+	hostIP := strings.TrimPrefix(config.Host, "https://")
 
 	transport, upgrader, err := spdy.RoundTripperFor(config)
 	if err != nil {
@@ -76,10 +76,7 @@ func (p *PortForwarder) Start(ctx context.Context) (localPort int, err error) {
 			panic(err)
 		}
 	}()
-	select {
-	case <-readyChan:
-		break
-	}
+	<-readyChan
 	ports, err := fw.GetPorts()
 	if err != nil {
 		return 0, err
