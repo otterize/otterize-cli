@@ -9,17 +9,20 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/server"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/pkg/browser"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 )
 
-const SwitchAccountFlagKey = "switch"
+const SwitchAccountFlagKey = "switch-account"
+const SwitchOrgFlagKey = "switch-org"
 
 func login(_ *cobra.Command, _ []string) error {
 	getConfCtxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
@@ -34,11 +37,11 @@ func login(_ *cobra.Command, _ []string) error {
 
 	loginServer := server.NewLoginServer(auth0Config)
 	loginServer.Start()
-	url := loginServer.GetLoginUrl(viper.GetBool(SwitchAccountFlagKey))
-	if err := browser.OpenURL(url); err != nil {
+	loginUrl := loginServer.GetLoginUrl(viper.GetBool(SwitchAccountFlagKey))
+	if err := browser.OpenURL(loginUrl); err != nil {
 		logrus.Warning("Failed to open browser:", err)
 	}
-	prints.PrintCliStderr("Please login to Otterize using your browser: %s", url)
+	prints.PrintCliStderr("Please login to Otterize using your browser: %s", loginUrl)
 	authResult := <-loginServer.GetAuthResultChannel()
 	prints.PrintCliStderr("Login completed successfully! logged in as: %s", authResult.Profile["email"])
 
@@ -77,51 +80,45 @@ func login(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	// FIXME: create task to
 	user := meResponse.JSON200.User
 	prints.PrintCliStderr("Logged in as Otterize user %s (%s)", user.Id, user.Email)
 	if len(*user.Organizations) != 0 {
 		prints.PrintCliStderr("You belong to the following organizations:")
-		for _, org := range *user.Organizations {
-			if org.Name != nil {
-				prints.PrintCliStderr("ID: %s | Name: %s", org.Id, *org.Name)
-			} else {
-				prints.PrintCliStderr("ID: %s", org.Id)
-			}
+		formatted, err := output.FormatOrganizations(*user.Organizations)
+		if err != nil {
+			return err
 		}
+		prints.PrintCliStderr(formatted)
 		if len(*user.Organizations) == 1 {
 			prints.PrintCliStderr("Only 1 organization found - auto-selecting this organization for use. To change, join another organization and log in again.")
 		} else {
-			prints.PrintCliStderr("More than 1 organization found, input org ID (to change, log-in again, blank to select first org): ")
-			reader := bufio.NewReader(os.Stdin)
-			orgId, err := reader.ReadString('\n')
-			if err != nil {
-				return err
-			}
+			if !viper.IsSet(config.ApiSelectedOrganizationId) || viper.GetBool(SwitchOrgFlagKey) {
+				prints.PrintCliStderr("More than 1 organization found, input org ID (to change, log-in again, blank to select first org): ")
+				reader := bufio.NewReader(os.Stdin)
+				orgId, err := reader.ReadString('\n')
+				if err != nil {
+					return err
+				}
 
-			if strings.TrimSpace(orgId) == "" {
-				orgId = (*user.Organizations)[0].Id
-			}
+				if strings.TrimSpace(orgId) == "" {
+					orgId = (*user.Organizations)[0].Id
+				}
 
-			err = config.SaveSelectedOrganization(config.OrganizationConfig{OrganizationId: orgId})
-			if err != nil {
-				return err
+				err = config.SaveSelectedOrganization(config.OrganizationConfig{OrganizationId: orgId})
+				if err != nil {
+					return err
+				}
 			}
+			prints.PrintCliStderr("More than 1 organization found, using previously selected organization. To change, log-in again with --%s.", SwitchOrgFlagKey)
 		}
 		prints.PrintCliStderr("User is registered with organization %s", viper.GetString(config.ApiSelectedOrganizationId))
 	} else {
-		prints.PrintCliStderr("User has no organization, automatically creating one for you.")
-		resp, err := c.CreateOrganizationMutationWithResponse(registerCtxTimeout)
+		apiAddress := viper.GetString(config.OtterizeAPIAddressKey)
+		parsedUrl, err := url.Parse(apiAddress)
 		if err != nil {
 			return err
 		}
-		orgId := resp.JSON200.Id
-		prints.PrintCliStderr("Created organization with ID %s. The CLI will automatically act on this organization.")
-		prints.PrintCliStderr("If you join another organization, log-in again to switch to the other organization.")
-		err = config.SaveSelectedOrganization(config.OrganizationConfig{OrganizationId: orgId})
-		if err != nil {
-			return err
-		}
+		prints.PrintCliStderr("User has no organization - log-in failed, please log-in at the website at %s://%s to create or join an organization.", parsedUrl.Scheme, parsedUrl.Host)
 	}
 
 	return nil
@@ -138,4 +135,5 @@ var LoginCmd = &cobra.Command{
 
 func init() {
 	LoginCmd.Flags().Bool(SwitchAccountFlagKey, false, "Switch to another account")
+	LoginCmd.Flags().Bool(SwitchOrgFlagKey, false, "Switch to a different organization")
 }

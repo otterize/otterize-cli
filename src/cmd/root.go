@@ -59,7 +59,7 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(config.InitConfig, initLogger, config.LoadApiCredentialsFile)
+	cobra.OnInitialize(config.InitConfig, initLogger, config.LoadApiCredentialsFile, config.LoadSelectedOrganizationFile)
 	RootCmd.PersistentFlags().StringVar(&config.CfgFile, "config", "", fmt.Sprintf("config file (default %s/%s)", config.OtterizeConfigDirName, config.OtterizeConfigFileName))
 	RootCmd.PersistentFlags().String(config.ApiUserTokenKey, "", "Otterize user token (optional)")
 	RootCmd.PersistentFlags().String(config.ApiSelectedOrganizationId, "", "Otterize organization ID to act on.")

@@ -48,6 +48,34 @@ func GetAPIToken(ctx context.Context) string {
 const ApiCredentialsFilename = "credentials"
 const ApiOrganizationFilename = "organization"
 
+func LoadConfigFile(output any, filename string) (bool, error) {
+	configDir, err := OtterizeConfigDirPath()
+	if errors.Is(err, os.ErrNotExist) {
+		// no home dir probably
+		return false, nil
+	} else if err != nil {
+		logrus.Warningf("Failed to find otterize config dir: %s", err)
+		return false, nil
+	}
+
+	configFilePath := filepath.Join(configDir, filename)
+	file, err := os.Open(configFilePath)
+	if errors.Is(err, os.ErrNotExist) {
+		return false, nil
+	}
+
+	if err != nil {
+		return false, fmt.Errorf("failed reading otterize api credentials file: %w", err)
+	}
+
+	err = json.NewDecoder(file).Decode(output)
+	if err != nil {
+		return false, fmt.Errorf("failed to decode secret config: %w", err)
+	}
+
+	return true, nil
+}
+
 func LoadApiCredentialsFile() {
 	if viper.InConfig(ApiClientIdKey) || viper.InConfig(ApiClientSecretKey) {
 		logrus.Warningf("API client ID and client secret should not be set in config. Instead, store the credentials in ~/%s/%s", OtterizeConfigDirName, ApiCredentialsFilename)
@@ -58,33 +86,11 @@ func LoadApiCredentialsFile() {
 		return
 	}
 
-	// try to read the auth from file
-	configDir, err := OtterizeConfigDirPath()
-	if errors.Is(err, os.ErrNotExist) {
-		// no home dir probably
-		return
-	} else if err != nil {
-		logrus.Warningf("Failed to find otterize config dir: %s", err)
-		return
-	}
-
-	credentialsFilePath := filepath.Join(configDir, ApiCredentialsFilename)
-	file, err := os.Open(credentialsFilePath)
-	if errors.Is(err, os.ErrNotExist) {
-		// no auth file
-		return
-	}
-
-	if err != nil {
-		must.Must(fmt.Errorf("failed reading otterize api credentials file: %w", err))
-		return
-	}
-
 	var secretConfig SecretConfig
+	loaded, err := LoadConfigFile(&secretConfig, ApiCredentialsFilename)
+	must.Must(err)
 
-	err = json.NewDecoder(file).Decode(&secretConfig)
-	if err != nil {
-		must.Must(fmt.Errorf("failed to decode secret config: %w", err))
+	if !loaded {
 		return
 	}
 
@@ -102,6 +108,10 @@ func LoadApiCredentialsFile() {
 }
 
 func SaveSecretConfig(conf SecretConfig) error {
+	return SaveJSONConfig(conf, ApiCredentialsFilename)
+}
+
+func SaveJSONConfig(config any, filename string) error {
 	dirPath, err := OtterizeConfigDirPath()
 	if err != nil {
 		return fmt.Errorf("unable to get config dir path: %w", err)
@@ -112,14 +122,14 @@ func SaveSecretConfig(conf SecretConfig) error {
 		return fmt.Errorf("unable to create config path: %w", err)
 	}
 
-	tokenPath := path.Join(dirPath, ApiCredentialsFilename)
+	tokenPath := path.Join(dirPath, filename)
 	file, err := os.OpenFile(tokenPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return fmt.Errorf("open file %s failed: %w", tokenPath, err)
 	}
 	defer file.Close()
 
-	err = json.NewEncoder(file).Encode(conf)
+	err = json.NewEncoder(file).Encode(config)
 	if err != nil {
 		return fmt.Errorf("unable to write auth to path %s: %w", tokenPath, err)
 	}
@@ -128,28 +138,10 @@ func SaveSecretConfig(conf SecretConfig) error {
 }
 
 func SaveSelectedOrganization(orgConf OrganizationConfig) error {
-	dirPath, err := OtterizeConfigDirPath()
+	err := SaveJSONConfig(orgConf, ApiOrganizationFilename)
 	if err != nil {
-		return fmt.Errorf("unable to get config dir path: %w", err)
+		return err
 	}
-
-	err = os.MkdirAll(dirPath, 0700)
-	if err != nil {
-		return fmt.Errorf("unable to create config path: %w", err)
-	}
-
-	tokenPath := path.Join(dirPath, ApiOrganizationFilename)
-	file, err := os.OpenFile(tokenPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		return fmt.Errorf("open file %s failed: %w", tokenPath, err)
-	}
-	defer file.Close()
-
-	err = json.NewEncoder(file).Encode(&orgConf)
-	if err != nil {
-		return fmt.Errorf("unable to write auth to path %s: %w", tokenPath, err)
-	}
-
 	viper.Set(ApiSelectedOrganizationId, orgConf.OrganizationId)
 
 	return nil
@@ -161,33 +153,11 @@ func LoadSelectedOrganizationFile() {
 		return
 	}
 
-	// try to read the auth from file
-	configDir, err := OtterizeConfigDirPath()
-	if errors.Is(err, os.ErrNotExist) {
-		// no home dir probably
-		return
-	} else if err != nil {
-		logrus.Warningf("Failed to find otterize config dir: %s", err)
-		return
-	}
-
-	orgFilePath := filepath.Join(configDir, ApiSelectedOrganizationId)
-	file, err := os.Open(orgFilePath)
-	if errors.Is(err, os.ErrNotExist) {
-		// no auth file
-		return
-	}
-
-	if err != nil {
-		must.Must(fmt.Errorf("failed reading otterize selected org ID file: %w", err))
-		return
-	}
-
 	var orgConfig OrganizationConfig
 
-	err = json.NewDecoder(file).Decode(&orgConfig)
-	if err != nil {
-		must.Must(fmt.Errorf("failed to decode org config: %w", err))
+	loaded, err := LoadConfigFile(&orgConfig, ApiOrganizationFilename)
+	must.Must(err)
+	if !loaded {
 		return
 	}
 
