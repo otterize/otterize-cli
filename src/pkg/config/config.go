@@ -26,6 +26,7 @@ const EnvPrefix = "OTTERIZE"
 
 const ApiClientIdKey = "client-id"
 const ApiClientSecretKey = "client-secret"
+const ApiSelectedOrganizationId = "org-id"
 const ApiUserTokenKey = "token"
 const OtterizeAPIAddressKey = "api-address"
 const OtterizeAPIAddressDefault = "https://app.otterize.com/api"
