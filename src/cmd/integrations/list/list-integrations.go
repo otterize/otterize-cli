@@ -32,7 +32,7 @@ var ListIntegrationsCmd = &cobra.Command{
 		r, err := c.IntegrationsQueryWithResponse(ctxTimeout,
 			&cloudapi.IntegrationsQueryParams{
 				Name:            lo.Ternary(name != "", &name, nil),
-				IntegrationType: lo.Ternary(integrationType != "", lo.ToPtr(cloudapi.IntegrationType(integrationType)), nil),
+				IntegrationType: lo.Ternary(integrationType != "", lo.ToPtr(cloudapi.IntegrationsQueryParamsIntegrationType(integrationType)), nil),
 				EnvironmentId:   lo.Ternary(envId != "", lo.ToPtr(envId), nil),
 			},
 		)

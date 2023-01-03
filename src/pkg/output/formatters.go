@@ -43,17 +43,13 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeSecrets bool
 	getColumnData := func(integration cloudapi.Integration) []map[string]string {
 		integrationColumns := map[string]string{
 			"id":   integration.Id,
-			"type": string(integration.IntegrationType),
+			"type": string(integration.Type),
 			"name": integration.Name,
 		}
 
 		if includeSecrets {
 			integrationColumns["client id"] = integration.Credentials.ClientId
 			integrationColumns["client secret"] = integration.Credentials.Secret
-		}
-
-		if integration.Status.Id != "" {
-			integrationColumns["controller last seen"] = fmt.Sprintf("%v", integration.Status.LastSeen)
 		}
 
 		return []map[string]string{integrationColumns}
