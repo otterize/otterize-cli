@@ -32,7 +32,7 @@ var CreateIntegrationCmd = &cobra.Command{
 		r, err := c.CreateIntegrationMutationWithResponse(ctxTimeout,
 			cloudapi.CreateIntegrationMutationJSONRequestBody{
 				Name:            name,
-				IntegrationType: cloudapi.IntegrationType(integrationType),
+				IntegrationType: cloudapi.CreateIntegrationMutationJSONBodyIntegrationType(integrationType),
 				EnvironmentInfo: cloudapi.IntegrationEnvironments{EnvironmentId: lo.Ternary(environmentID == "", nil, &environmentID)},
 			},
 		)

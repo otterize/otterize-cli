@@ -21,20 +21,19 @@ const (
 	BearerAuthScopes = "bearerAuth.Scopes"
 )
 
-// Defines values for ClusterClusterStatus.
+// Defines values for ClusterStatus.
 const (
-	ClusterClusterStatusCONNECTED          ClusterClusterStatus = "CONNECTED"
-	ClusterClusterStatusDISCONNECTED       ClusterClusterStatus = "DISCONNECTED"
-	ClusterClusterStatusNEVERCONNECTED     ClusterClusterStatus = "NEVER_CONNECTED"
-	ClusterClusterStatusPARTIALLYCONNECTED ClusterClusterStatus = "PARTIALLY_CONNECTED"
+	ClusterStatusCONNECTED          ClusterStatus = "CONNECTED"
+	ClusterStatusDISCONNECTED       ClusterStatus = "DISCONNECTED"
+	ClusterStatusNEVERCONNECTED     ClusterStatus = "NEVER_CONNECTED"
+	ClusterStatusPARTIALLYCONNECTED ClusterStatus = "PARTIALLY_CONNECTED"
 )
 
-// Defines values for ClusterComponentStatus.
+// Defines values for ComponentStatusType.
 const (
-	ClusterComponentStatusCONNECTED          ClusterComponentStatus = "CONNECTED"
-	ClusterComponentStatusDISCONNECTED       ClusterComponentStatus = "DISCONNECTED"
-	ClusterComponentStatusNEVERCONNECTED     ClusterComponentStatus = "NEVER_CONNECTED"
-	ClusterComponentStatusPARTIALLYCONNECTED ClusterComponentStatus = "PARTIALLY_CONNECTED"
+	ComponentStatusTypeCONNECTED      ComponentStatusType = "CONNECTED"
+	ComponentStatusTypeDISCONNECTED   ComponentStatusType = "DISCONNECTED"
+	ComponentStatusTypeNEVERCONNECTED ComponentStatusType = "NEVER_CONNECTED"
 )
 
 // Defines values for HTTPConfigMethod.
@@ -47,12 +46,6 @@ const (
 	HTTPConfigMethodPOST    HTTPConfigMethod = "POST"
 	HTTPConfigMethodPUT     HTTPConfigMethod = "PUT"
 	HTTPConfigMethodTRACE   HTTPConfigMethod = "TRACE"
-)
-
-// Defines values for IntegrationIntegrationType.
-const (
-	IntegrationIntegrationTypeCICD       IntegrationIntegrationType = "CICD"
-	IntegrationIntegrationTypeKUBERNETES IntegrationIntegrationType = "KUBERNETES"
 )
 
 // Defines values for IntegrationType.
@@ -69,12 +62,6 @@ const (
 	REDIS IntentType = "REDIS"
 )
 
-// Defines values for InviteStatus.
-const (
-	ACCEPTED InviteStatus = "ACCEPTED"
-	PENDING  InviteStatus = "PENDING"
-)
-
 // Defines values for KafkaConfigOperations.
 const (
 	KafkaConfigOperationsALTER           KafkaConfigOperations = "ALTER"
@@ -89,6 +76,30 @@ const (
 	KafkaConfigOperationsPRODUCE         KafkaConfigOperations = "PRODUCE"
 )
 
+// Defines values for OneIntegrationQueryParamsIntegrationType.
+const (
+	OneIntegrationQueryParamsIntegrationTypeCICD       OneIntegrationQueryParamsIntegrationType = "CICD"
+	OneIntegrationQueryParamsIntegrationTypeKUBERNETES OneIntegrationQueryParamsIntegrationType = "KUBERNETES"
+)
+
+// Defines values for IntegrationsQueryParamsIntegrationType.
+const (
+	IntegrationsQueryParamsIntegrationTypeCICD       IntegrationsQueryParamsIntegrationType = "CICD"
+	IntegrationsQueryParamsIntegrationTypeKUBERNETES IntegrationsQueryParamsIntegrationType = "KUBERNETES"
+)
+
+// Defines values for CreateIntegrationMutationJSONBodyIntegrationType.
+const (
+	CreateIntegrationMutationJSONBodyIntegrationTypeCICD       CreateIntegrationMutationJSONBodyIntegrationType = "CICD"
+	CreateIntegrationMutationJSONBodyIntegrationTypeKUBERNETES CreateIntegrationMutationJSONBodyIntegrationType = "KUBERNETES"
+)
+
+// Defines values for InvitesQueryParamsStatus.
+const (
+	ACCEPTED InvitesQueryParamsStatus = "ACCEPTED"
+	PENDING  InvitesQueryParamsStatus = "PENDING"
+)
+
 // AuthProviderUserInfo defines model for AuthProviderUserInfo.
 type AuthProviderUserInfo struct {
 	EmailVerified bool   `json:"emailVerified"`
@@ -96,31 +107,58 @@ type AuthProviderUserInfo struct {
 	PictureURL    string `json:"pictureURL"`
 }
 
+// CertificateCustomization defines model for CertificateCustomization.
+type CertificateCustomization struct {
+	DnsNames *[]string `json:"dnsNames,omitempty"`
+	Ttl      *int32    `json:"ttl,omitempty"`
+}
+
 // Cluster defines model for Cluster.
 type Cluster struct {
-	ClusterStatus *ClusterClusterStatus `json:"clusterStatus,omitempty"`
-	Components    *[]ClusterComponent   `json:"components,omitempty"`
+	Components    Components            `json:"components"`
+	Configuration *ClusterConfiguration `json:"configuration,omitempty"`
+	DefaultEnvID  string                `json:"defaultEnvID"`
 	Id            string                `json:"id"`
 	IntegrationID string                `json:"integrationID"`
 	Name          string                `json:"name"`
+	Status        *ClusterStatus        `json:"status,omitempty"`
 }
 
-// ClusterClusterStatus defines model for Cluster.ClusterStatus.
-type ClusterClusterStatus string
+// ClusterStatus defines model for Cluster.Status.
+type ClusterStatus string
 
-// ClusterComponent defines model for ClusterComponent.
-type ClusterComponent struct {
-	Name   string                  `json:"name"`
-	Status *ClusterComponentStatus `json:"status,omitempty"`
+// ClusterConfiguration defines model for ClusterConfiguration.
+type ClusterConfiguration struct {
+	GlobalDefaultDeny                     bool `json:"globalDefaultDeny"`
+	UseNetworkPoliciesInAccessGraphStates bool `json:"useNetworkPoliciesInAccessGraphStates"`
 }
 
-// ClusterComponentStatus defines model for ClusterComponent.Status.
-type ClusterComponentStatus string
+// ClusterConfigurationInput defines model for ClusterConfigurationInput.
+type ClusterConfigurationInput struct {
+	GlobalDefaultDeny                     bool `json:"globalDefaultDeny"`
+	UseNetworkPoliciesInAccessGraphStates bool `json:"useNetworkPoliciesInAccessGraphStates"`
+}
 
 // ClusterNamespacesPair defines model for ClusterNamespacesPair.
 type ClusterNamespacesPair struct {
 	Cluster    string    `json:"cluster"`
 	Namespaces *[]string `json:"namespaces,omitempty"`
+}
+
+// ComponentStatus defines model for ComponentStatus.
+type ComponentStatus struct {
+	LastSeen *time.Time          `json:"lastSeen,omitempty"`
+	Type     ComponentStatusType `json:"type"`
+}
+
+// ComponentStatusType defines model for ComponentStatus.Type.
+type ComponentStatusType string
+
+// Components defines model for Components.
+type Components struct {
+	CredentialsOperator ComponentStatus `json:"credentialsOperator"`
+	IntentsOperator     ComponentStatus `json:"intentsOperator"`
+	NetworkMapper       ComponentStatus `json:"networkMapper"`
 }
 
 // Environment defines model for Environment.
@@ -149,18 +187,17 @@ type HTTPConfigMethod string
 
 // Integration defines model for Integration.
 type Integration struct {
-	Credentials                  IntegrationCredentials     `json:"credentials"`
-	Id                           string                     `json:"id"`
-	Identity                     IntegrationIdentity        `json:"identity"`
-	IntegrationType              IntegrationIntegrationType `json:"integrationType"`
-	KubernetesDefaultEnvironment Environment                `json:"kubernetesDefaultEnvironment"`
-	Name                         string                     `json:"name"`
-	Organization                 Organization               `json:"organization"`
-	Status                       *IntegrationStatus         `json:"status,omitempty"`
+	Credentials                  IntegrationCredentials `json:"credentials"`
+	Id                           string                 `json:"id"`
+	Identity                     IntegrationIdentity    `json:"identity"`
+	KubernetesDefaultEnvironment Environment            `json:"kubernetesDefaultEnvironment"`
+	Name                         string                 `json:"name"`
+	Organization                 Organization           `json:"organization"`
+	Type                         IntegrationType        `json:"type"`
 }
 
-// IntegrationIntegrationType defines model for Integration.IntegrationType.
-type IntegrationIntegrationType string
+// IntegrationType defines model for Integration.Type.
+type IntegrationType string
 
 // IntegrationCredentials defines model for IntegrationCredentials.
 type IntegrationCredentials struct {
@@ -183,15 +220,6 @@ type IntegrationIdentityOtherFields struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }
-
-// IntegrationStatus defines model for IntegrationStatus.
-type IntegrationStatus struct {
-	Id       string    `json:"id"`
-	LastSeen time.Time `json:"lastSeen"`
-}
-
-// IntegrationType defines model for IntegrationType.
-type IntegrationType string
 
 // Intent defines model for Intent.
 type Intent struct {
@@ -218,9 +246,6 @@ type Invite struct {
 	Organization Organization `json:"organization"`
 }
 
-// InviteStatus defines model for InviteStatus.
-type InviteStatus string
-
 // KafkaConfig defines model for KafkaConfig.
 type KafkaConfig struct {
 	Name       string                   `json:"name"`
@@ -229,6 +254,15 @@ type KafkaConfig struct {
 
 // KafkaConfigOperations defines model for KafkaConfig.Operations.
 type KafkaConfigOperations string
+
+// KeyPair defines model for KeyPair.
+type KeyPair struct {
+	CaPEM     string `json:"caPEM"`
+	CertPEM   string `json:"certPEM"`
+	ExpiresAt int32  `json:"expiresAt"`
+	KeyPEM    string `json:"keyPEM"`
+	RootCAPEM string `json:"rootCAPEM"`
+}
 
 // Label defines model for Label.
 type Label struct {
@@ -251,8 +285,10 @@ type Me struct {
 
 // Namespace defines model for Namespace.
 type Namespace struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Cluster     *Cluster     `json:"cluster,omitempty"`
+	Environment *Environment `json:"environment,omitempty"`
+	Id          string       `json:"id"`
+	Name        string       `json:"name"`
 }
 
 // Organization defines model for Organization.
@@ -271,6 +307,7 @@ type Service struct {
 	Namespace                     *Namespace  `json:"namespace,omitempty"`
 	ReferencedByIntents           bool        `json:"referencedByIntents"`
 	ReferencedByKafkaServerConfig bool        `json:"referencedByKafkaServerConfig"`
+	TlsKeyPair                    KeyPair     `json:"tlsKeyPair"`
 }
 
 // User defines model for User.
@@ -310,6 +347,11 @@ type OneClusterQueryParams struct {
 type ClustersQueryParams struct {
 	ClusterId *string `form:"clusterId,omitempty" json:"clusterId,omitempty"`
 	Name      *string `form:"name,omitempty" json:"name,omitempty"`
+}
+
+// UpdateClusterMutationJSONBody defines parameters for UpdateClusterMutation.
+type UpdateClusterMutationJSONBody struct {
+	Configuration *ClusterConfigurationInput `json:"configuration,omitempty"`
 }
 
 // OneEnvironmentQueryParams defines parameters for OneEnvironmentQuery.
@@ -352,24 +394,33 @@ type AddEnvironmentLabelsMutationJSONBody struct {
 
 // OneIntegrationQueryParams defines parameters for OneIntegrationQuery.
 type OneIntegrationQueryParams struct {
-	Name            *string          `form:"name,omitempty" json:"name,omitempty"`
-	IntegrationType *IntegrationType `form:"integrationType,omitempty" json:"integrationType,omitempty"`
-	EnvironmentId   *string          `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	Name            *string                                   `form:"name,omitempty" json:"name,omitempty"`
+	IntegrationType *OneIntegrationQueryParamsIntegrationType `form:"integrationType,omitempty" json:"integrationType,omitempty"`
+	EnvironmentId   *string                                   `form:"environmentId,omitempty" json:"environmentId,omitempty"`
 }
+
+// OneIntegrationQueryParamsIntegrationType defines parameters for OneIntegrationQuery.
+type OneIntegrationQueryParamsIntegrationType string
 
 // IntegrationsQueryParams defines parameters for IntegrationsQuery.
 type IntegrationsQueryParams struct {
-	Name            *string          `form:"name,omitempty" json:"name,omitempty"`
-	IntegrationType *IntegrationType `form:"integrationType,omitempty" json:"integrationType,omitempty"`
-	EnvironmentId   *string          `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	Name            *string                                 `form:"name,omitempty" json:"name,omitempty"`
+	IntegrationType *IntegrationsQueryParamsIntegrationType `form:"integrationType,omitempty" json:"integrationType,omitempty"`
+	EnvironmentId   *string                                 `form:"environmentId,omitempty" json:"environmentId,omitempty"`
 }
+
+// IntegrationsQueryParamsIntegrationType defines parameters for IntegrationsQuery.
+type IntegrationsQueryParamsIntegrationType string
 
 // CreateIntegrationMutationJSONBody defines parameters for CreateIntegrationMutation.
 type CreateIntegrationMutationJSONBody struct {
-	EnvironmentInfo IntegrationEnvironments `json:"environmentInfo"`
-	IntegrationType IntegrationType         `json:"integrationType"`
-	Name            string                  `json:"name"`
+	EnvironmentInfo IntegrationEnvironments                          `json:"environmentInfo"`
+	IntegrationType CreateIntegrationMutationJSONBodyIntegrationType `json:"integrationType"`
+	Name            string                                           `json:"name"`
 }
+
+// CreateIntegrationMutationJSONBodyIntegrationType defines parameters for CreateIntegrationMutation.
+type CreateIntegrationMutationJSONBodyIntegrationType string
 
 // UpdateIntegrationMutationJSONBody defines parameters for UpdateIntegrationMutation.
 type UpdateIntegrationMutationJSONBody struct {
@@ -378,16 +429,27 @@ type UpdateIntegrationMutationJSONBody struct {
 
 // IntentsQueryParams defines parameters for IntentsQuery.
 type IntentsQueryParams struct {
-	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
-	Client        *string `form:"client,omitempty" json:"client,omitempty"`
-	Server        *string `form:"server,omitempty" json:"server,omitempty"`
-	Source        *string `form:"source,omitempty" json:"source,omitempty"`
+	EnvironmentId                                         *string                   `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	Client                                                *string                   `form:"client,omitempty" json:"client,omitempty"`
+	Server                                                *string                   `form:"server,omitempty" json:"server,omitempty"`
+	Source                                                *string                   `form:"source,omitempty" json:"source,omitempty"`
+	IntentsServerServerTlsKeyPairCertificateCustomization *CertificateCustomization `form:"intents_server_server_tlsKeyPair_certificateCustomization,omitempty" json:"intents_server_server_tlsKeyPair_certificateCustomization,omitempty"`
+	IntentsClientClientTlsKeyPairCertificateCustomization *CertificateCustomization `form:"intents_client_client_tlsKeyPair_certificateCustomization,omitempty" json:"intents_client_client_tlsKeyPair_certificateCustomization,omitempty"`
+}
+
+// IntentQueryParams defines parameters for IntentQuery.
+type IntentQueryParams struct {
+	IntentServerServerTlsKeyPairCertificateCustomization *CertificateCustomization `form:"intent_server_server_tlsKeyPair_certificateCustomization,omitempty" json:"intent_server_server_tlsKeyPair_certificateCustomization,omitempty"`
+	IntentClientClientTlsKeyPairCertificateCustomization *CertificateCustomization `form:"intent_client_client_tlsKeyPair_certificateCustomization,omitempty" json:"intent_client_client_tlsKeyPair_certificateCustomization,omitempty"`
 }
 
 // InvitesQueryParams defines parameters for InvitesQuery.
 type InvitesQueryParams struct {
-	Status *InviteStatus `form:"status,omitempty" json:"status,omitempty"`
+	Status *InvitesQueryParamsStatus `form:"status,omitempty" json:"status,omitempty"`
 }
+
+// InvitesQueryParamsStatus defines parameters for InvitesQuery.
+type InvitesQueryParamsStatus string
 
 // CreateInviteMutationJSONBody defines parameters for CreateInviteMutation.
 type CreateInviteMutationJSONBody struct {
@@ -402,14 +464,21 @@ type UpdateOrganizationMutationJSONBody struct {
 
 // OneServiceQueryParams defines parameters for OneServiceQuery.
 type OneServiceQueryParams struct {
-	EnvironmentId string `form:"environmentId" json:"environmentId"`
-	Name          string `form:"name" json:"name"`
+	EnvironmentId                                string                    `form:"environmentId" json:"environmentId"`
+	Name                                         string                    `form:"name" json:"name"`
+	OneServiceTlsKeyPairCertificateCustomization *CertificateCustomization `form:"oneService_tlsKeyPair_certificateCustomization,omitempty" json:"oneService_tlsKeyPair_certificateCustomization,omitempty"`
 }
 
 // ServicesQueryParams defines parameters for ServicesQuery.
 type ServicesQueryParams struct {
-	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
-	Name          *string `form:"name,omitempty" json:"name,omitempty"`
+	EnvironmentId                              *string                   `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	Name                                       *string                   `form:"name,omitempty" json:"name,omitempty"`
+	ServicesTlsKeyPairCertificateCustomization *CertificateCustomization `form:"services_tlsKeyPair_certificateCustomization,omitempty" json:"services_tlsKeyPair_certificateCustomization,omitempty"`
+}
+
+// ServiceQueryParams defines parameters for ServiceQuery.
+type ServiceQueryParams struct {
+	ServiceTlsKeyPairCertificateCustomization *CertificateCustomization `form:"service_tlsKeyPair_certificateCustomization,omitempty" json:"service_tlsKeyPair_certificateCustomization,omitempty"`
 }
 
 // CreateUserMutationJSONBody defines parameters for CreateUserMutation.
@@ -417,6 +486,9 @@ type CreateUserMutationJSONBody struct {
 	AuthProviderUserId string `json:"authProviderUserId"`
 	Email              string `json:"email"`
 }
+
+// UpdateClusterMutationJSONRequestBody defines body for UpdateClusterMutation for application/json ContentType.
+type UpdateClusterMutationJSONRequestBody UpdateClusterMutationJSONBody
 
 // CreateEnvironmentMutationJSONRequestBody defines body for CreateEnvironmentMutation for application/json ContentType.
 type CreateEnvironmentMutationJSONRequestBody CreateEnvironmentMutationJSONBody
@@ -524,6 +596,11 @@ type ClientInterface interface {
 	// ClusterQuery request
 	ClusterQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// UpdateClusterMutation request with any body
+	UpdateClusterMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateClusterMutation(ctx context.Context, id string, body UpdateClusterMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// OneEnvironmentQuery request
 	OneEnvironmentQuery(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -580,7 +657,7 @@ type ClientInterface interface {
 	IntentsQuery(ctx context.Context, params *IntentsQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// IntentQuery request
-	IntentQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	IntentQuery(ctx context.Context, id string, params *IntentQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// InvitesQuery request
 	InvitesQuery(ctx context.Context, params *InvitesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -623,7 +700,7 @@ type ClientInterface interface {
 	ServicesQuery(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ServiceQuery request
-	ServiceQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ServiceQuery(ctx context.Context, id string, params *ServiceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UsersQuery request
 	UsersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -666,6 +743,30 @@ func (c *Client) ClustersQuery(ctx context.Context, params *ClustersQueryParams,
 
 func (c *Client) ClusterQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewClusterQueryRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateClusterMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateClusterMutationRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateClusterMutation(ctx context.Context, id string, body UpdateClusterMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateClusterMutationRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -916,8 +1017,8 @@ func (c *Client) IntentsQuery(ctx context.Context, params *IntentsQueryParams, r
 	return c.Client.Do(req)
 }
 
-func (c *Client) IntentQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewIntentQueryRequest(c.Server, id)
+func (c *Client) IntentQuery(ctx context.Context, id string, params *IntentQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewIntentQueryRequest(c.Server, id, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1096,8 +1197,8 @@ func (c *Client) ServicesQuery(ctx context.Context, params *ServicesQueryParams,
 	return c.Client.Do(req)
 }
 
-func (c *Client) ServiceQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewServiceQueryRequest(c.Server, id)
+func (c *Client) ServiceQuery(ctx context.Context, id string, params *ServiceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewServiceQueryRequest(c.Server, id, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1316,6 +1417,53 @@ func NewClusterQueryRequest(server string, id string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewUpdateClusterMutationRequest calls the generic UpdateClusterMutation builder with application/json body
+func NewUpdateClusterMutationRequest(server string, id string, body UpdateClusterMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateClusterMutationRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateClusterMutationRequestWithBody generates requests for UpdateClusterMutation with any type of body
+func NewUpdateClusterMutationRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/clusters/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2096,6 +2244,38 @@ func NewIntentsQueryRequest(server string, params *IntentsQueryParams) (*http.Re
 
 	}
 
+	if params.IntentsServerServerTlsKeyPairCertificateCustomization != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "intents_server_server_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.IntentsServerServerTlsKeyPairCertificateCustomization); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.IntentsClientClientTlsKeyPairCertificateCustomization != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "intents_client_client_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.IntentsClientClientTlsKeyPairCertificateCustomization); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
 	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -2107,7 +2287,7 @@ func NewIntentsQueryRequest(server string, params *IntentsQueryParams) (*http.Re
 }
 
 // NewIntentQueryRequest generates requests for IntentQuery
-func NewIntentQueryRequest(server string, id string) (*http.Request, error) {
+func NewIntentQueryRequest(server string, id string, params *IntentQueryParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2131,6 +2311,42 @@ func NewIntentQueryRequest(server string, id string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	queryValues := queryURL.Query()
+
+	if params.IntentServerServerTlsKeyPairCertificateCustomization != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "intent_server_server_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.IntentServerServerTlsKeyPairCertificateCustomization); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.IntentClientClientTlsKeyPairCertificateCustomization != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "intent_client_client_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.IntentClientClientTlsKeyPairCertificateCustomization); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
@@ -2536,6 +2752,22 @@ func NewOneServiceQueryRequest(server string, params *OneServiceQueryParams) (*h
 		}
 	}
 
+	if params.OneServiceTlsKeyPairCertificateCustomization != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "oneService_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.OneServiceTlsKeyPairCertificateCustomization); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
 	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -2599,6 +2831,22 @@ func NewServicesQueryRequest(server string, params *ServicesQueryParams) (*http.
 
 	}
 
+	if params.ServicesTlsKeyPairCertificateCustomization != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "services_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.ServicesTlsKeyPairCertificateCustomization); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
 	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -2610,7 +2858,7 @@ func NewServicesQueryRequest(server string, params *ServicesQueryParams) (*http.
 }
 
 // NewServiceQueryRequest generates requests for ServiceQuery
-func NewServiceQueryRequest(server string, id string) (*http.Request, error) {
+func NewServiceQueryRequest(server string, id string, params *ServiceQueryParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2634,6 +2882,26 @@ func NewServiceQueryRequest(server string, id string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	queryValues := queryURL.Query()
+
+	if params.ServiceTlsKeyPairCertificateCustomization != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "service_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.ServiceTlsKeyPairCertificateCustomization); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
@@ -2830,6 +3098,11 @@ type ClientWithResponsesInterface interface {
 	// ClusterQuery request
 	ClusterQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ClusterQueryResponse, error)
 
+	// UpdateClusterMutation request with any body
+	UpdateClusterMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateClusterMutationResponse, error)
+
+	UpdateClusterMutationWithResponse(ctx context.Context, id string, body UpdateClusterMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateClusterMutationResponse, error)
+
 	// OneEnvironmentQuery request
 	OneEnvironmentQueryWithResponse(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*OneEnvironmentQueryResponse, error)
 
@@ -2886,7 +3159,7 @@ type ClientWithResponsesInterface interface {
 	IntentsQueryWithResponse(ctx context.Context, params *IntentsQueryParams, reqEditors ...RequestEditorFn) (*IntentsQueryResponse, error)
 
 	// IntentQuery request
-	IntentQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*IntentQueryResponse, error)
+	IntentQueryWithResponse(ctx context.Context, id string, params *IntentQueryParams, reqEditors ...RequestEditorFn) (*IntentQueryResponse, error)
 
 	// InvitesQuery request
 	InvitesQueryWithResponse(ctx context.Context, params *InvitesQueryParams, reqEditors ...RequestEditorFn) (*InvitesQueryResponse, error)
@@ -2929,7 +3202,7 @@ type ClientWithResponsesInterface interface {
 	ServicesQueryWithResponse(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*ServicesQueryResponse, error)
 
 	// ServiceQuery request
-	ServiceQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ServiceQueryResponse, error)
+	ServiceQueryWithResponse(ctx context.Context, id string, params *ServiceQueryParams, reqEditors ...RequestEditorFn) (*ServiceQueryResponse, error)
 
 	// UsersQuery request
 	UsersQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*UsersQueryResponse, error)
@@ -3024,6 +3297,34 @@ func (r ClusterQueryResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r ClusterQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateClusterMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Cluster
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateClusterMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateClusterMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3981,6 +4282,23 @@ func (c *ClientWithResponses) ClusterQueryWithResponse(ctx context.Context, id s
 	return ParseClusterQueryResponse(rsp)
 }
 
+// UpdateClusterMutationWithBodyWithResponse request with arbitrary body returning *UpdateClusterMutationResponse
+func (c *ClientWithResponses) UpdateClusterMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateClusterMutationResponse, error) {
+	rsp, err := c.UpdateClusterMutationWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateClusterMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateClusterMutationWithResponse(ctx context.Context, id string, body UpdateClusterMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateClusterMutationResponse, error) {
+	rsp, err := c.UpdateClusterMutation(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateClusterMutationResponse(rsp)
+}
+
 // OneEnvironmentQueryWithResponse request returning *OneEnvironmentQueryResponse
 func (c *ClientWithResponses) OneEnvironmentQueryWithResponse(ctx context.Context, params *OneEnvironmentQueryParams, reqEditors ...RequestEditorFn) (*OneEnvironmentQueryResponse, error) {
 	rsp, err := c.OneEnvironmentQuery(ctx, params, reqEditors...)
@@ -4157,8 +4475,8 @@ func (c *ClientWithResponses) IntentsQueryWithResponse(ctx context.Context, para
 }
 
 // IntentQueryWithResponse request returning *IntentQueryResponse
-func (c *ClientWithResponses) IntentQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*IntentQueryResponse, error) {
-	rsp, err := c.IntentQuery(ctx, id, reqEditors...)
+func (c *ClientWithResponses) IntentQueryWithResponse(ctx context.Context, id string, params *IntentQueryParams, reqEditors ...RequestEditorFn) (*IntentQueryResponse, error) {
+	rsp, err := c.IntentQuery(ctx, id, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4290,8 +4608,8 @@ func (c *ClientWithResponses) ServicesQueryWithResponse(ctx context.Context, par
 }
 
 // ServiceQueryWithResponse request returning *ServiceQueryResponse
-func (c *ClientWithResponses) ServiceQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ServiceQueryResponse, error) {
-	rsp, err := c.ServiceQuery(ctx, id, reqEditors...)
+func (c *ClientWithResponses) ServiceQueryWithResponse(ctx context.Context, id string, params *ServiceQueryParams, reqEditors ...RequestEditorFn) (*ServiceQueryResponse, error) {
+	rsp, err := c.ServiceQuery(ctx, id, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4487,6 +4805,74 @@ func ParseClusterQueryResponse(rsp *http.Response) (*ClusterQueryResponse, error
 	}
 
 	response := &ClusterQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Cluster
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateClusterMutationResponse parses an HTTP response from a UpdateClusterMutationWithResponse call
+func ParseUpdateClusterMutationResponse(rsp *http.Response) (*UpdateClusterMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateClusterMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
