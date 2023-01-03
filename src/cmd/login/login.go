@@ -119,6 +119,7 @@ func login(_ *cobra.Command, _ []string) error {
 			return err
 		}
 		prints.PrintCliStderr("User has no organization - log-in failed, please log-in at the website at %s://%s to create or join an organization.", parsedUrl.Scheme, parsedUrl.Host)
+		return nil
 	}
 
 	return nil
