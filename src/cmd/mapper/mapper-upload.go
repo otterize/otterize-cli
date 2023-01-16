@@ -3,7 +3,6 @@ package mapper
 import (
 	"context"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/intents"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/samber/lo"
@@ -24,17 +23,21 @@ var UploadCmd = &cobra.Command{
 			defer cancel()
 			intentsClient := graphql.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
-			discoveredIntentsToCloud := make([]intents.IntentInput, 0)
+			discoveredIntentsToCloud := make([]graphql.DiscoveredIntentInput, 0)
 			for _, service := range servicesIntents {
 				for _, intent := range service.Intents {
-					discoveredIntentsToCloud = append(discoveredIntentsToCloud, intents.IntentInput{
-						Client: lo.ToPtr(service.Client.Name),
-						Server: lo.ToPtr(intent.Name),
+					discoveredIntentsToCloud = append(discoveredIntentsToCloud, graphql.DiscoveredIntentInput{
+						Intent: &graphql.IntentInput{
+							ClientName:      lo.ToPtr(service.Client.Name),
+							Namespace:       lo.ToPtr(service.Client.Namespace),
+							ServerName:      lo.ToPtr(intent.Namespace),
+							ServerNamespace: lo.ToPtr(intent.Name),
+						},
 					})
 				}
 			}
 
-			return intentsClient.ReportDiscoveredIntents(ctxTimeout, viper.GetString(EnvIDKey), viper.GetString(SourceKey), discoveredIntentsToCloud)
+			return intentsClient.ReportDiscoveredIntents(ctxTimeout, discoveredIntentsToCloud)
 		})
 	},
 }
