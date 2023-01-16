@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"context"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/intents"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
@@ -21,7 +22,7 @@ var UploadCmd = &cobra.Command{
 			}
 			ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 			defer cancel()
-			intentsClient := intents.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+			intentsClient := graphql.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 
 			discoveredIntentsToCloud := make([]intents.IntentInput, 0)
 			for _, service := range servicesIntents {
