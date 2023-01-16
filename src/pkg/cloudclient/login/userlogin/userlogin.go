@@ -64,10 +64,7 @@ func (loginCtx *LoginContext) EnsureUserRegistered() error {
 func (loginCtx *LoginContext) SelectOrg(preSelectedOrgId string, switchOrg bool) (string, error) {
 	organizations := *loginCtx.me.Organizations
 	selectedOrg := ""
-	if preSelectedOrgId != "" && !switchOrg {
-		prints.PrintCliStderr("Using the previously selected organization.")
-		selectedOrg = preSelectedOrgId
-	} else if len(organizations) == 0 {
+	if len(organizations) == 0 {
 		orgId, err := loginCtx.createOrJoinOrgFromUserInput()
 		if err != nil {
 			return "", err
@@ -77,7 +74,7 @@ func (loginCtx *LoginContext) SelectOrg(preSelectedOrgId string, switchOrg bool)
 		prints.PrintCliStderr("Only 1 organization found - auto-selecting this organization for use.")
 		selectedOrg = organizations[0].Id
 	} else {
-		orgId, err := loginCtx.interactiveSelectOrg()
+		orgId, err := loginCtx.interactiveSelectOrg(preSelectedOrgId, switchOrg)
 		if err != nil {
 			return "", err
 		}
@@ -98,7 +95,7 @@ func (loginCtx *LoginContext) createOrJoinOrgFromUserInput() (string, error) {
 		}
 		prints.PrintCliStderr(formatted)
 	} else {
-		prints.PrintCliStderr("No pending organization invites.")
+		prints.PrintCliStderr("No pending invites for user.")
 	}
 
 	selectedInvite, ok, err := loginCtx.interactiveSelectInvite()
@@ -169,7 +166,7 @@ func (loginCtx *LoginContext) createNewOrg() (string, error) {
 	return org.Id, nil
 }
 
-func (loginCtx *LoginContext) interactiveSelectOrg() (string, error) {
+func (loginCtx *LoginContext) interactiveSelectOrg(preSelectedOrgId string, switchOrg bool) (string, error) {
 	organizations := *loginCtx.me.Organizations
 
 	prints.PrintCliStderr("You belong to the following organizations:")
@@ -178,6 +175,17 @@ func (loginCtx *LoginContext) interactiveSelectOrg() (string, error) {
 		return "", err
 	}
 	prints.PrintCliStderr(formatted)
+
+	isValidOrg := func(orgId string) bool {
+		return lo.ContainsBy(organizations, func(organization cloudapi.Organization) bool {
+			return organization.Id == orgId
+		})
+	}
+
+	if preSelectedOrgId != "" && !switchOrg && isValidOrg(preSelectedOrgId) {
+		prints.PrintCliStderr("Using the previously selected organization.")
+		return preSelectedOrgId, nil
+	}
 
 	for {
 		prints.PrintCliStderr("Input organization ID (blank to select first organization): ")
@@ -191,9 +199,7 @@ func (loginCtx *LoginContext) interactiveSelectOrg() (string, error) {
 			return organizations[0].Id, nil
 		}
 
-		if lo.ContainsBy(organizations, func(organization cloudapi.Organization) bool {
-			return organization.Id == orgId
-		}) {
+		if isValidOrg(orgId) {
 			return orgId, nil
 		}
 
