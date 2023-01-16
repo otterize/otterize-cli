@@ -3,8 +3,6 @@ package graphql
 import (
 	"context"
 	genqlientgraphql "github.com/Khan/genqlient/graphql"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/intents"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/users"
 	"github.com/samber/lo"
 	"golang.org/x/oauth2"
 )
@@ -27,15 +25,15 @@ func NewClient(address string, tokenSrc oauth2.TokenSource) *Client {
 	}
 }
 
-func (c *Client) ReportDiscoveredIntents(ctx context.Context, envId string, source string, intentsInput []intents.IntentInput) error {
-	_, err := intents.ReportDiscoveredIntents(ctx, c.Client, lo.ToPtr(envId), lo.ToPtr(source), lo.ToSlicePtr(intentsInput))
+func (c *Client) ReportDiscoveredIntents(ctx context.Context, intentsInput []DiscoveredIntentInput) error {
+	_, err := ReportDiscoveredIntents(ctx, c.Client, lo.ToSlicePtr(intentsInput))
 	return err
 }
 
-func (c *Client) RegisterAuth0User(ctx context.Context) (users.UserFields, error) {
-	createUserResponse, err := users.CreateUserFromAuth0User(ctx, c.Client)
+func (c *Client) RegisterAuth0User(ctx context.Context) (UserFields, error) {
+	createUserResponse, err := CreateUserFromAuth0User(ctx, c.Client)
 	if err != nil {
-		return users.UserFields{}, err
+		return UserFields{}, err
 	}
 
 	return createUserResponse.Me.RegisterUser.UserFields, nil

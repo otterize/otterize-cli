@@ -1,13 +1,10 @@
 fragment UserFields on User {
     id
     email
-    authProviderUserId
     organization {
         id
     }
-    authProviderUserInfo {
-        name
-    }
+    name
 }
 
 
