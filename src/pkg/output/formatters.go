@@ -8,7 +8,7 @@ import (
 )
 
 func FormatEnvs(envs []cloudapi.Environment) (string, error) {
-	columns := []string{"id", "name", "organization_id", "labels", "integrations_count", "intents_count"}
+	columns := []string{"id", "name", "labels", "integrations_count", "applied_intents_count"}
 
 	formatLabels := func(labels *[]cloudapi.Label) string {
 		if labels == nil {
@@ -24,11 +24,10 @@ func FormatEnvs(envs []cloudapi.Environment) (string, error) {
 
 	getColumnData := func(e cloudapi.Environment) []map[string]string {
 		return []map[string]string{{
-			"id":              e.Id,
-			"name":            lo.FromPtr(e.Name),
-			"organization_id": e.Organization.Id,
-			"intents_count":   fmt.Sprintf("%d", e.IntentsCount),
-			"labels":          formatLabels(e.Labels),
+			"id":                    e.Id,
+			"name":                  lo.FromPtr(e.Name),
+			"applied_intents_count": fmt.Sprintf("%d", e.AppliedIntentsCount),
+			"labels":                formatLabels(e.Labels),
 		}}
 	}
 	return FormatList(envs, columns, getColumnData)
@@ -84,15 +83,13 @@ func FormatOrganizations(organizations []cloudapi.Organization) (string, error) 
 }
 
 func FormatUsers(users []cloudapi.User) (string, error) {
-	columns := []string{"id", "email", "name", "auth0_user_id", "organization_id", "organization_name"}
+	columns := []string{"id", "email", "name", "organization_id"}
 	getColumnData := func(u cloudapi.User) []map[string]string {
 		return []map[string]string{{
-			"id":                u.Id,
-			"email":             u.Email,
-			"name":              u.AuthProviderUserInfo.Name,
-			"auth0_user_id":     u.AuthProviderUserId,
-			"organization_id":   u.Organization.Id,
-			"organization_name": lo.FromPtr(u.Organization.Name),
+			"id":              u.Id,
+			"email":           u.Email,
+			"name":            u.Name,
+			"organization_id": u.Organization.Id,
 		}}
 	}
 
