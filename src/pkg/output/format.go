@@ -35,7 +35,7 @@ func AsTable[T any](dataList []T, columns []string, getColumnData func(T) []map[
 		for _, columnData := range getColumnData(item) {
 			row := tab.Row()
 			for _, column := range columns {
-				value, _ := columnData[column]
+				value := columnData[column]
 				row.Column(value)
 			}
 		}

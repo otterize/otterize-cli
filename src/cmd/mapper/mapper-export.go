@@ -71,7 +71,6 @@ var ExportCmd = &cobra.Command{
 
 				for _, serviceIntent := range serviceIntents.Intents {
 					intent := v1alpha1.Intent{
-						Type: v1alpha1.IntentTypeHTTP,
 						Name: serviceIntent.Name,
 					}
 					if len(serviceIntent.Namespace) != 0 {
