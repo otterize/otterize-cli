@@ -326,10 +326,18 @@ type LabelInput struct {
 
 // Me defines model for Me.
 type Me struct {
-	Invites              *[]Invite       `json:"invites,omitempty"`
-	Organizations        *[]Organization `json:"organizations,omitempty"`
-	SelectedOrganization Organization    `json:"selectedOrganization"`
-	User                 User            `json:"user"`
+	Invites       []Invite       `json:"invites"`
+	Organizations []Organization `json:"organizations"`
+
+	// SelectedOrganization The organization under which the current user request acts.
+	// This is selected by the X-Otterize-Organization header,
+	// or, for users with a single organization, this is that single selected organization.
+	// This may be empty for users registered through MeMutation.registerUser but did not complete
+	// the login flow successfully by joining or creating an organization.
+	SelectedOrganization *struct {
+		Id string `json:"id"`
+	} `json:"selectedOrganization,omitempty"`
+	User User `json:"user"`
 }
 
 // Namespace defines model for Namespace.
@@ -384,16 +392,11 @@ type Service struct {
 
 // User defines model for User.
 type User struct {
-	Email        string `json:"email"`
-	Id           string `json:"id"`
-	ImageURL     string `json:"imageURL"`
-	Name         string `json:"name"`
-	Organization *struct {
-		Id string `json:"id"`
-	} `json:"organization,omitempty"`
-	Organizations *[]struct {
-		Id string `json:"id"`
-	} `json:"organizations,omitempty"`
+	AuthProviderUserId string `json:"authProviderUserId"`
+	Email              string `json:"email"`
+	Id                 string `json:"id"`
+	ImageURL           string `json:"imageURL"`
+	Name               string `json:"name"`
 }
 
 // BADREQUEST defines model for BAD_REQUEST.
@@ -545,8 +548,8 @@ type UpdateOrganizationMutationJSONBody struct {
 	Name     *string `json:"name,omitempty"`
 }
 
-// DisassociateUserFromOrgMutationParams defines parameters for DisassociateUserFromOrgMutation.
-type DisassociateUserFromOrgMutationParams struct {
+// DisassociateUserFromOrganizationMutationParams defines parameters for DisassociateUserFromOrganizationMutation.
+type DisassociateUserFromOrganizationMutationParams struct {
 	UserId string `form:"userId" json:"userId"`
 }
 
@@ -786,8 +789,8 @@ type ClientInterface interface {
 
 	UpdateOrganizationMutation(ctx context.Context, id string, body UpdateOrganizationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// DisassociateUserFromOrgMutation request
-	DisassociateUserFromOrgMutation(ctx context.Context, id string, params *DisassociateUserFromOrgMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DisassociateUserFromOrganizationMutation request
+	DisassociateUserFromOrganizationMutation(ctx context.Context, id string, params *DisassociateUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// OneServiceQuery request
 	OneServiceQuery(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1321,8 +1324,8 @@ func (c *Client) UpdateOrganizationMutation(ctx context.Context, id string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) DisassociateUserFromOrgMutation(ctx context.Context, id string, params *DisassociateUserFromOrgMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDisassociateUserFromOrgMutationRequest(c.Server, id, params)
+func (c *Client) DisassociateUserFromOrganizationMutation(ctx context.Context, id string, params *DisassociateUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDisassociateUserFromOrganizationMutationRequest(c.Server, id, params)
 	if err != nil {
 		return nil, err
 	}
@@ -2929,8 +2932,8 @@ func NewUpdateOrganizationMutationRequestWithBody(server string, id string, cont
 	return req, nil
 }
 
-// NewDisassociateUserFromOrgMutationRequest generates requests for DisassociateUserFromOrgMutation
-func NewDisassociateUserFromOrgMutationRequest(server string, id string, params *DisassociateUserFromOrgMutationParams) (*http.Request, error) {
+// NewDisassociateUserFromOrganizationMutationRequest generates requests for DisassociateUserFromOrganizationMutation
+func NewDisassociateUserFromOrganizationMutationRequest(server string, id string, params *DisassociateUserFromOrganizationMutationParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -3390,8 +3393,8 @@ type ClientWithResponsesInterface interface {
 
 	UpdateOrganizationMutationWithResponse(ctx context.Context, id string, body UpdateOrganizationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOrganizationMutationResponse, error)
 
-	// DisassociateUserFromOrgMutation request
-	DisassociateUserFromOrgMutationWithResponse(ctx context.Context, id string, params *DisassociateUserFromOrgMutationParams, reqEditors ...RequestEditorFn) (*DisassociateUserFromOrgMutationResponse, error)
+	// DisassociateUserFromOrganizationMutation request
+	DisassociateUserFromOrganizationMutationWithResponse(ctx context.Context, id string, params *DisassociateUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*DisassociateUserFromOrganizationMutationResponse, error)
 
 	// OneServiceQuery request
 	OneServiceQueryWithResponse(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*OneServiceQueryResponse, error)
@@ -4333,7 +4336,7 @@ func (r UpdateOrganizationMutationResponse) StatusCode() int {
 	return 0
 }
 
-type DisassociateUserFromOrgMutationResponse struct {
+type DisassociateUserFromOrganizationMutationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *string
@@ -4346,7 +4349,7 @@ type DisassociateUserFromOrgMutationResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r DisassociateUserFromOrgMutationResponse) Status() string {
+func (r DisassociateUserFromOrganizationMutationResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -4354,7 +4357,7 @@ func (r DisassociateUserFromOrgMutationResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r DisassociateUserFromOrgMutationResponse) StatusCode() int {
+func (r DisassociateUserFromOrganizationMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4878,13 +4881,13 @@ func (c *ClientWithResponses) UpdateOrganizationMutationWithResponse(ctx context
 	return ParseUpdateOrganizationMutationResponse(rsp)
 }
 
-// DisassociateUserFromOrgMutationWithResponse request returning *DisassociateUserFromOrgMutationResponse
-func (c *ClientWithResponses) DisassociateUserFromOrgMutationWithResponse(ctx context.Context, id string, params *DisassociateUserFromOrgMutationParams, reqEditors ...RequestEditorFn) (*DisassociateUserFromOrgMutationResponse, error) {
-	rsp, err := c.DisassociateUserFromOrgMutation(ctx, id, params, reqEditors...)
+// DisassociateUserFromOrganizationMutationWithResponse request returning *DisassociateUserFromOrganizationMutationResponse
+func (c *ClientWithResponses) DisassociateUserFromOrganizationMutationWithResponse(ctx context.Context, id string, params *DisassociateUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*DisassociateUserFromOrganizationMutationResponse, error) {
+	rsp, err := c.DisassociateUserFromOrganizationMutation(ctx, id, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseDisassociateUserFromOrgMutationResponse(rsp)
+	return ParseDisassociateUserFromOrganizationMutationResponse(rsp)
 }
 
 // OneServiceQueryWithResponse request returning *OneServiceQueryResponse
@@ -7176,15 +7179,15 @@ func ParseUpdateOrganizationMutationResponse(rsp *http.Response) (*UpdateOrganiz
 	return response, nil
 }
 
-// ParseDisassociateUserFromOrgMutationResponse parses an HTTP response from a DisassociateUserFromOrgMutationWithResponse call
-func ParseDisassociateUserFromOrgMutationResponse(rsp *http.Response) (*DisassociateUserFromOrgMutationResponse, error) {
+// ParseDisassociateUserFromOrganizationMutationResponse parses an HTTP response from a DisassociateUserFromOrganizationMutationWithResponse call
+func ParseDisassociateUserFromOrganizationMutationResponse(rsp *http.Response) (*DisassociateUserFromOrganizationMutationResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &DisassociateUserFromOrgMutationResponse{
+	response := &DisassociateUserFromOrganizationMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

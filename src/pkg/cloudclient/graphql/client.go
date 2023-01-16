@@ -30,11 +30,11 @@ func (c *Client) ReportDiscoveredIntents(ctx context.Context, intentsInput []Dis
 	return err
 }
 
-func (c *Client) RegisterAuth0User(ctx context.Context) (UserFields, error) {
+func (c *Client) RegisterAuth0User(ctx context.Context) (MeFields, error) {
 	createUserResponse, err := CreateUserFromAuth0User(ctx, c.Client)
 	if err != nil {
-		return UserFields{}, err
+		return MeFields{}, err
 	}
 
-	return createUserResponse.Me.RegisterUser.UserFields, nil
+	return createUserResponse.Me.RegisterUser.MeFields, nil
 }

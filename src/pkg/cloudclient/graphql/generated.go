@@ -12,46 +12,41 @@ import (
 
 // CreateUserFromAuth0UserMeMeMutation includes the requested fields of the GraphQL type MeMutation.
 type CreateUserFromAuth0UserMeMeMutation struct {
-	RegisterUser CreateUserFromAuth0UserMeMeMutationRegisterUser `json:"registerUser"`
+	// Register the user defined by the active session token into the otterize users store.
+	RegisterUser CreateUserFromAuth0UserMeMeMutationRegisterUserMe `json:"registerUser"`
 }
 
 // GetRegisterUser returns CreateUserFromAuth0UserMeMeMutation.RegisterUser, and is useful for accessing the field via an interface.
-func (v *CreateUserFromAuth0UserMeMeMutation) GetRegisterUser() CreateUserFromAuth0UserMeMeMutationRegisterUser {
+func (v *CreateUserFromAuth0UserMeMeMutation) GetRegisterUser() CreateUserFromAuth0UserMeMeMutationRegisterUserMe {
 	return v.RegisterUser
 }
 
-// CreateUserFromAuth0UserMeMeMutationRegisterUser includes the requested fields of the GraphQL type User.
-type CreateUserFromAuth0UserMeMeMutationRegisterUser struct {
-	UserFields `json:"-"`
+// CreateUserFromAuth0UserMeMeMutationRegisterUserMe includes the requested fields of the GraphQL type Me.
+type CreateUserFromAuth0UserMeMeMutationRegisterUserMe struct {
+	MeFields `json:"-"`
 }
 
-// GetId returns CreateUserFromAuth0UserMeMeMutationRegisterUser.Id, and is useful for accessing the field via an interface.
-func (v *CreateUserFromAuth0UserMeMeMutationRegisterUser) GetId() string { return v.UserFields.Id }
-
-// GetEmail returns CreateUserFromAuth0UserMeMeMutationRegisterUser.Email, and is useful for accessing the field via an interface.
-func (v *CreateUserFromAuth0UserMeMeMutationRegisterUser) GetEmail() string {
-	return v.UserFields.Email
+// GetUser returns CreateUserFromAuth0UserMeMeMutationRegisterUserMe.User, and is useful for accessing the field via an interface.
+func (v *CreateUserFromAuth0UserMeMeMutationRegisterUserMe) GetUser() MeFieldsUser {
+	return v.MeFields.User
 }
 
-// GetOrganization returns CreateUserFromAuth0UserMeMeMutationRegisterUser.Organization, and is useful for accessing the field via an interface.
-func (v *CreateUserFromAuth0UserMeMeMutationRegisterUser) GetOrganization() UserFieldsOrganization {
-	return v.UserFields.Organization
+// GetOrganizations returns CreateUserFromAuth0UserMeMeMutationRegisterUserMe.Organizations, and is useful for accessing the field via an interface.
+func (v *CreateUserFromAuth0UserMeMeMutationRegisterUserMe) GetOrganizations() []MeFieldsOrganizationsOrganization {
+	return v.MeFields.Organizations
 }
 
-// GetName returns CreateUserFromAuth0UserMeMeMutationRegisterUser.Name, and is useful for accessing the field via an interface.
-func (v *CreateUserFromAuth0UserMeMeMutationRegisterUser) GetName() string { return v.UserFields.Name }
-
-func (v *CreateUserFromAuth0UserMeMeMutationRegisterUser) UnmarshalJSON(b []byte) error {
+func (v *CreateUserFromAuth0UserMeMeMutationRegisterUserMe) UnmarshalJSON(b []byte) error {
 
 	if string(b) == "null" {
 		return nil
 	}
 
 	var firstPass struct {
-		*CreateUserFromAuth0UserMeMeMutationRegisterUser
+		*CreateUserFromAuth0UserMeMeMutationRegisterUserMe
 		graphql.NoUnmarshalJSON
 	}
-	firstPass.CreateUserFromAuth0UserMeMeMutationRegisterUser = v
+	firstPass.CreateUserFromAuth0UserMeMeMutationRegisterUserMe = v
 
 	err := json.Unmarshal(b, &firstPass)
 	if err != nil {
@@ -59,24 +54,20 @@ func (v *CreateUserFromAuth0UserMeMeMutationRegisterUser) UnmarshalJSON(b []byte
 	}
 
 	err = json.Unmarshal(
-		b, &v.UserFields)
+		b, &v.MeFields)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-type __premarshalCreateUserFromAuth0UserMeMeMutationRegisterUser struct {
-	Id string `json:"id"`
+type __premarshalCreateUserFromAuth0UserMeMeMutationRegisterUserMe struct {
+	User MeFieldsUser `json:"user"`
 
-	Email string `json:"email"`
-
-	Organization UserFieldsOrganization `json:"organization"`
-
-	Name string `json:"name"`
+	Organizations []MeFieldsOrganizationsOrganization `json:"organizations"`
 }
 
-func (v *CreateUserFromAuth0UserMeMeMutationRegisterUser) MarshalJSON() ([]byte, error) {
+func (v *CreateUserFromAuth0UserMeMeMutationRegisterUserMe) MarshalJSON() ([]byte, error) {
 	premarshaled, err := v.__premarshalJSON()
 	if err != nil {
 		return nil, err
@@ -84,18 +75,17 @@ func (v *CreateUserFromAuth0UserMeMeMutationRegisterUser) MarshalJSON() ([]byte,
 	return json.Marshal(premarshaled)
 }
 
-func (v *CreateUserFromAuth0UserMeMeMutationRegisterUser) __premarshalJSON() (*__premarshalCreateUserFromAuth0UserMeMeMutationRegisterUser, error) {
-	var retval __premarshalCreateUserFromAuth0UserMeMeMutationRegisterUser
+func (v *CreateUserFromAuth0UserMeMeMutationRegisterUserMe) __premarshalJSON() (*__premarshalCreateUserFromAuth0UserMeMeMutationRegisterUserMe, error) {
+	var retval __premarshalCreateUserFromAuth0UserMeMeMutationRegisterUserMe
 
-	retval.Id = v.UserFields.Id
-	retval.Email = v.UserFields.Email
-	retval.Organization = v.UserFields.Organization
-	retval.Name = v.UserFields.Name
+	retval.User = v.MeFields.User
+	retval.Organizations = v.MeFields.Organizations
 	return &retval, nil
 }
 
 // CreateUserFromAuth0UserResponse is returned by CreateUserFromAuth0User on success.
 type CreateUserFromAuth0UserResponse struct {
+	// Operate on the current logged-in user
 	Me CreateUserFromAuth0UserMeMeMutation `json:"me"`
 }
 
@@ -201,6 +191,44 @@ const (
 	KafkaOperationIdempotentWrite KafkaOperation = "IDEMPOTENT_WRITE"
 )
 
+// MeFields includes the GraphQL fields of Me requested by the fragment MeFields.
+type MeFields struct {
+	// The logged-in user details.
+	User MeFieldsUser `json:"user"`
+	// The organizations to which the current logged-in user belongs.
+	Organizations []MeFieldsOrganizationsOrganization `json:"organizations"`
+}
+
+// GetUser returns MeFields.User, and is useful for accessing the field via an interface.
+func (v *MeFields) GetUser() MeFieldsUser { return v.User }
+
+// GetOrganizations returns MeFields.Organizations, and is useful for accessing the field via an interface.
+func (v *MeFields) GetOrganizations() []MeFieldsOrganizationsOrganization { return v.Organizations }
+
+// MeFieldsOrganizationsOrganization includes the requested fields of the GraphQL type Organization.
+type MeFieldsOrganizationsOrganization struct {
+	Id string `json:"id"`
+}
+
+// GetId returns MeFieldsOrganizationsOrganization.Id, and is useful for accessing the field via an interface.
+func (v *MeFieldsOrganizationsOrganization) GetId() string { return v.Id }
+
+// MeFieldsUser includes the requested fields of the GraphQL type User.
+type MeFieldsUser struct {
+	Id    string `json:"id"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
+}
+
+// GetId returns MeFieldsUser.Id, and is useful for accessing the field via an interface.
+func (v *MeFieldsUser) GetId() string { return v.Id }
+
+// GetEmail returns MeFieldsUser.Email, and is useful for accessing the field via an interface.
+func (v *MeFieldsUser) GetEmail() string { return v.Email }
+
+// GetName returns MeFieldsUser.Name, and is useful for accessing the field via an interface.
+func (v *MeFieldsUser) GetName() string { return v.Name }
+
 // ReportDiscoveredIntentsResponse is returned by ReportDiscoveredIntents on success.
 type ReportDiscoveredIntentsResponse struct {
 	ReportDiscoveredIntents *bool `json:"reportDiscoveredIntents"`
@@ -210,34 +238,6 @@ type ReportDiscoveredIntentsResponse struct {
 func (v *ReportDiscoveredIntentsResponse) GetReportDiscoveredIntents() *bool {
 	return v.ReportDiscoveredIntents
 }
-
-// UserFields includes the GraphQL fields of User requested by the fragment UserFields.
-type UserFields struct {
-	Id           string                 `json:"id"`
-	Email        string                 `json:"email"`
-	Organization UserFieldsOrganization `json:"organization"`
-	Name         string                 `json:"name"`
-}
-
-// GetId returns UserFields.Id, and is useful for accessing the field via an interface.
-func (v *UserFields) GetId() string { return v.Id }
-
-// GetEmail returns UserFields.Email, and is useful for accessing the field via an interface.
-func (v *UserFields) GetEmail() string { return v.Email }
-
-// GetOrganization returns UserFields.Organization, and is useful for accessing the field via an interface.
-func (v *UserFields) GetOrganization() UserFieldsOrganization { return v.Organization }
-
-// GetName returns UserFields.Name, and is useful for accessing the field via an interface.
-func (v *UserFields) GetName() string { return v.Name }
-
-// UserFieldsOrganization includes the requested fields of the GraphQL type Organization.
-type UserFieldsOrganization struct {
-	Id string `json:"id"`
-}
-
-// GetId returns UserFieldsOrganization.Id, and is useful for accessing the field via an interface.
-func (v *UserFieldsOrganization) GetId() string { return v.Id }
 
 // __ReportDiscoveredIntentsInput is used internally by genqlient
 type __ReportDiscoveredIntentsInput struct {
@@ -257,17 +257,19 @@ func CreateUserFromAuth0User(
 mutation CreateUserFromAuth0User {
 	me {
 		registerUser {
-			... UserFields
+			... MeFields
 		}
 	}
 }
-fragment UserFields on User {
-	id
-	email
-	organization {
+fragment MeFields on Me {
+	user {
+		id
+		email
+		name
+	}
+	organizations {
 		id
 	}
-	name
 }
 `,
 	}

@@ -37,8 +37,6 @@ func login(_ *cobra.Command, _ []string) error {
 	authResult := <-loginServer.GetAuthResultChannel()
 	prints.PrintCliStderr("Login completed successfully! logged in as: %s", authResult.Profile["email"])
 
-	prints.PrintCliStderr("Querying user info from Otterize server at %s", otterizeAPIAddress)
-
 	apiAddress := viper.GetString(config.OtterizeAPIAddressKey)
 	loginCtx, err := userlogin.NewContext(apiAddress, authResult.AccessToken)
 	if err != nil {

@@ -1,17 +1,19 @@
-fragment UserFields on User {
-    id
-    email
-    organization {
+fragment MeFields on Me {
+    user {
+        id
+        email
+        name
+    }
+    organizations {
         id
     }
-    name
 }
 
 
 mutation CreateUserFromAuth0User {
     me {
         registerUser {
-            ...UserFields
+            ...MeFields
         }
     }
 }

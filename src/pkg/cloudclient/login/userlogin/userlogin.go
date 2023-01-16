@@ -37,16 +37,17 @@ func (loginCtx *LoginContext) EnsureUserRegistered() error {
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 	defer cancel()
 
+	prints.PrintCliStderr("Querying user info from Otterize server")
 	meResponse, err := loginCtx.apiClient.MeQueryWithResponse(ctxTimeout)
 	var httpError *restapi.HttpError
 	if err != nil && errors.As(err, &httpError) && httpError.StatusCode == http.StatusNotFound {
 		prints.PrintCliStderr("Registering user with Otterize backend for the first time")
 		// This is currently not exposed by REST API
-		user, err := loginCtx.gqlClient.RegisterAuth0User(ctxTimeout)
+		me, err := loginCtx.gqlClient.RegisterAuth0User(ctxTimeout)
 		if err != nil {
 			return err
 		}
-		prints.PrintCliStderr("User registered as Otterize user with user ID: %s", user.Id)
+		prints.PrintCliStderr("User registered as Otterize user with user ID: %s", me.User.Id)
 		meResponse, err = loginCtx.apiClient.MeQueryWithResponse(ctxTimeout)
 		if err != nil {
 			return err
@@ -62,7 +63,7 @@ func (loginCtx *LoginContext) EnsureUserRegistered() error {
 }
 
 func (loginCtx *LoginContext) SelectOrg(preSelectedOrgId string, switchOrg bool) (string, error) {
-	organizations := *loginCtx.me.Organizations
+	organizations := loginCtx.me.Organizations
 	selectedOrg := ""
 	if len(organizations) == 0 {
 		orgId, err := loginCtx.createOrJoinOrgFromUserInput()
@@ -86,32 +87,31 @@ func (loginCtx *LoginContext) SelectOrg(preSelectedOrgId string, switchOrg bool)
 }
 
 func (loginCtx *LoginContext) createOrJoinOrgFromUserInput() (string, error) {
-	invites := *loginCtx.me.Invites
+	invites := loginCtx.me.Invites
 	if len(invites) > 0 {
 		prints.PrintCliStderr("The following invites are available:")
-		formatted, err := output.FormatInvites(*loginCtx.me.Invites)
+		formatted, err := output.FormatInvites(loginCtx.me.Invites)
 		if err != nil {
 			return "", err
 		}
 		prints.PrintCliStderr(formatted)
+		selectedInvite, ok, err := loginCtx.interactiveSelectInvite()
+		if err != nil {
+			return "", err
+		}
+
+		if ok {
+			return loginCtx.joinOrgByInvite(selectedInvite)
+		}
 	} else {
 		prints.PrintCliStderr("No pending invites for user.")
-	}
-
-	selectedInvite, ok, err := loginCtx.interactiveSelectInvite()
-	if err != nil {
-		return "", err
-	}
-
-	if ok {
-		return loginCtx.joinOrgByInvite(selectedInvite)
 	}
 
 	return loginCtx.createNewOrg()
 }
 
 func (loginCtx *LoginContext) interactiveSelectInvite() (*cloudapi.Invite, bool, error) {
-	invites := *loginCtx.me.Invites
+	invites := loginCtx.me.Invites
 
 	for {
 		prints.PrintCliStderr("Input invite ID or blank to create a new organization: ")
@@ -121,7 +121,9 @@ func (loginCtx *LoginContext) interactiveSelectInvite() (*cloudapi.Invite, bool,
 			return nil, false, err
 		}
 
-		if strings.TrimSpace(inviteId) == "" {
+		inviteId = strings.TrimSpace(inviteId)
+
+		if inviteId == "" {
 			return nil, false, nil
 		}
 
@@ -167,7 +169,7 @@ func (loginCtx *LoginContext) createNewOrg() (string, error) {
 }
 
 func (loginCtx *LoginContext) interactiveSelectOrg(preSelectedOrgId string, switchOrg bool) (string, error) {
-	organizations := *loginCtx.me.Organizations
+	organizations := loginCtx.me.Organizations
 
 	prints.PrintCliStderr("You belong to the following organizations:")
 	formatted, err := output.FormatOrganizations(organizations)
