@@ -80,19 +80,19 @@ func login(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	user := meResponse.JSON200.User
-	prints.PrintCliStderr("Logged in as Otterize user %s (%s)", user.Id, user.Email)
+	me := meResponse.JSON200
+	prints.PrintCliStderr("Logged in as Otterize user %s (%s)", me.User.Id, me.User.Email)
 
-	if err := selectOrgFromUserInput(user); err != nil {
+	if err := selectOrgFromUserInput(me); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func selectOrgFromUserInput(user cloudapi.User) error {
+func selectOrgFromUserInput(me cloudapi.Me) error {
 	prints.PrintCliStderr("You belong to the following organizations:")
-	formatted, err := output.FormatOrganizations(*user.Organizations)
+	formatted, err := output.FormatOrganizations(*me.Organizations)
 	if err != nil {
 		return err
 	}
@@ -102,16 +102,16 @@ func selectOrgFromUserInput(user cloudapi.User) error {
 	if viper.IsSet(config.ApiSelectedOrganizationId) && !viper.GetBool(SwitchOrgFlagKey) {
 		prints.PrintCliStderr("More than 1 organization found, using previously selected organization. To change, log-in again with --%s.", SwitchOrgFlagKey)
 		selectedOrg = viper.GetString(config.ApiSelectedOrganizationId)
-	} else if len(*user.Organizations) == 0 {
-		orgId, err := createOrJoinOrgFromUserInput(user)
+	} else if len(*me.Organizations) == 0 {
+		orgId, err := createOrJoinOrgFromUserInput(me)
 		if err != nil {
 			return err
 		}
 		selectedOrg = orgId
 	}
-	if len(*user.Organizations) == 1 {
+	if len(*me.Organizations) == 1 {
 		prints.PrintCliStderr("Only 1 organization found - auto-selecting this organization for use. To change, join another organization and log in again.")
-		selectedOrg = (*user.Organizations)[0].Id
+		selectedOrg = (*me.Organizations)[0].Id
 	} else {
 		prints.PrintCliStderr("More than 1 organization found, input org ID (to change, log-in again, blank to select first org): ")
 		reader := bufio.NewReader(os.Stdin)
@@ -121,7 +121,7 @@ func selectOrgFromUserInput(user cloudapi.User) error {
 		}
 
 		if strings.TrimSpace(orgId) == "" {
-			orgId = (*user.Organizations)[0].Id
+			orgId = (*me.Organizations)[0].Id
 		}
 		selectedOrg = orgId
 	}
@@ -135,7 +135,7 @@ func selectOrgFromUserInput(user cloudapi.User) error {
 	return nil
 }
 
-func createOrJoinOrgFromUserInput(user cloudapi.User) (string, error) {
+func createOrJoinOrgFromUserInput(me cloudapi.Me) (string, error) {
 	return "", errors.New("not implemented")
 }
 
