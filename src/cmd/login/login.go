@@ -17,7 +17,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 )
@@ -83,19 +82,9 @@ func login(_ *cobra.Command, _ []string) error {
 
 	user := meResponse.JSON200.User
 	prints.PrintCliStderr("Logged in as Otterize user %s (%s)", user.Id, user.Email)
-	if len(*user.Organizations) != 0 {
-		err2 := selectOrgFromUserInput(user)
-		if err2 != nil {
-			return err2
-		}
-	} else {
-		apiAddress := viper.GetString(config.OtterizeAPIAddressKey)
-		parsedUrl, err := url.Parse(apiAddress)
-		if err != nil {
-			return err
-		}
-		prints.PrintCliStderr("User has no organization - log-in failed, please log-in at the website at %s://%s to create or join an organization.", parsedUrl.Scheme, parsedUrl.Host)
-		return nil
+
+	if err := selectOrgFromUserInput(user); err != nil {
+		return err
 	}
 
 	return nil
@@ -108,30 +97,46 @@ func selectOrgFromUserInput(user cloudapi.User) error {
 		return err
 	}
 	prints.PrintCliStderr(formatted)
+
+	selectedOrg := ""
+	if viper.IsSet(config.ApiSelectedOrganizationId) && !viper.GetBool(SwitchOrgFlagKey) {
+		prints.PrintCliStderr("More than 1 organization found, using previously selected organization. To change, log-in again with --%s.", SwitchOrgFlagKey)
+		selectedOrg = viper.GetString(config.ApiSelectedOrganizationId)
+	} else if len(*user.Organizations) == 0 {
+		orgId, err := createOrJoinOrgFromUserInput(user)
+		if err != nil {
+			return err
+		}
+		selectedOrg = orgId
+	}
 	if len(*user.Organizations) == 1 {
 		prints.PrintCliStderr("Only 1 organization found - auto-selecting this organization for use. To change, join another organization and log in again.")
+		selectedOrg = (*user.Organizations)[0].Id
 	} else {
-		if !viper.IsSet(config.ApiSelectedOrganizationId) || viper.GetBool(SwitchOrgFlagKey) {
-			prints.PrintCliStderr("More than 1 organization found, input org ID (to change, log-in again, blank to select first org): ")
-			reader := bufio.NewReader(os.Stdin)
-			orgId, err := reader.ReadString('\n')
-			if err != nil {
-				return err
-			}
-
-			if strings.TrimSpace(orgId) == "" {
-				orgId = (*user.Organizations)[0].Id
-			}
-
-			err = config.SaveSelectedOrganization(config.OrganizationConfig{OrganizationId: orgId})
-			if err != nil {
-				return err
-			}
+		prints.PrintCliStderr("More than 1 organization found, input org ID (to change, log-in again, blank to select first org): ")
+		reader := bufio.NewReader(os.Stdin)
+		orgId, err := reader.ReadString('\n')
+		if err != nil {
+			return err
 		}
-		prints.PrintCliStderr("More than 1 organization found, using previously selected organization. To change, log-in again with --%s.", SwitchOrgFlagKey)
+
+		if strings.TrimSpace(orgId) == "" {
+			orgId = (*user.Organizations)[0].Id
+		}
+		selectedOrg = orgId
 	}
+
+	err = config.SaveSelectedOrganization(config.OrganizationConfig{OrganizationId: selectedOrg})
+	if err != nil {
+		return err
+	}
+
 	prints.PrintCliStderr("User is registered with organization %s", viper.GetString(config.ApiSelectedOrganizationId))
 	return nil
+}
+
+func createOrJoinOrgFromUserInput(user cloudapi.User) (string, error) {
+	return "", errors.New("not implemented")
 }
 
 var LoginCmd = &cobra.Command{
