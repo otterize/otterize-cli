@@ -1,9 +1,12 @@
 package restapi
 
 import (
+	"context"
 	"fmt"
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
+	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/spf13/viper"
 	"net/http"
 )
 
@@ -21,6 +24,12 @@ func NewClientFromToken(address string, token string) (*cloudapi.ClientWithRespo
 	return cloudapi.NewClientWithResponses(
 		address,
 		cloudapi.WithRequestEditorFn(bearerTokenProvider.Intercept),
+		cloudapi.WithRequestEditorFn(func(ctx context.Context, req *http.Request) error {
+			if viper.IsSet(config.ApiSelectedOrganizationId) {
+				req.Header.Set("X-Otterize-Organization", viper.GetString(config.ApiSelectedOrganizationId))
+			}
+			return nil
+		}),
 		cloudapi.WithHTTPClient(&doerWithErrorCheck{doer: &http.Client{}}),
 	)
 }
