@@ -16,12 +16,9 @@ import (
 )
 
 type SecretConfig struct {
-	ClientId     string `json:"client_id,omitempty"`
-	ClientSecret string `json:"client_secret,omitempty"`
-	UserToken    string `json:"user_token,omitempty"`
-}
-
-type OrganizationConfig struct {
+	ClientId       string `json:"client_id,omitempty"`
+	ClientSecret   string `json:"client_secret,omitempty"`
+	UserToken      string `json:"user_token,omitempty"`
 	OrganizationId string `json:"organization_id"`
 }
 
@@ -46,7 +43,6 @@ func GetAPIToken(ctx context.Context) string {
 }
 
 const ApiCredentialsFilename = "credentials"
-const ApiOrganizationFilename = "organization"
 
 func LoadConfigFile(output any, filename string) (bool, error) {
 	configDir, err := OtterizeConfigDirPath()
@@ -103,6 +99,11 @@ func LoadApiCredentialsFile() {
 		return
 	}
 
+	if secretConfig.OrganizationId != "" {
+		viper.Set(ApiSelectedOrganizationId, secretConfig.OrganizationId)
+		return
+	}
+
 	viper.Set(ApiClientIdKey, secretConfig.ClientId)
 	viper.Set(ApiClientSecretKey, secretConfig.ClientSecret)
 }
@@ -135,34 +136,4 @@ func SaveJSONConfig(config any, filename string) error {
 	}
 
 	return nil
-}
-
-func SaveSelectedOrganization(orgConf OrganizationConfig) error {
-	err := SaveJSONConfig(orgConf, ApiOrganizationFilename)
-	if err != nil {
-		return err
-	}
-	viper.Set(ApiSelectedOrganizationId, orgConf.OrganizationId)
-
-	return nil
-}
-
-func LoadSelectedOrganizationFile() {
-	if viper.IsSet(ApiSelectedOrganizationId) {
-		// org ID was provided as a flag or env var
-		return
-	}
-
-	var orgConfig OrganizationConfig
-
-	loaded, err := LoadConfigFile(&orgConfig, ApiOrganizationFilename)
-	must.Must(err)
-	if !loaded {
-		return
-	}
-
-	if orgConfig.OrganizationId != "" {
-		viper.Set(ApiSelectedOrganizationId, orgConfig.OrganizationId)
-		return
-	}
 }

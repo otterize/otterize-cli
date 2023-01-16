@@ -55,12 +55,7 @@ func login(_ *cobra.Command, _ []string) error {
 	}
 
 	if err := config.SaveSecretConfig(config.SecretConfig{
-		UserToken: authResult.AccessToken,
-	}); err != nil {
-		return err
-	}
-
-	if err := config.SaveSelectedOrganization(config.OrganizationConfig{
+		UserToken:      authResult.AccessToken,
 		OrganizationId: selectedOrgId,
 	}); err != nil {
 		return err
