@@ -97,47 +97,47 @@ const (
 	KafkaOperationIdempotentwrite KafkaOperation = "IdempotentWrite"
 )
 
-// __reportDiscoveredIntentsInput is used internally by genqlient
-type __reportDiscoveredIntentsInput struct {
+// ReportDiscoveredIntentsResponse is returned by ReportDiscoveredIntents on success.
+type ReportDiscoveredIntentsResponse struct {
+	ReportDiscoveredSourcedIntents *bool `json:"reportDiscoveredSourcedIntents"`
+}
+
+// GetReportDiscoveredSourcedIntents returns ReportDiscoveredIntentsResponse.ReportDiscoveredSourcedIntents, and is useful for accessing the field via an interface.
+func (v *ReportDiscoveredIntentsResponse) GetReportDiscoveredSourcedIntents() *bool {
+	return v.ReportDiscoveredSourcedIntents
+}
+
+// __ReportDiscoveredIntentsInput is used internally by genqlient
+type __ReportDiscoveredIntentsInput struct {
 	EnvId   *string        `json:"envId"`
 	Source  *string        `json:"source"`
 	Intents []*IntentInput `json:"intents"`
 }
 
-// GetEnvId returns __reportDiscoveredIntentsInput.EnvId, and is useful for accessing the field via an interface.
-func (v *__reportDiscoveredIntentsInput) GetEnvId() *string { return v.EnvId }
+// GetEnvId returns __ReportDiscoveredIntentsInput.EnvId, and is useful for accessing the field via an interface.
+func (v *__ReportDiscoveredIntentsInput) GetEnvId() *string { return v.EnvId }
 
-// GetSource returns __reportDiscoveredIntentsInput.Source, and is useful for accessing the field via an interface.
-func (v *__reportDiscoveredIntentsInput) GetSource() *string { return v.Source }
+// GetSource returns __ReportDiscoveredIntentsInput.Source, and is useful for accessing the field via an interface.
+func (v *__ReportDiscoveredIntentsInput) GetSource() *string { return v.Source }
 
-// GetIntents returns __reportDiscoveredIntentsInput.Intents, and is useful for accessing the field via an interface.
-func (v *__reportDiscoveredIntentsInput) GetIntents() []*IntentInput { return v.Intents }
+// GetIntents returns __ReportDiscoveredIntentsInput.Intents, and is useful for accessing the field via an interface.
+func (v *__ReportDiscoveredIntentsInput) GetIntents() []*IntentInput { return v.Intents }
 
-// reportDiscoveredIntentsResponse is returned by reportDiscoveredIntents on success.
-type reportDiscoveredIntentsResponse struct {
-	ReportDiscoveredSourcedIntents *bool `json:"reportDiscoveredSourcedIntents"`
-}
-
-// GetReportDiscoveredSourcedIntents returns reportDiscoveredIntentsResponse.ReportDiscoveredSourcedIntents, and is useful for accessing the field via an interface.
-func (v *reportDiscoveredIntentsResponse) GetReportDiscoveredSourcedIntents() *bool {
-	return v.ReportDiscoveredSourcedIntents
-}
-
-func reportDiscoveredIntents(
+func ReportDiscoveredIntents(
 	ctx context.Context,
 	client graphql.Client,
 	envId *string,
 	source *string,
 	intents []*IntentInput,
-) (*reportDiscoveredIntentsResponse, error) {
+) (*ReportDiscoveredIntentsResponse, error) {
 	req := &graphql.Request{
-		OpName: "reportDiscoveredIntents",
+		OpName: "ReportDiscoveredIntents",
 		Query: `
-mutation reportDiscoveredIntents ($envId: ID!, $source: String!, $intents: [IntentInput!]!) {
+mutation ReportDiscoveredIntents ($envId: ID!, $source: String!, $intents: [IntentInput!]!) {
 	reportDiscoveredSourcedIntents(environmentId: $envId, source: $source, intents: $intents)
 }
 `,
-		Variables: &__reportDiscoveredIntentsInput{
+		Variables: &__ReportDiscoveredIntentsInput{
 			EnvId:   envId,
 			Source:  source,
 			Intents: intents,
@@ -145,7 +145,7 @@ mutation reportDiscoveredIntents ($envId: ID!, $source: String!, $intents: [Inte
 	}
 	var err error
 
-	var data reportDiscoveredIntentsResponse
+	var data ReportDiscoveredIntentsResponse
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(

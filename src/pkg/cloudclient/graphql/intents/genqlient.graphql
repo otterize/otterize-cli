@@ -1,4 +1,4 @@
 # @genqlient(pointer: true)
-mutation reportDiscoveredIntents($envId: ID!, $source: String!, $intents: [IntentInput!]!) {
+mutation ReportDiscoveredIntents($envId: ID!, $source: String!, $intents: [IntentInput!]!) {
     reportDiscoveredSourcedIntents(environmentId: $envId, source: $source, intents: $intents)
 }
