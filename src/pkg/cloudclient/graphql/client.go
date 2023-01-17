@@ -3,7 +3,6 @@ package graphql
 import (
 	"context"
 	genqlientgraphql "github.com/Khan/genqlient/graphql"
-	"github.com/samber/lo"
 	"golang.org/x/oauth2"
 )
 
@@ -23,11 +22,6 @@ func NewClient(address string, tokenSrc oauth2.TokenSource) *Client {
 		Address: address,
 		Client:  genqlientgraphql.NewClient(address, oauth2.NewClient(context.Background(), tokenSrc)),
 	}
-}
-
-func (c *Client) ReportDiscoveredIntents(ctx context.Context, intentsInput []DiscoveredIntentInput) error {
-	_, err := ReportDiscoveredIntents(ctx, c.Client, lo.ToSlicePtr(intentsInput))
-	return err
 }
 
 func (c *Client) RegisterAuth0User(ctx context.Context) (MeFields, error) {
