@@ -197,7 +197,9 @@ func (loginCtx *LoginContext) interactiveSelectOrg(preSelectedOrgId string, swit
 			return "", err
 		}
 
-		if strings.TrimSpace(orgId) == "" {
+		orgId = strings.TrimSpace(orgId)
+
+		if orgId == "" {
 			return organizations[0].Id, nil
 		}
 
