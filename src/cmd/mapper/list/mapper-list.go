@@ -1,4 +1,4 @@
-package mapper
+package list
 
 import (
 	"context"
@@ -6,6 +6,11 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+)
+
+const (
+	NamespacesKey       = "namespaces"
+	NamespacesShorthand = "n"
 )
 
 var ListCmd = &cobra.Command{

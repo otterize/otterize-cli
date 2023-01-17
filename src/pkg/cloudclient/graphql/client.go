@@ -23,3 +23,12 @@ func NewClient(address string, tokenSrc oauth2.TokenSource) *Client {
 		Client:  genqlientgraphql.NewClient(address, oauth2.NewClient(context.Background(), tokenSrc)),
 	}
 }
+
+func (c *Client) RegisterAuth0User(ctx context.Context) (MeFields, error) {
+	createUserResponse, err := CreateUserFromAuth0User(ctx, c.Client)
+	if err != nil {
+		return MeFields{}, err
+	}
+
+	return createUserResponse.Me.RegisterUser.MeFields, nil
+}

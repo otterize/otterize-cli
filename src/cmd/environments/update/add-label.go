@@ -12,9 +12,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-var AddLabelsCmd = &cobra.Command{
-	Use:          "add_labels <envid>",
-	Short:        `Adds labels to an existing Otterize environment`,
+var AddLabelCmd = &cobra.Command{
+	Use:          "add_label <envid>",
+	Short:        `Adds label to an existing Otterize environment`,
 	SilenceUsage: true,
 	Args:         cobra.ExactArgs(1),
 	RunE: func(_ *cobra.Command, args []string) error {
@@ -27,12 +27,13 @@ var AddLabelsCmd = &cobra.Command{
 		}
 
 		id := args[0]
-		labels := viper.GetStringMapString(LabelsKey)
+		key := viper.GetString(LabelKeyKey)
+		value := viper.GetString(LabelValueKey)
 
-		r, err := c.AddEnvironmentLabelsMutationWithResponse(ctxTimeout,
+		r, err := c.AddEnvironmentLabelMutationWithResponse(ctxTimeout,
 			id,
-			cloudapi.AddEnvironmentLabelsMutationJSONRequestBody{
-				Labels: cloudclient.LabelsToLabelInput(labels),
+			cloudapi.AddEnvironmentLabelMutationJSONRequestBody{
+				Label: cloudclient.LabelToLabelInput(key, value),
 			},
 		)
 		if err != nil {
@@ -53,5 +54,6 @@ var AddLabelsCmd = &cobra.Command{
 }
 
 func init() {
-	AddLabelsCmd.PersistentFlags().StringToStringP(LabelsKey, LabelsShorthand, make(map[string]string, 0), "Environment key value Labels (key=val,key2=val2=..)")
+	AddLabelCmd.PersistentFlags().String(LabelKeyKey, "", "label key")
+	AddLabelCmd.PersistentFlags().String(LabelValueKey, "", "label value")
 }

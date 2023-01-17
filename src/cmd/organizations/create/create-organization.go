@@ -24,7 +24,7 @@ var CreateOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		r, err := c.CreateOrganizationMutationWithResponse(ctxTimeout)
+		r, err := c.CreateOrganizationMutationWithResponse(ctxTimeout, cloudapi.CreateOrganizationMutationJSONRequestBody{})
 		if err != nil {
 			return err
 		}

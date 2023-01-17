@@ -36,6 +36,13 @@ const (
 	ComponentStatusTypeNEVERCONNECTED ComponentStatusType = "NEVER_CONNECTED"
 )
 
+// Defines values for CredentialsOperatorComponentType.
+const (
+	CredentialsOperatorComponentTypeCREDENTIALSOPERATOR CredentialsOperatorComponentType = "CREDENTIALS_OPERATOR"
+	CredentialsOperatorComponentTypeINTENTSOPERATOR     CredentialsOperatorComponentType = "INTENTS_OPERATOR"
+	CredentialsOperatorComponentTypeNETWORKMAPPER       CredentialsOperatorComponentType = "NETWORK_MAPPER"
+)
+
 // Defines values for HTTPConfigMethod.
 const (
 	HTTPConfigMethodCONNECT HTTPConfigMethod = "CONNECT"
@@ -56,10 +63,15 @@ const (
 
 // Defines values for IntentType.
 const (
-	GRPC  IntentType = "GRPC"
 	HTTP  IntentType = "HTTP"
 	KAFKA IntentType = "KAFKA"
-	REDIS IntentType = "REDIS"
+)
+
+// Defines values for IntentsOperatorComponentType.
+const (
+	IntentsOperatorComponentTypeCREDENTIALSOPERATOR IntentsOperatorComponentType = "CREDENTIALS_OPERATOR"
+	IntentsOperatorComponentTypeINTENTSOPERATOR     IntentsOperatorComponentType = "INTENTS_OPERATOR"
+	IntentsOperatorComponentTypeNETWORKMAPPER       IntentsOperatorComponentType = "NETWORK_MAPPER"
 )
 
 // Defines values for KafkaConfigOperations.
@@ -74,6 +86,13 @@ const (
 	KafkaConfigOperationsDESCRIBECONFIGS KafkaConfigOperations = "DESCRIBE_CONFIGS"
 	KafkaConfigOperationsIDEMPOTENTWRITE KafkaConfigOperations = "IDEMPOTENT_WRITE"
 	KafkaConfigOperationsPRODUCE         KafkaConfigOperations = "PRODUCE"
+)
+
+// Defines values for NetworkMapperComponentType.
+const (
+	CREDENTIALSOPERATOR NetworkMapperComponentType = "CREDENTIALS_OPERATOR"
+	INTENTSOPERATOR     NetworkMapperComponentType = "INTENTS_OPERATOR"
+	NETWORKMAPPER       NetworkMapperComponentType = "NETWORK_MAPPER"
 )
 
 // Defines values for OneIntegrationQueryParamsIntegrationType.
@@ -100,28 +119,30 @@ const (
 	PENDING  InvitesQueryParamsStatus = "PENDING"
 )
 
-// AuthProviderUserInfo defines model for AuthProviderUserInfo.
-type AuthProviderUserInfo struct {
-	EmailVerified bool   `json:"emailVerified"`
-	Name          string `json:"name"`
-	PictureURL    string `json:"pictureURL"`
-}
-
-// CertificateCustomization defines model for CertificateCustomization.
-type CertificateCustomization struct {
-	DnsNames *[]string `json:"dnsNames,omitempty"`
-	Ttl      *int32    `json:"ttl,omitempty"`
+// CertificateInformation defines model for CertificateInformation.
+type CertificateInformation struct {
+	CommonName string    `json:"commonName"`
+	DnsNames   *[]string `json:"dnsNames,omitempty"`
+	Ttl        *int32    `json:"ttl,omitempty"`
 }
 
 // Cluster defines model for Cluster.
 type Cluster struct {
-	Components    Components            `json:"components"`
-	Configuration *ClusterConfiguration `json:"configuration,omitempty"`
-	DefaultEnvID  string                `json:"defaultEnvID"`
-	Id            string                `json:"id"`
-	IntegrationID string                `json:"integrationID"`
-	Name          string                `json:"name"`
-	Status        *ClusterStatus        `json:"status,omitempty"`
+	Components         IntegrationComponents `json:"components"`
+	Configuration      *ClusterConfiguration `json:"configuration,omitempty"`
+	DefaultEnvironment struct {
+		Id string `json:"id"`
+	} `json:"defaultEnvironment"`
+	Id          string `json:"id"`
+	Integration *struct {
+		Id string `json:"id"`
+	} `json:"integration,omitempty"`
+	Name       string `json:"name"`
+	Namespaces []struct {
+		Id string `json:"id"`
+	} `json:"namespaces"`
+	ServiceCount int32          `json:"serviceCount"`
+	Status       *ClusterStatus `json:"status,omitempty"`
 }
 
 // ClusterStatus defines model for Cluster.Status.
@@ -139,12 +160,6 @@ type ClusterConfigurationInput struct {
 	UseNetworkPoliciesInAccessGraphStates bool `json:"useNetworkPoliciesInAccessGraphStates"`
 }
 
-// ClusterNamespacesPair defines model for ClusterNamespacesPair.
-type ClusterNamespacesPair struct {
-	Cluster    string    `json:"cluster"`
-	Namespaces *[]string `json:"namespaces,omitempty"`
-}
-
 // ComponentStatus defines model for ComponentStatus.
 type ComponentStatus struct {
 	LastSeen *time.Time          `json:"lastSeen,omitempty"`
@@ -154,21 +169,25 @@ type ComponentStatus struct {
 // ComponentStatusType defines model for ComponentStatus.Type.
 type ComponentStatusType string
 
-// Components defines model for Components.
-type Components struct {
-	CredentialsOperator ComponentStatus `json:"credentialsOperator"`
-	IntentsOperator     ComponentStatus `json:"intentsOperator"`
-	NetworkMapper       ComponentStatus `json:"networkMapper"`
+// CredentialsOperatorComponent defines model for CredentialsOperatorComponent.
+type CredentialsOperatorComponent struct {
+	Status ComponentStatus                  `json:"status"`
+	Type   CredentialsOperatorComponentType `json:"type"`
 }
+
+// CredentialsOperatorComponentType defines model for CredentialsOperatorComponent.Type.
+type CredentialsOperatorComponentType string
 
 // Environment defines model for Environment.
 type Environment struct {
-	Id           string                   `json:"id"`
-	IntentsCount int32                    `json:"intentsCount"`
-	Labels       *[]Label                 `json:"labels,omitempty"`
-	Name         *string                  `json:"name,omitempty"`
-	Namespaces   *[]ClusterNamespacesPair `json:"namespaces,omitempty"`
-	Organization Organization             `json:"organization"`
+	AppliedIntentsCount int32    `json:"appliedIntentsCount"`
+	Id                  string   `json:"id"`
+	Labels              *[]Label `json:"labels,omitempty"`
+	Name                *string  `json:"name,omitempty"`
+	Namespaces          []struct {
+		Id string `json:"id"`
+	} `json:"namespaces"`
+	ServiceCount int32 `json:"serviceCount"`
 }
 
 // Error defines model for Error.
@@ -187,17 +206,27 @@ type HTTPConfigMethod string
 
 // Integration defines model for Integration.
 type Integration struct {
+	Components                   *IntegrationComponents `json:"components,omitempty"`
 	Credentials                  IntegrationCredentials `json:"credentials"`
 	Id                           string                 `json:"id"`
 	Identity                     IntegrationIdentity    `json:"identity"`
-	KubernetesDefaultEnvironment Environment            `json:"kubernetesDefaultEnvironment"`
-	Name                         string                 `json:"name"`
-	Organization                 Organization           `json:"organization"`
-	Type                         IntegrationType        `json:"type"`
+	KubernetesDefaultEnvironment struct {
+		Id string `json:"id"`
+	} `json:"kubernetesDefaultEnvironment"`
+	Name string          `json:"name"`
+	Type IntegrationType `json:"type"`
 }
 
 // IntegrationType defines model for Integration.Type.
 type IntegrationType string
+
+// IntegrationComponents defines model for IntegrationComponents.
+type IntegrationComponents struct {
+	ClusterId           string                       `json:"clusterId"`
+	CredentialsOperator CredentialsOperatorComponent `json:"credentialsOperator"`
+	IntentsOperator     IntentsOperatorComponent     `json:"intentsOperator"`
+	NetworkMapper       NetworkMapperComponent       `json:"networkMapper"`
+}
 
 // IntegrationCredentials defines model for IntegrationCredentials.
 type IntegrationCredentials struct {
@@ -223,27 +252,46 @@ type IntegrationIdentityOtherFields struct {
 
 // Intent defines model for Intent.
 type Intent struct {
-	Client                    Service        `json:"client"`
-	FullyQualifiedServiceName string         `json:"fullyQualifiedServiceName"`
-	HttpResources             *[]HTTPConfig  `json:"httpResources,omitempty"`
-	Id                        string         `json:"id"`
-	KafkaResources            *[]KafkaConfig `json:"kafkaResources,omitempty"`
-	Server                    Service        `json:"server"`
-	Source                    string         `json:"source"`
-	Type                      *IntentType    `json:"type,omitempty"`
+	Client struct {
+		Id string `json:"id"`
+	} `json:"client"`
+	HttpResources  *[]HTTPConfig  `json:"httpResources,omitempty"`
+	Id             string         `json:"id"`
+	KafkaResources *[]KafkaConfig `json:"kafkaResources,omitempty"`
+	Server         struct {
+		Id string `json:"id"`
+	} `json:"server"`
+	Type *IntentType `json:"type,omitempty"`
 }
 
 // IntentType defines model for Intent.Type.
 type IntentType string
 
+// IntentsOperatorComponent defines model for IntentsOperatorComponent.
+type IntentsOperatorComponent struct {
+	Configuration *IntentsOperatorConfiguration `json:"configuration,omitempty"`
+	Status        ComponentStatus               `json:"status"`
+	Type          IntentsOperatorComponentType  `json:"type"`
+}
+
+// IntentsOperatorComponentType defines model for IntentsOperatorComponent.Type.
+type IntentsOperatorComponentType string
+
+// IntentsOperatorConfiguration defines model for IntentsOperatorConfiguration.
+type IntentsOperatorConfiguration struct {
+	EnableEnforcement bool `json:"enableEnforcement"`
+}
+
 // Invite defines model for Invite.
 type Invite struct {
-	Accepted     *time.Time   `json:"accepted,omitempty"`
-	Created      time.Time    `json:"created"`
-	Email        string       `json:"email"`
-	Id           string       `json:"id"`
-	InviterEmail *string      `json:"inviterEmail,omitempty"`
-	Organization Organization `json:"organization"`
+	Accepted     *time.Time `json:"accepted,omitempty"`
+	Created      time.Time  `json:"created"`
+	Email        string     `json:"email"`
+	Id           string     `json:"id"`
+	InviterEmail *string    `json:"inviterEmail,omitempty"`
+	Organization struct {
+		Id string `json:"id"`
+	} `json:"organization"`
 }
 
 // KafkaConfig defines model for KafkaConfig.
@@ -278,18 +326,41 @@ type LabelInput struct {
 
 // Me defines model for Me.
 type Me struct {
-	Invites              *[]Invite    `json:"invites,omitempty"`
-	SelectedOrganization Organization `json:"selectedOrganization"`
-	User                 User         `json:"user"`
+	Invites       []Invite       `json:"invites"`
+	Organizations []Organization `json:"organizations"`
+
+	// SelectedOrganization The organization under which the current user request acts.
+	// This is selected by the X-Otterize-Organization header,
+	// or, for users with a single organization, this is that single selected organization.
+	SelectedOrganization struct {
+		Id string `json:"id"`
+	} `json:"selectedOrganization"`
+	User User `json:"user"`
 }
 
 // Namespace defines model for Namespace.
 type Namespace struct {
-	Cluster     *Cluster     `json:"cluster,omitempty"`
-	Environment *Environment `json:"environment,omitempty"`
-	Id          string       `json:"id"`
-	Name        string       `json:"name"`
+	Cluster *struct {
+		Id string `json:"id"`
+	} `json:"cluster,omitempty"`
+	Environment *struct {
+		Id string `json:"id"`
+	} `json:"environment,omitempty"`
+	Id       string `json:"id"`
+	Name     string `json:"name"`
+	Services []struct {
+		Id string `json:"id"`
+	} `json:"services"`
 }
+
+// NetworkMapperComponent defines model for NetworkMapperComponent.
+type NetworkMapperComponent struct {
+	Status ComponentStatus            `json:"status"`
+	Type   NetworkMapperComponentType `json:"type"`
+}
+
+// NetworkMapperComponentType defines model for NetworkMapperComponent.Type.
+type NetworkMapperComponentType string
 
 // Organization defines model for Organization.
 type Organization struct {
@@ -300,24 +371,30 @@ type Organization struct {
 
 // Service defines model for Service.
 type Service struct {
-	Environment                   Environment `json:"environment"`
-	Id                            string      `json:"id"`
-	IntegrationId                 string      `json:"integrationId"`
-	Name                          string      `json:"name"`
-	Namespace                     *Namespace  `json:"namespace,omitempty"`
-	ReferencedByIntents           bool        `json:"referencedByIntents"`
-	ReferencedByKafkaServerConfig bool        `json:"referencedByKafkaServerConfig"`
-	TlsKeyPair                    KeyPair     `json:"tlsKeyPair"`
+	CertificateInformation *CertificateInformation `json:"certificateInformation,omitempty"`
+	Environment            struct {
+		Id string `json:"id"`
+	} `json:"environment"`
+	Id string `json:"id"`
+
+	// KafkaServerConfig If service is Kafka, its KafkaServerConfig.
+	KafkaServerConfig *struct {
+		Id string `json:"id"`
+	} `json:"kafkaServerConfig,omitempty"`
+	Name      string `json:"name"`
+	Namespace *struct {
+		Id string `json:"id"`
+	} `json:"namespace,omitempty"`
+	TlsKeyPair KeyPair `json:"tlsKeyPair"`
 }
 
 // User defines model for User.
 type User struct {
-	AuthProviderUserId   string               `json:"authProviderUserId"`
-	AuthProviderUserInfo AuthProviderUserInfo `json:"authProviderUserInfo"`
-	Email                string               `json:"email"`
-	Id                   string               `json:"id"`
-	Organization         *Organization        `json:"organization,omitempty"`
-	Organizations        *[]Organization      `json:"organizations,omitempty"`
+	AuthProviderUserId string `json:"authProviderUserId"`
+	Email              string `json:"email"`
+	Id                 string `json:"id"`
+	ImageURL           string `json:"imageURL"`
+	Name               string `json:"name"`
 }
 
 // BADREQUEST defines model for BAD_REQUEST.
@@ -340,14 +417,7 @@ type UNEXPECTEDERROR = Error
 
 // OneClusterQueryParams defines parameters for OneClusterQuery.
 type OneClusterQueryParams struct {
-	IntegrationId string `form:"integrationId" json:"integrationId"`
-	Name          string `form:"name" json:"name"`
-}
-
-// ClustersQueryParams defines parameters for ClustersQuery.
-type ClustersQueryParams struct {
-	ClusterId *string `form:"clusterId,omitempty" json:"clusterId,omitempty"`
-	Name      *string `form:"name,omitempty" json:"name,omitempty"`
+	Name string `form:"name" json:"name"`
 }
 
 // UpdateClusterMutationJSONBody defines parameters for UpdateClusterMutation.
@@ -383,14 +453,14 @@ type UpdateEnvironmentMutationJSONBody struct {
 	Name   *string       `json:"name,omitempty"`
 }
 
-// DeleteEnvironmentLabelsMutationParams defines parameters for DeleteEnvironmentLabelsMutation.
-type DeleteEnvironmentLabelsMutationParams struct {
-	Labels []string `form:"labels" json:"labels"`
+// AddEnvironmentLabelMutationJSONBody defines parameters for AddEnvironmentLabelMutation.
+type AddEnvironmentLabelMutationJSONBody struct {
+	Label LabelInput `json:"label"`
 }
 
-// AddEnvironmentLabelsMutationJSONBody defines parameters for AddEnvironmentLabelsMutation.
-type AddEnvironmentLabelsMutationJSONBody struct {
-	Labels []LabelInput `json:"labels"`
+// DeleteEnvironmentLabelMutationParams defines parameters for DeleteEnvironmentLabelMutation.
+type DeleteEnvironmentLabelMutationParams struct {
+	Key string `form:"key" json:"key"`
 }
 
 // OneIntegrationQueryParams defines parameters for OneIntegrationQuery.
@@ -398,6 +468,7 @@ type OneIntegrationQueryParams struct {
 	Name            *string                                   `form:"name,omitempty" json:"name,omitempty"`
 	IntegrationType *OneIntegrationQueryParamsIntegrationType `form:"integrationType,omitempty" json:"integrationType,omitempty"`
 	EnvironmentId   *string                                   `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	ClusterId       *string                                   `form:"clusterId,omitempty" json:"clusterId,omitempty"`
 }
 
 // OneIntegrationQueryParamsIntegrationType defines parameters for OneIntegrationQuery.
@@ -408,6 +479,7 @@ type IntegrationsQueryParams struct {
 	Name            *string                                 `form:"name,omitempty" json:"name,omitempty"`
 	IntegrationType *IntegrationsQueryParamsIntegrationType `form:"integrationType,omitempty" json:"integrationType,omitempty"`
 	EnvironmentId   *string                                 `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	ClusterId       *string                                 `form:"clusterId,omitempty" json:"clusterId,omitempty"`
 }
 
 // IntegrationsQueryParamsIntegrationType defines parameters for IntegrationsQuery.
@@ -415,6 +487,7 @@ type IntegrationsQueryParamsIntegrationType string
 
 // CreateIntegrationMutationJSONBody defines parameters for CreateIntegrationMutation.
 type CreateIntegrationMutationJSONBody struct {
+	ClusterId       *string                                          `json:"clusterId,omitempty"`
 	EnvironmentInfo IntegrationEnvironments                          `json:"environmentInfo"`
 	IntegrationType CreateIntegrationMutationJSONBodyIntegrationType `json:"integrationType"`
 	Name            string                                           `json:"name"`
@@ -430,18 +503,10 @@ type UpdateIntegrationMutationJSONBody struct {
 
 // IntentsQueryParams defines parameters for IntentsQuery.
 type IntentsQueryParams struct {
-	EnvironmentId                                         *string                   `form:"environmentId,omitempty" json:"environmentId,omitempty"`
-	Client                                                *string                   `form:"client,omitempty" json:"client,omitempty"`
-	Server                                                *string                   `form:"server,omitempty" json:"server,omitempty"`
-	Source                                                *string                   `form:"source,omitempty" json:"source,omitempty"`
-	IntentsServerServerTlsKeyPairCertificateCustomization *CertificateCustomization `form:"intents_server_server_tlsKeyPair_certificateCustomization,omitempty" json:"intents_server_server_tlsKeyPair_certificateCustomization,omitempty"`
-	IntentsClientClientTlsKeyPairCertificateCustomization *CertificateCustomization `form:"intents_client_client_tlsKeyPair_certificateCustomization,omitempty" json:"intents_client_client_tlsKeyPair_certificateCustomization,omitempty"`
-}
-
-// IntentQueryParams defines parameters for IntentQuery.
-type IntentQueryParams struct {
-	IntentServerServerTlsKeyPairCertificateCustomization *CertificateCustomization `form:"intent_server_server_tlsKeyPair_certificateCustomization,omitempty" json:"intent_server_server_tlsKeyPair_certificateCustomization,omitempty"`
-	IntentClientClientTlsKeyPairCertificateCustomization *CertificateCustomization `form:"intent_client_client_tlsKeyPair_certificateCustomization,omitempty" json:"intent_client_client_tlsKeyPair_certificateCustomization,omitempty"`
+	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	ClientId      *string `form:"clientId,omitempty" json:"clientId,omitempty"`
+	ServerId      *string `form:"serverId,omitempty" json:"serverId,omitempty"`
+	Source        *string `form:"source,omitempty" json:"source,omitempty"`
 }
 
 // InvitesQueryParams defines parameters for InvitesQuery.
@@ -457,35 +522,47 @@ type CreateInviteMutationJSONBody struct {
 	Email string `json:"email"`
 }
 
+// AcceptInviteMutationJSONBody defines parameters for AcceptInviteMutation.
+type AcceptInviteMutationJSONBody = map[string]interface{}
+
+// OneNamespaceQueryParams defines parameters for OneNamespaceQuery.
+type OneNamespaceQueryParams struct {
+	Name string `form:"name" json:"name"`
+}
+
+// NamespacesQueryParams defines parameters for NamespacesQuery.
+type NamespacesQueryParams struct {
+	Name          *string `form:"name,omitempty" json:"name,omitempty"`
+	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	ClusterId     *string `form:"clusterId,omitempty" json:"clusterId,omitempty"`
+}
+
+// CreateOrganizationMutationJSONBody defines parameters for CreateOrganizationMutation.
+type CreateOrganizationMutationJSONBody = map[string]interface{}
+
 // UpdateOrganizationMutationJSONBody defines parameters for UpdateOrganizationMutation.
 type UpdateOrganizationMutationJSONBody struct {
 	ImageURL *string `json:"imageURL,omitempty"`
 	Name     *string `json:"name,omitempty"`
 }
 
+// DisassociateUserFromOrganizationMutationParams defines parameters for DisassociateUserFromOrganizationMutation.
+type DisassociateUserFromOrganizationMutationParams struct {
+	UserId string `form:"userId" json:"userId"`
+}
+
 // OneServiceQueryParams defines parameters for OneServiceQuery.
 type OneServiceQueryParams struct {
-	EnvironmentId                                string                    `form:"environmentId" json:"environmentId"`
-	Name                                         string                    `form:"name" json:"name"`
-	OneServiceTlsKeyPairCertificateCustomization *CertificateCustomization `form:"oneService_tlsKeyPair_certificateCustomization,omitempty" json:"oneService_tlsKeyPair_certificateCustomization,omitempty"`
+	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	NamespaceId   *string `form:"namespaceId,omitempty" json:"namespaceId,omitempty"`
+	Name          string  `form:"name" json:"name"`
 }
 
 // ServicesQueryParams defines parameters for ServicesQuery.
 type ServicesQueryParams struct {
-	EnvironmentId                              *string                   `form:"environmentId,omitempty" json:"environmentId,omitempty"`
-	Name                                       *string                   `form:"name,omitempty" json:"name,omitempty"`
-	ServicesTlsKeyPairCertificateCustomization *CertificateCustomization `form:"services_tlsKeyPair_certificateCustomization,omitempty" json:"services_tlsKeyPair_certificateCustomization,omitempty"`
-}
-
-// ServiceQueryParams defines parameters for ServiceQuery.
-type ServiceQueryParams struct {
-	ServiceTlsKeyPairCertificateCustomization *CertificateCustomization `form:"service_tlsKeyPair_certificateCustomization,omitempty" json:"service_tlsKeyPair_certificateCustomization,omitempty"`
-}
-
-// CreateUserMutationJSONBody defines parameters for CreateUserMutation.
-type CreateUserMutationJSONBody struct {
-	AuthProviderUserId string `json:"authProviderUserId"`
-	Email              string `json:"email"`
+	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	NamespaceId   *string `form:"namespaceId,omitempty" json:"namespaceId,omitempty"`
+	Name          *string `form:"name,omitempty" json:"name,omitempty"`
 }
 
 // UpdateClusterMutationJSONRequestBody defines body for UpdateClusterMutation for application/json ContentType.
@@ -497,8 +574,8 @@ type CreateEnvironmentMutationJSONRequestBody CreateEnvironmentMutationJSONBody
 // UpdateEnvironmentMutationJSONRequestBody defines body for UpdateEnvironmentMutation for application/json ContentType.
 type UpdateEnvironmentMutationJSONRequestBody UpdateEnvironmentMutationJSONBody
 
-// AddEnvironmentLabelsMutationJSONRequestBody defines body for AddEnvironmentLabelsMutation for application/json ContentType.
-type AddEnvironmentLabelsMutationJSONRequestBody AddEnvironmentLabelsMutationJSONBody
+// AddEnvironmentLabelMutationJSONRequestBody defines body for AddEnvironmentLabelMutation for application/json ContentType.
+type AddEnvironmentLabelMutationJSONRequestBody AddEnvironmentLabelMutationJSONBody
 
 // CreateIntegrationMutationJSONRequestBody defines body for CreateIntegrationMutation for application/json ContentType.
 type CreateIntegrationMutationJSONRequestBody CreateIntegrationMutationJSONBody
@@ -509,11 +586,14 @@ type UpdateIntegrationMutationJSONRequestBody UpdateIntegrationMutationJSONBody
 // CreateInviteMutationJSONRequestBody defines body for CreateInviteMutation for application/json ContentType.
 type CreateInviteMutationJSONRequestBody CreateInviteMutationJSONBody
 
+// AcceptInviteMutationJSONRequestBody defines body for AcceptInviteMutation for application/json ContentType.
+type AcceptInviteMutationJSONRequestBody = AcceptInviteMutationJSONBody
+
+// CreateOrganizationMutationJSONRequestBody defines body for CreateOrganizationMutation for application/json ContentType.
+type CreateOrganizationMutationJSONRequestBody = CreateOrganizationMutationJSONBody
+
 // UpdateOrganizationMutationJSONRequestBody defines body for UpdateOrganizationMutation for application/json ContentType.
 type UpdateOrganizationMutationJSONRequestBody UpdateOrganizationMutationJSONBody
-
-// CreateUserMutationJSONRequestBody defines body for CreateUserMutation for application/json ContentType.
-type CreateUserMutationJSONRequestBody CreateUserMutationJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -592,7 +672,7 @@ type ClientInterface interface {
 	OneClusterQuery(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ClustersQuery request
-	ClustersQuery(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ClustersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ClusterQuery request
 	ClusterQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -624,13 +704,13 @@ type ClientInterface interface {
 
 	UpdateEnvironmentMutation(ctx context.Context, id string, body UpdateEnvironmentMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// DeleteEnvironmentLabelsMutation request
-	DeleteEnvironmentLabelsMutation(ctx context.Context, id string, params *DeleteEnvironmentLabelsMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// AddEnvironmentLabelMutation request with any body
+	AddEnvironmentLabelMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AddEnvironmentLabelsMutation request with any body
-	AddEnvironmentLabelsMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AddEnvironmentLabelMutation(ctx context.Context, id string, body AddEnvironmentLabelMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	AddEnvironmentLabelsMutation(ctx context.Context, id string, body AddEnvironmentLabelsMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteEnvironmentLabelMutation request
+	DeleteEnvironmentLabelMutation(ctx context.Context, id string, params *DeleteEnvironmentLabelMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// OneIntegrationQuery request
 	OneIntegrationQuery(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -658,7 +738,7 @@ type ClientInterface interface {
 	IntentsQuery(ctx context.Context, params *IntentsQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// IntentQuery request
-	IntentQuery(ctx context.Context, id string, params *IntentQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	IntentQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// InvitesQuery request
 	InvitesQuery(ctx context.Context, params *InvitesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -674,17 +754,30 @@ type ClientInterface interface {
 	// InviteQuery request
 	InviteQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AcceptInviteMutation request
-	AcceptInviteMutation(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// AcceptInviteMutation request with any body
+	AcceptInviteMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	AcceptInviteMutation(ctx context.Context, id string, body AcceptInviteMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// MeQuery request
 	MeQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// OneNamespaceQuery request
+	OneNamespaceQuery(ctx context.Context, params *OneNamespaceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// NamespacesQuery request
+	NamespacesQuery(ctx context.Context, params *NamespacesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// NamespaceQuery request
+	NamespaceQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// OrganizationsQuery request
 	OrganizationsQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateOrganizationMutation request
-	CreateOrganizationMutation(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateOrganizationMutation request with any body
+	CreateOrganizationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateOrganizationMutation(ctx context.Context, body CreateOrganizationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// OrganizationQuery request
 	OrganizationQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -694,6 +787,9 @@ type ClientInterface interface {
 
 	UpdateOrganizationMutation(ctx context.Context, id string, body UpdateOrganizationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DisassociateUserFromOrganizationMutation request
+	DisassociateUserFromOrganizationMutation(ctx context.Context, id string, params *DisassociateUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// OneServiceQuery request
 	OneServiceQuery(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -701,18 +797,10 @@ type ClientInterface interface {
 	ServicesQuery(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ServiceQuery request
-	ServiceQuery(ctx context.Context, id string, params *ServiceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ServiceQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UsersQuery request
 	UsersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateUserMutation request with any body
-	CreateUserMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateUserMutation(ctx context.Context, body CreateUserMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteUserMutation request
-	DeleteUserMutation(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UserQuery request
 	UserQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -730,8 +818,8 @@ func (c *Client) OneClusterQuery(ctx context.Context, params *OneClusterQueryPar
 	return c.Client.Do(req)
 }
 
-func (c *Client) ClustersQuery(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewClustersQueryRequest(c.Server, params)
+func (c *Client) ClustersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewClustersQueryRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -874,8 +962,8 @@ func (c *Client) UpdateEnvironmentMutation(ctx context.Context, id string, body 
 	return c.Client.Do(req)
 }
 
-func (c *Client) DeleteEnvironmentLabelsMutation(ctx context.Context, id string, params *DeleteEnvironmentLabelsMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteEnvironmentLabelsMutationRequest(c.Server, id, params)
+func (c *Client) AddEnvironmentLabelMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAddEnvironmentLabelMutationRequestWithBody(c.Server, id, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -886,8 +974,8 @@ func (c *Client) DeleteEnvironmentLabelsMutation(ctx context.Context, id string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) AddEnvironmentLabelsMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAddEnvironmentLabelsMutationRequestWithBody(c.Server, id, contentType, body)
+func (c *Client) AddEnvironmentLabelMutation(ctx context.Context, id string, body AddEnvironmentLabelMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAddEnvironmentLabelMutationRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -898,8 +986,8 @@ func (c *Client) AddEnvironmentLabelsMutationWithBody(ctx context.Context, id st
 	return c.Client.Do(req)
 }
 
-func (c *Client) AddEnvironmentLabelsMutation(ctx context.Context, id string, body AddEnvironmentLabelsMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAddEnvironmentLabelsMutationRequest(c.Server, id, body)
+func (c *Client) DeleteEnvironmentLabelMutation(ctx context.Context, id string, params *DeleteEnvironmentLabelMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteEnvironmentLabelMutationRequest(c.Server, id, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1018,8 +1106,8 @@ func (c *Client) IntentsQuery(ctx context.Context, params *IntentsQueryParams, r
 	return c.Client.Do(req)
 }
 
-func (c *Client) IntentQuery(ctx context.Context, id string, params *IntentQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewIntentQueryRequest(c.Server, id, params)
+func (c *Client) IntentQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewIntentQueryRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -1090,8 +1178,20 @@ func (c *Client) InviteQuery(ctx context.Context, id string, reqEditors ...Reque
 	return c.Client.Do(req)
 }
 
-func (c *Client) AcceptInviteMutation(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAcceptInviteMutationRequest(c.Server, id)
+func (c *Client) AcceptInviteMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAcceptInviteMutationRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) AcceptInviteMutation(ctx context.Context, id string, body AcceptInviteMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAcceptInviteMutationRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1114,6 +1214,42 @@ func (c *Client) MeQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*h
 	return c.Client.Do(req)
 }
 
+func (c *Client) OneNamespaceQuery(ctx context.Context, params *OneNamespaceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOneNamespaceQueryRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) NamespacesQuery(ctx context.Context, params *NamespacesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewNamespacesQueryRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) NamespaceQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewNamespaceQueryRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) OrganizationsQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewOrganizationsQueryRequest(c.Server)
 	if err != nil {
@@ -1126,8 +1262,20 @@ func (c *Client) OrganizationsQuery(ctx context.Context, reqEditors ...RequestEd
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateOrganizationMutation(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOrganizationMutationRequest(c.Server)
+func (c *Client) CreateOrganizationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOrganizationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateOrganizationMutation(ctx context.Context, body CreateOrganizationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOrganizationMutationRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1174,6 +1322,18 @@ func (c *Client) UpdateOrganizationMutation(ctx context.Context, id string, body
 	return c.Client.Do(req)
 }
 
+func (c *Client) DisassociateUserFromOrganizationMutation(ctx context.Context, id string, params *DisassociateUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDisassociateUserFromOrganizationMutationRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) OneServiceQuery(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewOneServiceQueryRequest(c.Server, params)
 	if err != nil {
@@ -1198,8 +1358,8 @@ func (c *Client) ServicesQuery(ctx context.Context, params *ServicesQueryParams,
 	return c.Client.Do(req)
 }
 
-func (c *Client) ServiceQuery(ctx context.Context, id string, params *ServiceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewServiceQueryRequest(c.Server, id, params)
+func (c *Client) ServiceQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewServiceQueryRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -1212,42 +1372,6 @@ func (c *Client) ServiceQuery(ctx context.Context, id string, params *ServiceQue
 
 func (c *Client) UsersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUsersQueryRequest(c.Server)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateUserMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateUserMutationRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateUserMutation(ctx context.Context, body CreateUserMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateUserMutationRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteUserMutation(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteUserMutationRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -1291,18 +1415,6 @@ func NewOneClusterQueryRequest(server string, params *OneClusterQueryParams) (*h
 
 	queryValues := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "integrationId", runtime.ParamLocationQuery, params.IntegrationId); err != nil {
-		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
-	}
-
 	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
 		return nil, err
 	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1326,7 +1438,7 @@ func NewOneClusterQueryRequest(server string, params *OneClusterQueryParams) (*h
 }
 
 // NewClustersQueryRequest generates requests for ClustersQuery
-func NewClustersQueryRequest(server string, params *ClustersQueryParams) (*http.Request, error) {
+func NewClustersQueryRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1343,42 +1455,6 @@ func NewClustersQueryRequest(server string, params *ClustersQueryParams) (*http.
 	if err != nil {
 		return nil, err
 	}
-
-	queryValues := queryURL.Query()
-
-	if params.ClusterId != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "clusterId", runtime.ParamLocationQuery, *params.ClusterId); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	if params.Name != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
@@ -1750,69 +1826,19 @@ func NewUpdateEnvironmentMutationRequestWithBody(server string, id string, conte
 	return req, nil
 }
 
-// NewDeleteEnvironmentLabelsMutationRequest generates requests for DeleteEnvironmentLabelsMutation
-func NewDeleteEnvironmentLabelsMutationRequest(server string, id string, params *DeleteEnvironmentLabelsMutationParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/environments/%s/labels", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	queryValues := queryURL.Query()
-
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "labels", runtime.ParamLocationQuery, params.Labels); err != nil {
-		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
-	}
-
-	queryURL.RawQuery = queryValues.Encode()
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewAddEnvironmentLabelsMutationRequest calls the generic AddEnvironmentLabelsMutation builder with application/json body
-func NewAddEnvironmentLabelsMutationRequest(server string, id string, body AddEnvironmentLabelsMutationJSONRequestBody) (*http.Request, error) {
+// NewAddEnvironmentLabelMutationRequest calls the generic AddEnvironmentLabelMutation builder with application/json body
+func NewAddEnvironmentLabelMutationRequest(server string, id string, body AddEnvironmentLabelMutationJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAddEnvironmentLabelsMutationRequestWithBody(server, id, "application/json", bodyReader)
+	return NewAddEnvironmentLabelMutationRequestWithBody(server, id, "application/json", bodyReader)
 }
 
-// NewAddEnvironmentLabelsMutationRequestWithBody generates requests for AddEnvironmentLabelsMutation with any type of body
-func NewAddEnvironmentLabelsMutationRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+// NewAddEnvironmentLabelMutationRequestWithBody generates requests for AddEnvironmentLabelMutation with any type of body
+func NewAddEnvironmentLabelMutationRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1843,6 +1869,56 @@ func NewAddEnvironmentLabelsMutationRequestWithBody(server string, id string, co
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteEnvironmentLabelMutationRequest generates requests for DeleteEnvironmentLabelMutation
+func NewDeleteEnvironmentLabelMutationRequest(server string, id string, params *DeleteEnvironmentLabelMutationParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/environments/%s/labels/:key", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "key", runtime.ParamLocationQuery, params.Key); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -1903,6 +1979,22 @@ func NewOneIntegrationQueryRequest(server string, params *OneIntegrationQueryPar
 	if params.EnvironmentId != nil {
 
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environmentId", runtime.ParamLocationQuery, *params.EnvironmentId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.ClusterId != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "clusterId", runtime.ParamLocationQuery, *params.ClusterId); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -1982,6 +2074,22 @@ func NewIntegrationsQueryRequest(server string, params *IntegrationsQueryParams)
 	if params.EnvironmentId != nil {
 
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environmentId", runtime.ParamLocationQuery, *params.EnvironmentId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.ClusterId != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "clusterId", runtime.ParamLocationQuery, *params.ClusterId); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -2197,9 +2305,9 @@ func NewIntentsQueryRequest(server string, params *IntentsQueryParams) (*http.Re
 
 	}
 
-	if params.Client != nil {
+	if params.ClientId != nil {
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "client", runtime.ParamLocationQuery, *params.Client); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "clientId", runtime.ParamLocationQuery, *params.ClientId); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -2213,9 +2321,9 @@ func NewIntentsQueryRequest(server string, params *IntentsQueryParams) (*http.Re
 
 	}
 
-	if params.Server != nil {
+	if params.ServerId != nil {
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "server", runtime.ParamLocationQuery, *params.Server); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "serverId", runtime.ParamLocationQuery, *params.ServerId); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -2245,38 +2353,6 @@ func NewIntentsQueryRequest(server string, params *IntentsQueryParams) (*http.Re
 
 	}
 
-	if params.IntentsServerServerTlsKeyPairCertificateCustomization != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "intents_server_server_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.IntentsServerServerTlsKeyPairCertificateCustomization); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	if params.IntentsClientClientTlsKeyPairCertificateCustomization != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "intents_client_client_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.IntentsClientClientTlsKeyPairCertificateCustomization); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
 	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -2288,7 +2364,7 @@ func NewIntentsQueryRequest(server string, params *IntentsQueryParams) (*http.Re
 }
 
 // NewIntentQueryRequest generates requests for IntentQuery
-func NewIntentQueryRequest(server string, id string, params *IntentQueryParams) (*http.Request, error) {
+func NewIntentQueryRequest(server string, id string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2312,42 +2388,6 @@ func NewIntentQueryRequest(server string, id string, params *IntentQueryParams) 
 	if err != nil {
 		return nil, err
 	}
-
-	queryValues := queryURL.Query()
-
-	if params.IntentServerServerTlsKeyPairCertificateCustomization != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "intent_server_server_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.IntentServerServerTlsKeyPairCertificateCustomization); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	if params.IntentClientClientTlsKeyPairCertificateCustomization != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "intent_client_client_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.IntentClientClientTlsKeyPairCertificateCustomization); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
@@ -2512,8 +2552,19 @@ func NewInviteQueryRequest(server string, id string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewAcceptInviteMutationRequest generates requests for AcceptInviteMutation
-func NewAcceptInviteMutationRequest(server string, id string) (*http.Request, error) {
+// NewAcceptInviteMutationRequest calls the generic AcceptInviteMutation builder with application/json body
+func NewAcceptInviteMutationRequest(server string, id string, body AcceptInviteMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewAcceptInviteMutationRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewAcceptInviteMutationRequestWithBody generates requests for AcceptInviteMutation with any type of body
+func NewAcceptInviteMutationRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2538,10 +2589,12 @@ func NewAcceptInviteMutationRequest(server string, id string) (*http.Request, er
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2556,6 +2609,162 @@ func NewMeQueryRequest(server string) (*http.Request, error) {
 	}
 
 	operationPath := fmt.Sprintf("/me")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewOneNamespaceQueryRequest generates requests for OneNamespaceQuery
+func NewOneNamespaceQueryRequest(server string, params *OneNamespaceQueryParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/namespace")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewNamespacesQueryRequest generates requests for NamespacesQuery
+func NewNamespacesQueryRequest(server string, params *NamespacesQueryParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/namespaces")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Name != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.EnvironmentId != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environmentId", runtime.ParamLocationQuery, *params.EnvironmentId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.ClusterId != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "clusterId", runtime.ParamLocationQuery, *params.ClusterId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewNamespaceQueryRequest generates requests for NamespaceQuery
+func NewNamespaceQueryRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/namespaces/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2600,8 +2809,19 @@ func NewOrganizationsQueryRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewCreateOrganizationMutationRequest generates requests for CreateOrganizationMutation
-func NewCreateOrganizationMutationRequest(server string) (*http.Request, error) {
+// NewCreateOrganizationMutationRequest calls the generic CreateOrganizationMutation builder with application/json body
+func NewCreateOrganizationMutationRequest(server string, body CreateOrganizationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateOrganizationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateOrganizationMutationRequestWithBody generates requests for CreateOrganizationMutation with any type of body
+func NewCreateOrganizationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2619,10 +2839,12 @@ func NewCreateOrganizationMutationRequest(server string) (*http.Request, error) 
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2708,6 +2930,56 @@ func NewUpdateOrganizationMutationRequestWithBody(server string, id string, cont
 	return req, nil
 }
 
+// NewDisassociateUserFromOrganizationMutationRequest generates requests for DisassociateUserFromOrganizationMutation
+func NewDisassociateUserFromOrganizationMutationRequest(server string, id string, params *DisassociateUserFromOrganizationMutationParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/organizations/%s/user/:user_id", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "userId", runtime.ParamLocationQuery, params.UserId); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewOneServiceQueryRequest generates requests for OneServiceQuery
 func NewOneServiceQueryRequest(server string, params *OneServiceQueryParams) (*http.Request, error) {
 	var err error
@@ -2729,16 +3001,36 @@ func NewOneServiceQueryRequest(server string, params *OneServiceQueryParams) (*h
 
 	queryValues := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environmentId", runtime.ParamLocationQuery, params.EnvironmentId); err != nil {
-		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
+	if params.EnvironmentId != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environmentId", runtime.ParamLocationQuery, *params.EnvironmentId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
 			}
 		}
+
+	}
+
+	if params.NamespaceId != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "namespaceId", runtime.ParamLocationQuery, *params.NamespaceId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
 	}
 
 	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
@@ -2751,22 +3043,6 @@ func NewOneServiceQueryRequest(server string, params *OneServiceQueryParams) (*h
 				queryValues.Add(k, v2)
 			}
 		}
-	}
-
-	if params.OneServiceTlsKeyPairCertificateCustomization != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "oneService_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.OneServiceTlsKeyPairCertificateCustomization); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -2816,9 +3092,9 @@ func NewServicesQueryRequest(server string, params *ServicesQueryParams) (*http.
 
 	}
 
-	if params.Name != nil {
+	if params.NamespaceId != nil {
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "namespaceId", runtime.ParamLocationQuery, *params.NamespaceId); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -2832,9 +3108,9 @@ func NewServicesQueryRequest(server string, params *ServicesQueryParams) (*http.
 
 	}
 
-	if params.ServicesTlsKeyPairCertificateCustomization != nil {
+	if params.Name != nil {
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "services_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.ServicesTlsKeyPairCertificateCustomization); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -2859,7 +3135,7 @@ func NewServicesQueryRequest(server string, params *ServicesQueryParams) (*http.
 }
 
 // NewServiceQueryRequest generates requests for ServiceQuery
-func NewServiceQueryRequest(server string, id string, params *ServiceQueryParams) (*http.Request, error) {
+func NewServiceQueryRequest(server string, id string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2883,26 +3159,6 @@ func NewServiceQueryRequest(server string, id string, params *ServiceQueryParams
 	if err != nil {
 		return nil, err
 	}
-
-	queryValues := queryURL.Query()
-
-	if params.ServiceTlsKeyPairCertificateCustomization != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "service_tlsKeyPair_certificateCustomization", runtime.ParamLocationQuery, *params.ServiceTlsKeyPairCertificateCustomization); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
@@ -2932,80 +3188,6 @@ func NewUsersQueryRequest(server string) (*http.Request, error) {
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateUserMutationRequest calls the generic CreateUserMutation builder with application/json body
-func NewCreateUserMutationRequest(server string, body CreateUserMutationJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateUserMutationRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewCreateUserMutationRequestWithBody generates requests for CreateUserMutation with any type of body
-func NewCreateUserMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteUserMutationRequest generates requests for DeleteUserMutation
-func NewDeleteUserMutationRequest(server string, id string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -3094,7 +3276,7 @@ type ClientWithResponsesInterface interface {
 	OneClusterQueryWithResponse(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*OneClusterQueryResponse, error)
 
 	// ClustersQuery request
-	ClustersQueryWithResponse(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*ClustersQueryResponse, error)
+	ClustersQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClustersQueryResponse, error)
 
 	// ClusterQuery request
 	ClusterQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ClusterQueryResponse, error)
@@ -3126,13 +3308,13 @@ type ClientWithResponsesInterface interface {
 
 	UpdateEnvironmentMutationWithResponse(ctx context.Context, id string, body UpdateEnvironmentMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateEnvironmentMutationResponse, error)
 
-	// DeleteEnvironmentLabelsMutation request
-	DeleteEnvironmentLabelsMutationWithResponse(ctx context.Context, id string, params *DeleteEnvironmentLabelsMutationParams, reqEditors ...RequestEditorFn) (*DeleteEnvironmentLabelsMutationResponse, error)
+	// AddEnvironmentLabelMutation request with any body
+	AddEnvironmentLabelMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AddEnvironmentLabelMutationResponse, error)
 
-	// AddEnvironmentLabelsMutation request with any body
-	AddEnvironmentLabelsMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AddEnvironmentLabelsMutationResponse, error)
+	AddEnvironmentLabelMutationWithResponse(ctx context.Context, id string, body AddEnvironmentLabelMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AddEnvironmentLabelMutationResponse, error)
 
-	AddEnvironmentLabelsMutationWithResponse(ctx context.Context, id string, body AddEnvironmentLabelsMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AddEnvironmentLabelsMutationResponse, error)
+	// DeleteEnvironmentLabelMutation request
+	DeleteEnvironmentLabelMutationWithResponse(ctx context.Context, id string, params *DeleteEnvironmentLabelMutationParams, reqEditors ...RequestEditorFn) (*DeleteEnvironmentLabelMutationResponse, error)
 
 	// OneIntegrationQuery request
 	OneIntegrationQueryWithResponse(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*OneIntegrationQueryResponse, error)
@@ -3160,7 +3342,7 @@ type ClientWithResponsesInterface interface {
 	IntentsQueryWithResponse(ctx context.Context, params *IntentsQueryParams, reqEditors ...RequestEditorFn) (*IntentsQueryResponse, error)
 
 	// IntentQuery request
-	IntentQueryWithResponse(ctx context.Context, id string, params *IntentQueryParams, reqEditors ...RequestEditorFn) (*IntentQueryResponse, error)
+	IntentQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*IntentQueryResponse, error)
 
 	// InvitesQuery request
 	InvitesQueryWithResponse(ctx context.Context, params *InvitesQueryParams, reqEditors ...RequestEditorFn) (*InvitesQueryResponse, error)
@@ -3176,17 +3358,30 @@ type ClientWithResponsesInterface interface {
 	// InviteQuery request
 	InviteQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*InviteQueryResponse, error)
 
-	// AcceptInviteMutation request
-	AcceptInviteMutationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*AcceptInviteMutationResponse, error)
+	// AcceptInviteMutation request with any body
+	AcceptInviteMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AcceptInviteMutationResponse, error)
+
+	AcceptInviteMutationWithResponse(ctx context.Context, id string, body AcceptInviteMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AcceptInviteMutationResponse, error)
 
 	// MeQuery request
 	MeQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*MeQueryResponse, error)
 
+	// OneNamespaceQuery request
+	OneNamespaceQueryWithResponse(ctx context.Context, params *OneNamespaceQueryParams, reqEditors ...RequestEditorFn) (*OneNamespaceQueryResponse, error)
+
+	// NamespacesQuery request
+	NamespacesQueryWithResponse(ctx context.Context, params *NamespacesQueryParams, reqEditors ...RequestEditorFn) (*NamespacesQueryResponse, error)
+
+	// NamespaceQuery request
+	NamespaceQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*NamespaceQueryResponse, error)
+
 	// OrganizationsQuery request
 	OrganizationsQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*OrganizationsQueryResponse, error)
 
-	// CreateOrganizationMutation request
-	CreateOrganizationMutationWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*CreateOrganizationMutationResponse, error)
+	// CreateOrganizationMutation request with any body
+	CreateOrganizationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrganizationMutationResponse, error)
+
+	CreateOrganizationMutationWithResponse(ctx context.Context, body CreateOrganizationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOrganizationMutationResponse, error)
 
 	// OrganizationQuery request
 	OrganizationQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*OrganizationQueryResponse, error)
@@ -3196,6 +3391,9 @@ type ClientWithResponsesInterface interface {
 
 	UpdateOrganizationMutationWithResponse(ctx context.Context, id string, body UpdateOrganizationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOrganizationMutationResponse, error)
 
+	// DisassociateUserFromOrganizationMutation request
+	DisassociateUserFromOrganizationMutationWithResponse(ctx context.Context, id string, params *DisassociateUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*DisassociateUserFromOrganizationMutationResponse, error)
+
 	// OneServiceQuery request
 	OneServiceQueryWithResponse(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*OneServiceQueryResponse, error)
 
@@ -3203,18 +3401,10 @@ type ClientWithResponsesInterface interface {
 	ServicesQueryWithResponse(ctx context.Context, params *ServicesQueryParams, reqEditors ...RequestEditorFn) (*ServicesQueryResponse, error)
 
 	// ServiceQuery request
-	ServiceQueryWithResponse(ctx context.Context, id string, params *ServiceQueryParams, reqEditors ...RequestEditorFn) (*ServiceQueryResponse, error)
+	ServiceQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ServiceQueryResponse, error)
 
 	// UsersQuery request
 	UsersQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*UsersQueryResponse, error)
-
-	// CreateUserMutation request with any body
-	CreateUserMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateUserMutationResponse, error)
-
-	CreateUserMutationWithResponse(ctx context.Context, body CreateUserMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateUserMutationResponse, error)
-
-	// DeleteUserMutation request
-	DeleteUserMutationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteUserMutationResponse, error)
 
 	// UserQuery request
 	UserQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*UserQueryResponse, error)
@@ -3500,7 +3690,7 @@ func (r UpdateEnvironmentMutationResponse) StatusCode() int {
 	return 0
 }
 
-type DeleteEnvironmentLabelsMutationResponse struct {
+type AddEnvironmentLabelMutationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Environment
@@ -3513,7 +3703,7 @@ type DeleteEnvironmentLabelsMutationResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r DeleteEnvironmentLabelsMutationResponse) Status() string {
+func (r AddEnvironmentLabelMutationResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3521,14 +3711,14 @@ func (r DeleteEnvironmentLabelsMutationResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r DeleteEnvironmentLabelsMutationResponse) StatusCode() int {
+func (r AddEnvironmentLabelMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type AddEnvironmentLabelsMutationResponse struct {
+type DeleteEnvironmentLabelMutationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Environment
@@ -3541,7 +3731,7 @@ type AddEnvironmentLabelsMutationResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r AddEnvironmentLabelsMutationResponse) Status() string {
+func (r DeleteEnvironmentLabelMutationResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3549,7 +3739,7 @@ func (r AddEnvironmentLabelsMutationResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AddEnvironmentLabelsMutationResponse) StatusCode() int {
+func (r DeleteEnvironmentLabelMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3948,6 +4138,90 @@ func (r MeQueryResponse) StatusCode() int {
 	return 0
 }
 
+type OneNamespaceQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Namespace
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r OneNamespaceQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r OneNamespaceQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type NamespacesQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Namespace
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r NamespacesQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r NamespacesQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type NamespaceQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Namespace
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r NamespaceQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r NamespaceQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type OrganizationsQueryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4054,6 +4328,34 @@ func (r UpdateOrganizationMutationResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UpdateOrganizationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DisassociateUserFromOrganizationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *string
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r DisassociateUserFromOrganizationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DisassociateUserFromOrganizationMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4172,62 +4474,6 @@ func (r UsersQueryResponse) StatusCode() int {
 	return 0
 }
 
-type CreateUserMutationResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *User
-	JSON400      *Error
-	JSON403      *Error
-	JSON404      *Error
-	JSON409      *Error
-	JSON500      *Error
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateUserMutationResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateUserMutationResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteUserMutationResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *string
-	JSON400      *Error
-	JSON403      *Error
-	JSON404      *Error
-	JSON409      *Error
-	JSON500      *Error
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteUserMutationResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteUserMutationResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type UserQueryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4266,8 +4512,8 @@ func (c *ClientWithResponses) OneClusterQueryWithResponse(ctx context.Context, p
 }
 
 // ClustersQueryWithResponse request returning *ClustersQueryResponse
-func (c *ClientWithResponses) ClustersQueryWithResponse(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*ClustersQueryResponse, error) {
-	rsp, err := c.ClustersQuery(ctx, params, reqEditors...)
+func (c *ClientWithResponses) ClustersQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClustersQueryResponse, error) {
+	rsp, err := c.ClustersQuery(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4370,30 +4616,30 @@ func (c *ClientWithResponses) UpdateEnvironmentMutationWithResponse(ctx context.
 	return ParseUpdateEnvironmentMutationResponse(rsp)
 }
 
-// DeleteEnvironmentLabelsMutationWithResponse request returning *DeleteEnvironmentLabelsMutationResponse
-func (c *ClientWithResponses) DeleteEnvironmentLabelsMutationWithResponse(ctx context.Context, id string, params *DeleteEnvironmentLabelsMutationParams, reqEditors ...RequestEditorFn) (*DeleteEnvironmentLabelsMutationResponse, error) {
-	rsp, err := c.DeleteEnvironmentLabelsMutation(ctx, id, params, reqEditors...)
+// AddEnvironmentLabelMutationWithBodyWithResponse request with arbitrary body returning *AddEnvironmentLabelMutationResponse
+func (c *ClientWithResponses) AddEnvironmentLabelMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AddEnvironmentLabelMutationResponse, error) {
+	rsp, err := c.AddEnvironmentLabelMutationWithBody(ctx, id, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseDeleteEnvironmentLabelsMutationResponse(rsp)
+	return ParseAddEnvironmentLabelMutationResponse(rsp)
 }
 
-// AddEnvironmentLabelsMutationWithBodyWithResponse request with arbitrary body returning *AddEnvironmentLabelsMutationResponse
-func (c *ClientWithResponses) AddEnvironmentLabelsMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AddEnvironmentLabelsMutationResponse, error) {
-	rsp, err := c.AddEnvironmentLabelsMutationWithBody(ctx, id, contentType, body, reqEditors...)
+func (c *ClientWithResponses) AddEnvironmentLabelMutationWithResponse(ctx context.Context, id string, body AddEnvironmentLabelMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AddEnvironmentLabelMutationResponse, error) {
+	rsp, err := c.AddEnvironmentLabelMutation(ctx, id, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAddEnvironmentLabelsMutationResponse(rsp)
+	return ParseAddEnvironmentLabelMutationResponse(rsp)
 }
 
-func (c *ClientWithResponses) AddEnvironmentLabelsMutationWithResponse(ctx context.Context, id string, body AddEnvironmentLabelsMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AddEnvironmentLabelsMutationResponse, error) {
-	rsp, err := c.AddEnvironmentLabelsMutation(ctx, id, body, reqEditors...)
+// DeleteEnvironmentLabelMutationWithResponse request returning *DeleteEnvironmentLabelMutationResponse
+func (c *ClientWithResponses) DeleteEnvironmentLabelMutationWithResponse(ctx context.Context, id string, params *DeleteEnvironmentLabelMutationParams, reqEditors ...RequestEditorFn) (*DeleteEnvironmentLabelMutationResponse, error) {
+	rsp, err := c.DeleteEnvironmentLabelMutation(ctx, id, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAddEnvironmentLabelsMutationResponse(rsp)
+	return ParseDeleteEnvironmentLabelMutationResponse(rsp)
 }
 
 // OneIntegrationQueryWithResponse request returning *OneIntegrationQueryResponse
@@ -4476,8 +4722,8 @@ func (c *ClientWithResponses) IntentsQueryWithResponse(ctx context.Context, para
 }
 
 // IntentQueryWithResponse request returning *IntentQueryResponse
-func (c *ClientWithResponses) IntentQueryWithResponse(ctx context.Context, id string, params *IntentQueryParams, reqEditors ...RequestEditorFn) (*IntentQueryResponse, error) {
-	rsp, err := c.IntentQuery(ctx, id, params, reqEditors...)
+func (c *ClientWithResponses) IntentQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*IntentQueryResponse, error) {
+	rsp, err := c.IntentQuery(ctx, id, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4528,9 +4774,17 @@ func (c *ClientWithResponses) InviteQueryWithResponse(ctx context.Context, id st
 	return ParseInviteQueryResponse(rsp)
 }
 
-// AcceptInviteMutationWithResponse request returning *AcceptInviteMutationResponse
-func (c *ClientWithResponses) AcceptInviteMutationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*AcceptInviteMutationResponse, error) {
-	rsp, err := c.AcceptInviteMutation(ctx, id, reqEditors...)
+// AcceptInviteMutationWithBodyWithResponse request with arbitrary body returning *AcceptInviteMutationResponse
+func (c *ClientWithResponses) AcceptInviteMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AcceptInviteMutationResponse, error) {
+	rsp, err := c.AcceptInviteMutationWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseAcceptInviteMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) AcceptInviteMutationWithResponse(ctx context.Context, id string, body AcceptInviteMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AcceptInviteMutationResponse, error) {
+	rsp, err := c.AcceptInviteMutation(ctx, id, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4546,6 +4800,33 @@ func (c *ClientWithResponses) MeQueryWithResponse(ctx context.Context, reqEditor
 	return ParseMeQueryResponse(rsp)
 }
 
+// OneNamespaceQueryWithResponse request returning *OneNamespaceQueryResponse
+func (c *ClientWithResponses) OneNamespaceQueryWithResponse(ctx context.Context, params *OneNamespaceQueryParams, reqEditors ...RequestEditorFn) (*OneNamespaceQueryResponse, error) {
+	rsp, err := c.OneNamespaceQuery(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseOneNamespaceQueryResponse(rsp)
+}
+
+// NamespacesQueryWithResponse request returning *NamespacesQueryResponse
+func (c *ClientWithResponses) NamespacesQueryWithResponse(ctx context.Context, params *NamespacesQueryParams, reqEditors ...RequestEditorFn) (*NamespacesQueryResponse, error) {
+	rsp, err := c.NamespacesQuery(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseNamespacesQueryResponse(rsp)
+}
+
+// NamespaceQueryWithResponse request returning *NamespaceQueryResponse
+func (c *ClientWithResponses) NamespaceQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*NamespaceQueryResponse, error) {
+	rsp, err := c.NamespaceQuery(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseNamespaceQueryResponse(rsp)
+}
+
 // OrganizationsQueryWithResponse request returning *OrganizationsQueryResponse
 func (c *ClientWithResponses) OrganizationsQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*OrganizationsQueryResponse, error) {
 	rsp, err := c.OrganizationsQuery(ctx, reqEditors...)
@@ -4555,9 +4836,17 @@ func (c *ClientWithResponses) OrganizationsQueryWithResponse(ctx context.Context
 	return ParseOrganizationsQueryResponse(rsp)
 }
 
-// CreateOrganizationMutationWithResponse request returning *CreateOrganizationMutationResponse
-func (c *ClientWithResponses) CreateOrganizationMutationWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*CreateOrganizationMutationResponse, error) {
-	rsp, err := c.CreateOrganizationMutation(ctx, reqEditors...)
+// CreateOrganizationMutationWithBodyWithResponse request with arbitrary body returning *CreateOrganizationMutationResponse
+func (c *ClientWithResponses) CreateOrganizationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrganizationMutationResponse, error) {
+	rsp, err := c.CreateOrganizationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOrganizationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateOrganizationMutationWithResponse(ctx context.Context, body CreateOrganizationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOrganizationMutationResponse, error) {
+	rsp, err := c.CreateOrganizationMutation(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4590,6 +4879,15 @@ func (c *ClientWithResponses) UpdateOrganizationMutationWithResponse(ctx context
 	return ParseUpdateOrganizationMutationResponse(rsp)
 }
 
+// DisassociateUserFromOrganizationMutationWithResponse request returning *DisassociateUserFromOrganizationMutationResponse
+func (c *ClientWithResponses) DisassociateUserFromOrganizationMutationWithResponse(ctx context.Context, id string, params *DisassociateUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*DisassociateUserFromOrganizationMutationResponse, error) {
+	rsp, err := c.DisassociateUserFromOrganizationMutation(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDisassociateUserFromOrganizationMutationResponse(rsp)
+}
+
 // OneServiceQueryWithResponse request returning *OneServiceQueryResponse
 func (c *ClientWithResponses) OneServiceQueryWithResponse(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*OneServiceQueryResponse, error) {
 	rsp, err := c.OneServiceQuery(ctx, params, reqEditors...)
@@ -4609,8 +4907,8 @@ func (c *ClientWithResponses) ServicesQueryWithResponse(ctx context.Context, par
 }
 
 // ServiceQueryWithResponse request returning *ServiceQueryResponse
-func (c *ClientWithResponses) ServiceQueryWithResponse(ctx context.Context, id string, params *ServiceQueryParams, reqEditors ...RequestEditorFn) (*ServiceQueryResponse, error) {
-	rsp, err := c.ServiceQuery(ctx, id, params, reqEditors...)
+func (c *ClientWithResponses) ServiceQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ServiceQueryResponse, error) {
+	rsp, err := c.ServiceQuery(ctx, id, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4624,32 +4922,6 @@ func (c *ClientWithResponses) UsersQueryWithResponse(ctx context.Context, reqEdi
 		return nil, err
 	}
 	return ParseUsersQueryResponse(rsp)
-}
-
-// CreateUserMutationWithBodyWithResponse request with arbitrary body returning *CreateUserMutationResponse
-func (c *ClientWithResponses) CreateUserMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateUserMutationResponse, error) {
-	rsp, err := c.CreateUserMutationWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateUserMutationResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateUserMutationWithResponse(ctx context.Context, body CreateUserMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateUserMutationResponse, error) {
-	rsp, err := c.CreateUserMutation(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateUserMutationResponse(rsp)
-}
-
-// DeleteUserMutationWithResponse request returning *DeleteUserMutationResponse
-func (c *ClientWithResponses) DeleteUserMutationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteUserMutationResponse, error) {
-	rsp, err := c.DeleteUserMutation(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteUserMutationResponse(rsp)
 }
 
 // UserQueryWithResponse request returning *UserQueryResponse
@@ -5341,15 +5613,15 @@ func ParseUpdateEnvironmentMutationResponse(rsp *http.Response) (*UpdateEnvironm
 	return response, nil
 }
 
-// ParseDeleteEnvironmentLabelsMutationResponse parses an HTTP response from a DeleteEnvironmentLabelsMutationWithResponse call
-func ParseDeleteEnvironmentLabelsMutationResponse(rsp *http.Response) (*DeleteEnvironmentLabelsMutationResponse, error) {
+// ParseAddEnvironmentLabelMutationResponse parses an HTTP response from a AddEnvironmentLabelMutationWithResponse call
+func ParseAddEnvironmentLabelMutationResponse(rsp *http.Response) (*AddEnvironmentLabelMutationResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &DeleteEnvironmentLabelsMutationResponse{
+	response := &AddEnvironmentLabelMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -5409,15 +5681,15 @@ func ParseDeleteEnvironmentLabelsMutationResponse(rsp *http.Response) (*DeleteEn
 	return response, nil
 }
 
-// ParseAddEnvironmentLabelsMutationResponse parses an HTTP response from a AddEnvironmentLabelsMutationWithResponse call
-func ParseAddEnvironmentLabelsMutationResponse(rsp *http.Response) (*AddEnvironmentLabelsMutationResponse, error) {
+// ParseDeleteEnvironmentLabelMutationResponse parses an HTTP response from a DeleteEnvironmentLabelMutationWithResponse call
+func ParseDeleteEnvironmentLabelMutationResponse(rsp *http.Response) (*DeleteEnvironmentLabelMutationResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AddEnvironmentLabelsMutationResponse{
+	response := &DeleteEnvironmentLabelMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -6429,6 +6701,210 @@ func ParseMeQueryResponse(rsp *http.Response) (*MeQueryResponse, error) {
 	return response, nil
 }
 
+// ParseOneNamespaceQueryResponse parses an HTTP response from a OneNamespaceQueryWithResponse call
+func ParseOneNamespaceQueryResponse(rsp *http.Response) (*OneNamespaceQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &OneNamespaceQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Namespace
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseNamespacesQueryResponse parses an HTTP response from a NamespacesQueryWithResponse call
+func ParseNamespacesQueryResponse(rsp *http.Response) (*NamespacesQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &NamespacesQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Namespace
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseNamespaceQueryResponse parses an HTTP response from a NamespaceQueryWithResponse call
+func ParseNamespaceQueryResponse(rsp *http.Response) (*NamespaceQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &NamespaceQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Namespace
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseOrganizationsQueryResponse parses an HTTP response from a OrganizationsQueryWithResponse call
 func ParseOrganizationsQueryResponse(rsp *http.Response) (*OrganizationsQueryResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -6701,6 +7177,74 @@ func ParseUpdateOrganizationMutationResponse(rsp *http.Response) (*UpdateOrganiz
 	return response, nil
 }
 
+// ParseDisassociateUserFromOrganizationMutationResponse parses an HTTP response from a DisassociateUserFromOrganizationMutationWithResponse call
+func ParseDisassociateUserFromOrganizationMutationResponse(rsp *http.Response) (*DisassociateUserFromOrganizationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DisassociateUserFromOrganizationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest string
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseOneServiceQueryResponse parses an HTTP response from a OneServiceQueryWithResponse call
 func ParseOneServiceQueryResponse(rsp *http.Response) (*OneServiceQueryResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -6921,142 +7465,6 @@ func ParseUsersQueryResponse(rsp *http.Response) (*UsersQueryResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest []User
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON403 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON409 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateUserMutationResponse parses an HTTP response from a CreateUserMutationWithResponse call
-func ParseCreateUserMutationResponse(rsp *http.Response) (*CreateUserMutationResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateUserMutationResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest User
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON403 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON409 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteUserMutationResponse parses an HTTP response from a DeleteUserMutationWithResponse call
-func ParseDeleteUserMutationResponse(rsp *http.Response) (*DeleteUserMutationResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteUserMutationResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest string
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
