@@ -15,7 +15,9 @@ import (
 	"path/filepath"
 )
 
-type SecretConfig struct {
+const ApiCredentialsFilename = "credentials"
+
+type Config struct {
 	ClientId       string `json:"client_id,omitempty"`
 	ClientSecret   string `json:"client_secret,omitempty"`
 	UserToken      string `json:"user_token,omitempty"`
@@ -41,8 +43,6 @@ func GetAPIToken(ctx context.Context) string {
 	must.Must(err)
 	return token.AccessToken
 }
-
-const ApiCredentialsFilename = "credentials"
 
 func LoadConfigFile(output any, filename string) (bool, error) {
 	configDir, err := OtterizeConfigDirPath()
@@ -82,33 +82,33 @@ func LoadApiCredentialsFile() {
 		return
 	}
 
-	var secretConfig SecretConfig
-	loaded, err := LoadConfigFile(&secretConfig, ApiCredentialsFilename)
+	var Config Config
+	loaded, err := LoadConfigFile(&Config, ApiCredentialsFilename)
 	must.Must(err)
 
 	if !loaded {
 		return
 	}
 
-	if secretConfig.UserToken != "" {
-		viper.Set(ApiUserTokenKey, secretConfig.UserToken)
+	if Config.UserToken != "" {
+		viper.Set(ApiUserTokenKey, Config.UserToken)
 		return
 	}
 
-	if secretConfig.ClientId == "" || secretConfig.ClientSecret == "" {
+	if Config.ClientId == "" || Config.ClientSecret == "" {
 		return
 	}
 
-	if secretConfig.OrganizationId != "" {
-		viper.Set(ApiSelectedOrganizationId, secretConfig.OrganizationId)
+	if Config.OrganizationId != "" {
+		viper.Set(ApiSelectedOrganizationId, Config.OrganizationId)
 		return
 	}
 
-	viper.Set(ApiClientIdKey, secretConfig.ClientId)
-	viper.Set(ApiClientSecretKey, secretConfig.ClientSecret)
+	viper.Set(ApiClientIdKey, Config.ClientId)
+	viper.Set(ApiClientSecretKey, Config.ClientSecret)
 }
 
-func SaveSecretConfig(conf SecretConfig) error {
+func SaveConfig(conf Config) error {
 	return SaveJSONConfig(conf, ApiCredentialsFilename)
 }
 
