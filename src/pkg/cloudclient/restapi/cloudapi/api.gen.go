@@ -332,11 +332,9 @@ type Me struct {
 	// SelectedOrganization The organization under which the current user request acts.
 	// This is selected by the X-Otterize-Organization header,
 	// or, for users with a single organization, this is that single selected organization.
-	// This may be empty for users registered through MeMutation.registerUser but did not complete
-	// the login flow successfully by joining or creating an organization.
-	SelectedOrganization *struct {
+	SelectedOrganization struct {
 		Id string `json:"id"`
-	} `json:"selectedOrganization,omitempty"`
+	} `json:"selectedOrganization"`
 	User User `json:"user"`
 }
 
