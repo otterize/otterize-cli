@@ -1,4 +1,4 @@
-package mapper
+package export
 
 import (
 	"bytes"
@@ -18,16 +18,20 @@ import (
 	"time"
 )
 
-const OutputLocationKey = "output"
-const OutputLocationShorthand = "o"
-const OutputTypeKey = "output-type"
-const OutputTypeDefault = OutputTypeSingleFile
-const OutputTypeSingleFile = "single-file"
-const OutputTypeDirectory = "dir"
-const OutputFormatKey = "format"
-const OutputFormatDefault = OutputFormatYAML
-const OutputFormatYAML = "yaml"
-const OutputFormatJSON = "json"
+const (
+	NamespacesKey           = "namespaces"
+	NamespacesShorthand     = "n"
+	OutputLocationKey       = "output"
+	OutputLocationShorthand = "o"
+	OutputTypeKey           = "output-type"
+	OutputTypeDefault       = OutputTypeSingleFile
+	OutputTypeSingleFile    = "single-file"
+	OutputTypeDirectory     = "dir"
+	OutputFormatKey         = "format"
+	OutputFormatDefault     = OutputFormatYAML
+	OutputFormatYAML        = "yaml"
+	OutputFormatJSON        = "json"
+)
 
 func writeIntentsFile(filePath string, intents []v1alpha1.ClientIntents) error {
 	f, err := os.Create(filePath)
