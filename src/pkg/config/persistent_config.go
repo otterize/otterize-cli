@@ -92,20 +92,14 @@ func LoadApiCredentialsFile() {
 
 	if Config.UserToken != "" {
 		viper.Set(ApiUserTokenKey, Config.UserToken)
-		return
 	}
-
-	if Config.ClientId == "" || Config.ClientSecret == "" {
-		return
-	}
-
 	if Config.OrganizationId != "" {
 		viper.Set(ApiSelectedOrganizationId, Config.OrganizationId)
-		return
 	}
-
-	viper.Set(ApiClientIdKey, Config.ClientId)
-	viper.Set(ApiClientSecretKey, Config.ClientSecret)
+	if Config.ClientId != "" || Config.ClientSecret != "" {
+		viper.Set(ApiClientIdKey, Config.ClientId)
+		viper.Set(ApiClientSecretKey, Config.ClientSecret)
+	}
 }
 
 func SaveConfig(conf Config) error {
