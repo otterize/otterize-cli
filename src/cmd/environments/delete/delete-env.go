@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
@@ -27,11 +26,8 @@ var DeleteEnvCmd = &cobra.Command{
 		}
 
 		id := args[0]
-		force := viper.GetBool(ForceKey)
 
-		r, err := c.DeleteEnvironmentMutationWithResponse(ctxTimeout, id,
-			&cloudapi.DeleteEnvironmentMutationParams{Force: &force},
-		)
+		r, err := c.DeleteEnvironmentMutationWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err
 		}
@@ -47,8 +43,4 @@ var DeleteEnvCmd = &cobra.Command{
 		prints.PrintCliStderr(formatted)
 		return nil
 	},
-}
-
-func init() {
-	DeleteEnvCmd.Flags().Bool(ForceKey, false, "force delete environment")
 }
