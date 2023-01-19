@@ -18,7 +18,8 @@ import (
 )
 
 const (
-	BearerAuthScopes = "bearerAuth.Scopes"
+	BearerAuthScopes         = "bearerAuth.Scopes"
+	OrganizationHeaderScopes = "organizationHeader.Scopes"
 )
 
 // Defines values for ClusterStatus.
@@ -41,6 +42,27 @@ const (
 	CredentialsOperatorComponentTypeCREDENTIALSOPERATOR CredentialsOperatorComponentType = "CREDENTIALS_OPERATOR"
 	CredentialsOperatorComponentTypeINTENTSOPERATOR     CredentialsOperatorComponentType = "INTENTS_OPERATOR"
 	CredentialsOperatorComponentTypeNETWORKMAPPER       CredentialsOperatorComponentType = "NETWORK_MAPPER"
+)
+
+// Defines values for EdgeAccessStatusReason.
+const (
+	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTS       EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS"
+	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENY          EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY"
+	EdgeAccessStatusReasonINTENTSOPERATORNEVERCONNECTED EdgeAccessStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
+	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCING   EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
+	EdgeAccessStatusReasonMISSINGAPPLIEDINTENTS         EdgeAccessStatusReason = "MISSING_APPLIED_INTENTS"
+	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED   EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
+	EdgeAccessStatusReasonSERVERHASNOAPPLIEDINTENTS     EdgeAccessStatusReason = "SERVER_HAS_NO_APPLIED_INTENTS"
+)
+
+// Defines values for EdgeAccessStatusVerdict.
+const (
+	EdgeAccessStatusVerdictBLOCKED               EdgeAccessStatusVerdict = "BLOCKED"
+	EdgeAccessStatusVerdictEXPLICITLYALLOWED     EdgeAccessStatusVerdict = "EXPLICITLY_ALLOWED"
+	EdgeAccessStatusVerdictEXPLICITLYOVERALLOWED EdgeAccessStatusVerdict = "EXPLICITLY_OVER_ALLOWED"
+	EdgeAccessStatusVerdictIMPLICITLYALLOWED     EdgeAccessStatusVerdict = "IMPLICITLY_ALLOWED"
+	EdgeAccessStatusVerdictUNKNOWN               EdgeAccessStatusVerdict = "UNKNOWN"
+	EdgeAccessStatusVerdictWOULDBEBLOCKED        EdgeAccessStatusVerdict = "WOULD_BE_BLOCKED"
 )
 
 // Defines values for HTTPConfigMethod.
@@ -74,6 +96,12 @@ const (
 	IntentsOperatorComponentTypeNETWORKMAPPER       IntentsOperatorComponentType = "NETWORK_MAPPER"
 )
 
+// Defines values for InviteStatus.
+const (
+	InviteStatusACCEPTED InviteStatus = "ACCEPTED"
+	InviteStatusPENDING  InviteStatus = "PENDING"
+)
+
 // Defines values for KafkaConfigOperations.
 const (
 	KafkaConfigOperationsALTER           KafkaConfigOperations = "ALTER"
@@ -95,6 +123,40 @@ const (
 	NETWORKMAPPER       NetworkMapperComponentType = "NETWORK_MAPPER"
 )
 
+// Defines values for ServerBlockingStatusReason.
+const (
+	ServerBlockingStatusReasonALLINTENTSAPPLIED             ServerBlockingStatusReason = "ALL_INTENTS_APPLIED"
+	ServerBlockingStatusReasonINTENTSIMPLICITLYALLOWED      ServerBlockingStatusReason = "INTENTS_IMPLICITLY_ALLOWED"
+	ServerBlockingStatusReasonINTENTSOPERATORNEVERCONNECTED ServerBlockingStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
+	ServerBlockingStatusReasonINTENTSOPERATORNOTENFORCING   ServerBlockingStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
+	ServerBlockingStatusReasonMISSINGAPPLIEDINTENTS         ServerBlockingStatusReason = "MISSING_APPLIED_INTENTS"
+	ServerBlockingStatusReasonNETWORKMAPPERNEVERCONNECTED   ServerBlockingStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
+)
+
+// Defines values for ServerBlockingStatusVerdict.
+const (
+	ServerBlockingStatusVerdictBLOCKING    ServerBlockingStatusVerdict = "BLOCKING"
+	ServerBlockingStatusVerdictNOTBLOCKING ServerBlockingStatusVerdict = "NOT_BLOCKING"
+	ServerBlockingStatusVerdictUNKNOWN     ServerBlockingStatusVerdict = "UNKNOWN"
+	ServerBlockingStatusVerdictWOULDBLOCK  ServerBlockingStatusVerdict = "WOULD_BLOCK"
+)
+
+// Defines values for ServerProtectionStatusReason.
+const (
+	INTENTSOPERATORNEVERCONNECTED  ServerProtectionStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
+	INTENTSOPERATORNOTENFORCING    ServerProtectionStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
+	PROTECTEDBYDEFAULTDENY         ServerProtectionStatusReason = "PROTECTED_BY_DEFAULT_DENY"
+	PROTECTEDBYSERVERNETWORKPOLICY ServerProtectionStatusReason = "PROTECTED_BY_SERVER_NETWORK_POLICY"
+	SERVERHASNONETWORKPOLICY       ServerProtectionStatusReason = "SERVER_HAS_NO_NETWORK_POLICY"
+)
+
+// Defines values for ServerProtectionStatusVerdict.
+const (
+	PROTECTED   ServerProtectionStatusVerdict = "PROTECTED"
+	UNKNOWN     ServerProtectionStatusVerdict = "UNKNOWN"
+	UNPROTECTED ServerProtectionStatusVerdict = "UNPROTECTED"
+)
+
 // Defines values for OneIntegrationQueryParamsIntegrationType.
 const (
 	OneIntegrationQueryParamsIntegrationTypeCICD       OneIntegrationQueryParamsIntegrationType = "CICD"
@@ -113,11 +175,52 @@ const (
 	CreateIntegrationMutationJSONBodyIntegrationTypeKUBERNETES CreateIntegrationMutationJSONBodyIntegrationType = "KUBERNETES"
 )
 
+// Defines values for OneInviteQueryParamsStatus.
+const (
+	OneInviteQueryParamsStatusACCEPTED OneInviteQueryParamsStatus = "ACCEPTED"
+	OneInviteQueryParamsStatusPENDING  OneInviteQueryParamsStatus = "PENDING"
+)
+
 // Defines values for InvitesQueryParamsStatus.
 const (
 	ACCEPTED InvitesQueryParamsStatus = "ACCEPTED"
 	PENDING  InvitesQueryParamsStatus = "PENDING"
 )
+
+// AccessGraph defines model for AccessGraph.
+type AccessGraph struct {
+	Clusters []struct {
+		Id string `json:"id"`
+	} `json:"clusters"`
+	Filter              AccessGraphFilter    `json:"filter"`
+	ServiceAccessGraphs []ServiceAccessGraph `json:"serviceAccessGraphs"`
+}
+
+// AccessGraphEdge defines model for AccessGraphEdge.
+type AccessGraphEdge struct {
+	AccessStatus   EdgeAccessStatus `json:"accessStatus"`
+	AppliedIntents []struct {
+		Id string `json:"id"`
+	} `json:"appliedIntents"`
+	Client struct {
+		Id string `json:"id"`
+	} `json:"client"`
+	DiscoveredIntents []struct {
+		Id string `json:"id"`
+	} `json:"discoveredIntents"`
+	Server struct {
+		Id string `json:"id"`
+	} `json:"server"`
+}
+
+// AccessGraphFilter defines model for AccessGraphFilter.
+type AccessGraphFilter struct {
+	ClusterIds                 *[]string  `json:"clusterIds,omitempty"`
+	EnvironmentIds             *[]string  `json:"environmentIds,omitempty"`
+	IncludeServicesWithNoEdges *bool      `json:"includeServicesWithNoEdges,omitempty"`
+	LastSeenAfter              *time.Time `json:"lastSeenAfter,omitempty"`
+	ServiceIds                 *[]string  `json:"serviceIds,omitempty"`
+}
 
 // CertificateInformation defines model for CertificateInformation.
 type CertificateInformation struct {
@@ -178,6 +281,19 @@ type CredentialsOperatorComponent struct {
 // CredentialsOperatorComponentType defines model for CredentialsOperatorComponent.Type.
 type CredentialsOperatorComponentType string
 
+// EdgeAccessStatus defines model for EdgeAccessStatus.
+type EdgeAccessStatus struct {
+	Reason                                EdgeAccessStatusReason  `json:"reason"`
+	UseNetworkPoliciesInAccessGraphStates bool                    `json:"useNetworkPoliciesInAccessGraphStates"`
+	Verdict                               EdgeAccessStatusVerdict `json:"verdict"`
+}
+
+// EdgeAccessStatusReason defines model for EdgeAccessStatus.Reason.
+type EdgeAccessStatusReason string
+
+// EdgeAccessStatusVerdict defines model for EdgeAccessStatus.Verdict.
+type EdgeAccessStatusVerdict string
+
 // Environment defines model for Environment.
 type Environment struct {
 	AppliedIntentsCount int32    `json:"appliedIntentsCount"`
@@ -203,6 +319,15 @@ type HTTPConfig struct {
 
 // HTTPConfigMethod defines model for HTTPConfig.Method.
 type HTTPConfigMethod string
+
+// InputAccessGraphFilter defines model for InputAccessGraphFilter.
+type InputAccessGraphFilter struct {
+	ClusterIds                 *[]string  `json:"clusterIds,omitempty"`
+	EnvironmentIds             *[]string  `json:"environmentIds,omitempty"`
+	IncludeServicesWithNoEdges *bool      `json:"includeServicesWithNoEdges,omitempty"`
+	LastSeenAfter              *time.Time `json:"lastSeenAfter,omitempty"`
+	ServiceIds                 *[]string  `json:"serviceIds,omitempty"`
+}
 
 // Integration defines model for Integration.
 type Integration struct {
@@ -284,15 +409,21 @@ type IntentsOperatorConfiguration struct {
 
 // Invite defines model for Invite.
 type Invite struct {
-	Accepted     *time.Time `json:"accepted,omitempty"`
-	Created      time.Time  `json:"created"`
-	Email        string     `json:"email"`
-	Id           string     `json:"id"`
-	InviterEmail *string    `json:"inviterEmail,omitempty"`
+	AcceptedAt *time.Time `json:"acceptedAt,omitempty"`
+	Created    time.Time  `json:"created"`
+	Email      string     `json:"email"`
+	Id         string     `json:"id"`
+	Inviter    struct {
+		Id string `json:"id"`
+	} `json:"inviter"`
 	Organization struct {
 		Id string `json:"id"`
 	} `json:"organization"`
+	Status InviteStatus `json:"status"`
 }
+
+// InviteStatus defines model for Invite.Status.
+type InviteStatus string
 
 // KafkaConfig defines model for KafkaConfig.
 type KafkaConfig struct {
@@ -328,14 +459,7 @@ type LabelInput struct {
 type Me struct {
 	Invites       []Invite       `json:"invites"`
 	Organizations []Organization `json:"organizations"`
-
-	// SelectedOrganization The organization under which the current user request acts.
-	// This is selected by the X-Otterize-Organization header,
-	// or, for users with a single organization, this is that single selected organization.
-	SelectedOrganization struct {
-		Id string `json:"id"`
-	} `json:"selectedOrganization"`
-	User User `json:"user"`
+	User          User           `json:"user"`
 }
 
 // Namespace defines model for Namespace.
@@ -369,6 +493,30 @@ type Organization struct {
 	Name     *string `json:"name,omitempty"`
 }
 
+// ServerBlockingStatus defines model for ServerBlockingStatus.
+type ServerBlockingStatus struct {
+	Reason  ServerBlockingStatusReason  `json:"reason"`
+	Verdict ServerBlockingStatusVerdict `json:"verdict"`
+}
+
+// ServerBlockingStatusReason defines model for ServerBlockingStatus.Reason.
+type ServerBlockingStatusReason string
+
+// ServerBlockingStatusVerdict defines model for ServerBlockingStatus.Verdict.
+type ServerBlockingStatusVerdict string
+
+// ServerProtectionStatus defines model for ServerProtectionStatus.
+type ServerProtectionStatus struct {
+	Reason  ServerProtectionStatusReason  `json:"reason"`
+	Verdict ServerProtectionStatusVerdict `json:"verdict"`
+}
+
+// ServerProtectionStatusReason defines model for ServerProtectionStatus.Reason.
+type ServerProtectionStatusReason string
+
+// ServerProtectionStatusVerdict defines model for ServerProtectionStatus.Verdict.
+type ServerProtectionStatusVerdict string
+
 // Service defines model for Service.
 type Service struct {
 	CertificateInformation *CertificateInformation `json:"certificateInformation,omitempty"`
@@ -386,6 +534,23 @@ type Service struct {
 		Id string `json:"id"`
 	} `json:"namespace,omitempty"`
 	TlsKeyPair KeyPair `json:"tlsKeyPair"`
+}
+
+// ServiceAccessGraph defines model for ServiceAccessGraph.
+type ServiceAccessGraph struct {
+	AccessStatus ServiceAccessStatus `json:"accessStatus"`
+	Calls        []AccessGraphEdge   `json:"calls"`
+	Serves       []AccessGraphEdge   `json:"serves"`
+	Service      struct {
+		Id string `json:"id"`
+	} `json:"service"`
+}
+
+// ServiceAccessStatus defines model for ServiceAccessStatus.
+type ServiceAccessStatus struct {
+	BlockingStatus                        ServerBlockingStatus   `json:"blockingStatus"`
+	ProtectionStatus                      ServerProtectionStatus `json:"protectionStatus"`
+	UseNetworkPoliciesInAccessGraphStates bool                   `json:"useNetworkPoliciesInAccessGraphStates"`
 }
 
 // User defines model for User.
@@ -415,6 +580,11 @@ type NOTFOUND = Error
 // UNEXPECTEDERROR defines model for UNEXPECTED_ERROR.
 type UNEXPECTEDERROR = Error
 
+// AccessGraphQueryJSONBody defines parameters for AccessGraphQuery.
+type AccessGraphQueryJSONBody struct {
+	Filter *InputAccessGraphFilter `json:"filter,omitempty"`
+}
+
 // OneClusterQueryParams defines parameters for OneClusterQuery.
 type OneClusterQueryParams struct {
 	Name string `form:"name" json:"name"`
@@ -442,11 +612,6 @@ type CreateEnvironmentMutationJSONBody struct {
 	Name   string        `json:"name"`
 }
 
-// DeleteEnvironmentMutationParams defines parameters for DeleteEnvironmentMutation.
-type DeleteEnvironmentMutationParams struct {
-	Force *bool `form:"force,omitempty" json:"force,omitempty"`
-}
-
 // UpdateEnvironmentMutationJSONBody defines parameters for UpdateEnvironmentMutation.
 type UpdateEnvironmentMutationJSONBody struct {
 	Labels *[]LabelInput `json:"labels,omitempty"`
@@ -465,10 +630,10 @@ type DeleteEnvironmentLabelMutationParams struct {
 
 // OneIntegrationQueryParams defines parameters for OneIntegrationQuery.
 type OneIntegrationQueryParams struct {
-	Name            *string                                   `form:"name,omitempty" json:"name,omitempty"`
 	IntegrationType *OneIntegrationQueryParamsIntegrationType `form:"integrationType,omitempty" json:"integrationType,omitempty"`
 	EnvironmentId   *string                                   `form:"environmentId,omitempty" json:"environmentId,omitempty"`
 	ClusterId       *string                                   `form:"clusterId,omitempty" json:"clusterId,omitempty"`
+	Name            *string                                   `form:"name,omitempty" json:"name,omitempty"`
 }
 
 // OneIntegrationQueryParamsIntegrationType defines parameters for OneIntegrationQuery.
@@ -509,8 +674,18 @@ type IntentsQueryParams struct {
 	Source        *string `form:"source,omitempty" json:"source,omitempty"`
 }
 
+// OneInviteQueryParams defines parameters for OneInviteQuery.
+type OneInviteQueryParams struct {
+	Email  *string                     `form:"email,omitempty" json:"email,omitempty"`
+	Status *OneInviteQueryParamsStatus `form:"status,omitempty" json:"status,omitempty"`
+}
+
+// OneInviteQueryParamsStatus defines parameters for OneInviteQuery.
+type OneInviteQueryParamsStatus string
+
 // InvitesQueryParams defines parameters for InvitesQuery.
 type InvitesQueryParams struct {
+	Email  *string                   `form:"email,omitempty" json:"email,omitempty"`
 	Status *InvitesQueryParamsStatus `form:"status,omitempty" json:"status,omitempty"`
 }
 
@@ -527,14 +702,16 @@ type AcceptInviteMutationJSONBody = map[string]interface{}
 
 // OneNamespaceQueryParams defines parameters for OneNamespaceQuery.
 type OneNamespaceQueryParams struct {
-	Name string `form:"name" json:"name"`
+	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	ClusterId     *string `form:"clusterId,omitempty" json:"clusterId,omitempty"`
+	Name          *string `form:"name,omitempty" json:"name,omitempty"`
 }
 
 // NamespacesQueryParams defines parameters for NamespacesQuery.
 type NamespacesQueryParams struct {
-	Name          *string `form:"name,omitempty" json:"name,omitempty"`
 	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
 	ClusterId     *string `form:"clusterId,omitempty" json:"clusterId,omitempty"`
+	Name          *string `form:"name,omitempty" json:"name,omitempty"`
 }
 
 // CreateOrganizationMutationJSONBody defines parameters for CreateOrganizationMutation.
@@ -555,7 +732,7 @@ type DisassociateUserFromOrganizationMutationParams struct {
 type OneServiceQueryParams struct {
 	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
 	NamespaceId   *string `form:"namespaceId,omitempty" json:"namespaceId,omitempty"`
-	Name          string  `form:"name" json:"name"`
+	Name          *string `form:"name,omitempty" json:"name,omitempty"`
 }
 
 // ServicesQueryParams defines parameters for ServicesQuery.
@@ -564,6 +741,9 @@ type ServicesQueryParams struct {
 	NamespaceId   *string `form:"namespaceId,omitempty" json:"namespaceId,omitempty"`
 	Name          *string `form:"name,omitempty" json:"name,omitempty"`
 }
+
+// AccessGraphQueryJSONRequestBody defines body for AccessGraphQuery for application/json ContentType.
+type AccessGraphQueryJSONRequestBody AccessGraphQueryJSONBody
 
 // UpdateClusterMutationJSONRequestBody defines body for UpdateClusterMutation for application/json ContentType.
 type UpdateClusterMutationJSONRequestBody UpdateClusterMutationJSONBody
@@ -668,6 +848,11 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// AccessGraphQuery request with any body
+	AccessGraphQueryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	AccessGraphQuery(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// OneClusterQuery request
 	OneClusterQuery(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -694,7 +879,7 @@ type ClientInterface interface {
 	CreateEnvironmentMutation(ctx context.Context, body CreateEnvironmentMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteEnvironmentMutation request
-	DeleteEnvironmentMutation(ctx context.Context, id string, params *DeleteEnvironmentMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	DeleteEnvironmentMutation(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// EnvironmentQuery request
 	EnvironmentQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -739,6 +924,9 @@ type ClientInterface interface {
 
 	// IntentQuery request
 	IntentQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// OneInviteQuery request
+	OneInviteQuery(ctx context.Context, params *OneInviteQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// InvitesQuery request
 	InvitesQuery(ctx context.Context, params *InvitesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -804,6 +992,30 @@ type ClientInterface interface {
 
 	// UserQuery request
 	UserQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) AccessGraphQueryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAccessGraphQueryRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) AccessGraphQuery(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAccessGraphQueryRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) OneClusterQuery(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -914,8 +1126,8 @@ func (c *Client) CreateEnvironmentMutation(ctx context.Context, body CreateEnvir
 	return c.Client.Do(req)
 }
 
-func (c *Client) DeleteEnvironmentMutation(ctx context.Context, id string, params *DeleteEnvironmentMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteEnvironmentMutationRequest(c.Server, id, params)
+func (c *Client) DeleteEnvironmentMutation(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteEnvironmentMutationRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -1108,6 +1320,18 @@ func (c *Client) IntentsQuery(ctx context.Context, params *IntentsQueryParams, r
 
 func (c *Client) IntentQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewIntentQueryRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) OneInviteQuery(ctx context.Context, params *OneInviteQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOneInviteQueryRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1392,6 +1616,46 @@ func (c *Client) UserQuery(ctx context.Context, id string, reqEditors ...Request
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewAccessGraphQueryRequest calls the generic AccessGraphQuery builder with application/json body
+func NewAccessGraphQueryRequest(server string, body AccessGraphQueryJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewAccessGraphQueryRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewAccessGraphQueryRequestWithBody generates requests for AccessGraphQuery with any type of body
+func NewAccessGraphQueryRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/access-graph")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
 }
 
 // NewOneClusterQueryRequest generates requests for OneClusterQuery
@@ -1692,7 +1956,7 @@ func NewCreateEnvironmentMutationRequestWithBody(server string, contentType stri
 }
 
 // NewDeleteEnvironmentMutationRequest generates requests for DeleteEnvironmentMutation
-func NewDeleteEnvironmentMutationRequest(server string, id string, params *DeleteEnvironmentMutationParams) (*http.Request, error) {
+func NewDeleteEnvironmentMutationRequest(server string, id string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1716,26 +1980,6 @@ func NewDeleteEnvironmentMutationRequest(server string, id string, params *Delet
 	if err != nil {
 		return nil, err
 	}
-
-	queryValues := queryURL.Query()
-
-	if params.Force != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "force", runtime.ParamLocationQuery, *params.Force); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
 	if err != nil {
@@ -1944,22 +2188,6 @@ func NewOneIntegrationQueryRequest(server string, params *OneIntegrationQueryPar
 
 	queryValues := queryURL.Query()
 
-	if params.Name != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
 	if params.IntegrationType != nil {
 
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "integrationType", runtime.ParamLocationQuery, *params.IntegrationType); err != nil {
@@ -1995,6 +2223,22 @@ func NewOneIntegrationQueryRequest(server string, params *OneIntegrationQueryPar
 	if params.ClusterId != nil {
 
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "clusterId", runtime.ParamLocationQuery, *params.ClusterId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Name != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -2397,6 +2641,69 @@ func NewIntentQueryRequest(server string, id string) (*http.Request, error) {
 	return req, nil
 }
 
+// NewOneInviteQueryRequest generates requests for OneInviteQuery
+func NewOneInviteQueryRequest(server string, params *OneInviteQueryParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/invite")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Email != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "email", runtime.ParamLocationQuery, *params.Email); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Status != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "status", runtime.ParamLocationQuery, *params.Status); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewInvitesQueryRequest generates requests for InvitesQuery
 func NewInvitesQueryRequest(server string, params *InvitesQueryParams) (*http.Request, error) {
 	var err error
@@ -2417,6 +2724,22 @@ func NewInvitesQueryRequest(server string, params *InvitesQueryParams) (*http.Re
 	}
 
 	queryValues := queryURL.Query()
+
+	if params.Email != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "email", runtime.ParamLocationQuery, *params.Email); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
 
 	if params.Status != nil {
 
@@ -2589,7 +2912,7 @@ func NewAcceptInviteMutationRequestWithBody(server string, id string, contentTyp
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -2647,16 +2970,52 @@ func NewOneNamespaceQueryRequest(server string, params *OneNamespaceQueryParams)
 
 	queryValues := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
-		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
+	if params.EnvironmentId != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environmentId", runtime.ParamLocationQuery, *params.EnvironmentId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
 			}
 		}
+
+	}
+
+	if params.ClusterId != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "clusterId", runtime.ParamLocationQuery, *params.ClusterId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Name != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -2690,22 +3049,6 @@ func NewNamespacesQueryRequest(server string, params *NamespacesQueryParams) (*h
 
 	queryValues := queryURL.Query()
 
-	if params.Name != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
 	if params.EnvironmentId != nil {
 
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environmentId", runtime.ParamLocationQuery, *params.EnvironmentId); err != nil {
@@ -2725,6 +3068,22 @@ func NewNamespacesQueryRequest(server string, params *NamespacesQueryParams) (*h
 	if params.ClusterId != nil {
 
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "clusterId", runtime.ParamLocationQuery, *params.ClusterId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Name != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -3033,16 +3392,20 @@ func NewOneServiceQueryRequest(server string, params *OneServiceQueryParams) (*h
 
 	}
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
-		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
+	if params.Name != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
 			}
 		}
+
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -3272,6 +3635,11 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// AccessGraphQuery request with any body
+	AccessGraphQueryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AccessGraphQueryResponse, error)
+
+	AccessGraphQueryWithResponse(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*AccessGraphQueryResponse, error)
+
 	// OneClusterQuery request
 	OneClusterQueryWithResponse(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*OneClusterQueryResponse, error)
 
@@ -3298,7 +3666,7 @@ type ClientWithResponsesInterface interface {
 	CreateEnvironmentMutationWithResponse(ctx context.Context, body CreateEnvironmentMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateEnvironmentMutationResponse, error)
 
 	// DeleteEnvironmentMutation request
-	DeleteEnvironmentMutationWithResponse(ctx context.Context, id string, params *DeleteEnvironmentMutationParams, reqEditors ...RequestEditorFn) (*DeleteEnvironmentMutationResponse, error)
+	DeleteEnvironmentMutationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteEnvironmentMutationResponse, error)
 
 	// EnvironmentQuery request
 	EnvironmentQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*EnvironmentQueryResponse, error)
@@ -3343,6 +3711,9 @@ type ClientWithResponsesInterface interface {
 
 	// IntentQuery request
 	IntentQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*IntentQueryResponse, error)
+
+	// OneInviteQuery request
+	OneInviteQueryWithResponse(ctx context.Context, params *OneInviteQueryParams, reqEditors ...RequestEditorFn) (*OneInviteQueryResponse, error)
 
 	// InvitesQuery request
 	InvitesQueryWithResponse(ctx context.Context, params *InvitesQueryParams, reqEditors ...RequestEditorFn) (*InvitesQueryResponse, error)
@@ -3408,6 +3779,34 @@ type ClientWithResponsesInterface interface {
 
 	// UserQuery request
 	UserQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*UserQueryResponse, error)
+}
+
+type AccessGraphQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AccessGraph
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r AccessGraphQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r AccessGraphQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type OneClusterQueryResponse struct {
@@ -3970,6 +4369,34 @@ func (r IntentQueryResponse) StatusCode() int {
 	return 0
 }
 
+type OneInviteQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Invite
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r OneInviteQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r OneInviteQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type InvitesQueryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4502,6 +4929,23 @@ func (r UserQueryResponse) StatusCode() int {
 	return 0
 }
 
+// AccessGraphQueryWithBodyWithResponse request with arbitrary body returning *AccessGraphQueryResponse
+func (c *ClientWithResponses) AccessGraphQueryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AccessGraphQueryResponse, error) {
+	rsp, err := c.AccessGraphQueryWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseAccessGraphQueryResponse(rsp)
+}
+
+func (c *ClientWithResponses) AccessGraphQueryWithResponse(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*AccessGraphQueryResponse, error) {
+	rsp, err := c.AccessGraphQuery(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseAccessGraphQueryResponse(rsp)
+}
+
 // OneClusterQueryWithResponse request returning *OneClusterQueryResponse
 func (c *ClientWithResponses) OneClusterQueryWithResponse(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*OneClusterQueryResponse, error) {
 	rsp, err := c.OneClusterQuery(ctx, params, reqEditors...)
@@ -4582,8 +5026,8 @@ func (c *ClientWithResponses) CreateEnvironmentMutationWithResponse(ctx context.
 }
 
 // DeleteEnvironmentMutationWithResponse request returning *DeleteEnvironmentMutationResponse
-func (c *ClientWithResponses) DeleteEnvironmentMutationWithResponse(ctx context.Context, id string, params *DeleteEnvironmentMutationParams, reqEditors ...RequestEditorFn) (*DeleteEnvironmentMutationResponse, error) {
-	rsp, err := c.DeleteEnvironmentMutation(ctx, id, params, reqEditors...)
+func (c *ClientWithResponses) DeleteEnvironmentMutationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteEnvironmentMutationResponse, error) {
+	rsp, err := c.DeleteEnvironmentMutation(ctx, id, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4728,6 +5172,15 @@ func (c *ClientWithResponses) IntentQueryWithResponse(ctx context.Context, id st
 		return nil, err
 	}
 	return ParseIntentQueryResponse(rsp)
+}
+
+// OneInviteQueryWithResponse request returning *OneInviteQueryResponse
+func (c *ClientWithResponses) OneInviteQueryWithResponse(ctx context.Context, params *OneInviteQueryParams, reqEditors ...RequestEditorFn) (*OneInviteQueryResponse, error) {
+	rsp, err := c.OneInviteQuery(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseOneInviteQueryResponse(rsp)
 }
 
 // InvitesQueryWithResponse request returning *InvitesQueryResponse
@@ -4931,6 +5384,74 @@ func (c *ClientWithResponses) UserQueryWithResponse(ctx context.Context, id stri
 		return nil, err
 	}
 	return ParseUserQueryResponse(rsp)
+}
+
+// ParseAccessGraphQueryResponse parses an HTTP response from a AccessGraphQueryWithResponse call
+func ParseAccessGraphQueryResponse(rsp *http.Response) (*AccessGraphQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &AccessGraphQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AccessGraph
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
 }
 
 // ParseOneClusterQueryResponse parses an HTTP response from a OneClusterQueryWithResponse call
@@ -6241,6 +6762,74 @@ func ParseIntentQueryResponse(rsp *http.Response) (*IntentQueryResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Intent
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseOneInviteQueryResponse parses an HTTP response from a OneInviteQueryWithResponse call
+func ParseOneInviteQueryResponse(rsp *http.Response) (*OneInviteQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &OneInviteQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Invite
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

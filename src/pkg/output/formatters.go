@@ -58,13 +58,14 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeSecrets bool
 }
 
 func FormatInvites(invites []cloudapi.Invite) (string, error) {
-	columns := []string{"id", "email", "created", "accepted"}
+	columns := []string{"id", "email", "status", "created at", "accepted at"}
 	getColumnData := func(invite cloudapi.Invite) []map[string]string {
 		return []map[string]string{{
-			"id":       invite.Id,
-			"email":    invite.Email,
-			"created":  invite.Created.String(),
-			"accepted": lo.Ternary(invite.Accepted != nil, lo.FromPtr(invite.Accepted).String(), ""),
+			"id":          invite.Id,
+			"email":       invite.Email,
+			"status":      string(invite.Status),
+			"created at":  invite.Created.String(),
+			"accepted at": lo.Ternary(invite.AcceptedAt != nil, lo.FromPtr(invite.AcceptedAt).String(), ""),
 		}}
 	}
 	return FormatList(invites, columns, getColumnData)
