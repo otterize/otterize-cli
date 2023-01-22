@@ -2,10 +2,12 @@ package output
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/markkurossi/tabulate"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/spf13/viper"
 	"reflect"
+	"sigs.k8s.io/yaml"
 )
 
 func AsJson(v any) (string, error) {
@@ -23,6 +25,34 @@ func AsJson(v any) (string, error) {
 		return "", err
 	}
 	return string(jsonBuf), nil
+}
+
+func AsYaml(v any) (string, error) {
+	output, err := yaml.Marshal(v)
+	if err != nil {
+		return "", err
+	}
+	return string(output), nil
+}
+
+func ToFormat(v any, outputFormat string) (string, error) {
+	var output string
+	var err error
+
+	switch outputFormat {
+	case config.OutputJson:
+		output, err = AsJson(v)
+	case config.OutputYaml:
+		output, err = AsYaml(v)
+	default:
+		return "", fmt.Errorf("unimplemented output format: %s", outputFormat)
+	}
+
+	if err != nil {
+		return "", err
+	}
+
+	return output, nil
 }
 
 func AsTable[T any](dataList []T, columns []string, getColumnData func(T) []map[string]string) (string, error) {
