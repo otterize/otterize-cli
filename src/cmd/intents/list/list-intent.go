@@ -7,6 +7,7 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -56,7 +57,7 @@ func listIntents(_ *cobra.Command, _ []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(result)
+	prints.PrintCliOutput(result)
 	return nil
 }
 
