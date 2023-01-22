@@ -35,17 +35,23 @@ func AsYaml(v any) (string, error) {
 	return string(output), nil
 }
 
-func ToFormat(v any, outputFormat string) (string, error) {
+func GetFormattedObject(obj any) (string, error) {
 	var output string
 	var err error
 
-	switch outputFormat {
-	case config.OutputJson:
-		output, err = AsJson(v)
-	case config.OutputYaml:
-		output, err = AsYaml(v)
+	switch outputFormatVal := viper.GetString(config.OutputFormatKey); {
+	case outputFormatVal == config.OutputJson:
+		bytes, err := json.MarshalIndent(obj, "", "  ")
+		if err != nil {
+			return "", err
+		}
+		output = string(bytes)
+
+	case outputFormatVal == config.OutputYaml:
+		output, err = AsYaml(obj)
+
 	default:
-		return "", fmt.Errorf("unimplemented output format: %s", outputFormat)
+		return "", fmt.Errorf("unexpected output format %s, use one of (%s, %s)", outputFormatVal, config.OutputJson, config.OutputYaml)
 	}
 
 	if err != nil {
