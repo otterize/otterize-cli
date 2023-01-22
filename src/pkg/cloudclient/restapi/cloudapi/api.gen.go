@@ -424,15 +424,6 @@ type KafkaTopic struct {
 	Topic                  string `json:"topic"`
 }
 
-// KeyPair defines model for KeyPair.
-type KeyPair struct {
-	CaPEM     string `json:"caPEM"`
-	CertPEM   string `json:"certPEM"`
-	ExpiresAt int32  `json:"expiresAt"`
-	KeyPEM    string `json:"keyPEM"`
-	RootCAPEM string `json:"rootCAPEM"`
-}
-
 // Label defines model for Label.
 type Label struct {
 	Key   string  `json:"key"`
@@ -519,7 +510,6 @@ type Service struct {
 	Namespace         *struct {
 		Id string `json:"id"`
 	} `json:"namespace,omitempty"`
-	TlsKeyPair KeyPair `json:"tlsKeyPair"`
 }
 
 // ServiceAccessGraph defines model for ServiceAccessGraph.
