@@ -34,21 +34,22 @@ func FormatEnvs(envs []cloudapi.Environment) (string, error) {
 }
 
 func FormatIntegrations(integrations []cloudapi.Integration, includeSecrets bool) (string, error) {
-	columns := []string{"id", "type", "name", "environments", "controller last seen", "intents last applied"}
+	columns := []string{"id", "type", "name", "default environment", "controller last seen", "intents last applied"}
 	if includeSecrets {
 		columns = append(columns, "client id", "client secret")
 	}
 
 	getColumnData := func(integration cloudapi.Integration) []map[string]string {
 		integrationColumns := map[string]string{
-			"id":   integration.Id,
-			"type": string(integration.Type),
-			"name": integration.Name,
+			"id":                  integration.Id,
+			"type":                string(integration.Type),
+			"name":                integration.Name,
+			"default environment": lo.FromPtr(integration.DefaultEnvironment).Id,
 		}
 
 		if includeSecrets {
 			integrationColumns["client id"] = integration.Credentials.ClientId
-			integrationColumns["client secret"] = integration.Credentials.Secret
+			integrationColumns["client secret"] = integration.Credentials.ClientSecret
 		}
 
 		return []map[string]string{integrationColumns}
