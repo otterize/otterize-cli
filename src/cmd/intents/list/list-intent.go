@@ -13,11 +13,12 @@ import (
 )
 
 var ListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List intents",
-	Args:  cobra.ExactArgs(0),
-	Long:  ``,
-	RunE:  listIntents,
+	Use:          "list",
+	Short:        "List intents",
+	Args:         cobra.ExactArgs(0),
+	Long:         ``,
+	SilenceUsage: true,
+	RunE:         listIntents,
 }
 
 type intentsList struct {

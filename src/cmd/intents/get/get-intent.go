@@ -12,11 +12,12 @@ import (
 )
 
 var GetCmd = &cobra.Command{
-	Use:   "get <intent-id>",
-	Short: "Gets an intent for a given id",
-	Args:  cobra.ExactArgs(1),
-	Long:  ``,
-	RunE:  getIntent,
+	Use:          "get <intent-id>",
+	Short:        "Gets an intent for a given id",
+	Args:         cobra.ExactArgs(1),
+	Long:         ``,
+	SilenceUsage: true,
+	RunE:         getIntent,
 }
 
 func getIntent(_ *cobra.Command, args []string) error {
