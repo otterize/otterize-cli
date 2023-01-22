@@ -434,6 +434,20 @@ type KafkaConfig struct {
 // KafkaConfigOperations defines model for KafkaConfig.Operations.
 type KafkaConfigOperations string
 
+// KafkaServerConfig defines model for KafkaServerConfig.
+type KafkaServerConfig struct {
+	Address *string      `json:"address,omitempty"`
+	Topics  []KafkaTopic `json:"topics"`
+}
+
+// KafkaTopic defines model for KafkaTopic.
+type KafkaTopic struct {
+	ClientIdentityRequired bool   `json:"clientIdentityRequired"`
+	IntentsRequired        bool   `json:"intentsRequired"`
+	Pattern                string `json:"pattern"`
+	Topic                  string `json:"topic"`
+}
+
 // KeyPair defines model for KeyPair.
 type KeyPair struct {
 	CaPEM     string `json:"caPEM"`
@@ -523,14 +537,10 @@ type Service struct {
 	Environment            struct {
 		Id string `json:"id"`
 	} `json:"environment"`
-	Id string `json:"id"`
-
-	// KafkaServerConfig If service is Kafka, its KafkaServerConfig.
-	KafkaServerConfig *struct {
-		Id string `json:"id"`
-	} `json:"kafkaServerConfig,omitempty"`
-	Name      string `json:"name"`
-	Namespace *struct {
+	Id                string             `json:"id"`
+	KafkaServerConfig *KafkaServerConfig `json:"kafkaServerConfig,omitempty"`
+	Name              string             `json:"name"`
+	Namespace         *struct {
 		Id string `json:"id"`
 	} `json:"namespace,omitempty"`
 	TlsKeyPair KeyPair `json:"tlsKeyPair"`
