@@ -37,11 +37,11 @@ func listIntents(_ *cobra.Command, _ []string) error {
 	if viper.IsSet(EnvironmentIDKey) {
 		params.EnvironmentId = lo.ToPtr(viper.GetString(EnvironmentIDKey))
 	}
-	if viper.IsSet(ClientIDKey) {
-		params.ClientId = lo.ToPtr(viper.GetString(ClientIDKey))
+	if viper.IsSet(IntentClientIDKey) {
+		params.ClientId = lo.ToPtr(viper.GetString(IntentClientIDKey))
 	}
-	if viper.IsSet(ServerIDKey) {
-		params.ServerId = lo.ToPtr(viper.GetString(ServerIDKey))
+	if viper.IsSet(IntentServerIDKey) {
+		params.ServerId = lo.ToPtr(viper.GetString(IntentServerIDKey))
 	}
 
 	resp, err := client.IntentsQueryWithResponse(ctxTimeout, &params)
@@ -60,9 +60,9 @@ func listIntents(_ *cobra.Command, _ []string) error {
 }
 
 func init() {
-	ListCmd.Flags().String(EnvironmentIDKey, "", "filter by environment id")
-	ListCmd.Flags().String(ClientIDKey, "", "filter by client id")
-	ListCmd.Flags().String(ServerIDKey, "", "filter by server id")
+	ListCmd.Flags().String(EnvironmentIDKey, "", "filter list by environment id")
+	ListCmd.Flags().String(IntentClientIDKey, "", "filter list by client id")
+	ListCmd.Flags().String(IntentServerIDKey, "", "filter list by server id")
 
 	ListCmd.Flags().String(config.OutputFormatKey, config.OutputFormatDefault, fmt.Sprintf("output format - %s/%s", config.OutputYaml, config.OutputJson))
 }
