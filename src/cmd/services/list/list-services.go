@@ -18,7 +18,7 @@ var ListCmd = &cobra.Command{
 	Args:         cobra.ExactArgs(0),
 	Long:         ``,
 	SilenceUsage: true,
-	RunE:         listIntents,
+	RunE:         listServices,
 }
 
 type servicesList struct {
