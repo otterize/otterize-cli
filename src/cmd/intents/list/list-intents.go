@@ -63,8 +63,8 @@ func listIntents(_ *cobra.Command, _ []string) error {
 
 func init() {
 	ListCmd.Flags().String(EnvironmentIDKey, "", "filter list by environment id")
-	ListCmd.Flags().String(IntentClientIDKey, "", "filter list by client id")
-	ListCmd.Flags().String(IntentServerIDKey, "", "filter list by server id")
+	ListCmd.Flags().String(IntentClientIDKey, "", "filter list by client service id")
+	ListCmd.Flags().String(IntentServerIDKey, "", "filter list by server service id")
 
 	ListCmd.Flags().String(config.OutputFormatKey, config.OutputFormatDefault, fmt.Sprintf("output format - %s/%s", config.OutputYaml, config.OutputJson))
 }

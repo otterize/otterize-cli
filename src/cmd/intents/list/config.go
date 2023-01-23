@@ -1,5 +1,5 @@
 package list
 
 const EnvironmentIDKey = "env-id"
-const IntentClientIDKey = "intent-client-id"
-const IntentServerIDKey = "intent-server-id"
+const IntentClientIDKey = "client-service-id"
+const IntentServerIDKey = "server-service-id"
