@@ -115,6 +115,12 @@ const (
 	KafkaConfigOperationsPRODUCE         KafkaConfigOperations = "PRODUCE"
 )
 
+// Defines values for KafkaTopicPattern.
+const (
+	LITERAL KafkaTopicPattern = "LITERAL"
+	PREFIX  KafkaTopicPattern = "PREFIX"
+)
+
 // Defines values for NetworkMapperComponentType.
 const (
 	CREDENTIALSOPERATOR NetworkMapperComponentType = "CREDENTIALS_OPERATOR"
@@ -324,6 +330,9 @@ type InputAccessGraphFilter struct {
 
 // Integration defines model for Integration.
 type Integration struct {
+	Cluster *struct {
+		Id string `json:"id"`
+	} `json:"cluster,omitempty"`
 	Components         *IntegrationComponents `json:"components,omitempty"`
 	Credentials        IntegrationCredentials `json:"credentials"`
 	DefaultEnvironment *struct {
@@ -418,20 +427,14 @@ type KafkaServerConfig struct {
 
 // KafkaTopic defines model for KafkaTopic.
 type KafkaTopic struct {
-	ClientIdentityRequired bool   `json:"clientIdentityRequired"`
-	IntentsRequired        bool   `json:"intentsRequired"`
-	Pattern                string `json:"pattern"`
-	Topic                  string `json:"topic"`
+	ClientIdentityRequired bool              `json:"clientIdentityRequired"`
+	IntentsRequired        bool              `json:"intentsRequired"`
+	Pattern                KafkaTopicPattern `json:"pattern"`
+	Topic                  string            `json:"topic"`
 }
 
-// KeyPair defines model for KeyPair.
-type KeyPair struct {
-	CaPEM     string `json:"caPEM"`
-	CertPEM   string `json:"certPEM"`
-	ExpiresAt int32  `json:"expiresAt"`
-	KeyPEM    string `json:"keyPEM"`
-	RootCAPEM string `json:"rootCAPEM"`
-}
+// KafkaTopicPattern defines model for KafkaTopic.Pattern.
+type KafkaTopicPattern string
 
 // Label defines model for Label.
 type Label struct {
@@ -519,7 +522,6 @@ type Service struct {
 	Namespace         *struct {
 		Id string `json:"id"`
 	} `json:"namespace,omitempty"`
-	TlsKeyPair KeyPair `json:"tlsKeyPair"`
 }
 
 // ServiceAccessGraph defines model for ServiceAccessGraph.
