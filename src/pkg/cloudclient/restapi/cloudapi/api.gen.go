@@ -46,23 +46,22 @@ const (
 
 // Defines values for EdgeAccessStatusReason.
 const (
-	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTS       EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS"
-	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENY          EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY"
-	EdgeAccessStatusReasonINTENTSOPERATORNEVERCONNECTED EdgeAccessStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
-	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCING   EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
-	EdgeAccessStatusReasonMISSINGAPPLIEDINTENTS         EdgeAccessStatusReason = "MISSING_APPLIED_INTENTS"
-	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED   EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
-	EdgeAccessStatusReasonSERVERHASNOAPPLIEDINTENTS     EdgeAccessStatusReason = "SERVER_HAS_NO_APPLIED_INTENTS"
+	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTS                 EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS"
+	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENY                    EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY"
+	EdgeAccessStatusReasonINTENTSOPERATORNEVERCONNECTED           EdgeAccessStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
+	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCING             EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
+	EdgeAccessStatusReasonMISSINGAPPLIEDINTENT                    EdgeAccessStatusReason = "MISSING_APPLIED_INTENT"
+	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED             EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
 )
 
 // Defines values for EdgeAccessStatusVerdict.
 const (
-	EdgeAccessStatusVerdictBLOCKED               EdgeAccessStatusVerdict = "BLOCKED"
-	EdgeAccessStatusVerdictEXPLICITLYALLOWED     EdgeAccessStatusVerdict = "EXPLICITLY_ALLOWED"
-	EdgeAccessStatusVerdictEXPLICITLYOVERALLOWED EdgeAccessStatusVerdict = "EXPLICITLY_OVER_ALLOWED"
-	EdgeAccessStatusVerdictIMPLICITLYALLOWED     EdgeAccessStatusVerdict = "IMPLICITLY_ALLOWED"
-	EdgeAccessStatusVerdictUNKNOWN               EdgeAccessStatusVerdict = "UNKNOWN"
-	EdgeAccessStatusVerdictWOULDBEBLOCKED        EdgeAccessStatusVerdict = "WOULD_BE_BLOCKED"
+	EdgeAccessStatusVerdictBLOCKED           EdgeAccessStatusVerdict = "BLOCKED"
+	EdgeAccessStatusVerdictEXPLICITLYALLOWED EdgeAccessStatusVerdict = "EXPLICITLY_ALLOWED"
+	EdgeAccessStatusVerdictIMPLICITLYALLOWED EdgeAccessStatusVerdict = "IMPLICITLY_ALLOWED"
+	EdgeAccessStatusVerdictUNKNOWN           EdgeAccessStatusVerdict = "UNKNOWN"
+	EdgeAccessStatusVerdictWOULDBEBLOCKED    EdgeAccessStatusVerdict = "WOULD_BE_BLOCKED"
 )
 
 // Defines values for HTTPConfigMethod.
@@ -79,7 +78,7 @@ const (
 
 // Defines values for IntegrationType.
 const (
-	IntegrationTypeCICD       IntegrationType = "CICD"
+	IntegrationTypeGENERIC    IntegrationType = "GENERIC"
 	IntegrationTypeKUBERNETES IntegrationType = "KUBERNETES"
 )
 
@@ -159,20 +158,14 @@ const (
 
 // Defines values for OneIntegrationQueryParamsIntegrationType.
 const (
-	OneIntegrationQueryParamsIntegrationTypeCICD       OneIntegrationQueryParamsIntegrationType = "CICD"
+	OneIntegrationQueryParamsIntegrationTypeGENERIC    OneIntegrationQueryParamsIntegrationType = "GENERIC"
 	OneIntegrationQueryParamsIntegrationTypeKUBERNETES OneIntegrationQueryParamsIntegrationType = "KUBERNETES"
 )
 
 // Defines values for IntegrationsQueryParamsIntegrationType.
 const (
-	IntegrationsQueryParamsIntegrationTypeCICD       IntegrationsQueryParamsIntegrationType = "CICD"
-	IntegrationsQueryParamsIntegrationTypeKUBERNETES IntegrationsQueryParamsIntegrationType = "KUBERNETES"
-)
-
-// Defines values for CreateIntegrationMutationJSONBodyIntegrationType.
-const (
-	CreateIntegrationMutationJSONBodyIntegrationTypeCICD       CreateIntegrationMutationJSONBodyIntegrationType = "CICD"
-	CreateIntegrationMutationJSONBodyIntegrationTypeKUBERNETES CreateIntegrationMutationJSONBodyIntegrationType = "KUBERNETES"
+	GENERIC    IntegrationsQueryParamsIntegrationType = "GENERIC"
+	KUBERNETES IntegrationsQueryParamsIntegrationType = "KUBERNETES"
 )
 
 // Defines values for OneInviteQueryParamsStatus.
@@ -331,13 +324,12 @@ type InputAccessGraphFilter struct {
 
 // Integration defines model for Integration.
 type Integration struct {
-	Components                   *IntegrationComponents `json:"components,omitempty"`
-	Credentials                  IntegrationCredentials `json:"credentials"`
-	Id                           string                 `json:"id"`
-	Identity                     IntegrationIdentity    `json:"identity"`
-	KubernetesDefaultEnvironment struct {
+	Components         *IntegrationComponents `json:"components,omitempty"`
+	Credentials        IntegrationCredentials `json:"credentials"`
+	DefaultEnvironment *struct {
 		Id string `json:"id"`
-	} `json:"kubernetesDefaultEnvironment"`
+	} `json:"defaultEnvironment,omitempty"`
+	Id   string          `json:"id"`
 	Name string          `json:"name"`
 	Type IntegrationType `json:"type"`
 }
@@ -355,24 +347,8 @@ type IntegrationComponents struct {
 
 // IntegrationCredentials defines model for IntegrationCredentials.
 type IntegrationCredentials struct {
-	ClientId string `json:"clientId"`
-	Secret   string `json:"secret"`
-}
-
-// IntegrationEnvironments defines model for IntegrationEnvironments.
-type IntegrationEnvironments struct {
-	EnvironmentId *string `json:"environmentId,omitempty"`
-}
-
-// IntegrationIdentity defines model for IntegrationIdentity.
-type IntegrationIdentity struct {
-	Other *[]IntegrationIdentityOtherFields `json:"other,omitempty"`
-}
-
-// IntegrationIdentityOtherFields defines model for IntegrationIdentityOtherFields.
-type IntegrationIdentityOtherFields struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	ClientId     string `json:"clientId"`
+	ClientSecret string `json:"clientSecret"`
 }
 
 // Intent defines model for Intent.
@@ -433,6 +409,20 @@ type KafkaConfig struct {
 
 // KafkaConfigOperations defines model for KafkaConfig.Operations.
 type KafkaConfigOperations string
+
+// KafkaServerConfig defines model for KafkaServerConfig.
+type KafkaServerConfig struct {
+	Address *string      `json:"address,omitempty"`
+	Topics  []KafkaTopic `json:"topics"`
+}
+
+// KafkaTopic defines model for KafkaTopic.
+type KafkaTopic struct {
+	ClientIdentityRequired bool   `json:"clientIdentityRequired"`
+	IntentsRequired        bool   `json:"intentsRequired"`
+	Pattern                string `json:"pattern"`
+	Topic                  string `json:"topic"`
+}
 
 // KeyPair defines model for KeyPair.
 type KeyPair struct {
@@ -523,14 +513,10 @@ type Service struct {
 	Environment            struct {
 		Id string `json:"id"`
 	} `json:"environment"`
-	Id string `json:"id"`
-
-	// KafkaServerConfig If service is Kafka, its KafkaServerConfig.
-	KafkaServerConfig *struct {
-		Id string `json:"id"`
-	} `json:"kafkaServerConfig,omitempty"`
-	Name      string `json:"name"`
-	Namespace *struct {
+	Id                string             `json:"id"`
+	KafkaServerConfig *KafkaServerConfig `json:"kafkaServerConfig,omitempty"`
+	Name              string             `json:"name"`
+	Namespace         *struct {
 		Id string `json:"id"`
 	} `json:"namespace,omitempty"`
 	TlsKeyPair KeyPair `json:"tlsKeyPair"`
@@ -650,16 +636,17 @@ type IntegrationsQueryParams struct {
 // IntegrationsQueryParamsIntegrationType defines parameters for IntegrationsQuery.
 type IntegrationsQueryParamsIntegrationType string
 
-// CreateIntegrationMutationJSONBody defines parameters for CreateIntegrationMutation.
-type CreateIntegrationMutationJSONBody struct {
-	ClusterId       *string                                          `json:"clusterId,omitempty"`
-	EnvironmentInfo IntegrationEnvironments                          `json:"environmentInfo"`
-	IntegrationType CreateIntegrationMutationJSONBodyIntegrationType `json:"integrationType"`
-	Name            string                                           `json:"name"`
+// CreateGenericIntegrationMutationJSONBody defines parameters for CreateGenericIntegrationMutation.
+type CreateGenericIntegrationMutationJSONBody struct {
+	Name string `json:"name"`
 }
 
-// CreateIntegrationMutationJSONBodyIntegrationType defines parameters for CreateIntegrationMutation.
-type CreateIntegrationMutationJSONBodyIntegrationType string
+// CreateKubernetesIntegrationMutationJSONBody defines parameters for CreateKubernetesIntegrationMutation.
+type CreateKubernetesIntegrationMutationJSONBody struct {
+	ClusterId     *string `json:"clusterId,omitempty"`
+	EnvironmentId *string `json:"environmentId,omitempty"`
+	Name          string  `json:"name"`
+}
 
 // UpdateIntegrationMutationJSONBody defines parameters for UpdateIntegrationMutation.
 type UpdateIntegrationMutationJSONBody struct {
@@ -757,8 +744,11 @@ type UpdateEnvironmentMutationJSONRequestBody UpdateEnvironmentMutationJSONBody
 // AddEnvironmentLabelMutationJSONRequestBody defines body for AddEnvironmentLabelMutation for application/json ContentType.
 type AddEnvironmentLabelMutationJSONRequestBody AddEnvironmentLabelMutationJSONBody
 
-// CreateIntegrationMutationJSONRequestBody defines body for CreateIntegrationMutation for application/json ContentType.
-type CreateIntegrationMutationJSONRequestBody CreateIntegrationMutationJSONBody
+// CreateGenericIntegrationMutationJSONRequestBody defines body for CreateGenericIntegrationMutation for application/json ContentType.
+type CreateGenericIntegrationMutationJSONRequestBody CreateGenericIntegrationMutationJSONBody
+
+// CreateKubernetesIntegrationMutationJSONRequestBody defines body for CreateKubernetesIntegrationMutation for application/json ContentType.
+type CreateKubernetesIntegrationMutationJSONRequestBody CreateKubernetesIntegrationMutationJSONBody
 
 // UpdateIntegrationMutationJSONRequestBody defines body for UpdateIntegrationMutation for application/json ContentType.
 type UpdateIntegrationMutationJSONRequestBody UpdateIntegrationMutationJSONBody
@@ -903,10 +893,15 @@ type ClientInterface interface {
 	// IntegrationsQuery request
 	IntegrationsQuery(ctx context.Context, params *IntegrationsQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateIntegrationMutation request with any body
-	CreateIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateGenericIntegrationMutation request with any body
+	CreateGenericIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	CreateIntegrationMutation(ctx context.Context, body CreateIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateGenericIntegrationMutation(ctx context.Context, body CreateGenericIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateKubernetesIntegrationMutation request with any body
+	CreateKubernetesIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateKubernetesIntegrationMutation(ctx context.Context, body CreateKubernetesIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteIntegrationMutation request
 	DeleteIntegrationMutation(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1234,8 +1229,8 @@ func (c *Client) IntegrationsQuery(ctx context.Context, params *IntegrationsQuer
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateIntegrationMutationRequestWithBody(c.Server, contentType, body)
+func (c *Client) CreateGenericIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateGenericIntegrationMutationRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1246,8 +1241,32 @@ func (c *Client) CreateIntegrationMutationWithBody(ctx context.Context, contentT
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateIntegrationMutation(ctx context.Context, body CreateIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateIntegrationMutationRequest(c.Server, body)
+func (c *Client) CreateGenericIntegrationMutation(ctx context.Context, body CreateGenericIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateGenericIntegrationMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateKubernetesIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateKubernetesIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateKubernetesIntegrationMutation(ctx context.Context, body CreateKubernetesIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateKubernetesIntegrationMutationRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -2357,19 +2376,19 @@ func NewIntegrationsQueryRequest(server string, params *IntegrationsQueryParams)
 	return req, nil
 }
 
-// NewCreateIntegrationMutationRequest calls the generic CreateIntegrationMutation builder with application/json body
-func NewCreateIntegrationMutationRequest(server string, body CreateIntegrationMutationJSONRequestBody) (*http.Request, error) {
+// NewCreateGenericIntegrationMutationRequest calls the generic CreateGenericIntegrationMutation builder with application/json body
+func NewCreateGenericIntegrationMutationRequest(server string, body CreateGenericIntegrationMutationJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewCreateIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+	return NewCreateGenericIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewCreateIntegrationMutationRequestWithBody generates requests for CreateIntegrationMutation with any type of body
-func NewCreateIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewCreateGenericIntegrationMutationRequestWithBody generates requests for CreateGenericIntegrationMutation with any type of body
+func NewCreateGenericIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2377,7 +2396,47 @@ func NewCreateIntegrationMutationRequestWithBody(server string, contentType stri
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/integrations")
+	operationPath := fmt.Sprintf("/integrations/generic")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewCreateKubernetesIntegrationMutationRequest calls the generic CreateKubernetesIntegrationMutation builder with application/json body
+func NewCreateKubernetesIntegrationMutationRequest(server string, body CreateKubernetesIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateKubernetesIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateKubernetesIntegrationMutationRequestWithBody generates requests for CreateKubernetesIntegrationMutation with any type of body
+func NewCreateKubernetesIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/kubernetes")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3305,7 +3364,7 @@ func NewDisassociateUserFromOrganizationMutationRequest(server string, id string
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/user/:user_id", pathParam0)
+	operationPath := fmt.Sprintf("/organizations/%s/users/:user_id", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3690,10 +3749,15 @@ type ClientWithResponsesInterface interface {
 	// IntegrationsQuery request
 	IntegrationsQueryWithResponse(ctx context.Context, params *IntegrationsQueryParams, reqEditors ...RequestEditorFn) (*IntegrationsQueryResponse, error)
 
-	// CreateIntegrationMutation request with any body
-	CreateIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateIntegrationMutationResponse, error)
+	// CreateGenericIntegrationMutation request with any body
+	CreateGenericIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGenericIntegrationMutationResponse, error)
 
-	CreateIntegrationMutationWithResponse(ctx context.Context, body CreateIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateIntegrationMutationResponse, error)
+	CreateGenericIntegrationMutationWithResponse(ctx context.Context, body CreateGenericIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGenericIntegrationMutationResponse, error)
+
+	// CreateKubernetesIntegrationMutation request with any body
+	CreateKubernetesIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateKubernetesIntegrationMutationResponse, error)
+
+	CreateKubernetesIntegrationMutationWithResponse(ctx context.Context, body CreateKubernetesIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateKubernetesIntegrationMutationResponse, error)
 
 	// DeleteIntegrationMutation request
 	DeleteIntegrationMutationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteIntegrationMutationResponse, error)
@@ -4201,7 +4265,7 @@ func (r IntegrationsQueryResponse) StatusCode() int {
 	return 0
 }
 
-type CreateIntegrationMutationResponse struct {
+type CreateGenericIntegrationMutationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Integration
@@ -4214,7 +4278,7 @@ type CreateIntegrationMutationResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r CreateIntegrationMutationResponse) Status() string {
+func (r CreateGenericIntegrationMutationResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -4222,7 +4286,35 @@ func (r CreateIntegrationMutationResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r CreateIntegrationMutationResponse) StatusCode() int {
+func (r CreateGenericIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateKubernetesIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateKubernetesIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateKubernetesIntegrationMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5104,21 +5196,38 @@ func (c *ClientWithResponses) IntegrationsQueryWithResponse(ctx context.Context,
 	return ParseIntegrationsQueryResponse(rsp)
 }
 
-// CreateIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateIntegrationMutationResponse
-func (c *ClientWithResponses) CreateIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateIntegrationMutationResponse, error) {
-	rsp, err := c.CreateIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+// CreateGenericIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateGenericIntegrationMutationResponse
+func (c *ClientWithResponses) CreateGenericIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGenericIntegrationMutationResponse, error) {
+	rsp, err := c.CreateGenericIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreateIntegrationMutationResponse(rsp)
+	return ParseCreateGenericIntegrationMutationResponse(rsp)
 }
 
-func (c *ClientWithResponses) CreateIntegrationMutationWithResponse(ctx context.Context, body CreateIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateIntegrationMutationResponse, error) {
-	rsp, err := c.CreateIntegrationMutation(ctx, body, reqEditors...)
+func (c *ClientWithResponses) CreateGenericIntegrationMutationWithResponse(ctx context.Context, body CreateGenericIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGenericIntegrationMutationResponse, error) {
+	rsp, err := c.CreateGenericIntegrationMutation(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreateIntegrationMutationResponse(rsp)
+	return ParseCreateGenericIntegrationMutationResponse(rsp)
+}
+
+// CreateKubernetesIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateKubernetesIntegrationMutationResponse
+func (c *ClientWithResponses) CreateKubernetesIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateKubernetesIntegrationMutationResponse, error) {
+	rsp, err := c.CreateKubernetesIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateKubernetesIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateKubernetesIntegrationMutationWithResponse(ctx context.Context, body CreateKubernetesIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateKubernetesIntegrationMutationResponse, error) {
+	rsp, err := c.CreateKubernetesIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateKubernetesIntegrationMutationResponse(rsp)
 }
 
 // DeleteIntegrationMutationWithResponse request returning *DeleteIntegrationMutationResponse
@@ -6406,15 +6515,83 @@ func ParseIntegrationsQueryResponse(rsp *http.Response) (*IntegrationsQueryRespo
 	return response, nil
 }
 
-// ParseCreateIntegrationMutationResponse parses an HTTP response from a CreateIntegrationMutationWithResponse call
-func ParseCreateIntegrationMutationResponse(rsp *http.Response) (*CreateIntegrationMutationResponse, error) {
+// ParseCreateGenericIntegrationMutationResponse parses an HTTP response from a CreateGenericIntegrationMutationWithResponse call
+func ParseCreateGenericIntegrationMutationResponse(rsp *http.Response) (*CreateGenericIntegrationMutationResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreateIntegrationMutationResponse{
+	response := &CreateGenericIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateKubernetesIntegrationMutationResponse parses an HTTP response from a CreateKubernetesIntegrationMutationWithResponse call
+func ParseCreateKubernetesIntegrationMutationResponse(rsp *http.Response) (*CreateKubernetesIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateKubernetesIntegrationMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
