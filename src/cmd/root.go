@@ -9,6 +9,7 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/login"
 	"github.com/otterize/otterize-cli/src/cmd/mapper"
 	"github.com/otterize/otterize-cli/src/cmd/organizations"
+	"github.com/otterize/otterize-cli/src/cmd/services"
 	"github.com/otterize/otterize-cli/src/cmd/users"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/sirupsen/logrus"
@@ -74,6 +75,7 @@ func init() {
 	RootCmd.AddCommand(environments.EnvironmentsCmd)
 	RootCmd.AddCommand(integrations.IntegrationsCmd)
 	RootCmd.AddCommand(intents.IntentsCmd)
+	RootCmd.AddCommand(services.ServicesCmd)
 	RootCmd.AddCommand(invites.InvitesCmd)
 	RootCmd.AddCommand(login.LoginCmd)
 	RootCmd.AddCommand(mapper.MapperCmd)
