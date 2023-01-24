@@ -2,7 +2,8 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Otterize API Server",
-    "version": "6ec4575de806fb55ec4aa2cab95e94debffacc67"
+    "version": "v1beta",
+    "x-version-hash": "53e5f92f2621fc2187babaeaa811469691e58bcf"
   },
   "servers": [
     {
