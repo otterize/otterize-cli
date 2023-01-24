@@ -3,10 +3,13 @@ package restapi
 import (
 	_ "embed"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/deepmap/oapi-codegen/pkg/util"
 	"github.com/getkin/kin-openapi/openapi3"
+)
+
+const (
+	ApiVersionHashExt = "x-version-hash2"
 )
 
 type APIVersion struct {
@@ -39,9 +42,9 @@ func GetLocalApiVersion() (APIVersion, error) {
 func extractVersionInfo(apiSpecs *openapi3.T) (APIVersion, error) {
 	version := apiSpecs.Info.Version
 
-	versionHashExt, ok := apiSpecs.Info.Extensions["x-version-hash"]
+	versionHashExt, ok := apiSpecs.Info.Extensions[ApiVersionHashExt]
 	if !ok {
-		return APIVersion{}, errors.New("failed extracting version hash: API specs missing x-version-hash extension")
+		return APIVersion{}, fmt.Errorf("failed extracting version hash: API specs missing %s extension", ApiVersionHashExt)
 	}
 
 	var versionHashValue string
