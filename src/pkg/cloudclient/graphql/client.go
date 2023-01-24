@@ -17,7 +17,7 @@ func NewClientFromToken(address string, token string) *Client {
 }
 
 func NewClient(address string, tokenSrc oauth2.TokenSource) *Client {
-	address = address + "/graphql/v1"
+	address = address + "/graphql/v1beta"
 	return &Client{
 		Address: address,
 		Client:  genqlientgraphql.NewClient(address, oauth2.NewClient(context.Background(), tokenSrc)),
