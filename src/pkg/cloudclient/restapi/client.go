@@ -15,7 +15,7 @@ type Doer interface {
 }
 
 func NewClientFromToken(address string, token string) (*cloudapi.ClientWithResponses, error) {
-	address = address + "/rest/v1"
+	address = address + "/rest/v1beta"
 	bearerTokenProvider, err := securityprovider.NewSecurityProviderBearerToken(token)
 	if err != nil {
 		return nil, err
