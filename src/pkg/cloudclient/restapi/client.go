@@ -6,6 +6,7 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/spf13/viper"
 	"net/http"
 )
@@ -15,6 +16,24 @@ type Doer interface {
 }
 
 func NewClientFromToken(address string, token string) (*cloudapi.ClientWithResponses, error) {
+	localApiVersion, err := GetLocalApiVersion()
+	if err != nil {
+		return nil, err
+	}
+
+	cloudApiVersion, err := GetCloudApiVersion(address)
+	if err != nil {
+		return nil, err
+	}
+
+	if localApiVersion != cloudApiVersion {
+		prints.PrintCliStderr("Warning: Cloud API version %s is different from the CLI build API version %s.\n"+
+			"Some cloud CLI commands may fail.\n"+
+			"To resolve, upgrade your CLI to the latest version.\n",
+			cloudApiVersion, localApiVersion,
+		)
+	}
+
 	address = address + "/rest/v1beta"
 	bearerTokenProvider, err := securityprovider.NewSecurityProviderBearerToken(token)
 	if err != nil {

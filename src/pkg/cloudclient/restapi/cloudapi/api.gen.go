@@ -32,9 +32,9 @@ const (
 
 // Defines values for ComponentStatusType.
 const (
-	ComponentStatusTypeCONNECTED      ComponentStatusType = "CONNECTED"
-	ComponentStatusTypeDISCONNECTED   ComponentStatusType = "DISCONNECTED"
-	ComponentStatusTypeNEVERCONNECTED ComponentStatusType = "NEVER_CONNECTED"
+	ComponentStatusTypeCONNECTED     ComponentStatusType = "CONNECTED"
+	ComponentStatusTypeDISCONNECTED  ComponentStatusType = "DISCONNECTED"
+	ComponentStatusTypeNOTINTEGRATED ComponentStatusType = "NOT_INTEGRATED"
 )
 
 // Defines values for CredentialsOperatorComponentType.
@@ -46,13 +46,14 @@ const (
 
 // Defines values for EdgeAccessStatusReason.
 const (
-	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTS                 EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS"
-	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
-	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENY                    EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY"
-	EdgeAccessStatusReasonINTENTSOPERATORNEVERCONNECTED           EdgeAccessStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
-	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCING             EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
-	EdgeAccessStatusReasonMISSINGAPPLIEDINTENT                    EdgeAccessStatusReason = "MISSING_APPLIED_INTENT"
-	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED             EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
+	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTS                         EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS"
+	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE         EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENY                            EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY"
+	EdgeAccessStatusReasonINTENTSOPERATORNEVERCONNECTED                   EdgeAccessStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
+	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCING                     EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
+	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCINGMISSINGAPPLIEDINTENT EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT"
+	EdgeAccessStatusReasonMISSINGAPPLIEDINTENT                            EdgeAccessStatusReason = "MISSING_APPLIED_INTENT"
+	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED                     EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
 )
 
 // Defines values for EdgeAccessStatusVerdict.
@@ -103,6 +104,7 @@ const (
 
 // Defines values for KafkaConfigOperations.
 const (
+	KafkaConfigOperationsALL             KafkaConfigOperations = "ALL"
 	KafkaConfigOperationsALTER           KafkaConfigOperations = "ALTER"
 	KafkaConfigOperationsALTERCONFIGS    KafkaConfigOperations = "ALTER_CONFIGS"
 	KafkaConfigOperationsCLUSTERACTION   KafkaConfigOperations = "CLUSTER_ACTION"
@@ -218,6 +220,7 @@ type AccessGraphFilter struct {
 	EnvironmentIds             *[]string  `json:"environmentIds,omitempty"`
 	IncludeServicesWithNoEdges *bool      `json:"includeServicesWithNoEdges,omitempty"`
 	LastSeenAfter              *time.Time `json:"lastSeenAfter,omitempty"`
+	NamespaceIds               *[]string  `json:"namespaceIds,omitempty"`
 	ServiceIds                 *[]string  `json:"serviceIds,omitempty"`
 }
 
@@ -325,6 +328,7 @@ type InputAccessGraphFilter struct {
 	EnvironmentIds             *[]string  `json:"environmentIds,omitempty"`
 	IncludeServicesWithNoEdges *bool      `json:"includeServicesWithNoEdges,omitempty"`
 	LastSeenAfter              *time.Time `json:"lastSeenAfter,omitempty"`
+	NamespaceIds               *[]string  `json:"namespaceIds,omitempty"`
 	ServiceIds                 *[]string  `json:"serviceIds,omitempty"`
 }
 
@@ -645,7 +649,7 @@ type CreateGenericIntegrationMutationJSONBody struct {
 
 // CreateKubernetesIntegrationMutationJSONBody defines parameters for CreateKubernetesIntegrationMutation.
 type CreateKubernetesIntegrationMutationJSONBody struct {
-	ClusterId     *string `json:"clusterId,omitempty"`
+	ClusterId     string  `json:"clusterId"`
 	EnvironmentId *string `json:"environmentId,omitempty"`
 	Name          string  `json:"name"`
 }

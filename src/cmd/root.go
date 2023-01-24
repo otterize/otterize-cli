@@ -11,6 +11,7 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/organizations"
 	"github.com/otterize/otterize-cli/src/cmd/services"
 	"github.com/otterize/otterize-cli/src/cmd/users"
+	"github.com/otterize/otterize-cli/src/cmd/version"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -81,6 +82,7 @@ func init() {
 	RootCmd.AddCommand(mapper.MapperCmd)
 	RootCmd.AddCommand(organizations.OrganizationsCmd)
 	RootCmd.AddCommand(users.UsersCmd)
+	RootCmd.AddCommand(version.ApiVersionCmd)
 }
 
 func initLogger() {

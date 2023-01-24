@@ -3,3 +3,4 @@ generated.go linguist-generated=true
 *.gen.go linguist-generated=true
 go.mod linguist-generated=true
 go.sum linguist-generated=true
+openapi.json linguist-generated=true
