@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	ApiVersionHashExt = "x-revision-hash"
+	ApiRevisionExt = "x-revision"
 )
 
 type APIVersion struct {
-	Version string
-	Hash    string
+	Version  string
+	Revision string
 }
 
 //go:embed cloudapi/openapi.json
@@ -42,18 +42,18 @@ func GetLocalApiVersion() (APIVersion, error) {
 func extractVersionInfo(apiSpecs *openapi3.T) (APIVersion, error) {
 	version := apiSpecs.Info.Version
 
-	versionHashExt, ok := apiSpecs.Info.Extensions[ApiVersionHashExt]
+	revisionExt, ok := apiSpecs.Info.Extensions[ApiRevisionExt]
 	if !ok {
-		return APIVersion{}, fmt.Errorf("failed extracting version hash: API specs missing %s extension", ApiVersionHashExt)
+		return APIVersion{}, fmt.Errorf("failed extracting API revision: API specs missing %s extension", ApiRevisionExt)
 	}
 
-	var versionHashValue string
-	if err := json.Unmarshal(versionHashExt.(json.RawMessage), &versionHashValue); err != nil {
-		return APIVersion{}, fmt.Errorf("failed extracting version hash: %w", err)
+	var revisionValue string
+	if err := json.Unmarshal(revisionExt.(json.RawMessage), &revisionValue); err != nil {
+		return APIVersion{}, fmt.Errorf("failed extracting API revision: %w", err)
 	}
 
 	return APIVersion{
-		Version: version,
-		Hash:    versionHashValue,
+		Version:  version,
+		Revision: revisionValue,
 	}, nil
 }

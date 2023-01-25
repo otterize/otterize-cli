@@ -27,10 +27,10 @@ func NewClientFromToken(address string, token string) (*cloudapi.ClientWithRespo
 	}
 
 	if localApiVersion != cloudApiVersion {
-		prints.PrintCliStderr("Warning: Cloud API version %s is different from the CLI build API version %s.\n"+
-			"Some cloud CLI commands may fail.\n"+
-			"To resolve, upgrade your CLI to the latest version.\n",
-			cloudApiVersion, localApiVersion,
+		prints.PrintCliStderr(`
+Caution: this CLI was built with a different version of the Otterize Cloud API.
+Please run otterize api-version for more info.
+`,
 		)
 	}
 

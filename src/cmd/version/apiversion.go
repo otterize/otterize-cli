@@ -24,8 +24,26 @@ var ApiVersionCmd = &cobra.Command{
 			return err
 		}
 
-		prints.PrintCliOutput("Current Cloud API Version: %s", cloudApiVersion)
-		prints.PrintCliOutput("CLI was compiled with Cloud API Version: %s", localApiVersion)
+		prints.PrintCliOutput(
+			`Current Cloud API: 
+    version: %s 
+    revision: %s 
+This CLI was built against: 
+    version: %s 
+    revision: %s`,
+			cloudApiVersion.Version, cloudApiVersion.Revision,
+			localApiVersion.Version, localApiVersion.Revision)
+
+		if cloudApiVersion != localApiVersion {
+			prints.PrintCliStderr(`
+Caution: this CLI was built with a different version/revision of the Otterize Cloud API. 
+Some cloud CLI commands may fail. 
+Upgrade your CLI to the latest build to resolve this issue.`)
+		} else {
+			prints.PrintCliOutput(`
+This CLI was built using the latest version & revision of the Otterize Cloud API.`)
+		}
+
 		return nil
 	},
 }

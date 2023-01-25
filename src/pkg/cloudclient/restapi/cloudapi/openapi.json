@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-version-hash": "53e5f92f2621fc2187babaeaa811469691e58bcf"
+    "x-revision": "91efb6f8acb98985fc2b993baa8d279049c8b302"
   },
   "servers": [
     {
