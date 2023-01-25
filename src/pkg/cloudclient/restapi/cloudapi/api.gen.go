@@ -461,15 +461,14 @@ type Me struct {
 
 // Namespace defines model for Namespace.
 type Namespace struct {
-	Cluster *struct {
-		Id string `json:"id"`
-	} `json:"cluster,omitempty"`
+	Cluster     *Cluster `json:"cluster,omitempty"`
 	Environment *struct {
 		Id string `json:"id"`
 	} `json:"environment,omitempty"`
-	Id       string `json:"id"`
-	Name     string `json:"name"`
-	Services []struct {
+	Id           string `json:"id"`
+	Name         string `json:"name"`
+	ServiceCount int32  `json:"serviceCount"`
+	Services     []struct {
 		Id string `json:"id"`
 	} `json:"services"`
 }
@@ -523,9 +522,7 @@ type Service struct {
 	Id                string             `json:"id"`
 	KafkaServerConfig *KafkaServerConfig `json:"kafkaServerConfig,omitempty"`
 	Name              string             `json:"name"`
-	Namespace         *struct {
-		Id string `json:"id"`
-	} `json:"namespace,omitempty"`
+	Namespace         *Namespace         `json:"namespace,omitempty"`
 }
 
 // ServiceAccessGraph defines model for ServiceAccessGraph.
@@ -580,6 +577,11 @@ type AccessGraphQueryJSONBody struct {
 // OneClusterQueryParams defines parameters for OneClusterQuery.
 type OneClusterQueryParams struct {
 	Name string `form:"name" json:"name"`
+}
+
+// CreateClusterMutationJSONBody defines parameters for CreateClusterMutation.
+type CreateClusterMutationJSONBody struct {
+	Name string `json:"name"`
 }
 
 // UpdateClusterMutationJSONBody defines parameters for UpdateClusterMutation.
@@ -706,6 +708,11 @@ type NamespacesQueryParams struct {
 	Name          *string `form:"name,omitempty" json:"name,omitempty"`
 }
 
+// UpdateNamespaceMutationJSONBody defines parameters for UpdateNamespaceMutation.
+type UpdateNamespaceMutationJSONBody struct {
+	EnvironmentId *string `json:"environmentId,omitempty"`
+}
+
 // CreateOrganizationMutationJSONBody defines parameters for CreateOrganizationMutation.
 type CreateOrganizationMutationJSONBody = map[string]interface{}
 
@@ -737,6 +744,9 @@ type ServicesQueryParams struct {
 // AccessGraphQueryJSONRequestBody defines body for AccessGraphQuery for application/json ContentType.
 type AccessGraphQueryJSONRequestBody AccessGraphQueryJSONBody
 
+// CreateClusterMutationJSONRequestBody defines body for CreateClusterMutation for application/json ContentType.
+type CreateClusterMutationJSONRequestBody CreateClusterMutationJSONBody
+
 // UpdateClusterMutationJSONRequestBody defines body for UpdateClusterMutation for application/json ContentType.
 type UpdateClusterMutationJSONRequestBody UpdateClusterMutationJSONBody
 
@@ -763,6 +773,9 @@ type CreateInviteMutationJSONRequestBody CreateInviteMutationJSONBody
 
 // AcceptInviteMutationJSONRequestBody defines body for AcceptInviteMutation for application/json ContentType.
 type AcceptInviteMutationJSONRequestBody = AcceptInviteMutationJSONBody
+
+// UpdateNamespaceMutationJSONRequestBody defines body for UpdateNamespaceMutation for application/json ContentType.
+type UpdateNamespaceMutationJSONRequestBody UpdateNamespaceMutationJSONBody
 
 // CreateOrganizationMutationJSONRequestBody defines body for CreateOrganizationMutation for application/json ContentType.
 type CreateOrganizationMutationJSONRequestBody = CreateOrganizationMutationJSONBody
@@ -853,6 +866,14 @@ type ClientInterface interface {
 
 	// ClustersQuery request
 	ClustersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateClusterMutation request with any body
+	CreateClusterMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateClusterMutation(ctx context.Context, body CreateClusterMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteClusterMutation request
+	DeleteClusterMutation(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ClusterQuery request
 	ClusterQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -959,6 +980,11 @@ type ClientInterface interface {
 	// NamespaceQuery request
 	NamespaceQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// UpdateNamespaceMutation request with any body
+	UpdateNamespaceMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateNamespaceMutation(ctx context.Context, id string, body UpdateNamespaceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// OrganizationsQuery request
 	OrganizationsQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1032,6 +1058,42 @@ func (c *Client) OneClusterQuery(ctx context.Context, params *OneClusterQueryPar
 
 func (c *Client) ClustersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewClustersQueryRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateClusterMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateClusterMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateClusterMutation(ctx context.Context, body CreateClusterMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateClusterMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteClusterMutation(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteClusterMutationRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -1498,6 +1560,30 @@ func (c *Client) NamespaceQuery(ctx context.Context, id string, reqEditors ...Re
 	return c.Client.Do(req)
 }
 
+func (c *Client) UpdateNamespaceMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateNamespaceMutationRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateNamespaceMutation(ctx context.Context, id string, body UpdateNamespaceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateNamespaceMutationRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) OrganizationsQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewOrganizationsQueryRequest(c.Server)
 	if err != nil {
@@ -1745,6 +1831,80 @@ func NewClustersQueryRequest(server string) (*http.Request, error) {
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateClusterMutationRequest calls the generic CreateClusterMutation builder with application/json body
+func NewCreateClusterMutationRequest(server string, body CreateClusterMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateClusterMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateClusterMutationRequestWithBody generates requests for CreateClusterMutation with any type of body
+func NewCreateClusterMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/clusters")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteClusterMutationRequest generates requests for DeleteClusterMutation
+func NewDeleteClusterMutationRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/clusters/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -3189,6 +3349,53 @@ func NewNamespaceQueryRequest(server string, id string) (*http.Request, error) {
 	return req, nil
 }
 
+// NewUpdateNamespaceMutationRequest calls the generic UpdateNamespaceMutation builder with application/json body
+func NewUpdateNamespaceMutationRequest(server string, id string, body UpdateNamespaceMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateNamespaceMutationRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateNamespaceMutationRequestWithBody generates requests for UpdateNamespaceMutation with any type of body
+func NewUpdateNamespaceMutationRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/namespaces/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewOrganizationsQueryRequest generates requests for OrganizationsQuery
 func NewOrganizationsQueryRequest(server string) (*http.Request, error) {
 	var err error
@@ -3694,6 +3901,14 @@ type ClientWithResponsesInterface interface {
 	// ClustersQuery request
 	ClustersQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClustersQueryResponse, error)
 
+	// CreateClusterMutation request with any body
+	CreateClusterMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateClusterMutationResponse, error)
+
+	CreateClusterMutationWithResponse(ctx context.Context, body CreateClusterMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateClusterMutationResponse, error)
+
+	// DeleteClusterMutation request
+	DeleteClusterMutationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteClusterMutationResponse, error)
+
 	// ClusterQuery request
 	ClusterQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ClusterQueryResponse, error)
 
@@ -3798,6 +4013,11 @@ type ClientWithResponsesInterface interface {
 
 	// NamespaceQuery request
 	NamespaceQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*NamespaceQueryResponse, error)
+
+	// UpdateNamespaceMutation request with any body
+	UpdateNamespaceMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateNamespaceMutationResponse, error)
+
+	UpdateNamespaceMutationWithResponse(ctx context.Context, id string, body UpdateNamespaceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateNamespaceMutationResponse, error)
 
 	// OrganizationsQuery request
 	OrganizationsQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*OrganizationsQueryResponse, error)
@@ -3912,6 +4132,62 @@ func (r ClustersQueryResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r ClustersQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateClusterMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Cluster
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateClusterMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateClusterMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteClusterMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *string
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteClusterMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteClusterMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4730,6 +5006,34 @@ func (r NamespaceQueryResponse) StatusCode() int {
 	return 0
 }
 
+type UpdateNamespaceMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Namespace
+	JSON400      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateNamespaceMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateNamespaceMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type OrganizationsQueryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -5043,6 +5347,32 @@ func (c *ClientWithResponses) ClustersQueryWithResponse(ctx context.Context, req
 		return nil, err
 	}
 	return ParseClustersQueryResponse(rsp)
+}
+
+// CreateClusterMutationWithBodyWithResponse request with arbitrary body returning *CreateClusterMutationResponse
+func (c *ClientWithResponses) CreateClusterMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateClusterMutationResponse, error) {
+	rsp, err := c.CreateClusterMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateClusterMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateClusterMutationWithResponse(ctx context.Context, body CreateClusterMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateClusterMutationResponse, error) {
+	rsp, err := c.CreateClusterMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateClusterMutationResponse(rsp)
+}
+
+// DeleteClusterMutationWithResponse request returning *DeleteClusterMutationResponse
+func (c *ClientWithResponses) DeleteClusterMutationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteClusterMutationResponse, error) {
+	rsp, err := c.DeleteClusterMutation(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteClusterMutationResponse(rsp)
 }
 
 // ClusterQueryWithResponse request returning *ClusterQueryResponse
@@ -5378,6 +5708,23 @@ func (c *ClientWithResponses) NamespaceQueryWithResponse(ctx context.Context, id
 	return ParseNamespaceQueryResponse(rsp)
 }
 
+// UpdateNamespaceMutationWithBodyWithResponse request with arbitrary body returning *UpdateNamespaceMutationResponse
+func (c *ClientWithResponses) UpdateNamespaceMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateNamespaceMutationResponse, error) {
+	rsp, err := c.UpdateNamespaceMutationWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateNamespaceMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateNamespaceMutationWithResponse(ctx context.Context, id string, body UpdateNamespaceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateNamespaceMutationResponse, error) {
+	rsp, err := c.UpdateNamespaceMutation(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateNamespaceMutationResponse(rsp)
+}
+
 // OrganizationsQueryWithResponse request returning *OrganizationsQueryResponse
 func (c *ClientWithResponses) OrganizationsQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*OrganizationsQueryResponse, error) {
 	rsp, err := c.OrganizationsQuery(ctx, reqEditors...)
@@ -5636,6 +5983,142 @@ func ParseClustersQueryResponse(rsp *http.Response) (*ClustersQueryResponse, err
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest []Cluster
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateClusterMutationResponse parses an HTTP response from a CreateClusterMutationWithResponse call
+func ParseCreateClusterMutationResponse(rsp *http.Response) (*CreateClusterMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateClusterMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Cluster
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteClusterMutationResponse parses an HTTP response from a DeleteClusterMutationWithResponse call
+func ParseDeleteClusterMutationResponse(rsp *http.Response) (*DeleteClusterMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteClusterMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest string
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -7601,6 +8084,74 @@ func ParseNamespaceQueryResponse(rsp *http.Response) (*NamespaceQueryResponse, e
 	}
 
 	response := &NamespaceQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Namespace
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateNamespaceMutationResponse parses an HTTP response from a UpdateNamespaceMutationWithResponse call
+func ParseUpdateNamespaceMutationResponse(rsp *http.Response) (*UpdateNamespaceMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateNamespaceMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
