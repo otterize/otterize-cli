@@ -246,8 +246,8 @@ type Cluster struct {
 	Namespaces []struct {
 		Id string `json:"id"`
 	} `json:"namespaces"`
-	ServiceCount int32          `json:"serviceCount"`
-	Status       *ClusterStatus `json:"status,omitempty"`
+	ServiceCount int32         `json:"serviceCount"`
+	Status       ClusterStatus `json:"status"`
 }
 
 // ClusterStatus defines model for Cluster.Status.

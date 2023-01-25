@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/otterize/otterize-cli/src/cmd/clusters"
 	"github.com/otterize/otterize-cli/src/cmd/environments"
 	"github.com/otterize/otterize-cli/src/cmd/integrations"
 	"github.com/otterize/otterize-cli/src/cmd/intents"
@@ -83,6 +84,7 @@ func init() {
 	RootCmd.AddCommand(organizations.OrganizationsCmd)
 	RootCmd.AddCommand(users.UsersCmd)
 	RootCmd.AddCommand(version.ApiVersionCmd)
+	RootCmd.AddCommand(clusters.ClustersCmd)
 }
 
 func initLogger() {

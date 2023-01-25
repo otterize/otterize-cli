@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "758be73cf0431ac4d352ccbe8048720829c4f441"
+    "x-revision": "91a17b3d8fed77c0cf7f3f4b941ae9482688a486"
   },
   "servers": [
     {
@@ -3009,6 +3009,7 @@
         "type": "object",
         "required": [
           "name",
+          "status",
           "components",
           "namespaces",
           "serviceCount",
