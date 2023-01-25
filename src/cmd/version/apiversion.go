@@ -37,7 +37,7 @@ This CLI was built against:
 		if cloudApiVersion != localApiVersion {
 			prints.PrintCliStderr(`
 Caution: this CLI was built with a different version/revision of the Otterize Cloud API. 
-Some cloud CLI commands may fail. 
+Some Cloud CLI commands may fail. 
 Upgrade your CLI to the latest build to resolve this issue.`)
 		} else {
 			prints.PrintCliOutput(`
