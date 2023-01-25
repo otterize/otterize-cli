@@ -12,9 +12,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-var ListClustersCmd = &cobra.Command{
+var ListNamespacesCmd = &cobra.Command{
 	Use:          "list",
-	Short:        `List clusters.`,
+	Short:        `List namespaces.`,
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
@@ -26,18 +26,22 @@ var ListClustersCmd = &cobra.Command{
 		}
 
 		name := viper.GetString(NameKey)
+		envID := viper.GetString(EnvironmentIDKey)
+		clusterID := viper.GetString(ClusterIDKey)
 
-		r, err := c.ClustersQueryWithResponse(ctxTimeout,
-			&cloudapi.ClustersQueryParams{
-				Name: lo.Ternary(name != "", &name, nil),
+		r, err := c.NamespacesQueryWithResponse(ctxTimeout,
+			&cloudapi.NamespacesQueryParams{
+				EnvironmentId: lo.Ternary(envID != "", &envID, nil),
+				ClusterId:     lo.Ternary(clusterID != "", &clusterID, nil),
+				Name:          lo.Ternary(name != "", &name, nil),
 			},
 		)
 		if err != nil {
 			return err
 		}
 
-		clusters := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatClusters(clusters)
+		namespaces := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatNamespaces(namespaces)
 		if err != nil {
 			return err
 		}
@@ -48,5 +52,7 @@ var ListClustersCmd = &cobra.Command{
 }
 
 func init() {
-	ListClustersCmd.Flags().StringP(NameKey, NameShorthand, "", "clusterF name")
+	ListNamespacesCmd.Flags().StringP(NameKey, NameShorthand, "", "namespace name")
+	ListNamespacesCmd.Flags().String(EnvironmentIDKey, "", "environment id")
+	ListNamespacesCmd.Flags().String(ClusterIDKey, "", "cluster id")
 }

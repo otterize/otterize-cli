@@ -112,3 +112,17 @@ func FormatClusters(clusters []cloudapi.Cluster) (string, error) {
 
 	return FormatList(clusters, columns, getColumnData)
 }
+
+func FormatNamespaces(namespaces []cloudapi.Namespace) (string, error) {
+	columns := []string{"id", "name", "cluster id", "service count"}
+	getColumnData := func(ns cloudapi.Namespace) []map[string]string {
+		return []map[string]string{{
+			"id":            ns.Id,
+			"name":          ns.Name,
+			"cluster id":    ns.Cluster.Id,
+			"service count": fmt.Sprintf("%d", ns.ServiceCount),
+		}}
+	}
+
+	return FormatList(namespaces, columns, getColumnData)
+}

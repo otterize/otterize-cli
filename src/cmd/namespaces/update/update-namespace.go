@@ -1,4 +1,4 @@
-package list
+package update
 
 import (
 	"context"
@@ -12,10 +12,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var ListClustersCmd = &cobra.Command{
-	Use:          "list",
-	Short:        `List clusters.`,
-	Args:         cobra.NoArgs,
+var UpdateNamespaceCmd = &cobra.Command{
+	Use:          "update <namespace-id>",
+	Short:        `Updates a namespace.`,
+	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
@@ -25,19 +25,23 @@ var ListClustersCmd = &cobra.Command{
 			return err
 		}
 
-		name := viper.GetString(NameKey)
+		id := args[0]
+		envID := viper.GetString(EnvironmentIDKey)
 
-		r, err := c.ClustersQueryWithResponse(ctxTimeout,
-			&cloudapi.ClustersQueryParams{
-				Name: lo.Ternary(name != "", &name, nil),
+		r, err := c.UpdateNamespaceMutationWithResponse(ctxTimeout,
+			id,
+			cloudapi.UpdateNamespaceMutationJSONRequestBody{
+				EnvironmentId: lo.Ternary(envID != "", &envID, nil),
 			},
 		)
 		if err != nil {
 			return err
 		}
 
-		clusters := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatClusters(clusters)
+		prints.PrintCliStderr("namespace updated")
+
+		namespace := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatNamespaces([]cloudapi.Namespace{namespace})
 		if err != nil {
 			return err
 		}
@@ -48,5 +52,5 @@ var ListClustersCmd = &cobra.Command{
 }
 
 func init() {
-	ListClustersCmd.Flags().StringP(NameKey, NameShorthand, "", "clusterF name")
+	UpdateNamespaceCmd.Flags().String(EnvironmentIDKey, "", "environment id")
 }
