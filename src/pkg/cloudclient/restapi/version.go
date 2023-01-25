@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	ApiVersionHashExt = "x-version-hash2"
+	ApiVersionHashExt = "x-revision-hash"
 )
 
 type APIVersion struct {
@@ -49,7 +49,7 @@ func extractVersionInfo(apiSpecs *openapi3.T) (APIVersion, error) {
 
 	var versionHashValue string
 	if err := json.Unmarshal(versionHashExt.(json.RawMessage), &versionHashValue); err != nil {
-		return APIVersion{}, fmt.Errorf("failed extracting version hash: unexpected value %v", versionHashExt)
+		return APIVersion{}, fmt.Errorf("failed extracting version hash: %w", err)
 	}
 
 	return APIVersion{
