@@ -120,7 +120,7 @@ func FormatNamespaces(namespaces []cloudapi.Namespace) (string, error) {
 			"id":             ns.Id,
 			"name":           ns.Name,
 			"cluster id":     ns.Cluster.Id,
-			"environment id": lo.FromPtr(ns.Environment).Id,
+			"environment id": ns.Environment.Id,
 			"service count":  fmt.Sprintf("%d", ns.ServiceCount),
 		}}
 	}
