@@ -1,7 +1,7 @@
 package intentsprinter
 
 import (
-	"github.com/otterize/intents-operator/src/operator/api/v1alpha1"
+	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"io"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sync/atomic"
@@ -28,26 +28,23 @@ spec:
 {{- if $intent.Type }}
       type: {{ $intent.Type }}
 {{- end }}
-{{- if ne $intent.Namespace "" }}
-      namespace: {{ $intent.Namespace }}
-{{- end -}}
 {{ end }}`
 
 var crdTemplateParsed = template.Must(template.New("intents").Parse(crdTemplate))
 
 // Keep this bit here so we have a compile time check that the structure the template assumes is correct.
-var _ = v1alpha1.ClientIntents{
+var _ = v1alpha2.ClientIntents{
 	TypeMeta:   v1.TypeMeta{Kind: "", APIVersion: ""},
 	ObjectMeta: v1.ObjectMeta{Name: "", Namespace: ""},
-	Spec: &v1alpha1.IntentsSpec{
-		Service: v1alpha1.Service{Name: ""},
-		Calls: []v1alpha1.Intent{{
-			Type: "", Name: "", Namespace: "",
+	Spec: &v1alpha2.IntentsSpec{
+		Service: v1alpha2.Service{Name: ""},
+		Calls: []v1alpha2.Intent{{
+			Type: "", Name: "",
 		}},
 	},
 }
 
-func (p *IntentsPrinter) PrintObj(intents *v1alpha1.ClientIntents, w io.Writer) error {
+func (p *IntentsPrinter) PrintObj(intents *v1alpha2.ClientIntents, w io.Writer) error {
 	count := atomic.AddInt64(&p.printCount, 1)
 	if count > 1 {
 		if _, err := w.Write([]byte("\n---\n")); err != nil {
