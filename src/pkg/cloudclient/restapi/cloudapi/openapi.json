@@ -1017,14 +1017,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "in": "query",
-            "name": "source",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3284,7 +3276,7 @@
               "KAFKA"
             ]
           },
-          "kafkaResources": {
+          "kafkaTopics": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/KafkaConfig"
@@ -3334,18 +3326,21 @@
           "path": {
             "type": "string"
           },
-          "method": {
-            "type": "string",
-            "enum": [
-              "GET",
-              "POST",
-              "PUT",
-              "DELETE",
-              "OPTIONS",
-              "TRACE",
-              "PATCH",
-              "CONNECT"
-            ]
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "OPTIONS",
+                "TRACE",
+                "PATCH",
+                "CONNECT"
+              ]
+            }
           }
         }
       },

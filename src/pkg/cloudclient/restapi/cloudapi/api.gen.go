@@ -65,16 +65,16 @@ const (
 	EdgeAccessStatusVerdictWOULDBEBLOCKED    EdgeAccessStatusVerdict = "WOULD_BE_BLOCKED"
 )
 
-// Defines values for HTTPConfigMethod.
+// Defines values for HTTPConfigMethods.
 const (
-	HTTPConfigMethodCONNECT HTTPConfigMethod = "CONNECT"
-	HTTPConfigMethodDELETE  HTTPConfigMethod = "DELETE"
-	HTTPConfigMethodGET     HTTPConfigMethod = "GET"
-	HTTPConfigMethodOPTIONS HTTPConfigMethod = "OPTIONS"
-	HTTPConfigMethodPATCH   HTTPConfigMethod = "PATCH"
-	HTTPConfigMethodPOST    HTTPConfigMethod = "POST"
-	HTTPConfigMethodPUT     HTTPConfigMethod = "PUT"
-	HTTPConfigMethodTRACE   HTTPConfigMethod = "TRACE"
+	HTTPConfigMethodsCONNECT HTTPConfigMethods = "CONNECT"
+	HTTPConfigMethodsDELETE  HTTPConfigMethods = "DELETE"
+	HTTPConfigMethodsGET     HTTPConfigMethods = "GET"
+	HTTPConfigMethodsOPTIONS HTTPConfigMethods = "OPTIONS"
+	HTTPConfigMethodsPATCH   HTTPConfigMethods = "PATCH"
+	HTTPConfigMethodsPOST    HTTPConfigMethods = "POST"
+	HTTPConfigMethodsPUT     HTTPConfigMethods = "PUT"
+	HTTPConfigMethodsTRACE   HTTPConfigMethods = "TRACE"
 )
 
 // Defines values for IntegrationType.
@@ -315,12 +315,12 @@ type Error struct {
 
 // HTTPConfig defines model for HTTPConfig.
 type HTTPConfig struct {
-	Method *HTTPConfigMethod `json:"method,omitempty"`
-	Path   *string           `json:"path,omitempty"`
+	Methods *[]HTTPConfigMethods `json:"methods,omitempty"`
+	Path    *string              `json:"path,omitempty"`
 }
 
-// HTTPConfigMethod defines model for HTTPConfig.Method.
-type HTTPConfigMethod string
+// HTTPConfigMethods defines model for HTTPConfig.Methods.
+type HTTPConfigMethods string
 
 // InputAccessGraphFilter defines model for InputAccessGraphFilter.
 type InputAccessGraphFilter struct {
@@ -369,10 +369,10 @@ type Intent struct {
 	Client struct {
 		Id string `json:"id"`
 	} `json:"client"`
-	HttpResources  *[]HTTPConfig  `json:"httpResources,omitempty"`
-	Id             string         `json:"id"`
-	KafkaResources *[]KafkaConfig `json:"kafkaResources,omitempty"`
-	Server         struct {
+	HttpResources *[]HTTPConfig  `json:"httpResources,omitempty"`
+	Id            string         `json:"id"`
+	KafkaTopics   *[]KafkaConfig `json:"kafkaTopics,omitempty"`
+	Server        struct {
 		Id string `json:"id"`
 	} `json:"server"`
 	Type *IntentType `json:"type,omitempty"`
@@ -664,7 +664,6 @@ type IntentsQueryParams struct {
 	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
 	ClientId      *string `form:"clientId,omitempty" json:"clientId,omitempty"`
 	ServerId      *string `form:"serverId,omitempty" json:"serverId,omitempty"`
-	Source        *string `form:"source,omitempty" json:"source,omitempty"`
 }
 
 // OneInviteQueryParams defines parameters for OneInviteQuery.
@@ -2633,22 +2632,6 @@ func NewIntentsQueryRequest(server string, params *IntentsQueryParams) (*http.Re
 	if params.ServerId != nil {
 
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "serverId", runtime.ParamLocationQuery, *params.ServerId); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	if params.Source != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "source", runtime.ParamLocationQuery, *params.Source); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
