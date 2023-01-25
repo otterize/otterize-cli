@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/otterize/intents-operator/src/operator/api/v1alpha1"
+	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
@@ -29,7 +29,7 @@ const OutputFormatDefault = OutputFormatYAML
 const OutputFormatYAML = "yaml"
 const OutputFormatJSON = "json"
 
-func writeIntentsFile(filePath string, intents []v1alpha1.ClientIntents) error {
+func writeIntentsFile(filePath string, intents []v1alpha2.ClientIntents) error {
 	f, err := os.Create(filePath)
 	if err != nil {
 		return err
@@ -64,22 +64,23 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			outputList := make([]v1alpha1.ClientIntents, 0)
+			outputList := make([]v1alpha2.ClientIntents, 0)
 
 			for _, serviceIntents := range intentsFromMapper {
-				intentList := make([]v1alpha1.Intent, 0)
+				intentList := make([]v1alpha2.Intent, 0)
 
 				for _, serviceIntent := range serviceIntents.Intents {
-					intent := v1alpha1.Intent{
+					intent := v1alpha2.Intent{
 						Name: serviceIntent.Name,
 					}
-					if len(serviceIntent.Namespace) != 0 {
-						intent.Namespace = serviceIntent.Namespace
+					// For a simpler output we explicitly mention namespace only when it's outside of client namespace
+					if len(serviceIntent.Namespace) != 0 && serviceIntent.Namespace != serviceIntents.Client.Namespace {
+						intent.Name = fmt.Sprintf("%s.%s", serviceIntent.Name, serviceIntent.Namespace)
 					}
 					intentList = append(intentList, intent)
 				}
 
-				intentsOutput := v1alpha1.ClientIntents{
+				intentsOutput := v1alpha2.ClientIntents{
 					TypeMeta: v1.TypeMeta{
 						Kind:       consts.IntentsKind,
 						APIVersion: consts.IntentsAPIVersion,
@@ -88,7 +89,7 @@ var ExportCmd = &cobra.Command{
 						Name:      serviceIntents.Client.Name,
 						Namespace: serviceIntents.Client.Namespace,
 					},
-					Spec: &v1alpha1.IntentsSpec{Service: v1alpha1.Service{Name: serviceIntents.Client.Name}},
+					Spec: &v1alpha2.IntentsSpec{Service: v1alpha2.Service{Name: serviceIntents.Client.Name}},
 				}
 
 				if len(intentList) != 0 {
@@ -118,7 +119,7 @@ var ExportCmd = &cobra.Command{
 							return err
 						}
 						filePath = filepath.Join(viper.GetString(OutputLocationKey), filePath)
-						err := writeIntentsFile(filePath, []v1alpha1.ClientIntents{intent})
+						err := writeIntentsFile(filePath, []v1alpha2.ClientIntents{intent})
 						if err != nil {
 							return err
 						}
@@ -140,7 +141,7 @@ var ExportCmd = &cobra.Command{
 	},
 }
 
-func getFormattedIntents(intentList []v1alpha1.ClientIntents) (string, error) {
+func getFormattedIntents(intentList []v1alpha2.ClientIntents) (string, error) {
 	switch outputFormatVal := viper.GetString(OutputFormatKey); {
 	case outputFormatVal == OutputFormatJSON:
 		formatted, err := json.MarshalIndent(intentList, "", "  ")
