@@ -393,7 +393,9 @@ type IntentsOperatorComponentType string
 
 // IntentsOperatorConfiguration defines model for IntentsOperatorConfiguration.
 type IntentsOperatorConfiguration struct {
-	EnableEnforcement bool `json:"enableEnforcement"`
+	GlobalEnforcementEnabled        bool `json:"globalEnforcementEnabled"`
+	KafkaACLEnforcementEnabled      bool `json:"kafkaACLEnforcementEnabled"`
+	NetworkPolicyEnforcementEnabled bool `json:"networkPolicyEnforcementEnabled"`
 }
 
 // Invite defines model for Invite.
@@ -461,10 +463,10 @@ type Me struct {
 
 // Namespace defines model for Namespace.
 type Namespace struct {
-	Cluster     *Cluster `json:"cluster,omitempty"`
-	Environment *struct {
+	Cluster     Cluster `json:"cluster"`
+	Environment struct {
 		Id string `json:"id"`
-	} `json:"environment,omitempty"`
+	} `json:"environment"`
 	Id           string `json:"id"`
 	Name         string `json:"name"`
 	ServiceCount int32  `json:"serviceCount"`

@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "d99f25990c6b8277977e63829ef1771d7589965a"
+    "x-revision": "834e146d470ad9450662c4f325846724f032776b"
   },
   "servers": [
     {
@@ -3373,10 +3373,18 @@
       "IntentsOperatorConfiguration": {
         "type": "object",
         "required": [
-          "enableEnforcement"
+          "globalEnforcementEnabled",
+          "networkPolicyEnforcementEnabled",
+          "kafkaACLEnforcementEnabled"
         ],
         "properties": {
-          "enableEnforcement": {
+          "globalEnforcementEnabled": {
+            "type": "boolean"
+          },
+          "networkPolicyEnforcementEnabled": {
+            "type": "boolean"
+          },
+          "kafkaACLEnforcementEnabled": {
             "type": "boolean"
           }
         }
@@ -3643,6 +3651,8 @@
         "required": [
           "id",
           "name",
+          "cluster",
+          "environment",
           "services",
           "serviceCount"
         ],
