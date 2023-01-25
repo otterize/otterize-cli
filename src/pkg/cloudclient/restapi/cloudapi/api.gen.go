@@ -32,9 +32,9 @@ const (
 
 // Defines values for ComponentStatusType.
 const (
-	ComponentStatusTypeCONNECTED      ComponentStatusType = "CONNECTED"
-	ComponentStatusTypeDISCONNECTED   ComponentStatusType = "DISCONNECTED"
-	ComponentStatusTypeNEVERCONNECTED ComponentStatusType = "NEVER_CONNECTED"
+	ComponentStatusTypeCONNECTED     ComponentStatusType = "CONNECTED"
+	ComponentStatusTypeDISCONNECTED  ComponentStatusType = "DISCONNECTED"
+	ComponentStatusTypeNOTINTEGRATED ComponentStatusType = "NOT_INTEGRATED"
 )
 
 // Defines values for CredentialsOperatorComponentType.
@@ -46,13 +46,14 @@ const (
 
 // Defines values for EdgeAccessStatusReason.
 const (
-	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTS                 EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS"
-	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
-	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENY                    EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY"
-	EdgeAccessStatusReasonINTENTSOPERATORNEVERCONNECTED           EdgeAccessStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
-	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCING             EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
-	EdgeAccessStatusReasonMISSINGAPPLIEDINTENT                    EdgeAccessStatusReason = "MISSING_APPLIED_INTENT"
-	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED             EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
+	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTS                         EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS"
+	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE         EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENY                            EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY"
+	EdgeAccessStatusReasonINTENTSOPERATORNEVERCONNECTED                   EdgeAccessStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
+	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCING                     EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
+	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCINGMISSINGAPPLIEDINTENT EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT"
+	EdgeAccessStatusReasonMISSINGAPPLIEDINTENT                            EdgeAccessStatusReason = "MISSING_APPLIED_INTENT"
+	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED                     EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
 )
 
 // Defines values for EdgeAccessStatusVerdict.
@@ -64,16 +65,16 @@ const (
 	EdgeAccessStatusVerdictWOULDBEBLOCKED    EdgeAccessStatusVerdict = "WOULD_BE_BLOCKED"
 )
 
-// Defines values for HTTPConfigMethod.
+// Defines values for HTTPConfigMethods.
 const (
-	HTTPConfigMethodCONNECT HTTPConfigMethod = "CONNECT"
-	HTTPConfigMethodDELETE  HTTPConfigMethod = "DELETE"
-	HTTPConfigMethodGET     HTTPConfigMethod = "GET"
-	HTTPConfigMethodOPTIONS HTTPConfigMethod = "OPTIONS"
-	HTTPConfigMethodPATCH   HTTPConfigMethod = "PATCH"
-	HTTPConfigMethodPOST    HTTPConfigMethod = "POST"
-	HTTPConfigMethodPUT     HTTPConfigMethod = "PUT"
-	HTTPConfigMethodTRACE   HTTPConfigMethod = "TRACE"
+	HTTPConfigMethodsCONNECT HTTPConfigMethods = "CONNECT"
+	HTTPConfigMethodsDELETE  HTTPConfigMethods = "DELETE"
+	HTTPConfigMethodsGET     HTTPConfigMethods = "GET"
+	HTTPConfigMethodsOPTIONS HTTPConfigMethods = "OPTIONS"
+	HTTPConfigMethodsPATCH   HTTPConfigMethods = "PATCH"
+	HTTPConfigMethodsPOST    HTTPConfigMethods = "POST"
+	HTTPConfigMethodsPUT     HTTPConfigMethods = "PUT"
+	HTTPConfigMethodsTRACE   HTTPConfigMethods = "TRACE"
 )
 
 // Defines values for IntegrationType.
@@ -103,6 +104,7 @@ const (
 
 // Defines values for KafkaConfigOperations.
 const (
+	KafkaConfigOperationsALL             KafkaConfigOperations = "ALL"
 	KafkaConfigOperationsALTER           KafkaConfigOperations = "ALTER"
 	KafkaConfigOperationsALTERCONFIGS    KafkaConfigOperations = "ALTER_CONFIGS"
 	KafkaConfigOperationsCLUSTERACTION   KafkaConfigOperations = "CLUSTER_ACTION"
@@ -218,6 +220,7 @@ type AccessGraphFilter struct {
 	EnvironmentIds             *[]string  `json:"environmentIds,omitempty"`
 	IncludeServicesWithNoEdges *bool      `json:"includeServicesWithNoEdges,omitempty"`
 	LastSeenAfter              *time.Time `json:"lastSeenAfter,omitempty"`
+	NamespaceIds               *[]string  `json:"namespaceIds,omitempty"`
 	ServiceIds                 *[]string  `json:"serviceIds,omitempty"`
 }
 
@@ -312,12 +315,12 @@ type Error struct {
 
 // HTTPConfig defines model for HTTPConfig.
 type HTTPConfig struct {
-	Method *HTTPConfigMethod `json:"method,omitempty"`
-	Path   *string           `json:"path,omitempty"`
+	Methods *[]HTTPConfigMethods `json:"methods,omitempty"`
+	Path    *string              `json:"path,omitempty"`
 }
 
-// HTTPConfigMethod defines model for HTTPConfig.Method.
-type HTTPConfigMethod string
+// HTTPConfigMethods defines model for HTTPConfig.Methods.
+type HTTPConfigMethods string
 
 // InputAccessGraphFilter defines model for InputAccessGraphFilter.
 type InputAccessGraphFilter struct {
@@ -325,6 +328,7 @@ type InputAccessGraphFilter struct {
 	EnvironmentIds             *[]string  `json:"environmentIds,omitempty"`
 	IncludeServicesWithNoEdges *bool      `json:"includeServicesWithNoEdges,omitempty"`
 	LastSeenAfter              *time.Time `json:"lastSeenAfter,omitempty"`
+	NamespaceIds               *[]string  `json:"namespaceIds,omitempty"`
 	ServiceIds                 *[]string  `json:"serviceIds,omitempty"`
 }
 
@@ -365,10 +369,10 @@ type Intent struct {
 	Client struct {
 		Id string `json:"id"`
 	} `json:"client"`
-	HttpResources  *[]HTTPConfig  `json:"httpResources,omitempty"`
-	Id             string         `json:"id"`
-	KafkaResources *[]KafkaConfig `json:"kafkaResources,omitempty"`
-	Server         struct {
+	HttpResources *[]HTTPConfig  `json:"httpResources,omitempty"`
+	Id            string         `json:"id"`
+	KafkaTopics   *[]KafkaConfig `json:"kafkaTopics,omitempty"`
+	Server        struct {
 		Id string `json:"id"`
 	} `json:"server"`
 	Type *IntentType `json:"type,omitempty"`
@@ -645,7 +649,7 @@ type CreateGenericIntegrationMutationJSONBody struct {
 
 // CreateKubernetesIntegrationMutationJSONBody defines parameters for CreateKubernetesIntegrationMutation.
 type CreateKubernetesIntegrationMutationJSONBody struct {
-	ClusterId     *string `json:"clusterId,omitempty"`
+	ClusterId     string  `json:"clusterId"`
 	EnvironmentId *string `json:"environmentId,omitempty"`
 	Name          string  `json:"name"`
 }
@@ -660,7 +664,6 @@ type IntentsQueryParams struct {
 	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
 	ClientId      *string `form:"clientId,omitempty" json:"clientId,omitempty"`
 	ServerId      *string `form:"serverId,omitempty" json:"serverId,omitempty"`
-	Source        *string `form:"source,omitempty" json:"source,omitempty"`
 }
 
 // OneInviteQueryParams defines parameters for OneInviteQuery.
@@ -2629,22 +2632,6 @@ func NewIntentsQueryRequest(server string, params *IntentsQueryParams) (*http.Re
 	if params.ServerId != nil {
 
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "serverId", runtime.ParamLocationQuery, *params.ServerId); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	if params.Source != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "source", runtime.ParamLocationQuery, *params.Source); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
