@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "91a17b3d8fed77c0cf7f3f4b941ae9482688a486"
+    "x-revision": "d99f25990c6b8277977e63829ef1771d7589965a"
   },
   "servers": [
     {
@@ -236,7 +236,16 @@
         "description": "List clusters",
         "summary": "List clusters",
         "operationId": "clusters_query",
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "List clusters",

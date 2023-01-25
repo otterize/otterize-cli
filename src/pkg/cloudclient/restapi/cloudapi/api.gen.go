@@ -579,6 +579,11 @@ type OneClusterQueryParams struct {
 	Name string `form:"name" json:"name"`
 }
 
+// ClustersQueryParams defines parameters for ClustersQuery.
+type ClustersQueryParams struct {
+	Name *string `form:"name,omitempty" json:"name,omitempty"`
+}
+
 // CreateClusterMutationJSONBody defines parameters for CreateClusterMutation.
 type CreateClusterMutationJSONBody struct {
 	Name string `json:"name"`
@@ -865,7 +870,7 @@ type ClientInterface interface {
 	OneClusterQuery(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ClustersQuery request
-	ClustersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ClustersQuery(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateClusterMutation request with any body
 	CreateClusterMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1056,8 +1061,8 @@ func (c *Client) OneClusterQuery(ctx context.Context, params *OneClusterQueryPar
 	return c.Client.Do(req)
 }
 
-func (c *Client) ClustersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewClustersQueryRequest(c.Server)
+func (c *Client) ClustersQuery(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewClustersQueryRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1812,7 +1817,7 @@ func NewOneClusterQueryRequest(server string, params *OneClusterQueryParams) (*h
 }
 
 // NewClustersQueryRequest generates requests for ClustersQuery
-func NewClustersQueryRequest(server string) (*http.Request, error) {
+func NewClustersQueryRequest(server string, params *ClustersQueryParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1829,6 +1834,26 @@ func NewClustersQueryRequest(server string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	queryValues := queryURL.Query()
+
+	if params.Name != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
@@ -3899,7 +3924,7 @@ type ClientWithResponsesInterface interface {
 	OneClusterQueryWithResponse(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*OneClusterQueryResponse, error)
 
 	// ClustersQuery request
-	ClustersQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClustersQueryResponse, error)
+	ClustersQueryWithResponse(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*ClustersQueryResponse, error)
 
 	// CreateClusterMutation request with any body
 	CreateClusterMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateClusterMutationResponse, error)
@@ -5341,8 +5366,8 @@ func (c *ClientWithResponses) OneClusterQueryWithResponse(ctx context.Context, p
 }
 
 // ClustersQueryWithResponse request returning *ClustersQueryResponse
-func (c *ClientWithResponses) ClustersQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClustersQueryResponse, error) {
-	rsp, err := c.ClustersQuery(ctx, reqEditors...)
+func (c *ClientWithResponses) ClustersQueryWithResponse(ctx context.Context, params *ClustersQueryParams, reqEditors ...RequestEditorFn) (*ClustersQueryResponse, error) {
+	rsp, err := c.ClustersQuery(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

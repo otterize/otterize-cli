@@ -1,4 +1,4 @@
-package list
+package update
 
 import (
 	"context"
@@ -12,10 +12,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var ListClustersCmd = &cobra.Command{
-	Use:          "list",
-	Short:        `List clusters.`,
-	Args:         cobra.NoArgs,
+var UpdateClusterCmd = &cobra.Command{
+	Use:          "update <cluster-id>",
+	Short:        `Updates a cluster.`,
+	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
@@ -25,19 +25,29 @@ var ListClustersCmd = &cobra.Command{
 			return err
 		}
 
-		name := viper.GetString(NameKey)
+		id := args[0]
 
-		r, err := c.ClustersQueryWithResponse(ctxTimeout,
-			&cloudapi.ClustersQueryParams{
-				Name: lo.Ternary(name != "", &name, nil),
+		var configuration *cloudapi.ClusterConfigurationInput
+		if viper.IsSet(GlobalDefaultDenyKey) {
+			configuration = &cloudapi.ClusterConfigurationInput{
+				GlobalDefaultDeny: viper.GetBool(GlobalDefaultDenyKey),
+			}
+		}
+
+		r, err := c.UpdateClusterMutationWithResponse(ctxTimeout,
+			id,
+			cloudapi.UpdateClusterMutationJSONRequestBody{
+				Configuration: configuration,
 			},
 		)
 		if err != nil {
 			return err
 		}
 
-		clusters := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatClusters(clusters)
+		prints.PrintCliStderr("cluster updated")
+
+		cluster := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatClusters([]cloudapi.Cluster{cluster})
 		if err != nil {
 			return err
 		}
@@ -48,5 +58,5 @@ var ListClustersCmd = &cobra.Command{
 }
 
 func init() {
-	ListClustersCmd.Flags().StringP(NameKey, NameShorthand, "", "integration name")
+	UpdateClusterCmd.Flags().Bool(GlobalDefaultDenyKey, false, "set/unset global default deny")
 }

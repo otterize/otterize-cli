@@ -13,7 +13,7 @@ import (
 )
 
 var GetClusterCmd = &cobra.Command{
-	Use:          "get <clusterid>",
+	Use:          "get <cluster-id>",
 	Short:        `Gets details for cluster.`,
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,

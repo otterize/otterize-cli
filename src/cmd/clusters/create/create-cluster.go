@@ -1,4 +1,4 @@
-package list
+package create
 
 import (
 	"context"
@@ -12,14 +12,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-var ListClustersCmd = &cobra.Command{
-	Use:          "list",
-	Short:        `List clusters.`,
-	Args:         cobra.NoArgs,
+var CreateClusterCmd = &cobra.Command{
+	Use:          "create",
+	Short:        `Creates a cluster.`,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
+
 		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
 		if err != nil {
 			return err
@@ -27,17 +27,15 @@ var ListClustersCmd = &cobra.Command{
 
 		name := viper.GetString(NameKey)
 
-		r, err := c.ClustersQueryWithResponse(ctxTimeout,
-			&cloudapi.ClustersQueryParams{
-				Name: lo.Ternary(name != "", &name, nil),
-			},
+		r, err := c.CreateClusterMutationWithResponse(ctxTimeout,
+			cloudapi.CreateClusterMutationJSONRequestBody{Name: name},
 		)
 		if err != nil {
 			return err
 		}
 
-		clusters := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatClusters(clusters)
+		cluster := lo.FromPtr(r.JSON200)
+		formatted, err := output.FormatClusters([]cloudapi.Cluster{cluster})
 		if err != nil {
 			return err
 		}
@@ -48,5 +46,6 @@ var ListClustersCmd = &cobra.Command{
 }
 
 func init() {
-	ListClustersCmd.Flags().StringP(NameKey, NameShorthand, "", "integration name")
+	CreateClusterCmd.Flags().StringP(NameKey, NameShorthand, "", "cluster name")
+	cobra.CheckErr(CreateClusterCmd.MarkFlagRequired(NameKey))
 }
