@@ -31,6 +31,10 @@ var ListCmd = &cobra.Command{
 				}
 
 			}
+
+			if len(servicesIntents) == 0 {
+				output.PrintStderr("No connections found. The network mapper detects (1) connections that are currently open and (2) DNS lookups while a connection is being initiated, for connections between pods on this cluster.")
+			}
 			return nil
 		})
 	},
