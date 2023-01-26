@@ -660,7 +660,6 @@ type CreateGenericIntegrationMutationJSONBody struct {
 type CreateKubernetesIntegrationMutationJSONBody struct {
 	ClusterId     string  `json:"clusterId"`
 	EnvironmentId *string `json:"environmentId,omitempty"`
-	Name          string  `json:"name"`
 }
 
 // UpdateIntegrationMutationJSONBody defines parameters for UpdateIntegrationMutation.

@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "834e146d470ad9450662c4f325846724f032776b"
+    "x-revision": "a97941eb9c944f3c958664c532e98e21f1a9f881"
   },
   "servers": [
     {
@@ -2421,9 +2421,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
-                    "type": "string"
-                  },
                   "environmentId": {
                     "type": "string"
                   },
@@ -2432,7 +2429,6 @@
                   }
                 },
                 "required": [
-                  "name",
                   "clusterId"
                 ]
               }
@@ -2596,6 +2592,16 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
+      },
+      "oauth2": {
+        "type": "oauth2",
+        "description": "Use a Client ID and Client secret from an Otterize integration to authenticate.",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "/api/auth/tokens/token",
+            "scopes": {}
+          }
+        }
       },
       "organizationHeader": {
         "type": "apiKey",
