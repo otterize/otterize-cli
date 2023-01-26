@@ -3136,7 +3136,7 @@ func NewAcceptInviteMutationRequestWithBody(server string, id string, contentTyp
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/invites/%s/accept", pathParam0)
+	operationPath := fmt.Sprintf("/invites/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
