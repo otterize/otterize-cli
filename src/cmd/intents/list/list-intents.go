@@ -22,10 +22,6 @@ var ListCmd = &cobra.Command{
 	RunE:         listIntents,
 }
 
-type intentsList struct {
-	Intents []cloudapi.Intent `json:"intents"`
-}
-
 func listIntents(_ *cobra.Command, _ []string) error {
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 	defer cancel()
