@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "622d77c70bb487f52ce2a19b42e57d5984473471"
+    "x-revision": "a97941eb9c944f3c958664c532e98e21f1a9f881"
   },
   "servers": [
     {
@@ -2421,9 +2421,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
-                    "type": "string"
-                  },
                   "environmentId": {
                     "type": "string"
                   },
@@ -2432,7 +2429,6 @@
                   }
                 },
                 "required": [
-                  "name",
                   "clusterId"
                 ]
               }
