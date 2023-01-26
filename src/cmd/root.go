@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/otterize/otterize-cli/src/cmd/clusters"
 	"github.com/otterize/otterize-cli/src/cmd/environments"
 	"github.com/otterize/otterize-cli/src/cmd/integrations"
 	"github.com/otterize/otterize-cli/src/cmd/intents"
 	"github.com/otterize/otterize-cli/src/cmd/invites"
 	"github.com/otterize/otterize-cli/src/cmd/login"
 	"github.com/otterize/otterize-cli/src/cmd/mapper"
+	"github.com/otterize/otterize-cli/src/cmd/namespaces"
 	"github.com/otterize/otterize-cli/src/cmd/organizations"
 	"github.com/otterize/otterize-cli/src/cmd/services"
 	"github.com/otterize/otterize-cli/src/cmd/users"
@@ -83,6 +85,8 @@ func init() {
 	RootCmd.AddCommand(organizations.OrganizationsCmd)
 	RootCmd.AddCommand(users.UsersCmd)
 	RootCmd.AddCommand(version.ApiVersionCmd)
+	RootCmd.AddCommand(clusters.ClustersCmd)
+	RootCmd.AddCommand(namespaces.NamespacesCmd)
 }
 
 func initLogger() {

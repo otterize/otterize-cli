@@ -96,3 +96,34 @@ func FormatUsers(users []cloudapi.User) (string, error) {
 
 	return FormatList(users, columns, getColumnData)
 }
+
+func FormatClusters(clusters []cloudapi.Cluster) (string, error) {
+	columns := []string{"id", "name", "status", "namespace count", "service count", "configuration.globalDefaultDeny"}
+	getColumnData := func(c cloudapi.Cluster) []map[string]string {
+		return []map[string]string{{
+			"id":                              c.Id,
+			"name":                            c.Name,
+			"status":                          string(c.Status),
+			"namespace count":                 fmt.Sprintf("%d", len(c.Name)),
+			"service count":                   fmt.Sprintf("%d", c.ServiceCount),
+			"configuration.globalDefaultDeny": fmt.Sprintf("%t", lo.FromPtr(c.Configuration).GlobalDefaultDeny),
+		}}
+	}
+
+	return FormatList(clusters, columns, getColumnData)
+}
+
+func FormatNamespaces(namespaces []cloudapi.Namespace) (string, error) {
+	columns := []string{"id", "name", "cluster id", "environment id", "service count"}
+	getColumnData := func(ns cloudapi.Namespace) []map[string]string {
+		return []map[string]string{{
+			"id":             ns.Id,
+			"name":           ns.Name,
+			"cluster id":     ns.Cluster.Id,
+			"environment id": ns.Environment.Id,
+			"service count":  fmt.Sprintf("%d", ns.ServiceCount),
+		}}
+	}
+
+	return FormatList(namespaces, columns, getColumnData)
+}
