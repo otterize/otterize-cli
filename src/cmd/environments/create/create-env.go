@@ -53,5 +53,6 @@ var CreateEnvCmd = &cobra.Command{
 
 func init() {
 	CreateEnvCmd.Flags().StringP(NameKey, NameShorthand, "", "environment name")
+	cobra.CheckErr(CreateEnvCmd.MarkFlagRequired(NameKey))
 	CreateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, make(map[string]string, 0), "Environment labels in key value format: key=val,key2=val2,... Value is optional - specify no value to skip it, e.g. key=,key2=value2")
 }

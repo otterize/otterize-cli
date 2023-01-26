@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "91efb6f8acb98985fc2b993baa8d279049c8b302"
+    "x-revision": "834e146d470ad9450662c4f325846724f032776b"
   },
   "servers": [
     {
@@ -117,6 +117,54 @@
           }
         }
       },
+      "delete": {
+        "tags": [
+          "clusters"
+        ],
+        "description": "Delete cluster",
+        "summary": "Delete cluster",
+        "operationId": "deleteCluster_mutation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete cluster",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        }
+      },
       "patch": {
         "tags": [
           "clusters"
@@ -188,7 +236,16 @@
         "description": "List clusters",
         "summary": "List clusters",
         "operationId": "clusters_query",
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "List clusters",
@@ -199,6 +256,62 @@
                   "items": {
                     "$ref": "#/components/schemas/Cluster"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "clusters"
+        ],
+        "description": "Create cluster",
+        "summary": "Create cluster",
+        "operationId": "createCluster_mutation",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create cluster",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cluster"
                 }
               }
             }
@@ -1397,6 +1510,68 @@
         "responses": {
           "200": {
             "description": "Get namespace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Namespace"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "namespaces"
+        ],
+        "description": "Update namespace",
+        "summary": "Update namespace",
+        "operationId": "updateNamespace_mutation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "environmentId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update namespace",
             "content": {
               "application/json": {
                 "schema": {
@@ -2843,6 +3018,7 @@
         "type": "object",
         "required": [
           "name",
+          "status",
           "components",
           "namespaces",
           "serviceCount",
@@ -2928,15 +3104,7 @@
             "type": "string"
           },
           "namespace": {
-            "type": "object",
-            "required": [
-              "id"
-            ],
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            }
+            "$ref": "#/components/schemas/Namespace"
           },
           "environment": {
             "type": "object",
@@ -3205,10 +3373,18 @@
       "IntentsOperatorConfiguration": {
         "type": "object",
         "required": [
-          "enableEnforcement"
+          "globalEnforcementEnabled",
+          "networkPolicyEnforcementEnabled",
+          "kafkaACLEnforcementEnabled"
         ],
         "properties": {
-          "enableEnforcement": {
+          "globalEnforcementEnabled": {
+            "type": "boolean"
+          },
+          "networkPolicyEnforcementEnabled": {
+            "type": "boolean"
+          },
+          "kafkaACLEnforcementEnabled": {
             "type": "boolean"
           }
         }
@@ -3475,7 +3651,10 @@
         "required": [
           "id",
           "name",
-          "services"
+          "cluster",
+          "environment",
+          "services",
+          "serviceCount"
         ],
         "properties": {
           "id": {
@@ -3485,15 +3664,7 @@
             "type": "string"
           },
           "cluster": {
-            "type": "object",
-            "required": [
-              "id"
-            ],
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            }
+            "$ref": "#/components/schemas/Cluster"
           },
           "environment": {
             "type": "object",
@@ -3519,6 +3690,10 @@
                 }
               }
             }
+          },
+          "serviceCount": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
