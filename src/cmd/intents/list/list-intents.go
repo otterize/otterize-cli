@@ -22,10 +22,6 @@ var ListCmd = &cobra.Command{
 	RunE:         listIntents,
 }
 
-type intentsList struct {
-	Intents []cloudapi.Intent `json:"intents"`
-}
-
 func listIntents(_ *cobra.Command, _ []string) error {
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 	defer cancel()
@@ -53,10 +49,11 @@ func listIntents(_ *cobra.Command, _ []string) error {
 
 	intents := lo.FromPtr(resp.JSON200)
 
-	result, err := output.GetFormattedObject(intentsList{intents})
+	result, err := output.FormatList(intents, output.IntentsColumns(), output.FormatIntentsForCLITable)
 	if err != nil {
 		return err
 	}
+
 	prints.PrintCliOutput(result)
 	return nil
 }
