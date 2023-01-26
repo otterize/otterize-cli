@@ -38,7 +38,9 @@ This CLI was built against:
 			prints.PrintCliStderr(`
 Caution: this CLI was built with a different version/revision of the Otterize Cloud API. 
 Some Cloud CLI commands may fail. 
-Upgrade your CLI to the latest build to resolve this issue.`)
+Upgrade your CLI to the latest build to resolve this issue. 
+For upgrade instructions, see https://docs.otterize.com/getting-started/oss-installation#install-the-otterize-cli
+`)
 		} else {
 			prints.PrintCliOutput(`
 This CLI was built using the latest version & revision of the Otterize Cloud API.`)
