@@ -2,12 +2,14 @@ package restapi
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/spf13/viper"
+	"log"
 	"net/http"
 )
 
@@ -61,21 +63,38 @@ type doerWithErrorCheck struct {
 	doer Doer
 }
 
+type ResponseBody struct {
+	Message string `json:"message"`
+}
+
 func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
 	resp, err := d.doer.Do(req)
 	if err != nil {
 		return resp, err
 	}
+
+	defer resp.Body.Close()
+
+	var body ResponseBody
+	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+		log.Fatalln(err)
+	}
+
 	if isErrorStatus(resp.StatusCode) {
-		return resp, &HttpError{resp.StatusCode}
+		return resp, &HttpError{resp.StatusCode, body.Message}
 	}
 	return resp, nil
 }
 
 type HttpError struct {
 	StatusCode int
+	Message    string
 }
 
 func (err *HttpError) Error() string {
-	return fmt.Sprintf("HTTP error %d (%s)", err.StatusCode, http.StatusText(err.StatusCode))
+	message := err.Message
+	if message == "" {
+		message = http.StatusText(err.StatusCode)
+	}
+	return fmt.Sprintf("HTTP error %d (%s)", err.StatusCode, message)
 }
