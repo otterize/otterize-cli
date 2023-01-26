@@ -9,7 +9,6 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/spf13/viper"
-	"log"
 	"net/http"
 )
 
@@ -64,7 +63,7 @@ type doerWithErrorCheck struct {
 }
 
 type ResponseBody struct {
-	Message string `json:"message"`
+	Message string `json:"message,omitempty"`
 }
 
 func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
@@ -73,15 +72,13 @@ func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
 		return resp, err
 	}
 
-	defer resp.Body.Close()
-
-	var body ResponseBody
-	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
-		log.Fatalln(err)
-	}
-
 	if isErrorStatus(resp.StatusCode) {
-		return resp, &HttpError{resp.StatusCode, body.Message}
+		var parsedBody ResponseBody
+		if err := json.NewDecoder(resp.Body).Decode(&parsedBody); err != nil {
+			return nil, &HttpError{StatusCode: resp.StatusCode}
+		}
+
+		return nil, &HttpError{StatusCode: resp.StatusCode, Message: parsedBody.Message}
 	}
 	return resp, nil
 }
