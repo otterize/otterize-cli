@@ -53,10 +53,11 @@ func listIntents(_ *cobra.Command, _ []string) error {
 
 	intents := lo.FromPtr(resp.JSON200)
 
-	result, err := output.GetFormattedObject(intentsList{intents})
+	result, err := output.FormatList(intents, output.IntentsColumns(), output.FormatIntentsForCLITable)
 	if err != nil {
 		return err
 	}
+
 	prints.PrintCliOutput(result)
 	return nil
 }
