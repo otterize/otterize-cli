@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/amit7itz/goset"
-	"github.com/otterize/intents-operator/src/operator/api/v1alpha1"
+	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
 	"github.com/spf13/cobra"
@@ -22,8 +22,8 @@ const regularFile = 0
 const FilepathKey = "filename"
 const FilepathShorthand = "f"
 
-func NewIntentsResourceFromIntentsSpec(spec v1alpha1.IntentsSpec) *v1alpha1.ClientIntents {
-	return &v1alpha1.ClientIntents{
+func NewIntentsResourceFromIntentsSpec(spec v1alpha2.IntentsSpec) *v1alpha2.ClientIntents {
+	return &v1alpha2.ClientIntents{
 		TypeMeta: v1.TypeMeta{
 			Kind:       consts.IntentsKind,
 			APIVersion: consts.IntentsAPIVersion,
@@ -80,7 +80,7 @@ var ConvertCmd = &cobra.Command{
 						return fmt.Errorf("unable to parse YAML file %s: %w", path, err)
 					}
 
-					var intentsSpec v1alpha1.IntentsSpec
+					var intentsSpec v1alpha2.IntentsSpec
 					err = yaml.UnmarshalStrict(doc, &intentsSpec)
 					if err != nil {
 						return fmt.Errorf("unable to parse YAML file %s: %w", path, err)
