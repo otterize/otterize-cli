@@ -27,7 +27,7 @@ spec:
     - name: {{ $intent.Name }}
 {{- if $intent.Type }}
       type: {{ $intent.Type }}
-{{- end }}
+{{- end -}}
 {{ end }}`
 
 var crdTemplateParsed = template.Must(template.New("intents").Parse(crdTemplate))
