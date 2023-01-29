@@ -16,6 +16,9 @@ func FormatEnvs(envs []cloudapi.Environment) (string, error) {
 		}
 
 		labelStrings := lo.Map(*labels, func(l cloudapi.Label, _ int) string {
+			if lo.FromPtr(l.Value) == "" {
+				return l.Key
+			}
 			return fmt.Sprintf("%s=%s", l.Key, lo.FromPtr(l.Value))
 		})
 
