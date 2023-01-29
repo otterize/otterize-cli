@@ -168,42 +168,44 @@ func FormatNamespaces(namespaces []cloudapi.Namespace) {
 }
 
 func getCertificateInformation(cert cloudapi.CertificateInformation) string {
-	var certificateInfo, commonName, dns, ttl string
-	commonName = cert.CommonName
-	if cert.DnsNames != nil {
-		for _, dnsName := range *cert.DnsNames {
-			dns += fmt.Sprintf("%s,", dnsName)
-		}
-	}
-	if cert.Ttl != nil {
-		ttl = formatD(*cert.Ttl)
+	certInfoParts := []string{
+		fmt.Sprintf("common-name=%s", cert.CommonName),
 	}
 
-	certificateInfo = fmt.Sprintf("common-name=%s,", commonName)
-	if len(dns) > 0 {
-		certificateInfo += fmt.Sprintf("dns-names=%s", dns)
+	if cert.DnsNames != nil && len(*cert.DnsNames) > 0 {
+		dns := strings.Join(lo.FromPtr(cert.DnsNames), ",")
+		certInfoParts = append(certInfoParts,
+			fmt.Sprintf("dns-names=%s", dns),
+		)
 	}
-	if len(ttl) > 0 {
-		certificateInfo += fmt.Sprintf("ttl=%s,", ttl)
+	if cert.Ttl != nil {
+		ttl := formatD(lo.FromPtr(cert.Ttl))
+		certInfoParts = append(certInfoParts,
+			fmt.Sprintf("ttl=%s,", ttl),
+		)
 	}
-	return certificateInfo
+	return strings.Join(certInfoParts, ",")
 }
 
 func getKafkaInfo(ksc cloudapi.KafkaServerConfig) string {
-	var kafkaInfo string
-	var topics string
-	for _, topic := range ksc.Topics {
-		topics += fmt.Sprintf("%s,pattern=%s,client-identity-required=%t,intents-required=%t,", topic.Topic, string(topic.Pattern), topic.ClientIdentityRequired, topic.IntentsRequired)
-	}
-	var address string
+	var kafkaInfoParts []string
 	if ksc.Address != nil {
-		address = *ksc.Address
-		kafkaInfo = fmt.Sprintf("%s,", address)
+		kafkaInfoParts = append(kafkaInfoParts, *ksc.Address)
 	}
-	if len(topics) > 0 {
-		kafkaInfo += fmt.Sprintf("topics=%s", topics)
+	if len(ksc.Topics) > 0 {
+		topics := strings.Join(
+			lo.Map(ksc.Topics, func(topic cloudapi.KafkaTopic, _ int) string {
+				return fmt.Sprintf("%s,pattern=%s,client-identity-required=%t,intents-required=%t,",
+					topic.Topic, string(topic.Pattern), topic.ClientIdentityRequired, topic.IntentsRequired)
+			}),
+			",",
+		)
+
+		kafkaInfoParts = append(kafkaInfoParts,
+			fmt.Sprintf("topics=%s", topics),
+		)
 	}
-	return kafkaInfo
+	return strings.Join(kafkaInfoParts, ",")
 }
 
 func FormatServices(services []cloudapi.Service) {
