@@ -13,13 +13,14 @@ import (
 var MapperCmd = &cobra.Command{
 	Use:     "network-mapper",
 	GroupID: groups.OSSGroup.ID,
-	Short:   "",
+	Aliases: []string{"mapper"},
+	Short:   "Interact with the Otterize Kubernetes network mapper",
 }
 
 func init() {
-	MapperCmd.PersistentFlags().String(mapperclient.MapperServiceNameKey, mapperclient.MapperServiceNameDefault, "the name of the mapper service")
-	MapperCmd.PersistentFlags().String(mapperclient.MapperNamespaceKey, mapperclient.MapperNamespaceDefault, "the namespace of the mapper service")
-	MapperCmd.PersistentFlags().Int(mapperclient.MapperServicePortKey, mapperclient.MapperServicePortDefault, "the port of the mapper service")
+	MapperCmd.PersistentFlags().String(mapperclient.MapperServiceNameKey, mapperclient.MapperServiceNameDefault, "mapper service name")
+	MapperCmd.PersistentFlags().String(mapperclient.MapperNamespaceKey, mapperclient.MapperNamespaceDefault, "mapper service namespace")
+	MapperCmd.PersistentFlags().Int(mapperclient.MapperServicePortKey, mapperclient.MapperServicePortDefault, "mapper service port")
 
 	MapperCmd.AddCommand(export.ExportCmd)
 	MapperCmd.AddCommand(list.ListCmd)

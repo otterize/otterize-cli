@@ -15,7 +15,7 @@ const (
 
 var ListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "",
+	Short: "List intents discovered by the network mapper",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return mapperclient.WithClient(func(c *mapperclient.Client) error {
 			namespacesFilter := viper.GetStringSlice(NamespacesKey)

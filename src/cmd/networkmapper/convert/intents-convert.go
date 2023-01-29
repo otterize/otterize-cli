@@ -36,7 +36,7 @@ func NewIntentsResourceFromIntentsSpec(spec v1alpha2.IntentsSpec) *v1alpha2.Clie
 }
 
 var ConvertCmd = &cobra.Command{
-	Use:   "convert",
+	Use:   "intents-convert",
 	Short: "Converts Otterize intents to Kubernetes ClientIntents resources",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		printer := intentsprinter.IntentsPrinter{}
