@@ -12,6 +12,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey            = "name"
+	NameShorthand      = "n"
+	EnvironmentIDKey   = "env-id"
+	IntegrationTypeKey = "type"
+)
+
 var ListIntegrationsCmd = &cobra.Command{
 	Use:          "list",
 	Short:        `List integrations.`,
@@ -53,6 +60,6 @@ var ListIntegrationsCmd = &cobra.Command{
 
 func init() {
 	ListIntegrationsCmd.Flags().StringP(NameKey, NameShorthand, "", "integration name")
-	ListIntegrationsCmd.Flags().StringP(IntegrationTypeKey, IntegrationTypeShorthand, "", "integration type")
-	ListIntegrationsCmd.Flags().StringP(EnvironmentIDKey, EnvironmentIDShorthand, "", "environment id")
+	ListIntegrationsCmd.Flags().String(IntegrationTypeKey, "", "integration type")
+	ListIntegrationsCmd.Flags().String(EnvironmentIDKey, "", "environment id")
 }

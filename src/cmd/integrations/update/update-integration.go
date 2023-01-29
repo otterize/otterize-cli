@@ -12,6 +12,11 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey       = "name"
+	NameShorthand = "n"
+)
+
 var UpdateIntegrationlicationCmd = &cobra.Command{
 	Use:          "update <integration-id>",
 	Short:        `Updates an Otterize integration.`,
@@ -52,5 +57,5 @@ var UpdateIntegrationlicationCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateIntegrationlicationCmd.Flags().StringP(NameKey, NameShorthand, "", "New integration name")
+	UpdateIntegrationlicationCmd.Flags().StringP(NameKey, NameShorthand, "", "new integration name")
 }

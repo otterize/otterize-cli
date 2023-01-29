@@ -6,7 +6,7 @@ import (
 
 var CreateIntegrationCmd = &cobra.Command{
 	Use:   "create",
-	Short: `Creates an Otterize integration and returns its client ID and client secret.`,
+	Short: "Create an integration",
 }
 
 func init() {

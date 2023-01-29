@@ -53,5 +53,5 @@ var UpdateOrganizationCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateOrganizationCmd.PersistentFlags().StringP(NameKey, NameShorthand, "", "New organization name")
+	UpdateOrganizationCmd.PersistentFlags().StringP(NameKey, NameShorthand, "", "new organization name")
 }

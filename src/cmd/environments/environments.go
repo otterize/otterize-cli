@@ -13,7 +13,7 @@ import (
 var EnvironmentsCmd = &cobra.Command{
 	Use:     "environments",
 	GroupID: groups.ResourcesGroup.ID,
-	Aliases: []string{"envs"},
+	Aliases: []string{"environment", "envs", "env"},
 	Short:   "Create, modify, delete & query environment objects via the Otterize API",
 }
 

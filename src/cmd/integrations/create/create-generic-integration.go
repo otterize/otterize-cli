@@ -11,9 +11,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey       = "name"
+	NameShorthand = "n"
+)
+
 var CreateGenericIntegrationCmd = &cobra.Command{
 	Use:          "generic",
-	Short:        `Creates an Otterize Generic integration and returns its client ID and client secret.`,
+	Short:        "Create a generic integration",
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

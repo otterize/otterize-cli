@@ -14,7 +14,7 @@ import (
 
 var GetIntegrationCmd = &cobra.Command{
 	Use:          "get <integration-id>",
-	Short:        `Gets details for an integration.`,
+	Short:        "Gets details for an integration",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

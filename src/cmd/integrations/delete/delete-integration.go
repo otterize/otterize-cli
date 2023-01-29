@@ -14,7 +14,7 @@ import (
 
 var DeleteIntegrationCmd = &cobra.Command{
 	Use:          "delete <integration-id>",
-	Short:        `Delete an integration.`,
+	Short:        "Delete an integration",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

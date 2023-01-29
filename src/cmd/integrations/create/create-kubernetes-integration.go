@@ -12,9 +12,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	EnvironmentIDKey = "env-id"
+	ClusterIDKey     = "cluster-id"
+)
+
 var CreateKubernetesIntegrationCmd = &cobra.Command{
 	Use:          "kubernetes",
-	Short:        `Creates an Otterize Kubernetes integration and returns its client ID and client secret.`,
+	Short:        "Create a Kubernetes integration",
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

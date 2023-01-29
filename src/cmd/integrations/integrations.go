@@ -13,7 +13,8 @@ import (
 var IntegrationsCmd = &cobra.Command{
 	Use:     "integrations",
 	GroupID: groups.ResourcesGroup.ID,
-	Short:   "",
+	Aliases: []string{"integration"},
+	Short:   "Create, modify, delete & query integration objects via the Otterize API",
 }
 
 func init() {
