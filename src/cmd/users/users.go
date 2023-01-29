@@ -10,7 +10,8 @@ import (
 var UsersCmd = &cobra.Command{
 	Use:     "users",
 	GroupID: groups.AccountsGroup.ID,
-	Short:   "",
+	Aliases: []string{"user"},
+	Short:   "Manage Otterize users",
 }
 
 func init() {
