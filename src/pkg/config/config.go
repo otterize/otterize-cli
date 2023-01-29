@@ -40,6 +40,7 @@ const OutputKey = "output"
 const OutputDefault = OutputText
 const OutputText = "text"
 const OutputJson = "json"
+const OutputYaml = "yaml"
 const DefaultTimeout = 60 * time.Second
 
 var CfgFile string // used for flag

@@ -289,7 +289,7 @@ type Environment struct {
 	AppliedIntentsCount int32    `json:"appliedIntentsCount"`
 	Id                  string   `json:"id"`
 	Labels              *[]Label `json:"labels,omitempty"`
-	Name                *string  `json:"name,omitempty"`
+	Name                string   `json:"name"`
 	Namespaces          []struct {
 		Id string `json:"id"`
 	} `json:"namespaces"`
