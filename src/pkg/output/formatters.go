@@ -101,14 +101,17 @@ func FormatUsers(users []cloudapi.User) {
 }
 
 func FormatClusters(clusters []cloudapi.Cluster) {
-	columns := []string{"id", "name", "status", "namespace count", "service count", "configuration.globalDefaultDeny"}
+	columns := []string{"id", "name", "default environment id", "integration id", "namespace count", "service count", "configuration"}
+
 	getColumnData := func(c cloudapi.Cluster) []map[string]string {
 		return []map[string]string{{
-			"id":                              c.Id,
-			"name":                            c.Name,
-			"namespace count":                 fmt.Sprintf("%d", len(c.Name)),
-			"service count":                   fmt.Sprintf("%d", c.ServiceCount),
-			"configuration.globalDefaultDeny": fmt.Sprintf("%t", lo.FromPtr(c.Configuration).GlobalDefaultDeny),
+			"id":                     c.Id,
+			"name":                   c.Name,
+			"default environment id": lo.FromPtr(c.DefaultEnvironment).Id,
+			"integration id":         lo.FromPtr(c.Integration).Id,
+			"namespace count":        fmt.Sprintf("%d", len(c.Name)),
+			"service count":          fmt.Sprintf("%d", c.ServiceCount),
+			"configuration":          fmt.Sprintf("%+v", lo.FromPtr(c.Configuration)),
 		}}
 	}
 
