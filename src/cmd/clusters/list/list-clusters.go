@@ -48,5 +48,5 @@ var ListClustersCmd = &cobra.Command{
 }
 
 func init() {
-	ListClustersCmd.Flags().StringP(NameKey, NameShorthand, "", "clusterF name")
+	ListClustersCmd.Flags().StringP(NameKey, NameShorthand, "", "cluster name")
 }
