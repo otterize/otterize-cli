@@ -4,13 +4,8 @@ import (
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/samber/lo"
-	"golang.org/x/exp/constraints"
 	"strings"
 )
-
-func formatD[T constraints.Integer](c T) string {
-	return fmt.Sprintf("%d", c)
-}
 
 func formatComponentStatus(status cloudapi.ComponentStatus) string {
 	return fmt.Sprintf("%s (last seen: %v)",
@@ -42,9 +37,9 @@ func FormatEnvs(envs []cloudapi.Environment) {
 			"id":                    e.Id,
 			"name":                  e.Name,
 			"labels":                formatLabels(e.Labels),
-			"service count":         formatD(e.ServiceCount),
-			"namespaces count":      formatD(len(e.Namespaces)),
-			"applied intents count": formatD(e.AppliedIntentsCount),
+			"service count":         fmt.Sprintf("%d", e.ServiceCount),
+			"namespaces count":      fmt.Sprintf("%d", len(e.Namespaces)),
+			"applied intents count": fmt.Sprintf("%d", e.AppliedIntentsCount),
 		}}
 	}
 	PrintFormatList(envs, columns, getColumnData)
@@ -136,8 +131,8 @@ func FormatClusters(clusters []cloudapi.Cluster) {
 			"name":                   c.Name,
 			"default environment id": lo.FromPtr(c.DefaultEnvironment).Id,
 			"integration id":         lo.FromPtr(c.Integration).Id,
-			"namespace count":        formatD(len(c.Name)),
-			"service count":          formatD(c.ServiceCount),
+			"namespace count":        fmt.Sprintf("%d", len(c.Name)),
+			"service count":          fmt.Sprintf("%d", c.ServiceCount),
 			"configuration":          fmt.Sprintf("%+v", lo.FromPtr(c.Configuration)),
 		}
 
@@ -160,7 +155,7 @@ func FormatNamespaces(namespaces []cloudapi.Namespace) {
 			"cluster":        ns.Cluster.Name,
 			"cluster id":     ns.Cluster.Id,
 			"environment id": ns.Environment.Id,
-			"service count":  formatD(ns.ServiceCount),
+			"service count":  fmt.Sprintf("%d", ns.ServiceCount),
 		}}
 	}
 
@@ -179,7 +174,7 @@ func getCertificateInformation(cert cloudapi.CertificateInformation) string {
 		)
 	}
 	if cert.Ttl != nil {
-		ttl := formatD(lo.FromPtr(cert.Ttl))
+		ttl := fmt.Sprintf("%d", lo.FromPtr(cert.Ttl))
 		certInfoParts = append(certInfoParts,
 			fmt.Sprintf("ttl=%s,", ttl),
 		)
