@@ -14,8 +14,9 @@ import (
 const (
 	NameKey            = "name"
 	NameShorthand      = "n"
-	EnvironmentIDKey   = "env-id"
 	IntegrationTypeKey = "type"
+	EnvironmentIDKey   = "env-id"
+	ClusterIDKey       = "cluster-id"
 )
 
 var ListIntegrationsCmd = &cobra.Command{
@@ -31,15 +32,16 @@ var ListIntegrationsCmd = &cobra.Command{
 			return err
 		}
 
-		envId := viper.GetString(EnvironmentIDKey)
-		name := viper.GetString(NameKey)
-		integrationType := viper.GetString(IntegrationTypeKey)
-
 		r, err := c.IntegrationsQueryWithResponse(ctxTimeout,
 			&cloudapi.IntegrationsQueryParams{
-				Name:            lo.Ternary(name != "", &name, nil),
-				IntegrationType: lo.Ternary(integrationType != "", lo.ToPtr(cloudapi.IntegrationsQueryParamsIntegrationType(integrationType)), nil),
-				EnvironmentId:   lo.Ternary(envId != "", lo.ToPtr(envId), nil),
+				Name: lo.Ternary(viper.IsSet(NameKey), lo.ToPtr(viper.GetString(NameKey)), nil),
+				IntegrationType: lo.Ternary(
+					viper.IsSet(IntegrationTypeKey),
+					lo.ToPtr(cloudapi.IntegrationsQueryParamsIntegrationType(viper.GetString(IntegrationTypeKey))),
+					nil,
+				),
+				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIDKey), lo.ToPtr(viper.GetString(EnvironmentIDKey)), nil),
+				ClusterId:     lo.Ternary(viper.IsSet(ClusterIDKey), lo.ToPtr(viper.GetString(ClusterIDKey)), nil),
 			},
 		)
 		if err != nil {
@@ -55,4 +57,5 @@ func init() {
 	ListIntegrationsCmd.Flags().StringP(NameKey, NameShorthand, "", "integration name")
 	ListIntegrationsCmd.Flags().String(IntegrationTypeKey, "", "integration type")
 	ListIntegrationsCmd.Flags().String(EnvironmentIDKey, "", "environment id")
+	ListIntegrationsCmd.Flags().String(ClusterIDKey, "", "cluster id")
 }

@@ -24,7 +24,6 @@ var DeleteInviteCmd = &cobra.Command{
 		}
 
 		id := args[0]
-
 		r, err := c.DeleteInviteMutationWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err

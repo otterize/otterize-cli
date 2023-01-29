@@ -32,18 +32,13 @@ var ListCmd = &cobra.Command{
 			return err
 		}
 
-		params := cloudapi.ServicesQueryParams{}
-		if viper.IsSet(EnvironmentIDKey) {
-			params.EnvironmentId = lo.ToPtr(viper.GetString(EnvironmentIDKey))
-		}
-		if viper.IsSet(NamespaceIDKey) {
-			params.NamespaceId = lo.ToPtr(viper.GetString(NamespaceIDKey))
-		}
-		if viper.IsSet(NameKey) {
-			params.Name = lo.ToPtr(viper.GetString(NameKey))
-		}
-
-		r, err := c.ServicesQueryWithResponse(ctxTimeout, &params)
+		r, err := c.ServicesQueryWithResponse(ctxTimeout,
+			&cloudapi.ServicesQueryParams{
+				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIDKey), lo.ToPtr(viper.GetString(EnvironmentIDKey)), nil),
+				NamespaceId:   lo.Ternary(viper.IsSet(NamespaceIDKey), lo.ToPtr(viper.GetString(NamespaceIDKey)), nil),
+				Name:          lo.Ternary(viper.IsSet(NameKey), lo.ToPtr(viper.GetString(NameKey)), nil),
+			},
+		)
 		if err != nil {
 			return err
 		}

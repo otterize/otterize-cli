@@ -31,15 +31,11 @@ var ListNamespacesCmd = &cobra.Command{
 			return err
 		}
 
-		name := viper.GetString(NameKey)
-		envID := viper.GetString(EnvironmentIDKey)
-		clusterID := viper.GetString(ClusterIDKey)
-
 		r, err := c.NamespacesQueryWithResponse(ctxTimeout,
 			&cloudapi.NamespacesQueryParams{
-				EnvironmentId: lo.Ternary(envID != "", &envID, nil),
-				ClusterId:     lo.Ternary(clusterID != "", &clusterID, nil),
-				Name:          lo.Ternary(name != "", &name, nil),
+				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIDKey), lo.ToPtr(viper.GetString(EnvironmentIDKey)), nil),
+				ClusterId:     lo.Ternary(viper.IsSet(ClusterIDKey), lo.ToPtr(viper.GetString(ClusterIDKey)), nil),
+				Name:          lo.Ternary(viper.IsSet(NameKey), lo.ToPtr(viper.GetString(NameKey)), nil),
 			},
 		)
 		if err != nil {

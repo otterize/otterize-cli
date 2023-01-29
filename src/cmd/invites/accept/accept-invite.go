@@ -24,8 +24,8 @@ var AcceptInviteCmd = &cobra.Command{
 			return err
 		}
 
-		inviteID := args[0]
-		r, err := c.AcceptInviteMutationWithResponse(ctxTimeout, inviteID, cloudapi.AcceptInviteMutationJSONRequestBody{})
+		id := args[0]
+		r, err := c.AcceptInviteMutationWithResponse(ctxTimeout, id, cloudapi.AcceptInviteMutationJSONRequestBody{})
 		if err != nil {
 			return err
 		}

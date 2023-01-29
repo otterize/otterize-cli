@@ -29,10 +29,10 @@ var CreateInviteCmd = &cobra.Command{
 			return err
 		}
 
-		email := viper.GetString(EmailKey)
-
 		r, err := c.CreateInviteMutationWithResponse(ctxTimeout,
-			cloudapi.CreateInviteMutationJSONRequestBody{Email: email},
+			cloudapi.CreateInviteMutationJSONRequestBody{
+				Email: viper.GetString(EmailKey),
+			},
 		)
 		if err != nil {
 			return err

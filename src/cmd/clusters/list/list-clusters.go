@@ -29,11 +29,9 @@ var ListClustersCmd = &cobra.Command{
 			return err
 		}
 
-		name := viper.GetString(NameKey)
-
 		r, err := c.ClustersQueryWithResponse(ctxTimeout,
 			&cloudapi.ClustersQueryParams{
-				Name: lo.Ternary(name != "", &name, nil),
+				Name: lo.Ternary(viper.IsSet(NameKey), lo.ToPtr(viper.GetString(NameKey)), nil),
 			},
 		)
 		if err != nil {

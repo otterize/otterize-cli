@@ -25,7 +25,6 @@ var GetEnvCmd = &cobra.Command{
 		}
 
 		id := args[0]
-
 		r, err := c.EnvironmentQueryWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err
