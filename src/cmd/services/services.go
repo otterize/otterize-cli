@@ -11,7 +11,7 @@ var ServicesCmd = &cobra.Command{
 	Use:     "services",
 	GroupID: groups.ResourcesGroup.ID,
 	Aliases: []string{"service"},
-	Short:   "Service operations via the Otterize API",
+	Short:   "Manage services via the Otterize API",
 }
 
 func init() {

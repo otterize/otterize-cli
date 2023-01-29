@@ -1,16 +1,17 @@
-package mapper
+package networkmapper
 
 import (
 	"github.com/otterize/otterize-cli/src/cmd/groups"
-	"github.com/otterize/otterize-cli/src/cmd/mapper/export"
-	"github.com/otterize/otterize-cli/src/cmd/mapper/list"
-	"github.com/otterize/otterize-cli/src/cmd/mapper/reset"
+	"github.com/otterize/otterize-cli/src/cmd/networkmapper/convert"
+	"github.com/otterize/otterize-cli/src/cmd/networkmapper/export"
+	"github.com/otterize/otterize-cli/src/cmd/networkmapper/list"
+	"github.com/otterize/otterize-cli/src/cmd/networkmapper/reset"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/spf13/cobra"
 )
 
 var MapperCmd = &cobra.Command{
-	Use:     "mapper",
+	Use:     "network-mapper",
 	GroupID: groups.OSSGroup.ID,
 	Short:   "",
 }
@@ -23,4 +24,5 @@ func init() {
 	MapperCmd.AddCommand(export.ExportCmd)
 	MapperCmd.AddCommand(list.ListCmd)
 	MapperCmd.AddCommand(reset.ResetCmd)
+	MapperCmd.AddCommand(convert.ConvertCmd)
 }

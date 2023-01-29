@@ -9,8 +9,8 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/intents"
 	"github.com/otterize/otterize-cli/src/cmd/invites"
 	"github.com/otterize/otterize-cli/src/cmd/login"
-	"github.com/otterize/otterize-cli/src/cmd/mapper"
 	"github.com/otterize/otterize-cli/src/cmd/namespaces"
+	"github.com/otterize/otterize-cli/src/cmd/networkmapper"
 	"github.com/otterize/otterize-cli/src/cmd/organizations"
 	"github.com/otterize/otterize-cli/src/cmd/services"
 	"github.com/otterize/otterize-cli/src/cmd/users"
@@ -102,7 +102,7 @@ func init() {
 	RootCmd.AddCommand(namespaces.NamespacesCmd)
 
 	RootCmd.AddGroup(groups.OSSGroup)
-	RootCmd.AddCommand(mapper.MapperCmd)
+	RootCmd.AddCommand(networkmapper.MapperCmd)
 }
 
 func initLogger() {
