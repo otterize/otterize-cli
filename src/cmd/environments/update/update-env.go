@@ -50,14 +50,7 @@ var UpdateEnvCmd = &cobra.Command{
 		}
 
 		prints.PrintCliStderr("Environment updated")
-
-		env := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatEnvs([]cloudapi.Environment{env})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatEnvs([]cloudapi.Environment{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }

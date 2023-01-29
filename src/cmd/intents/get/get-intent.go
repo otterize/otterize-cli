@@ -34,12 +34,12 @@ var GetCmd = &cobra.Command{
 		}
 
 		intent := lo.FromPtr(resp.JSON200)
-		result, err := output.FormatIntents([]cloudapi.Intent{intent})
+		formatted, err := output.FormatIntents([]cloudapi.Intent{intent})
 		if err != nil {
 			return err
 		}
 
-		prints.PrintCliOutput(result)
+		prints.PrintCliOutput(formatted)
 		return nil
 	},
 }

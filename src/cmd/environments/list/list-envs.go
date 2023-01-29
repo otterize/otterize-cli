@@ -6,7 +6,6 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -46,13 +45,7 @@ var ListEnvsCmd = &cobra.Command{
 			return err
 		}
 
-		envs := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatEnvs(envs)
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatEnvs(lo.FromPtr(r.JSON200))
 		return nil
 	},
 }

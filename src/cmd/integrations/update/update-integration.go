@@ -45,13 +45,7 @@ var UpdateIntegrationlicationCmd = &cobra.Command{
 
 		prints.PrintCliStderr("Integration updated")
 
-		integration := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatIntegrations([]cloudapi.Integration{integration}, false)
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatIntegrations([]cloudapi.Integration{lo.FromPtr(r.JSON200)}, false)
 		return nil
 	},
 }

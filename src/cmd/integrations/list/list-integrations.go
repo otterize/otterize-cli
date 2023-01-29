@@ -6,7 +6,6 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -47,13 +46,7 @@ var ListIntegrationsCmd = &cobra.Command{
 			return err
 		}
 
-		integrations := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatIntegrations(integrations, false)
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatIntegrations(lo.FromPtr(r.JSON200), false)
 		return nil
 	},
 }

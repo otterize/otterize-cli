@@ -3,11 +3,13 @@ package output
 import (
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
+	"github.com/otterize/otterize-cli/src/pkg/utils/must"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"strings"
 )
 
-func FormatEnvs(envs []cloudapi.Environment) (string, error) {
+func FormatEnvs(envs []cloudapi.Environment) {
 	columns := []string{"id", "name", "labels", "integrations_count", "applied_intents_count"}
 
 	formatLabels := func(labels *[]cloudapi.Label) string {
@@ -33,10 +35,12 @@ func FormatEnvs(envs []cloudapi.Environment) (string, error) {
 			"labels":                formatLabels(e.Labels),
 		}}
 	}
-	return FormatList(envs, columns, getColumnData)
+	formatted, err := FormatList(envs, columns, getColumnData)
+	must.Must(err)
+	prints.PrintCliOutput(formatted)
 }
 
-func FormatIntegrations(integrations []cloudapi.Integration, includeSecrets bool) (string, error) {
+func FormatIntegrations(integrations []cloudapi.Integration, includeSecrets bool) {
 	columns := []string{"id", "type", "name", "default environment", "controller last seen", "intents last applied"}
 	if includeSecrets {
 		columns = append(columns, "client id", "client secret")
@@ -58,7 +62,9 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeSecrets bool
 		return []map[string]string{integrationColumns}
 	}
 
-	return FormatList(integrations, columns, getColumnData)
+	formatted, err := FormatList(integrations, columns, getColumnData)
+	must.Must(err)
+	prints.PrintCliOutput(formatted)
 }
 
 func FormatInvites(invites []cloudapi.Invite) (string, error) {

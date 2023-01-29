@@ -51,12 +51,12 @@ var ListCmd = &cobra.Command{
 		}
 
 		services := lo.FromPtr(resp.JSON200)
-		result, err := output.FormatServices(services)
+		formatted, err := output.FormatServices(services)
 		if err != nil {
 			return err
 		}
 
-		prints.PrintCliOutput(result)
+		prints.PrintCliOutput(formatted)
 		return nil
 	},
 }

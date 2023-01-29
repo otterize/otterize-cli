@@ -49,12 +49,12 @@ var ListCmd = &cobra.Command{
 		}
 
 		intents := lo.FromPtr(resp.JSON200)
-		result, err := output.FormatIntents(intents)
+		formatted, err := output.FormatIntents(intents)
 		if err != nil {
 			return err
 		}
 
-		prints.PrintCliOutput(result)
+		prints.PrintCliOutput(formatted)
 		return nil
 	},
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -41,14 +40,8 @@ var CreateKubernetesIntegrationCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		integration := r.JSON200
 
-		formatted, err := output.FormatIntegrations([]cloudapi.Integration{*integration}, true)
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatIntegrations([]cloudapi.Integration{lo.FromPtr(r.JSON200)}, true)
 		return nil
 	},
 }
