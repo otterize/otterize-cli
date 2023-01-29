@@ -26,15 +26,13 @@ var AcceptInviteCmd = &cobra.Command{
 		}
 
 		inviteID := args[0]
-		resp, err := c.AcceptInviteMutationWithResponse(ctxTimeout, inviteID, cloudapi.AcceptInviteMutationJSONRequestBody{})
+		r, err := c.AcceptInviteMutationWithResponse(ctxTimeout, inviteID, cloudapi.AcceptInviteMutationJSONRequestBody{})
 		if err != nil {
 			return err
 		}
 
-		org := resp.JSON200.Organization
-		prints.PrintCliStderr("Joined organization %s",
-			org.Id)
-
+		org := r.JSON200.Organization
+		prints.PrintCliStderr("Joined organization %s", org.Id)
 		return nil
 	},
 }

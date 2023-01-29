@@ -3,8 +3,6 @@ package output
 import (
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
-	"github.com/otterize/otterize-cli/src/pkg/utils/must"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"strings"
 )
@@ -35,9 +33,7 @@ func FormatEnvs(envs []cloudapi.Environment) {
 			"labels":                formatLabels(e.Labels),
 		}}
 	}
-	formatted, err := FormatList(envs, columns, getColumnData)
-	must.Must(err)
-	prints.PrintCliOutput(formatted)
+	PrintFormatList(envs, columns, getColumnData)
 }
 
 func FormatIntegrations(integrations []cloudapi.Integration, includeSecrets bool) {
@@ -62,12 +58,10 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeSecrets bool
 		return []map[string]string{integrationColumns}
 	}
 
-	formatted, err := FormatList(integrations, columns, getColumnData)
-	must.Must(err)
-	prints.PrintCliOutput(formatted)
+	PrintFormatList(integrations, columns, getColumnData)
 }
 
-func FormatInvites(invites []cloudapi.Invite) (string, error) {
+func FormatInvites(invites []cloudapi.Invite) {
 	columns := []string{"id", "email", "status", "created at", "accepted at"}
 	getColumnData := func(invite cloudapi.Invite) []map[string]string {
 		return []map[string]string{{
@@ -78,10 +72,10 @@ func FormatInvites(invites []cloudapi.Invite) (string, error) {
 			"accepted at": lo.Ternary(invite.AcceptedAt != nil, lo.FromPtr(invite.AcceptedAt).String(), ""),
 		}}
 	}
-	return FormatList(invites, columns, getColumnData)
+	PrintFormatList(invites, columns, getColumnData)
 }
 
-func FormatOrganizations(organizations []cloudapi.Organization) (string, error) {
+func FormatOrganizations(organizations []cloudapi.Organization) {
 	columns := []string{"id", "name"}
 	getColumnData := func(org cloudapi.Organization) []map[string]string {
 		return []map[string]string{{
@@ -90,10 +84,10 @@ func FormatOrganizations(organizations []cloudapi.Organization) (string, error) 
 		}}
 	}
 
-	return FormatList(organizations, columns, getColumnData)
+	PrintFormatList(organizations, columns, getColumnData)
 }
 
-func FormatUsers(users []cloudapi.User) (string, error) {
+func FormatUsers(users []cloudapi.User) {
 	columns := []string{"id", "email", "name"}
 	getColumnData := func(u cloudapi.User) []map[string]string {
 		return []map[string]string{{
@@ -103,10 +97,10 @@ func FormatUsers(users []cloudapi.User) (string, error) {
 		}}
 	}
 
-	return FormatList(users, columns, getColumnData)
+	PrintFormatList(users, columns, getColumnData)
 }
 
-func FormatClusters(clusters []cloudapi.Cluster) (string, error) {
+func FormatClusters(clusters []cloudapi.Cluster) {
 	columns := []string{"id", "name", "status", "namespace count", "service count", "configuration.globalDefaultDeny"}
 	getColumnData := func(c cloudapi.Cluster) []map[string]string {
 		return []map[string]string{{
@@ -119,10 +113,10 @@ func FormatClusters(clusters []cloudapi.Cluster) (string, error) {
 		}}
 	}
 
-	return FormatList(clusters, columns, getColumnData)
+	PrintFormatList(clusters, columns, getColumnData)
 }
 
-func FormatNamespaces(namespaces []cloudapi.Namespace) (string, error) {
+func FormatNamespaces(namespaces []cloudapi.Namespace) {
 	columns := []string{"id", "name", "cluster id", "environment id", "service count"}
 	getColumnData := func(ns cloudapi.Namespace) []map[string]string {
 		return []map[string]string{{
@@ -134,7 +128,7 @@ func FormatNamespaces(namespaces []cloudapi.Namespace) (string, error) {
 		}}
 	}
 
-	return FormatList(namespaces, columns, getColumnData)
+	PrintFormatList(namespaces, columns, getColumnData)
 }
 
 func getCertificateInformation(cert cloudapi.CertificateInformation) string {
@@ -176,7 +170,7 @@ func getKafkaInfo(ksc cloudapi.KafkaServerConfig) string {
 	return kafkaInfo
 }
 
-func FormatServices(services []cloudapi.Service) (string, error) {
+func FormatServices(services []cloudapi.Service) {
 	columns := []string{"id", "name", "namespace", "environment id", "kafka info", "certificate info"}
 	getColumnData := func(s cloudapi.Service) []map[string]string {
 		var kafkaInfo string
@@ -199,10 +193,10 @@ func FormatServices(services []cloudapi.Service) (string, error) {
 		}}
 	}
 
-	return FormatList(services, columns, getColumnData)
+	PrintFormatList(services, columns, getColumnData)
 }
 
-func FormatIntents(intents []cloudapi.Intent) (string, error) {
+func FormatIntents(intents []cloudapi.Intent) {
 	columns := []string{"id", "client", "server", "type", "object", "action"}
 
 	getColumnData := func(input cloudapi.Intent) []map[string]string {
@@ -260,5 +254,5 @@ func FormatIntents(intents []cloudapi.Intent) (string, error) {
 		}
 	}
 
-	return FormatList(intents, columns, getColumnData)
+	PrintFormatList(intents, columns, getColumnData)
 }

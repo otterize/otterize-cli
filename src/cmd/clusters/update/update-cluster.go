@@ -48,15 +48,8 @@ var UpdateClusterCmd = &cobra.Command{
 			return err
 		}
 
-		prints.PrintCliStderr("cluster updated")
-
-		cluster := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatClusters([]cloudapi.Cluster{cluster})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		prints.PrintCliStderr("Cluster updated")
+		output.FormatClusters([]cloudapi.Cluster{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }

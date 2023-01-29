@@ -5,7 +5,6 @@ import (
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -29,13 +28,7 @@ var ListUsersCmd = &cobra.Command{
 			return err
 		}
 
-		users := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatUsers(users)
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatUsers(lo.FromPtr(r.JSON200))
 		return nil
 	},
 }

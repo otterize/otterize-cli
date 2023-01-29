@@ -42,15 +42,8 @@ var UpdateNamespaceCmd = &cobra.Command{
 			return err
 		}
 
-		prints.PrintCliStderr("namespace updated")
-
-		namespace := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatNamespaces([]cloudapi.Namespace{namespace})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		prints.PrintCliStderr("Namespace updated")
+		output.FormatNamespaces([]cloudapi.Namespace{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }

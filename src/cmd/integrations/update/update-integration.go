@@ -44,7 +44,6 @@ var UpdateIntegrationlicationCmd = &cobra.Command{
 		}
 
 		prints.PrintCliStderr("Integration updated")
-
 		output.FormatIntegrations([]cloudapi.Integration{lo.FromPtr(r.JSON200)}, false)
 		return nil
 	},

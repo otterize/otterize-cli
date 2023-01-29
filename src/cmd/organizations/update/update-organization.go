@@ -44,14 +44,7 @@ var UpdateOrganizationCmd = &cobra.Command{
 		}
 
 		prints.PrintCliStderr("Organization updated")
-
-		org := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatOrganizations([]cloudapi.Organization{org})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatOrganizations([]cloudapi.Organization{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }

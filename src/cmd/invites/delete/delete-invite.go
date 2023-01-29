@@ -2,10 +2,8 @@ package delete
 
 import (
 	"context"
-	"fmt"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 
@@ -34,14 +32,7 @@ var DeleteInviteCmd = &cobra.Command{
 		}
 
 		inviteID := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatItem(inviteID, func(id string) string {
-			return fmt.Sprintf("Deleted invite with id %s", id)
-		})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliStderr(formatted)
+		prints.PrintCliStderr("Deleted invite %s", inviteID)
 		return nil
 	},
 }

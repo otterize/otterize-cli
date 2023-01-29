@@ -90,11 +90,7 @@ func (loginCtx *LoginContext) createOrJoinOrgFromUserInput() (string, error) {
 	invites := loginCtx.me.Invites
 	if len(invites) > 0 {
 		prints.PrintCliStderr("The following invites are available:")
-		formatted, err := output.FormatInvites(loginCtx.me.Invites)
-		if err != nil {
-			return "", err
-		}
-		prints.PrintCliStderr(formatted)
+		output.FormatInvites(loginCtx.me.Invites)
 		selectedInvite, ok, err := loginCtx.interactiveSelectInvite()
 		if err != nil {
 			return "", err
@@ -160,11 +156,7 @@ func (loginCtx *LoginContext) createNewOrg() (string, error) {
 	}
 
 	org := lo.FromPtr(r.JSON200)
-	formatted, err := output.FormatOrganizations([]cloudapi.Organization{org})
-	if err != nil {
-		return "", err
-	}
-	prints.PrintCliOutput(formatted)
+	output.FormatOrganizations([]cloudapi.Organization{org})
 	return org.Id, nil
 }
 
@@ -172,11 +164,7 @@ func (loginCtx *LoginContext) interactiveSelectOrg(preSelectedOrgId string, swit
 	organizations := loginCtx.me.Organizations
 
 	prints.PrintCliStderr("You belong to the following organizations:")
-	formatted, err := output.FormatOrganizations(organizations)
-	if err != nil {
-		return "", err
-	}
-	prints.PrintCliStderr(formatted)
+	output.FormatOrganizations(organizations)
 
 	isValidOrg := func(orgId string) bool {
 		return lo.ContainsBy(organizations, func(organization cloudapi.Organization) bool {

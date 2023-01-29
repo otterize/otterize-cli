@@ -6,7 +6,6 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -28,18 +27,12 @@ var GetCmd = &cobra.Command{
 
 		id := args[0]
 
-		resp, err := c.IntentQueryWithResponse(ctxTimeout, id)
+		r, err := c.IntentQueryWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err
 		}
 
-		intent := lo.FromPtr(resp.JSON200)
-		formatted, err := output.FormatIntents([]cloudapi.Intent{intent})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatIntents([]cloudapi.Intent{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }

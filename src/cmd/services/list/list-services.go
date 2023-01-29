@@ -6,7 +6,6 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -45,18 +44,12 @@ var ListCmd = &cobra.Command{
 			params.Name = lo.ToPtr(viper.GetString(NameKey))
 		}
 
-		resp, err := c.ServicesQueryWithResponse(ctxTimeout, &params)
+		r, err := c.ServicesQueryWithResponse(ctxTimeout, &params)
 		if err != nil {
 			return err
 		}
 
-		services := lo.FromPtr(resp.JSON200)
-		formatted, err := output.FormatServices(services)
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatServices(lo.FromPtr(r.JSON200))
 		return nil
 	},
 }

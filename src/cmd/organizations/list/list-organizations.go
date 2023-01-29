@@ -5,7 +5,6 @@ import (
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -29,13 +28,7 @@ var ListOrganizationsCmd = &cobra.Command{
 			return err
 		}
 
-		organizations := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatOrganizations(organizations)
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatOrganizations(lo.FromPtr(r.JSON200))
 		return nil
 	},
 }

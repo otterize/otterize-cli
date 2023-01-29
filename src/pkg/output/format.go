@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/markkurossi/tabulate"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/utils/must"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/spf13/viper"
 	"reflect"
 	"sigs.k8s.io/yaml"
@@ -96,23 +98,8 @@ func FormatList[T any](dataList []T, columns []string, getColumnData func(T) []m
 	return output, nil
 }
 
-func FormatItem[T any](item T, getTextData func(T) string) (string, error) {
-	var output string
-	var err error
-
-	if viper.GetString(config.OutputKey) == config.OutputJson {
-		output, err = AsJson(item)
-	} else {
-		output = getTextData(item)
-	}
-
-	if err != nil {
-		return "", err
-	}
-	return output, nil
-}
-
-type HttpErrorResponse interface {
-	Status() string
-	StatusCode() int
+func PrintFormatList[T any](dataList []T, columns []string, getColumnData func(T) []map[string]string) {
+	formatted, err := FormatList(dataList, columns, getColumnData)
+	must.Must(err)
+	prints.PrintCliOutput(formatted)
 }

@@ -2,7 +2,6 @@ package get
 
 import (
 	"context"
-	"fmt"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
@@ -27,18 +26,12 @@ var GetCmd = &cobra.Command{
 		}
 
 		id := args[0]
-		resp, err := c.ServiceQueryWithResponse(ctxTimeout, id)
+		r, err := c.ServiceQueryWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err
 		}
 
-		service := lo.FromPtr(resp.JSON200)
-
-		result, err := output.FormatServices([]cloudapi.Service{service})
-		if err != nil {
-			return err
-		}
-		fmt.Println(result)
+		output.FormatServices([]cloudapi.Service{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -33,13 +32,7 @@ var GetOrganizationCmd = &cobra.Command{
 			return err
 		}
 
-		org := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatOrganizations([]cloudapi.Organization{org})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatOrganizations([]cloudapi.Organization{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }
