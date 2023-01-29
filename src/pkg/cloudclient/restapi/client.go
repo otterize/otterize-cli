@@ -16,6 +16,10 @@ type Doer interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
+func NewClient(ctx context.Context) (*cloudapi.ClientWithResponses, error) {
+	return NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctx))
+}
+
 func NewClientFromToken(address string, token string) (*cloudapi.ClientWithResponses, error) {
 	localApiVersion, err := GetLocalApiVersion()
 	if err != nil {
