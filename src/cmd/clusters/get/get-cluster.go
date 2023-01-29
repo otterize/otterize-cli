@@ -14,7 +14,7 @@ import (
 
 var GetClusterCmd = &cobra.Command{
 	Use:          "get <cluster-id>",
-	Short:        `Gets details for cluster.`,
+	Short:        "Get details for cluster",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

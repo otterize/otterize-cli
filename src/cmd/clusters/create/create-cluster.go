@@ -12,9 +12,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey       = "name"
+	NameShorthand = "n"
+)
+
 var CreateClusterCmd = &cobra.Command{
 	Use:          "create",
-	Short:        `Creates a cluster.`,
+	Short:        "Create a cluster",
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

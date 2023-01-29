@@ -11,8 +11,7 @@ import (
 
 var ClustersCmd = &cobra.Command{
 	Use:   "clusters",
-	Short: "",
-	Long:  ``,
+	Short: "Create, modify, delete & query cluster objects via the Otterize API",
 }
 
 func init() {

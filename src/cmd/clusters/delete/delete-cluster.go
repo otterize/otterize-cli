@@ -14,7 +14,7 @@ import (
 
 var DeleteClusterCmd = &cobra.Command{
 	Use:          "delete <cluster-id>",
-	Short:        `Delete a cluster.`,
+	Short:        "Delete a cluster",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

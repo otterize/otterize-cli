@@ -12,9 +12,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey       = "name"
+	NameShorthand = "n"
+)
+
 var ListClustersCmd = &cobra.Command{
 	Use:          "list",
-	Short:        `List clusters.`,
+	Short:        "List clusters",
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
@@ -48,5 +53,5 @@ var ListClustersCmd = &cobra.Command{
 }
 
 func init() {
-	ListClustersCmd.Flags().StringP(NameKey, NameShorthand, "", "clusterF name")
+	ListClustersCmd.Flags().StringP(NameKey, NameShorthand, "", "cluster name")
 }

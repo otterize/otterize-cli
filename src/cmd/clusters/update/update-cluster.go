@@ -12,9 +12,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	GlobalDefaultDenyKey = "global-default-deny"
+)
+
 var UpdateClusterCmd = &cobra.Command{
 	Use:          "update <cluster-id>",
-	Short:        `Updates a cluster.`,
+	Short:        "Update a cluster",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
