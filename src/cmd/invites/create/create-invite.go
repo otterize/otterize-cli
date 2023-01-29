@@ -18,6 +18,7 @@ const (
 var CreateInviteCmd = &cobra.Command{
 	Use:          "create",
 	Short:        "Create a user invite",
+	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

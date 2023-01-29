@@ -21,6 +21,7 @@ const (
 var ListEnvsCmd = &cobra.Command{
 	Use:          "list",
 	Short:        "List Environments",
+	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

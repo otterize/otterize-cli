@@ -38,6 +38,7 @@ func NewIntentsResourceFromIntentsSpec(spec v1alpha2.IntentsSpec) *v1alpha2.Clie
 var ConvertCmd = &cobra.Command{
 	Use:   "intents-convert",
 	Short: "Converts Otterize intents to Kubernetes ClientIntents resources",
+	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		printer := intentsprinter.IntentsPrinter{}
 		allowedExts := goset.NewSet(".yaml", ".yml")
@@ -105,4 +106,5 @@ var ConvertCmd = &cobra.Command{
 func init() {
 	ConvertCmd.Flags().StringP(FilepathKey, FilepathShorthand, ".",
 		"filename that contains the intents, or a directory containing intents")
+	cobra.CheckErr(ConvertCmd.MarkFlagRequired(FilepathKey))
 }

@@ -14,8 +14,8 @@ import (
 var GetEnvCmd = &cobra.Command{
 	Use:          "get <environment-id>",
 	Short:        "Get details for an environment",
-	SilenceUsage: true,
 	Args:         cobra.ExactArgs(1),
+	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()

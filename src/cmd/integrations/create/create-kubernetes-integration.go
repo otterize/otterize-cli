@@ -19,6 +19,7 @@ const (
 var CreateKubernetesIntegrationCmd = &cobra.Command{
 	Use:          "kubernetes",
 	Short:        "Create a Kubernetes integration",
+	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

@@ -22,7 +22,6 @@ var ListCmd = &cobra.Command{
 	Use:          "list",
 	Short:        "List services",
 	Args:         cobra.NoArgs,
-	Long:         ``,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, _ []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

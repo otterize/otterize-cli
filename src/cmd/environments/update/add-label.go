@@ -20,8 +20,8 @@ const (
 var AddLabelCmd = &cobra.Command{
 	Use:          "add-label <environment-id>",
 	Short:        "Add a label to an environment",
-	SilenceUsage: true,
 	Args:         cobra.ExactArgs(1),
+	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
