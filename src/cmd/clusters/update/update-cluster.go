@@ -12,15 +12,19 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	GlobalDefaultDenyKey = "global-default-deny"
+)
+
 var UpdateClusterCmd = &cobra.Command{
 	Use:          "update <cluster-id>",
-	Short:        `Updates a cluster.`,
+	Short:        "Update a cluster",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -44,15 +48,8 @@ var UpdateClusterCmd = &cobra.Command{
 			return err
 		}
 
-		prints.PrintCliStderr("cluster updated")
-
-		cluster := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatClusters([]cloudapi.Cluster{cluster})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		prints.PrintCliStderr("Cluster updated")
+		output.FormatClusters([]cloudapi.Cluster{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }

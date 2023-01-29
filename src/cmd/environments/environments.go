@@ -6,14 +6,15 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/environments/get"
 	"github.com/otterize/otterize-cli/src/cmd/environments/list"
 	"github.com/otterize/otterize-cli/src/cmd/environments/update"
+	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/spf13/cobra"
 )
 
 var EnvironmentsCmd = &cobra.Command{
 	Use:     "environments",
-	Aliases: []string{"envs"},
-	Short:   "",
-	Long:    ``,
+	GroupID: groups.ResourcesGroup.ID,
+	Aliases: []string{"environment", "envs", "env"},
+	Short:   "Manage environments",
 }
 
 func init() {

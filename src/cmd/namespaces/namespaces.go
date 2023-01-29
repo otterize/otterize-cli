@@ -1,6 +1,7 @@
 package namespaces
 
 import (
+	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/otterize/otterize-cli/src/cmd/namespaces/get"
 	"github.com/otterize/otterize-cli/src/cmd/namespaces/list"
 	"github.com/otterize/otterize-cli/src/cmd/namespaces/update"
@@ -8,9 +9,10 @@ import (
 )
 
 var NamespacesCmd = &cobra.Command{
-	Use:   "namespaces",
-	Short: "",
-	Long:  ``,
+	Use:     "namespaces",
+	GroupID: groups.ResourcesGroup.ID,
+	Aliases: []string{"namespace"},
+	Short:   "Manage namespaces",
 }
 
 func init() {

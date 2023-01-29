@@ -2,9 +2,10 @@ package output
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/markkurossi/tabulate"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/utils/must"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/spf13/viper"
 	"reflect"
 	"sigs.k8s.io/yaml"
@@ -33,32 +34,6 @@ func AsYaml(v any) (string, error) {
 		return "", err
 	}
 	return string(output), nil
-}
-
-func GetFormattedObject(obj any) (string, error) {
-	var output string
-	var err error
-
-	switch outputFormatVal := viper.GetString(config.OutputFormatKey); {
-	case outputFormatVal == config.OutputJson:
-		bytes, err := json.MarshalIndent(obj, "", "  ")
-		if err != nil {
-			return "", err
-		}
-		output = string(bytes)
-
-	case outputFormatVal == config.OutputYaml:
-		output, err = AsYaml(obj)
-
-	default:
-		return "", fmt.Errorf("unexpected output format %s, use one of (%s, %s)", outputFormatVal, config.OutputJson, config.OutputYaml)
-	}
-
-	if err != nil {
-		return "", err
-	}
-
-	return output, nil
 }
 
 func AsTable[T any](dataList []T, columns []string, getColumnData func(T) []map[string]string) (string, error) {
@@ -96,23 +71,8 @@ func FormatList[T any](dataList []T, columns []string, getColumnData func(T) []m
 	return output, nil
 }
 
-func FormatItem[T any](item T, getTextData func(T) string) (string, error) {
-	var output string
-	var err error
-
-	if viper.GetString(config.OutputKey) == config.OutputJson {
-		output, err = AsJson(item)
-	} else {
-		output = getTextData(item)
-	}
-
-	if err != nil {
-		return "", err
-	}
-	return output, nil
-}
-
-type HttpErrorResponse interface {
-	Status() string
-	StatusCode() int
+func PrintFormatList[T any](dataList []T, columns []string, getColumnData func(T) []map[string]string) {
+	formatted, err := FormatList(dataList, columns, getColumnData)
+	must.Must(err)
+	prints.PrintCliOutput(formatted)
 }

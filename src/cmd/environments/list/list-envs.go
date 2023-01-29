@@ -6,21 +6,28 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey         = "name"
+	NameShorthand   = "n"
+	LabelsKey       = "labels"
+	LabelsShorthand = "l"
+)
+
 var ListEnvsCmd = &cobra.Command{
 	Use:          "list",
-	Short:        `List Environments.`,
+	Short:        "List Environments",
+	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -39,18 +46,12 @@ var ListEnvsCmd = &cobra.Command{
 			return err
 		}
 
-		envs := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatEnvs(envs)
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatEnvs(lo.FromPtr(r.JSON200))
 		return nil
 	},
 }
 
 func init() {
 	ListEnvsCmd.Flags().StringP(NameKey, NameShorthand, "", "environment name")
-	ListEnvsCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, make(map[string]string, 0), "Show only environments that match the given labels")
+	ListEnvsCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "environment labels in key=value format (value is optional): key1=val1,key2=val2,key3=")
 }

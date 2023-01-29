@@ -12,16 +12,23 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey         = "name"
+	NameShorthand   = "n"
+	LabelsKey       = "labels"
+	LabelsShorthand = "l"
+)
+
 var UpdateEnvCmd = &cobra.Command{
-	Use:          "update <envid>",
-	Short:        `Updates an Otterize environment`,
-	SilenceUsage: true,
+	Use:          "update <environment-id>",
+	Short:        "Update an environment",
 	Args:         cobra.ExactArgs(1),
+	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -43,21 +50,14 @@ var UpdateEnvCmd = &cobra.Command{
 		}
 
 		prints.PrintCliStderr("Environment updated")
-
-		env := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatEnvs([]cloudapi.Environment{env})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatEnvs([]cloudapi.Environment{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }
 
 func init() {
-	UpdateEnvCmd.Flags().StringP(NameKey, NameShorthand, "", "New environment name")
-	UpdateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "New environment key value Labels (key=val,key2=val2=..)")
+	UpdateEnvCmd.Flags().StringP(NameKey, NameShorthand, "", "new environment name")
+	UpdateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "new environment labels in key=value format (value is optional): key1=val1,key2=val2,key3=")
 
 	UpdateEnvCmd.AddCommand(RemoveLabelCmd)
 	UpdateEnvCmd.AddCommand(AddLabelCmd)

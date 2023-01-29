@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "465ba4174008682f54f99e37d0b7791148aade14"
+    "x-revision": "606cf8e74a756e2966745135fbd80188a7f07020"
   },
   "servers": [
     {
@@ -2872,7 +2872,8 @@
         "required": [
           "useNetworkPoliciesInAccessGraphStates",
           "protectionStatus",
-          "blockingStatus"
+          "blockingStatus",
+          "hasAppliedIntents"
         ],
         "properties": {
           "useNetworkPoliciesInAccessGraphStates": {
@@ -2883,6 +2884,9 @@
           },
           "blockingStatus": {
             "$ref": "#/components/schemas/ServerBlockingStatus"
+          },
+          "hasAppliedIntents": {
+            "type": "boolean"
           }
         }
       },

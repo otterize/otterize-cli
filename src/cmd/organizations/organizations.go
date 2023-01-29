@@ -1,6 +1,7 @@
 package organizations
 
 import (
+	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/otterize/otterize-cli/src/cmd/organizations/create"
 	"github.com/otterize/otterize-cli/src/cmd/organizations/get"
 	"github.com/otterize/otterize-cli/src/cmd/organizations/list"
@@ -10,9 +11,9 @@ import (
 
 var OrganizationsCmd = &cobra.Command{
 	Use:     "organizations",
-	Aliases: []string{"orgs"},
-	Short:   "",
-	Long:    ``,
+	GroupID: groups.AccountsGroup.ID,
+	Aliases: []string{"organization", "orgs", "org"},
+	Short:   "Manage Otterize organizations",
 }
 
 func init() {

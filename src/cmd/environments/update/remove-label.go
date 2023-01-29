@@ -12,16 +12,20 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	LabelToDeleteKey = "key"
+)
+
 var RemoveLabelCmd = &cobra.Command{
-	Use:          "remove_label <envid>",
-	Short:        `Removes label from an existing Otterize environmentD`,
-	SilenceUsage: true,
+	Use:          "remove-label <environment-id>",
+	Short:        "Remove a label from an environment",
 	Args:         cobra.ExactArgs(1),
+	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -40,18 +44,12 @@ var RemoveLabelCmd = &cobra.Command{
 		}
 
 		prints.PrintCliStderr("Environment updated")
-
-		env := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatEnvs([]cloudapi.Environment{env})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatEnvs([]cloudapi.Environment{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }
 
 func init() {
-	RemoveLabelCmd.PersistentFlags().String(LabelsKey, "", "Label key to delete")
+	RemoveLabelCmd.Flags().String(LabelToDeleteKey, "", "label key to delete")
+	cobra.CheckErr(RemoveLabelCmd.MarkFlagRequired(LabelToDeleteKey))
 }

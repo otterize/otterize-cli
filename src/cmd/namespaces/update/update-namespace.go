@@ -12,15 +12,19 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	EnvironmentIDKey = "env-id"
+)
+
 var UpdateNamespaceCmd = &cobra.Command{
 	Use:          "update <namespace-id>",
-	Short:        `Updates a namespace.`,
+	Short:        "Update a namespace",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -38,15 +42,8 @@ var UpdateNamespaceCmd = &cobra.Command{
 			return err
 		}
 
-		prints.PrintCliStderr("namespace updated")
-
-		namespace := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatNamespaces([]cloudapi.Namespace{namespace})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		prints.PrintCliStderr("Namespace updated")
+		output.FormatNamespaces([]cloudapi.Namespace{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }

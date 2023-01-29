@@ -12,16 +12,20 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey       = "name"
+	NameShorthand = "n"
+)
+
 var UpdateOrganizationCmd = &cobra.Command{
-	Use:          "update <orgid>",
-	Aliases:      []string{"org"},
-	Short:        `Updates an Otterize organization.`,
+	Use:          "update <organization-id>",
+	Short:        "Update an organization",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -40,18 +44,11 @@ var UpdateOrganizationCmd = &cobra.Command{
 		}
 
 		prints.PrintCliStderr("Organization updated")
-
-		org := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatOrganizations([]cloudapi.Organization{org})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatOrganizations([]cloudapi.Organization{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }
 
 func init() {
-	UpdateOrganizationCmd.PersistentFlags().StringP(NameKey, NameShorthand, "", "New organization name")
+	UpdateOrganizationCmd.Flags().StringP(NameKey, NameShorthand, "", "new organization name")
 }

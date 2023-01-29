@@ -6,21 +6,25 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
+const (
+	EmailKey = "email"
+)
+
 var CreateInviteCmd = &cobra.Command{
 	Use:          "create",
-	Short:        `Creates an Otterize user invite.`,
+	Short:        "Create a user invite",
+	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -34,17 +38,11 @@ var CreateInviteCmd = &cobra.Command{
 			return err
 		}
 
-		i := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatInvites([]cloudapi.Invite{i})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatInvites([]cloudapi.Invite{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }
 
 func init() {
-	CreateInviteCmd.PersistentFlags().String(EmailKey, "", "Email address")
+	CreateInviteCmd.Flags().String(EmailKey, "", "invited email address")
 }

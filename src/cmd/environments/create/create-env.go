@@ -6,22 +6,28 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey         = "name"
+	NameShorthand   = "n"
+	LabelsKey       = "labels"
+	LabelsShorthand = "l"
+)
+
 var CreateEnvCmd = &cobra.Command{
-	Use:                   "create",
-	DisableFlagsInUseLine: true,
-	Short:                 `Creates an Otterize environment and returns its ID`,
-	SilenceUsage:          true,
+	Use:          "create",
+	Short:        "Create an environment",
+	Args:         cobra.NoArgs,
+	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -40,13 +46,7 @@ var CreateEnvCmd = &cobra.Command{
 			return err
 		}
 
-		env := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatEnvs([]cloudapi.Environment{env})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatEnvs([]cloudapi.Environment{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }
@@ -54,5 +54,5 @@ var CreateEnvCmd = &cobra.Command{
 func init() {
 	CreateEnvCmd.Flags().StringP(NameKey, NameShorthand, "", "environment name")
 	cobra.CheckErr(CreateEnvCmd.MarkFlagRequired(NameKey))
-	CreateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, make(map[string]string, 0), "Environment labels in key value format: key=val,key2=val2,... Value is optional - specify no value to skip it, e.g. key=,key2=value2")
+	CreateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "environment labels in key=value format (value is optional): key1=val1,key2=val2,key3=")
 }

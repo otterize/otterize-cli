@@ -540,6 +540,7 @@ type ServiceAccessGraph struct {
 // ServiceAccessStatus defines model for ServiceAccessStatus.
 type ServiceAccessStatus struct {
 	BlockingStatus                        ServerBlockingStatus   `json:"blockingStatus"`
+	HasAppliedIntents                     bool                   `json:"hasAppliedIntents"`
 	ProtectionStatus                      ServerProtectionStatus `json:"protectionStatus"`
 	UseNetworkPoliciesInAccessGraphStates bool                   `json:"useNetworkPoliciesInAccessGraphStates"`
 }

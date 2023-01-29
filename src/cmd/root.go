@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"github.com/otterize/otterize-cli/src/cmd/clusters"
 	"github.com/otterize/otterize-cli/src/cmd/environments"
+	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/otterize/otterize-cli/src/cmd/integrations"
 	"github.com/otterize/otterize-cli/src/cmd/intents"
 	"github.com/otterize/otterize-cli/src/cmd/invites"
 	"github.com/otterize/otterize-cli/src/cmd/login"
-	"github.com/otterize/otterize-cli/src/cmd/mapper"
 	"github.com/otterize/otterize-cli/src/cmd/namespaces"
+	"github.com/otterize/otterize-cli/src/cmd/networkmapper"
 	"github.com/otterize/otterize-cli/src/cmd/organizations"
 	"github.com/otterize/otterize-cli/src/cmd/services"
 	"github.com/otterize/otterize-cli/src/cmd/users"
@@ -25,8 +26,11 @@ import (
 
 var RootCmd = &cobra.Command{
 	Use:   filepath.Base(os.Args[0]),
-	Short: "",
-	Long:  ``,
+	Short: "The Otterize CLI",
+	Long: `The Otterize CLI offers the following capabilities:
+- Interacting with Otterize Cloud via its public API
+- Interacting with Otterize OSS components
+`,
 }
 
 func preRunHook(cmd *cobra.Command, args []string) {
@@ -64,29 +68,41 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(config.InitConfig, initLogger, config.LoadApiCredentialsFile)
-	RootCmd.PersistentFlags().StringVar(&config.CfgFile, "config", "", fmt.Sprintf("config file (default %s/%s)", config.OtterizeConfigDirName, config.OtterizeConfigFileName))
+	defaultConfigDir, err := config.OtterizeConfigDirPath()
+	if err != nil {
+		panic(err)
+	}
+	defaultConfigPath := filepath.Join(defaultConfigDir, config.OtterizeConfigFileName)
+
+	RootCmd.PersistentFlags().StringVar(&config.CfgFile, "config", "", fmt.Sprintf("config file (default %s)", defaultConfigPath))
 	RootCmd.PersistentFlags().String(config.ApiUserTokenKey, "", "Otterize user token (optional)")
-	RootCmd.PersistentFlags().String(config.ApiSelectedOrganizationId, "", "Otterize organization ID to act on.")
+	RootCmd.PersistentFlags().String(config.ApiSelectedOrganizationId, "", "Otterize organization ID to act on (optional)")
 	RootCmd.PersistentFlags().String(config.ApiClientIdKey, "", "Otterize client ID")
 	RootCmd.PersistentFlags().String(config.ApiClientSecretKey, "", "Otterize client secret")
-	RootCmd.PersistentFlags().String(config.OtterizeAPIAddressKey, config.OtterizeAPIAddressDefault, "The URL of the Otterize API")
+	RootCmd.PersistentFlags().String(config.OtterizeAPIAddressKey, config.OtterizeAPIAddressDefault, "Otterize API URL")
 	RootCmd.PersistentFlags().BoolP(config.QuietModeKey, config.QuietModeShorthand, config.QuietModeDefault, "Suppress prints")
 	RootCmd.PersistentFlags().Bool(config.DebugKey, config.DebugDefault, "Debug logs")
-	RootCmd.PersistentFlags().Bool(config.InteractiveModeKey, true, "Whether to ask for missing flags interactively")
+	RootCmd.PersistentFlags().Bool(config.InteractiveModeKey, true, "Ask for missing flags interactively")
 	RootCmd.PersistentFlags().String(config.OutputKey, config.OutputDefault, "Output format - json/text")
 
+	RootCmd.AddCommand(version.ApiVersionCmd)
+
+	RootCmd.AddGroup(groups.AccountsGroup)
+	RootCmd.AddCommand(login.LoginCmd)
+	RootCmd.AddCommand(users.UsersCmd)
+	RootCmd.AddCommand(organizations.OrganizationsCmd)
+	RootCmd.AddCommand(invites.InvitesCmd)
+
+	RootCmd.AddGroup(groups.ResourcesGroup)
 	RootCmd.AddCommand(environments.EnvironmentsCmd)
 	RootCmd.AddCommand(integrations.IntegrationsCmd)
 	RootCmd.AddCommand(intents.IntentsCmd)
 	RootCmd.AddCommand(services.ServicesCmd)
-	RootCmd.AddCommand(invites.InvitesCmd)
-	RootCmd.AddCommand(login.LoginCmd)
-	RootCmd.AddCommand(mapper.MapperCmd)
-	RootCmd.AddCommand(organizations.OrganizationsCmd)
-	RootCmd.AddCommand(users.UsersCmd)
-	RootCmd.AddCommand(version.ApiVersionCmd)
 	RootCmd.AddCommand(clusters.ClustersCmd)
 	RootCmd.AddCommand(namespaces.NamespacesCmd)
+
+	RootCmd.AddGroup(groups.OSSGroup)
+	RootCmd.AddCommand(networkmapper.MapperCmd)
 }
 
 func initLogger() {

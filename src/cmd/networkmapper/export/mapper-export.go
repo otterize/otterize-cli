@@ -52,8 +52,8 @@ func writeIntentsFile(filePath string, intents []v1alpha2.ClientIntents) error {
 
 var ExportCmd = &cobra.Command{
 	Use:   "export",
-	Short: "",
-	Long:  ``,
+	Short: "Export Otterize intents from network mapper",
+	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return mapperclient.WithClient(func(c *mapperclient.Client) error {
 			err := validateOutputFlags()

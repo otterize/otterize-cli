@@ -12,16 +12,21 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	LabelKeyKey   = "key"
+	LabelValueKey = "value"
+)
+
 var AddLabelCmd = &cobra.Command{
-	Use:          "add_label <envid>",
-	Short:        `Adds label to an existing Otterize environment`,
-	SilenceUsage: true,
+	Use:          "add-label <environment-id>",
+	Short:        "Add a label to an environment",
 	Args:         cobra.ExactArgs(1),
+	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -41,19 +46,13 @@ var AddLabelCmd = &cobra.Command{
 		}
 
 		prints.PrintCliStderr("Environment updated")
-
-		env := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatEnvs([]cloudapi.Environment{env})
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatEnvs([]cloudapi.Environment{lo.FromPtr(r.JSON200)})
 		return nil
 	},
 }
 
 func init() {
-	AddLabelCmd.PersistentFlags().String(LabelKeyKey, "", "label key")
-	AddLabelCmd.PersistentFlags().String(LabelValueKey, "", "label value")
+	AddLabelCmd.Flags().String(LabelKeyKey, "", "label key")
+	cobra.CheckErr(AddLabelCmd.MarkFlagRequired(LabelKeyKey))
+	AddLabelCmd.Flags().String(LabelValueKey, "", "label value (optional)")
 }

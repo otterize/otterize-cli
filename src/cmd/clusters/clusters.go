@@ -6,13 +6,15 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/clusters/get"
 	"github.com/otterize/otterize-cli/src/cmd/clusters/list"
 	"github.com/otterize/otterize-cli/src/cmd/clusters/update"
+	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/spf13/cobra"
 )
 
 var ClustersCmd = &cobra.Command{
-	Use:   "clusters",
-	Short: "",
-	Long:  ``,
+	Use:     "clusters",
+	GroupID: groups.ResourcesGroup.ID,
+	Aliases: []string{"cluster"},
+	Short:   "Manage clusters",
 }
 
 func init() {

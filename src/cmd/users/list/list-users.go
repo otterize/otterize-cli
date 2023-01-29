@@ -5,21 +5,19 @@ import (
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var ListUsersCmd = &cobra.Command{
 	Use:          "list",
-	Short:        `List users.`,
+	Short:        "List users",
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -29,13 +27,7 @@ var ListUsersCmd = &cobra.Command{
 			return err
 		}
 
-		users := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatUsers(users)
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatUsers(lo.FromPtr(r.JSON200))
 		return nil
 	},
 }

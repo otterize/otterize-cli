@@ -12,15 +12,20 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey       = "name"
+	NameShorthand = "n"
+)
+
 var UpdateIntegrationlicationCmd = &cobra.Command{
 	Use:          "update <integration-id>",
-	Short:        `Updates an Otterize integration.`,
+	Short:        "Update an integration",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -39,18 +44,11 @@ var UpdateIntegrationlicationCmd = &cobra.Command{
 		}
 
 		prints.PrintCliStderr("Integration updated")
-
-		integration := lo.FromPtr(r.JSON200)
-		formatted, err := output.FormatIntegrations([]cloudapi.Integration{integration}, false)
-		if err != nil {
-			return err
-		}
-
-		prints.PrintCliOutput(formatted)
+		output.FormatIntegrations([]cloudapi.Integration{lo.FromPtr(r.JSON200)}, false)
 		return nil
 	},
 }
 
 func init() {
-	UpdateIntegrationlicationCmd.Flags().StringP(NameKey, NameShorthand, "", "New integration name")
+	UpdateIntegrationlicationCmd.Flags().StringP(NameKey, NameShorthand, "", "new integration name")
 }
