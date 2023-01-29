@@ -14,7 +14,7 @@ var ClustersCmd = &cobra.Command{
 	Use:     "clusters",
 	GroupID: groups.ResourcesGroup.ID,
 	Aliases: []string{"cluster"},
-	Short:   "Create, modify, delete & query cluster objects via the Otterize API",
+	Short:   "Cluster operations via the Otterize API",
 }
 
 func init() {

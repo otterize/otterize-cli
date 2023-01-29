@@ -12,9 +12,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	EnvironmentIDKey = "env-id"
+)
+
 var UpdateNamespaceCmd = &cobra.Command{
 	Use:          "update <namespace-id>",
-	Short:        `Updates a namespace.`,
+	Short:        "Update a namespace",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

@@ -14,7 +14,7 @@ var IntegrationsCmd = &cobra.Command{
 	Use:     "integrations",
 	GroupID: groups.ResourcesGroup.ID,
 	Aliases: []string{"integration"},
-	Short:   "Create, modify, delete & query integration objects via the Otterize API",
+	Short:   "Integration operations via the Otterize API",
 }
 
 func init() {

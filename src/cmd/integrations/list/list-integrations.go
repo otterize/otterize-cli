@@ -21,7 +21,7 @@ const (
 
 var ListIntegrationsCmd = &cobra.Command{
 	Use:          "list",
-	Short:        `List integrations.`,
+	Short:        "List integrations",
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

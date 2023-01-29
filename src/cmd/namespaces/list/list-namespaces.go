@@ -12,9 +12,16 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey          = "name"
+	NameShorthand    = "n"
+	EnvironmentIDKey = "env-id"
+	ClusterIDKey     = "cluster-id"
+)
+
 var ListNamespacesCmd = &cobra.Command{
 	Use:          "list",
-	Short:        `List namespaces.`,
+	Short:        "List namespaces",
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

@@ -14,7 +14,7 @@ import (
 
 var GetNamespaceCmd = &cobra.Command{
 	Use:          "get <namespace-id>",
-	Short:        `Gets details for namespace.`,
+	Short:        "Get details for a namespace",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

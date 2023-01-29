@@ -14,7 +14,7 @@ import (
 
 var CreateInviteCmd = &cobra.Command{
 	Use:          "create",
-	Short:        `Creates an Otterize user invite.`,
+	Short:        "Create a user invite",
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

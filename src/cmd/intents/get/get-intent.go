@@ -14,7 +14,7 @@ import (
 
 var GetCmd = &cobra.Command{
 	Use:          "get <intent-id>",
-	Short:        "Gets an intent for a given id",
+	Short:        "Get an intent for a given id",
 	Args:         cobra.ExactArgs(1),
 	Long:         ``,
 	SilenceUsage: true,

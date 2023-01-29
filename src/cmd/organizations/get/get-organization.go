@@ -15,7 +15,7 @@ import (
 var GetOrganizationCmd = &cobra.Command{
 	Use:          "get <orgid>",
 	Aliases:      []string{"org"},
-	Short:        `Gets details for an organization.`,
+	Short:        "Get details for an organization",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

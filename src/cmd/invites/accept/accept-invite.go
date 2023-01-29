@@ -13,7 +13,7 @@ import (
 
 var AcceptInviteCmd = &cobra.Command{
 	Use:          "accept <inviteid>",
-	Short:        "Accept an Otterize user invite.",
+	Short:        "Accept an Otterize user invite",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

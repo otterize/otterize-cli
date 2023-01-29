@@ -13,8 +13,8 @@ import (
 )
 
 var GetUserCmd = &cobra.Command{
-	Use:          "get <userid>",
-	Short:        `Gets details for a user.`,
+	Use:          "get <user-id>",
+	Short:        "Get details for a user",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

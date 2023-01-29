@@ -13,7 +13,7 @@ import (
 
 var ListOrganizationsCmd = &cobra.Command{
 	Use:          "list",
-	Short:        `List organizations.`,
+	Short:        "List organizations",
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

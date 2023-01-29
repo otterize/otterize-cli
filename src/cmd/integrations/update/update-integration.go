@@ -19,7 +19,7 @@ const (
 
 var UpdateIntegrationlicationCmd = &cobra.Command{
 	Use:          "update <integration-id>",
-	Short:        `Updates an Otterize integration.`,
+	Short:        "Update an integration",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

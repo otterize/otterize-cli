@@ -14,8 +14,7 @@ import (
 
 var UpdateOrganizationCmd = &cobra.Command{
 	Use:          "update <orgid>",
-	Aliases:      []string{"org"},
-	Short:        `Updates an Otterize organization.`,
+	Short:        "Update an organization",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

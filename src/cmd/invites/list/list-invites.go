@@ -14,7 +14,7 @@ import (
 
 var ListInvitesCmd = &cobra.Command{
 	Use:          "list",
-	Short:        `List user invites.`,
+	Short:        "List user invites",
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

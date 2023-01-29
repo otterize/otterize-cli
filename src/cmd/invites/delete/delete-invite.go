@@ -15,7 +15,7 @@ import (
 
 var DeleteInviteCmd = &cobra.Command{
 	Use:          "delete <inviteid>",
-	Short:        `Delete a user invite.`,
+	Short:        "Delete a user invite",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

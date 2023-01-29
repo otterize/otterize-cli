@@ -14,7 +14,7 @@ import (
 
 var CreateOrganizationCmd = &cobra.Command{
 	Use:          "create",
-	Short:        `Creates a new Otterize organization.`,
+	Short:        "Create an organization",
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

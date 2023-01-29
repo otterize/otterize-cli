@@ -14,7 +14,7 @@ import (
 
 var GetEnvCmd = &cobra.Command{
 	Use:          "get <environment-id>",
-	Short:        "Gets details for an environment",
+	Short:        "Get details for an environment",
 	SilenceUsage: true,
 	Args:         cobra.ExactArgs(1),
 	RunE: func(_ *cobra.Command, args []string) error {

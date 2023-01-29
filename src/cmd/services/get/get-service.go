@@ -13,7 +13,7 @@ import (
 
 var GetCmd = &cobra.Command{
 	Use:          "get <service-id>",
-	Short:        "Gets a service for a given id",
+	Short:        "Get a service for a given id",
 	Args:         cobra.ExactArgs(1),
 	Long:         ``,
 	SilenceUsage: true,
