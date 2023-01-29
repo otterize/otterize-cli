@@ -12,9 +12,16 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey         = "name"
+	NameShorthand   = "n"
+	LabelsKey       = "labels"
+	LabelsShorthand = "l"
+)
+
 var UpdateEnvCmd = &cobra.Command{
-	Use:          "update <envid>",
-	Short:        `Updates an Otterize environment`,
+	Use:          "update <environment-id>",
+	Short:        "Update an environment",
 	SilenceUsage: true,
 	Args:         cobra.ExactArgs(1),
 	RunE: func(_ *cobra.Command, args []string) error {
@@ -56,8 +63,8 @@ var UpdateEnvCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateEnvCmd.Flags().StringP(NameKey, NameShorthand, "", "New environment name")
-	UpdateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "New environment key value Labels (key=val,key2=val2=..)")
+	UpdateEnvCmd.Flags().StringP(NameKey, NameShorthand, "", "new environment name")
+	UpdateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "new environment labels in key=value format (value is optional): key1=val1,key2=val2,key3=")
 
 	UpdateEnvCmd.AddCommand(RemoveLabelCmd)
 	UpdateEnvCmd.AddCommand(AddLabelCmd)

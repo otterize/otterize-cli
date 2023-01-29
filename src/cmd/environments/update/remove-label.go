@@ -12,9 +12,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	LabelToDeleteKey = "key"
+)
+
 var RemoveLabelCmd = &cobra.Command{
-	Use:          "remove_label <envid>",
-	Short:        `Removes label from an existing Otterize environmentD`,
+	Use:          "remove-label <environment-id>",
+	Short:        "Remove a label from an environment",
 	SilenceUsage: true,
 	Args:         cobra.ExactArgs(1),
 	RunE: func(_ *cobra.Command, args []string) error {
@@ -53,5 +57,5 @@ var RemoveLabelCmd = &cobra.Command{
 }
 
 func init() {
-	RemoveLabelCmd.PersistentFlags().String(LabelsKey, "", "Label key to delete")
+	RemoveLabelCmd.PersistentFlags().String(LabelToDeleteKey, "", "label key to delete")
 }

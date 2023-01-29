@@ -10,10 +10,8 @@ import (
 )
 
 var EnvironmentsCmd = &cobra.Command{
-	Use:     "environments",
-	Aliases: []string{"envs"},
-	Short:   "",
-	Long:    ``,
+	Use:   "environments",
+	Short: "Create, modify, delete & query environment objects via the Otterize API",
 }
 
 func init() {

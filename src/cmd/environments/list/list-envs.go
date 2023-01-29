@@ -12,9 +12,16 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey         = "name"
+	NameShorthand   = "n"
+	LabelsKey       = "labels"
+	LabelsShorthand = "l"
+)
+
 var ListEnvsCmd = &cobra.Command{
 	Use:          "list",
-	Short:        `List Environments.`,
+	Short:        "List Environments",
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
@@ -52,5 +59,5 @@ var ListEnvsCmd = &cobra.Command{
 
 func init() {
 	ListEnvsCmd.Flags().StringP(NameKey, NameShorthand, "", "environment name")
-	ListEnvsCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, make(map[string]string, 0), "Show only environments that match the given labels")
+	ListEnvsCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "environment labels in key=value format (value is optional): key1=val1,key2=val2,key3=")
 }

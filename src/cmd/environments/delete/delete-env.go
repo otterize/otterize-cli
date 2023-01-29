@@ -13,8 +13,8 @@ import (
 )
 
 var DeleteEnvCmd = &cobra.Command{
-	Use:          "delete <envid>",
-	Short:        `Delete an environment.`,
+	Use:          "delete <environment-id>",
+	Short:        "Delete an environment",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {

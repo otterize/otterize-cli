@@ -12,9 +12,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	LabelKeyKey   = "key"
+	LabelValueKey = "value"
+)
+
 var AddLabelCmd = &cobra.Command{
-	Use:          "add_label <envid>",
-	Short:        `Adds label to an existing Otterize environment`,
+	Use:          "add-label <environment-id>",
+	Short:        "Add a label to an environment",
 	SilenceUsage: true,
 	Args:         cobra.ExactArgs(1),
 	RunE: func(_ *cobra.Command, args []string) error {
@@ -55,5 +60,5 @@ var AddLabelCmd = &cobra.Command{
 
 func init() {
 	AddLabelCmd.PersistentFlags().String(LabelKeyKey, "", "label key")
-	AddLabelCmd.PersistentFlags().String(LabelValueKey, "", "label value")
+	AddLabelCmd.PersistentFlags().String(LabelValueKey, "", "label value (optional)")
 }
