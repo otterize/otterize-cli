@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "606cf8e74a756e2966745135fbd80188a7f07020"
+    "x-revision": "c1cfdabfd254e9466dfa1f8418e3bde336b28dd0"
   },
   "servers": [
     {
@@ -2532,7 +2532,7 @@
         ],
         "description": "Remove user from organization",
         "summary": "Remove user from organization",
-        "operationId": "disassociateUserFromOrganization_mutation",
+        "operationId": "removeUserFromOrganization_mutation",
         "parameters": [
           {
             "in": "path",
@@ -3026,25 +3026,14 @@
         "type": "object",
         "required": [
           "name",
-          "status",
           "components",
           "namespaces",
           "serviceCount",
-          "defaultEnvironment",
           "id"
         ],
         "properties": {
           "name": {
             "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "NEVER_CONNECTED",
-              "DISCONNECTED",
-              "PARTIALLY_CONNECTED",
-              "CONNECTED"
-            ]
           },
           "components": {
             "$ref": "#/components/schemas/IntegrationComponents"

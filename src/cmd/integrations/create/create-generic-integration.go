@@ -30,11 +30,9 @@ var CreateGenericIntegrationCmd = &cobra.Command{
 			return err
 		}
 
-		name := viper.GetString(NameKey)
-
 		r, err := c.CreateGenericIntegrationMutationWithResponse(ctxTimeout,
 			cloudapi.CreateGenericIntegrationMutationJSONRequestBody{
-				Name: name,
+				Name: viper.GetString(NameKey),
 			})
 		if err != nil {
 			return err

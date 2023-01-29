@@ -32,14 +32,14 @@ var ListEnvsCmd = &cobra.Command{
 			return err
 		}
 
-		name := viper.GetString(NameKey)
-		labels := viper.GetStringMapString(LabelsKey)
-		labelsInput := lo.Ternary(len(labels) == 0, nil, lo.ToPtr(cloudclient.LabelsToLabelInput(labels)))
-
 		r, err := c.EnvironmentsQueryWithResponse(ctxTimeout,
 			&cloudapi.EnvironmentsQueryParams{
-				Name:   lo.Ternary(name != "", &name, nil),
-				Labels: labelsInput,
+				Name: lo.Ternary(viper.IsSet(NameKey), lo.ToPtr(NameKey), nil),
+				Labels: lo.Ternary(
+					viper.IsSet(LabelsKey),
+					lo.ToPtr(cloudclient.LabelsToLabelInput(viper.GetStringMapString(LabelsKey))),
+					nil,
+				),
 			},
 		)
 		if err != nil {

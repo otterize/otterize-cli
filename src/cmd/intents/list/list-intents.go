@@ -31,18 +31,13 @@ var ListCmd = &cobra.Command{
 			return err
 		}
 
-		params := cloudapi.IntentsQueryParams{}
-		if viper.IsSet(EnvironmentIDKey) {
-			params.EnvironmentId = lo.ToPtr(viper.GetString(EnvironmentIDKey))
-		}
-		if viper.IsSet(IntentClientIDKey) {
-			params.ClientId = lo.ToPtr(viper.GetString(IntentClientIDKey))
-		}
-		if viper.IsSet(IntentServerIDKey) {
-			params.ServerId = lo.ToPtr(viper.GetString(IntentServerIDKey))
-		}
-
-		r, err := c.IntentsQueryWithResponse(ctxTimeout, &params)
+		r, err := c.IntentsQueryWithResponse(ctxTimeout,
+			&cloudapi.IntentsQueryParams{
+				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIDKey), lo.ToPtr(viper.GetString(EnvironmentIDKey)), nil),
+				ClientId:      lo.Ternary(viper.IsSet(IntentClientIDKey), lo.ToPtr(viper.GetString(IntentClientIDKey)), nil),
+				ServerId:      lo.Ternary(viper.IsSet(IntentServerIDKey), lo.ToPtr(viper.GetString(IntentServerIDKey)), nil),
+			},
+		)
 		if err != nil {
 			return err
 		}
@@ -55,5 +50,5 @@ var ListCmd = &cobra.Command{
 func init() {
 	ListCmd.Flags().String(EnvironmentIDKey, "", "environment id")
 	ListCmd.Flags().String(IntentClientIDKey, "", "client service id")
-	ListCmd.Flags().String(IntentServerIDKey, "", "service id")
+	ListCmd.Flags().String(IntentServerIDKey, "", "server service id")
 }

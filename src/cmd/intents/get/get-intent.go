@@ -25,7 +25,6 @@ var GetCmd = &cobra.Command{
 		}
 
 		id := args[0]
-
 		r, err := c.IntentQueryWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err

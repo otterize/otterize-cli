@@ -15,6 +15,7 @@ import (
 const (
 	NameKey       = "name"
 	NameShorthand = "n"
+	ImageURLKey   = "image-url"
 )
 
 var UpdateOrganizationCmd = &cobra.Command{
@@ -31,12 +32,11 @@ var UpdateOrganizationCmd = &cobra.Command{
 		}
 
 		id := args[0]
-		name := viper.GetString(NameKey)
-
 		r, err := c.UpdateOrganizationMutationWithResponse(ctxTimeout,
 			id,
 			cloudapi.UpdateOrganizationMutationJSONRequestBody{
-				Name: lo.Ternary(name != "", &name, nil),
+				Name:     lo.Ternary(viper.IsSet(NameKey), lo.ToPtr(viper.GetString(NameKey)), nil),
+				ImageURL: lo.Ternary(viper.IsSet(ImageURLKey), lo.ToPtr(viper.GetString(ImageURLKey)), nil),
 			},
 		)
 		if err != nil {
@@ -51,4 +51,5 @@ var UpdateOrganizationCmd = &cobra.Command{
 
 func init() {
 	UpdateOrganizationCmd.Flags().StringP(NameKey, NameShorthand, "", "new organization name")
+	UpdateOrganizationCmd.Flags().String(ImageURLKey, "", "new organization image URL")
 }

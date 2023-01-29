@@ -30,10 +30,8 @@ var CreateClusterCmd = &cobra.Command{
 			return err
 		}
 
-		name := viper.GetString(NameKey)
-
 		r, err := c.CreateClusterMutationWithResponse(ctxTimeout,
-			cloudapi.CreateClusterMutationJSONRequestBody{Name: name},
+			cloudapi.CreateClusterMutationJSONRequestBody{Name: viper.GetString(NameKey)},
 		)
 		if err != nil {
 			return err

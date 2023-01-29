@@ -12,7 +12,6 @@ import (
 
 var GetOrganizationCmd = &cobra.Command{
 	Use:          "get <organization-id>",
-	Aliases:      []string{"org"},
 	Short:        "Get details for an organization",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
@@ -25,7 +24,6 @@ var GetOrganizationCmd = &cobra.Command{
 		}
 
 		id := args[0]
-
 		r, err := c.OrganizationQueryWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err

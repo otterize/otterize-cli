@@ -23,7 +23,6 @@ var DeleteClusterCmd = &cobra.Command{
 		}
 
 		id := args[0]
-
 		r, err := c.DeleteClusterMutationWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err

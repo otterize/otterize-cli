@@ -23,7 +23,6 @@ var DeleteEnvCmd = &cobra.Command{
 		}
 
 		id := args[0]
-
 		r, err := c.DeleteEnvironmentMutationWithResponse(ctxTimeout, id)
 		if err != nil {
 			return err

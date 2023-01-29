@@ -1,11 +1,10 @@
-package update
+package removeuser
 
 import (
 	"context"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
@@ -13,41 +12,39 @@ import (
 )
 
 const (
-	LabelToDeleteKey = "key"
+	UserIDKey = "user-id"
 )
 
-var RemoveLabelCmd = &cobra.Command{
-	Use:          "remove-label <environment-id>",
-	Short:        "Remove a label from an environment",
+var RemoveUserFromOrganizationCmd = &cobra.Command{
+	Use:          "remove-user <organization-id>",
+	Short:        "Update an organization",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-
 		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
 
 		id := args[0]
-		r, err := c.DeleteEnvironmentLabelMutationWithResponse(ctxTimeout,
+		r, err := c.RemoveUserFromOrganizationMutationWithResponse(ctxTimeout,
 			id,
-			&cloudapi.DeleteEnvironmentLabelMutationParams{
-				Key: viper.GetString(LabelKeyKey),
+			&cloudapi.RemoveUserFromOrganizationMutationParams{
+				UserId: viper.GetString(UserIDKey),
 			},
 		)
 		if err != nil {
 			return err
 		}
 
-		prints.PrintCliStderr("Environment updated")
-		output.FormatEnvs([]cloudapi.Environment{lo.FromPtr(r.JSON200)})
+		prints.PrintCliStderr("User %s removed from organization %s", lo.FromPtr(r.JSON200), id)
 		return nil
 	},
 }
 
 func init() {
-	RemoveLabelCmd.Flags().String(LabelToDeleteKey, "", "label key to delete")
-	cobra.CheckErr(RemoveLabelCmd.MarkFlagRequired(LabelToDeleteKey))
+	RemoveUserFromOrganizationCmd.Flags().String(UserIDKey, "", "user id")
+	cobra.CheckErr(RemoveUserFromOrganizationCmd.MarkFlagRequired(UserIDKey))
 }

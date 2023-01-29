@@ -32,13 +32,10 @@ var AddLabelCmd = &cobra.Command{
 		}
 
 		id := args[0]
-		key := viper.GetString(LabelKeyKey)
-		value := viper.GetString(LabelValueKey)
-
 		r, err := c.AddEnvironmentLabelMutationWithResponse(ctxTimeout,
 			id,
 			cloudapi.AddEnvironmentLabelMutationJSONRequestBody{
-				Label: cloudclient.LabelToLabelInput(key, value),
+				Label: cloudclient.LabelToLabelInput(viper.GetString(LabelKeyKey), viper.GetString(LabelValueKey)),
 			},
 		)
 		if err != nil {

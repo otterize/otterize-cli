@@ -106,7 +106,6 @@ func FormatClusters(clusters []cloudapi.Cluster) {
 		return []map[string]string{{
 			"id":                              c.Id,
 			"name":                            c.Name,
-			"status":                          string(c.Status),
 			"namespace count":                 fmt.Sprintf("%d", len(c.Name)),
 			"service count":                   fmt.Sprintf("%d", c.ServiceCount),
 			"configuration.globalDefaultDeny": fmt.Sprintf("%t", lo.FromPtr(c.Configuration).GlobalDefaultDeny),

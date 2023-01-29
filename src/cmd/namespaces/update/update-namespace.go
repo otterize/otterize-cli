@@ -30,12 +30,10 @@ var UpdateNamespaceCmd = &cobra.Command{
 		}
 
 		id := args[0]
-		envID := viper.GetString(EnvironmentIDKey)
-
 		r, err := c.UpdateNamespaceMutationWithResponse(ctxTimeout,
 			id,
 			cloudapi.UpdateNamespaceMutationJSONRequestBody{
-				EnvironmentId: lo.Ternary(envID != "", &envID, nil),
+				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIDKey), lo.ToPtr(viper.GetString(EnvironmentIDKey)), nil),
 			},
 		)
 		if err != nil {
