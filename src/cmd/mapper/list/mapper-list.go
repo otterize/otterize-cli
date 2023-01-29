@@ -16,7 +16,6 @@ const (
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "",
-	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return mapperclient.WithClient(func(c *mapperclient.Client) error {
 			namespacesFilter := viper.GetStringSlice(NamespacesKey)

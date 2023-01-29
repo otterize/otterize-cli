@@ -1,6 +1,7 @@
 package invites
 
 import (
+	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/otterize/otterize-cli/src/cmd/invites/accept"
 	"github.com/otterize/otterize-cli/src/cmd/invites/create"
 	"github.com/otterize/otterize-cli/src/cmd/invites/delete"
@@ -9,9 +10,9 @@ import (
 )
 
 var InvitesCmd = &cobra.Command{
-	Use:   "invites",
-	Short: "",
-	Long:  ``,
+	Use:     "invites",
+	GroupID: groups.AccountsGroup.ID,
+	Short:   "",
 }
 
 func init() {

@@ -2,6 +2,7 @@ package login
 
 import (
 	"context"
+	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/auth_api"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/server"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/userlogin"
@@ -18,8 +19,8 @@ const SwitchOrgFlagKey = "switch-org"
 
 var LoginCmd = &cobra.Command{
 	Use:          "login",
+	GroupID:      groups.AccountsGroup.ID,
 	Short:        "Login to Otterize Cloud",
-	Long:         ``,
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, _ []string) error {

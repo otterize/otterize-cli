@@ -1,6 +1,7 @@
 package mapper
 
 import (
+	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/otterize/otterize-cli/src/cmd/mapper/export"
 	"github.com/otterize/otterize-cli/src/cmd/mapper/list"
 	"github.com/otterize/otterize-cli/src/cmd/mapper/reset"
@@ -9,9 +10,9 @@ import (
 )
 
 var MapperCmd = &cobra.Command{
-	Use:   "mapper",
-	Short: "",
-	Long:  ``,
+	Use:     "mapper",
+	GroupID: groups.OSSGroup.ID,
+	Short:   "",
 }
 
 func init() {
