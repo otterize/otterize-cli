@@ -127,3 +127,68 @@ func FormatNamespaces(namespaces []cloudapi.Namespace) (string, error) {
 
 	return FormatList(namespaces, columns, getColumnData)
 }
+
+func getCertificateInformation(cert cloudapi.CertificateInformation) string {
+	var certificateInfo, commonName, dns, ttl string
+	commonName = cert.CommonName
+	if cert.DnsNames != nil {
+		for _, dnsName := range *cert.DnsNames {
+			dns += fmt.Sprintf("%s,", dnsName)
+		}
+	}
+	if cert.Ttl != nil {
+		ttl = fmt.Sprintf("%d", *cert.Ttl)
+	}
+
+	certificateInfo = fmt.Sprintf("common-name=%s,", commonName)
+	if len(dns) > 0 {
+		certificateInfo += fmt.Sprintf("dns-names=%s", dns)
+	}
+	if len(ttl) > 0 {
+		certificateInfo += fmt.Sprintf("ttl=%s,", ttl)
+	}
+	return certificateInfo
+}
+
+func getKafkaInfo(ksc cloudapi.KafkaServerConfig) string {
+	var kafkaInfo string
+	var topics string
+	for _, topic := range ksc.Topics {
+		topics += fmt.Sprintf("%s,pattern=%s,client-identity-required=%t,intents-required=%t,", topic.Topic, string(topic.Pattern), topic.ClientIdentityRequired, topic.IntentsRequired)
+	}
+	var address string
+	if ksc.Address != nil {
+		address = *ksc.Address
+		kafkaInfo = fmt.Sprintf("%s,", address)
+	}
+	if len(topics) > 0 {
+		kafkaInfo += fmt.Sprintf("topics=%s", topics)
+	}
+	return kafkaInfo
+}
+
+func FormatServices(services []cloudapi.Service) (string, error) {
+	columns := []string{"id", "name", "namespace", "environment id", "kafka info", "certificate info"}
+	getColumnData := func(s cloudapi.Service) []map[string]string {
+		var kafkaInfo string
+		var certificateInfo string
+		if s.KafkaServerConfig != nil {
+			kafkaInfo = getKafkaInfo(*s.KafkaServerConfig)
+		}
+
+		if s.CertificateInformation != nil {
+			certificateInfo = getCertificateInformation(*s.CertificateInformation)
+		}
+
+		return []map[string]string{{
+			"id":               s.Id,
+			"name":             s.Name,
+			"namespace":        s.Namespace.Name,
+			"environment id":   s.Environment.Id,
+			"kafka info":       kafkaInfo,
+			"certificate info": certificateInfo,
+		}}
+	}
+
+	return FormatList(services, columns, getColumnData)
+}
