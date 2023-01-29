@@ -13,7 +13,7 @@ import (
 )
 
 var GetOrganizationCmd = &cobra.Command{
-	Use:          "get <orgid>",
+	Use:          "get <organization-id>",
 	Aliases:      []string{"org"},
 	Short:        "Get details for an organization",
 	Args:         cobra.ExactArgs(1),

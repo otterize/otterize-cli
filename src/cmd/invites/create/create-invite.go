@@ -50,5 +50,5 @@ var CreateInviteCmd = &cobra.Command{
 }
 
 func init() {
-	CreateInviteCmd.PersistentFlags().String(EmailKey, "", "invited email address")
+	CreateInviteCmd.Flags().String(EmailKey, "", "invited email address")
 }

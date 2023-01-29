@@ -15,6 +15,7 @@ import (
 var CreateOrganizationCmd = &cobra.Command{
 	Use:          "create",
 	Short:        "Create an organization",
+	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)

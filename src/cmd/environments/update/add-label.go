@@ -59,6 +59,7 @@ var AddLabelCmd = &cobra.Command{
 }
 
 func init() {
-	AddLabelCmd.PersistentFlags().String(LabelKeyKey, "", "label key")
-	AddLabelCmd.PersistentFlags().String(LabelValueKey, "", "label value (optional)")
+	AddLabelCmd.Flags().String(LabelKeyKey, "", "label key")
+	cobra.CheckErr(AddLabelCmd.MarkFlagRequired(LabelKeyKey))
+	AddLabelCmd.Flags().String(LabelValueKey, "", "label value (optional)")
 }

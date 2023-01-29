@@ -57,5 +57,5 @@ var RemoveLabelCmd = &cobra.Command{
 }
 
 func init() {
-	RemoveLabelCmd.PersistentFlags().String(LabelToDeleteKey, "", "label key to delete")
+	RemoveLabelCmd.Flags().String(LabelToDeleteKey, "", "label key to delete")
 }

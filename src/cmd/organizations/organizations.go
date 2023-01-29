@@ -12,8 +12,8 @@ import (
 var OrganizationsCmd = &cobra.Command{
 	Use:     "organizations",
 	GroupID: groups.AccountsGroup.ID,
-	Short:   "",
-	Long:    ``,
+	Aliases: []string{"organization", "orgs", "org"},
+	Short:   "Manage Otterize organizations",
 }
 
 func init() {

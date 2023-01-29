@@ -12,8 +12,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	NameKey       = "name"
+	NameShorthand = "n"
+)
+
 var UpdateOrganizationCmd = &cobra.Command{
-	Use:          "update <orgid>",
+	Use:          "update <organization-id>",
 	Short:        "Update an organization",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
@@ -52,5 +57,5 @@ var UpdateOrganizationCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateOrganizationCmd.PersistentFlags().StringP(NameKey, NameShorthand, "", "new organization name")
+	UpdateOrganizationCmd.Flags().StringP(NameKey, NameShorthand, "", "new organization name")
 }
