@@ -2,7 +2,6 @@ package list
 
 import (
 	"context"
-	"fmt"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
@@ -13,55 +12,55 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	EnvironmentIDKey  = "env-id"
+	IntentClientIDKey = "client-service-id"
+	IntentServerIDKey = "server-service-id"
+)
+
 var ListCmd = &cobra.Command{
 	Use:          "list",
 	Short:        "List intents",
-	Args:         cobra.ExactArgs(0),
-	Long:         ``,
+	Args:         cobra.NoArgs,
 	SilenceUsage: true,
-	RunE:         listIntents,
-}
+	RunE: func(_ *cobra.Command, _ []string) error {
+		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
+		defer cancel()
 
-func listIntents(_ *cobra.Command, _ []string) error {
-	ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
-	defer cancel()
+		c, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
+		if err != nil {
+			return err
+		}
 
-	client, err := cloudclient.NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctxTimeout))
-	if err != nil {
-		return err
-	}
+		params := cloudapi.IntentsQueryParams{}
+		if viper.IsSet(EnvironmentIDKey) {
+			params.EnvironmentId = lo.ToPtr(viper.GetString(EnvironmentIDKey))
+		}
+		if viper.IsSet(IntentClientIDKey) {
+			params.ClientId = lo.ToPtr(viper.GetString(IntentClientIDKey))
+		}
+		if viper.IsSet(IntentServerIDKey) {
+			params.ServerId = lo.ToPtr(viper.GetString(IntentServerIDKey))
+		}
 
-	params := cloudapi.IntentsQueryParams{}
-	if viper.IsSet(EnvironmentIDKey) {
-		params.EnvironmentId = lo.ToPtr(viper.GetString(EnvironmentIDKey))
-	}
-	if viper.IsSet(IntentClientIDKey) {
-		params.ClientId = lo.ToPtr(viper.GetString(IntentClientIDKey))
-	}
-	if viper.IsSet(IntentServerIDKey) {
-		params.ServerId = lo.ToPtr(viper.GetString(IntentServerIDKey))
-	}
+		resp, err := c.IntentsQueryWithResponse(ctxTimeout, &params)
+		if err != nil {
+			return err
+		}
 
-	resp, err := client.IntentsQueryWithResponse(ctxTimeout, &params)
-	if err != nil {
-		return err
-	}
+		intents := lo.FromPtr(resp.JSON200)
+		result, err := output.FormatIntents(intents)
+		if err != nil {
+			return err
+		}
 
-	intents := lo.FromPtr(resp.JSON200)
-
-	result, err := output.FormatList(intents, output.IntentsColumns(), output.FormatIntentsForCLITable)
-	if err != nil {
-		return err
-	}
-
-	prints.PrintCliOutput(result)
-	return nil
+		prints.PrintCliOutput(result)
+		return nil
+	},
 }
 
 func init() {
-	ListCmd.Flags().String(EnvironmentIDKey, "", "filter list by environment id")
-	ListCmd.Flags().String(IntentClientIDKey, "", "filter list by client service id")
-	ListCmd.Flags().String(IntentServerIDKey, "", "filter list by server service id")
-
-	ListCmd.Flags().String(config.OutputFormatKey, config.OutputFormatDefault, fmt.Sprintf("output format - %s/%s", config.OutputYaml, config.OutputJson))
+	ListCmd.Flags().String(EnvironmentIDKey, "", "environment id")
+	ListCmd.Flags().String(IntentClientIDKey, "", "client service id")
+	ListCmd.Flags().String(IntentServerIDKey, "", "service id")
 }
