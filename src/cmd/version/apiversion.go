@@ -10,7 +10,7 @@ import (
 
 var ApiVersionCmd = &cobra.Command{
 	Use:          "api-version",
-	Short:        "Get the Otterize api version",
+	Short:        "Get the Otterize API version",
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
