@@ -12,7 +12,7 @@ var NamespacesCmd = &cobra.Command{
 	Use:     "namespaces",
 	GroupID: groups.ResourcesGroup.ID,
 	Aliases: []string{"namespace"},
-	Short:   "Manage namespaces via the Otterize API",
+	Short:   "Manage namespaces",
 }
 
 func init() {

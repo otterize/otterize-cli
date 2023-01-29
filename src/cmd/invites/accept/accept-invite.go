@@ -12,8 +12,8 @@ import (
 )
 
 var AcceptInviteCmd = &cobra.Command{
-	Use:          "accept <inviteid>",
-	Short:        "Accept an Otterize user invite",
+	Use:          "accept <invite-id>",
+	Short:        "Accept a user invite",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
@@ -26,7 +26,6 @@ var AcceptInviteCmd = &cobra.Command{
 		}
 
 		inviteID := args[0]
-
 		resp, err := c.AcceptInviteMutationWithResponse(ctxTimeout, inviteID, cloudapi.AcceptInviteMutationJSONRequestBody{})
 		if err != nil {
 			return err

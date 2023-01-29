@@ -14,7 +14,7 @@ import (
 )
 
 var DeleteInviteCmd = &cobra.Command{
-	Use:          "delete <inviteid>",
+	Use:          "delete <invite-id>",
 	Short:        "Delete a user invite",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,

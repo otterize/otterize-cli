@@ -11,7 +11,7 @@ var IntentsCmd = &cobra.Command{
 	Use:     "intents",
 	GroupID: groups.ResourcesGroup.ID,
 	Aliases: []string{"intent"},
-	Short:   "Manage intents via the Otterize API",
+	Short:   "Manage intents",
 }
 
 func init() {

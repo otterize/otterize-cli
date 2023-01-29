@@ -12,6 +12,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	EmailKey = "email"
+)
+
 var CreateInviteCmd = &cobra.Command{
 	Use:          "create",
 	Short:        "Create a user invite",
@@ -46,5 +50,5 @@ var CreateInviteCmd = &cobra.Command{
 }
 
 func init() {
-	CreateInviteCmd.PersistentFlags().String(EmailKey, "", "Email address")
+	CreateInviteCmd.PersistentFlags().String(EmailKey, "", "invited email address")
 }

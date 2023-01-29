@@ -14,7 +14,7 @@ var ClustersCmd = &cobra.Command{
 	Use:     "clusters",
 	GroupID: groups.ResourcesGroup.ID,
 	Aliases: []string{"cluster"},
-	Short:   "Manage clusters via the Otterize API",
+	Short:   "Manage clusters",
 }
 
 func init() {

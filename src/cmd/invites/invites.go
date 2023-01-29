@@ -12,7 +12,7 @@ import (
 var InvitesCmd = &cobra.Command{
 	Use:     "invites",
 	GroupID: groups.AccountsGroup.ID,
-	Short:   "",
+	Short:   "Manage Otterize user invites",
 }
 
 func init() {

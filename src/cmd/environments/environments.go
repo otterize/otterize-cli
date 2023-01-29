@@ -14,7 +14,7 @@ var EnvironmentsCmd = &cobra.Command{
 	Use:     "environments",
 	GroupID: groups.ResourcesGroup.ID,
 	Aliases: []string{"environment", "envs", "env"},
-	Short:   "Manage environments via the Otterize API",
+	Short:   "Manage environments",
 }
 
 func init() {
