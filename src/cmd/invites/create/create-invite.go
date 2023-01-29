@@ -45,4 +45,5 @@ var CreateInviteCmd = &cobra.Command{
 
 func init() {
 	CreateInviteCmd.Flags().String(EmailKey, "", "invited email address")
+	cobra.CheckErr(CreateInviteCmd.MarkFlagRequired(EmailKey))
 }
