@@ -9,19 +9,11 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-const (
-	NameKey         = "name"
-	NameShorthand   = "n"
-	LabelsKey       = "labels"
-	LabelsShorthand = "l"
-)
-
-var UpdateEnvCmd = &cobra.Command{
-	Use:          "update <environment-id>",
-	Short:        "Update an environment",
+var RemoveAllLabelsCmd = &cobra.Command{
+	Use:          "remove-all-labels <environment-id>",
+	Short:        "Remove all labels from an environment",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
@@ -35,15 +27,9 @@ var UpdateEnvCmd = &cobra.Command{
 
 		id := args[0]
 
-		params := cloudapi.UpdateEnvironmentMutationJSONRequestBody{}
-		if viper.IsSet(NameKey) {
-			name := viper.GetString(NameKey)
-			params.Name = lo.ToPtr(name)
-		}
-
-		if viper.IsSet(LabelsKey) {
-			labels := cloudclient.LabelsToLabelInput(viper.GetStringMapString(LabelsKey))
-			params.Labels = lo.ToPtr(labels)
+		emptyLabels := make([]cloudapi.LabelInput, 0)
+		params := cloudapi.UpdateEnvironmentMutationJSONRequestBody{
+			Labels: lo.ToPtr(emptyLabels),
 		}
 
 		response, err := c.UpdateEnvironmentMutationWithResponse(ctxTimeout, id, params)
@@ -55,13 +41,4 @@ var UpdateEnvCmd = &cobra.Command{
 		output.FormatEnvs([]cloudapi.Environment{lo.FromPtr(response.JSON200)})
 		return nil
 	},
-}
-
-func init() {
-	UpdateEnvCmd.Flags().StringP(NameKey, NameShorthand, "", "new environment name")
-	UpdateEnvCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "new environment labels in key=value format (value is optional): key1=val1,key2=val2,key3=")
-
-	UpdateEnvCmd.AddCommand(RemoveAllLabelsCmd)
-	UpdateEnvCmd.AddCommand(RemoveLabelCmd)
-	UpdateEnvCmd.AddCommand(AddLabelCmd)
 }
