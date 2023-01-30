@@ -2,6 +2,7 @@ package list
 
 import (
 	"context"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/enums"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
@@ -32,16 +33,21 @@ var ListIntegrationsCmd = &cobra.Command{
 			return err
 		}
 
+		var integrationTypeParam *cloudapi.IntegrationsQueryParamsIntegrationType
+		if viper.IsSet(IntegrationTypeKey) {
+			integrationType, err := enums.IntegrationTypeFromString(viper.GetString(IntegrationTypeKey))
+			if err != nil {
+				return err
+			}
+			integrationTypeParam = lo.ToPtr(cloudapi.IntegrationsQueryParamsIntegrationType(integrationType))
+		}
+
 		r, err := c.IntegrationsQueryWithResponse(ctxTimeout,
 			&cloudapi.IntegrationsQueryParams{
-				Name: lo.Ternary(viper.IsSet(NameKey), lo.ToPtr(viper.GetString(NameKey)), nil),
-				IntegrationType: lo.Ternary(
-					viper.IsSet(IntegrationTypeKey),
-					lo.ToPtr(cloudapi.IntegrationsQueryParamsIntegrationType(viper.GetString(IntegrationTypeKey))),
-					nil,
-				),
-				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIDKey), lo.ToPtr(viper.GetString(EnvironmentIDKey)), nil),
-				ClusterId:     lo.Ternary(viper.IsSet(ClusterIDKey), lo.ToPtr(viper.GetString(ClusterIDKey)), nil),
+				Name:            lo.Ternary(viper.IsSet(NameKey), lo.ToPtr(viper.GetString(NameKey)), nil),
+				IntegrationType: integrationTypeParam,
+				EnvironmentId:   lo.Ternary(viper.IsSet(EnvironmentIDKey), lo.ToPtr(viper.GetString(EnvironmentIDKey)), nil),
+				ClusterId:       lo.Ternary(viper.IsSet(ClusterIDKey), lo.ToPtr(viper.GetString(ClusterIDKey)), nil),
 			},
 		)
 		if err != nil {

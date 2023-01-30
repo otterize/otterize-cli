@@ -32,23 +32,19 @@ var UpdateClusterCmd = &cobra.Command{
 
 		id := args[0]
 
-		var configuration *cloudapi.ClusterConfigurationInput
+		var configuration cloudapi.ClusterConfigurationInput
 		if viper.IsSet(GlobalDefaultDenyKey) {
-			configuration = &cloudapi.ClusterConfigurationInput{
-				GlobalDefaultDeny: viper.GetBool(GlobalDefaultDenyKey),
-			}
+			configuration.GlobalDefaultDeny = viper.GetBool(GlobalDefaultDenyKey)
 		}
 
 		if viper.IsSet(UseNetworkPoliciesInAccessGraphStatesKey) {
-			configuration = &cloudapi.ClusterConfigurationInput{
-				UseNetworkPoliciesInAccessGraphStates: viper.GetBool(UseNetworkPoliciesInAccessGraphStatesKey),
-			}
+			configuration.UseNetworkPoliciesInAccessGraphStates = viper.GetBool(UseNetworkPoliciesInAccessGraphStatesKey)
 		}
 
 		r, err := c.UpdateClusterMutationWithResponse(ctxTimeout,
 			id,
 			cloudapi.UpdateClusterMutationJSONRequestBody{
-				Configuration: configuration,
+				Configuration: &configuration,
 			},
 		)
 		if err != nil {
