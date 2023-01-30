@@ -13,7 +13,8 @@ import (
 )
 
 const (
-	GlobalDefaultDenyKey = "global-default-deny"
+	GlobalDefaultDenyKey                     = "global-default-deny"
+	UseNetworkPoliciesInAccessGraphStatesKey = "use-network-policies-in-access-graph-states"
 )
 
 var UpdateClusterCmd = &cobra.Command{
@@ -31,17 +32,19 @@ var UpdateClusterCmd = &cobra.Command{
 
 		id := args[0]
 
-		var configuration *cloudapi.ClusterConfigurationInput
+		var configuration cloudapi.ClusterConfigurationInput
 		if viper.IsSet(GlobalDefaultDenyKey) {
-			configuration = &cloudapi.ClusterConfigurationInput{
-				GlobalDefaultDeny: viper.GetBool(GlobalDefaultDenyKey),
-			}
+			configuration.GlobalDefaultDeny = viper.GetBool(GlobalDefaultDenyKey)
+		}
+
+		if viper.IsSet(UseNetworkPoliciesInAccessGraphStatesKey) {
+			configuration.UseNetworkPoliciesInAccessGraphStates = viper.GetBool(UseNetworkPoliciesInAccessGraphStatesKey)
 		}
 
 		r, err := c.UpdateClusterMutationWithResponse(ctxTimeout,
 			id,
 			cloudapi.UpdateClusterMutationJSONRequestBody{
-				Configuration: configuration,
+				Configuration: &configuration,
 			},
 		)
 		if err != nil {
@@ -55,5 +58,6 @@ var UpdateClusterCmd = &cobra.Command{
 }
 
 func init() {
+	UpdateClusterCmd.Flags().Bool(UseNetworkPoliciesInAccessGraphStatesKey, false, "set/unset use network policies in access graph states")
 	UpdateClusterCmd.Flags().Bool(GlobalDefaultDenyKey, false, "set/unset global default deny")
 }
