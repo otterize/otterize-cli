@@ -16,6 +16,7 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/users"
 	"github.com/otterize/otterize-cli/src/cmd/version"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/utils/must"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
@@ -76,6 +77,9 @@ func init() {
 
 	RootCmd.PersistentFlags().StringVar(&config.CfgFile, "config", "", fmt.Sprintf("config file (default %s)", defaultConfigPath))
 	RootCmd.PersistentFlags().String(config.ApiUserTokenKey, "", "Otterize user token (optional)")
+	must.Must(RootCmd.PersistentFlags().MarkHidden(config.ApiUserTokenKey))
+	RootCmd.PersistentFlags().String(config.ApiUserTokenExpiryKey, "", "Otterize user token expiry (optional)")
+	must.Must(RootCmd.PersistentFlags().MarkHidden(config.ApiUserTokenExpiryKey))
 	RootCmd.PersistentFlags().String(config.ApiSelectedOrganizationId, "", "Otterize organization ID to act on (optional)")
 	RootCmd.PersistentFlags().String(config.ApiClientIdKey, "", "Otterize client ID")
 	RootCmd.PersistentFlags().String(config.ApiClientSecretKey, "", "Otterize client secret")

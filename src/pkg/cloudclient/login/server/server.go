@@ -12,6 +12,7 @@ import (
 	"golang.org/x/oauth2"
 	"io"
 	"net/http"
+	"time"
 )
 
 const (
@@ -21,6 +22,7 @@ const (
 
 type AuthResult struct {
 	AccessToken string
+	Expiry      time.Time
 	Profile     map[string]interface{}
 }
 
@@ -100,6 +102,7 @@ func (l *LoginServer) callback(w http.ResponseWriter, req *http.Request) {
 
 	l.authResultChan <- &AuthResult{
 		AccessToken: token.AccessToken,
+		Expiry:      token.Expiry,
 		Profile:     profile,
 	}
 	_, _ = io.WriteString(w, "Login completed successfully. You can close this window now.")

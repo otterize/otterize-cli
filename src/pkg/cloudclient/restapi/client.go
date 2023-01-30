@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/auth"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
@@ -17,7 +18,7 @@ type Doer interface {
 }
 
 func NewClient(ctx context.Context) (*cloudapi.ClientWithResponses, error) {
-	return NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), config.GetAPIToken(ctx))
+	return NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), auth.GetAPIToken(ctx))
 }
 
 func NewClientFromToken(address string, token string) (*cloudapi.ClientWithResponses, error) {
@@ -78,11 +79,18 @@ func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
 
 	if isErrorStatus(resp.StatusCode) {
 		var parsedBody ResponseBody
+		httpError := &HttpError{StatusCode: resp.StatusCode}
 		if err := json.NewDecoder(resp.Body).Decode(&parsedBody); err != nil {
-			return nil, &HttpError{StatusCode: resp.StatusCode}
+			httpError.Message = http.StatusText(resp.StatusCode)
+		} else {
+			httpError.Message = parsedBody.Message
 		}
 
-		return nil, &HttpError{StatusCode: resp.StatusCode, Message: parsedBody.Message}
+		if resp.StatusCode == http.StatusUnauthorized {
+			auth.Fail(httpError)
+		}
+
+		return nil, httpError
 	}
 	return resp, nil
 }
@@ -93,9 +101,5 @@ type HttpError struct {
 }
 
 func (err *HttpError) Error() string {
-	message := err.Message
-	if message == "" {
-		message = http.StatusText(err.StatusCode)
-	}
-	return fmt.Sprintf("HTTP error %d (%s)", err.StatusCode, message)
+	return fmt.Sprintf("HTTP error %d (%s)", err.StatusCode, err.Message)
 }
