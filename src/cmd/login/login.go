@@ -61,6 +61,7 @@ var LoginCmd = &cobra.Command{
 
 		if err := config.SaveConfig(config.Config{
 			UserToken:      authResult.AccessToken,
+			Expiry:         authResult.Expiry,
 			OrganizationId: selectedOrgId,
 		}); err != nil {
 			return err

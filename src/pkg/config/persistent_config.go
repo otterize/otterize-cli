@@ -1,47 +1,26 @@
 package config
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/utils/must"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/clientcredentials"
 	"os"
 	"path"
 	"path/filepath"
+	"time"
 )
 
 const ApiCredentialsFilename = "credentials"
 
 type Config struct {
-	ClientId       string `json:"client_id,omitempty"`
-	ClientSecret   string `json:"client_secret,omitempty"`
-	UserToken      string `json:"user_token,omitempty"`
-	OrganizationId string `json:"organization_id"`
-}
-
-func GetAPITokenSource(ctx context.Context) oauth2.TokenSource {
-	if viper.IsSet(ApiUserTokenKey) {
-		return oauth2.StaticTokenSource(&oauth2.Token{AccessToken: viper.GetString(ApiUserTokenKey)})
-	}
-	cfg := clientcredentials.Config{
-		ClientID:     viper.GetString(ApiClientIdKey),
-		ClientSecret: viper.GetString(ApiClientSecretKey),
-		TokenURL:     fmt.Sprintf("%s/auth/tokens/token", viper.GetString(OtterizeAPIAddressKey)),
-		AuthStyle:    oauth2.AuthStyleInParams,
-	}
-	return cfg.TokenSource(ctx)
-}
-
-func GetAPIToken(ctx context.Context) string {
-	tokenSrc := GetAPITokenSource(ctx)
-	token, err := tokenSrc.Token()
-	must.Must(err)
-	return token.AccessToken
+	ClientId       string    `json:"client_id,omitempty"`
+	ClientSecret   string    `json:"client_secret,omitempty"`
+	UserToken      string    `json:"user_token,omitempty"`
+	Expiry         time.Time `json:"expiry,omitempty"`
+	OrganizationId string    `json:"organization_id"`
 }
 
 func LoadConfigFile(output any, filename string) (bool, error) {
@@ -92,6 +71,9 @@ func LoadApiCredentialsFile() {
 
 	if Config.UserToken != "" {
 		viper.Set(ApiUserTokenKey, Config.UserToken)
+	}
+	if !Config.Expiry.IsZero() {
+		viper.Set(ApiUserTokenExpiryKey, Config.Expiry)
 	}
 	if Config.OrganizationId != "" {
 		viper.Set(ApiSelectedOrganizationId, Config.OrganizationId)
