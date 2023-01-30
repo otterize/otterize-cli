@@ -34,23 +34,25 @@ var UpdateEnvCmd = &cobra.Command{
 		}
 
 		id := args[0]
-		r, err := c.UpdateEnvironmentMutationWithResponse(ctxTimeout,
-			id,
-			cloudapi.UpdateEnvironmentMutationJSONRequestBody{
-				Name: lo.Ternary(viper.IsSet(NameKey), lo.ToPtr(NameKey), nil),
-				Labels: lo.Ternary(
-					viper.IsSet(LabelsKey),
-					lo.ToPtr(cloudclient.LabelsToLabelInput(viper.GetStringMapString(LabelsKey))),
-					nil,
-				),
-			},
-		)
+
+		params := cloudapi.UpdateEnvironmentMutationJSONRequestBody{}
+		if viper.IsSet(NameKey) {
+			name := viper.GetString(NameKey)
+			params.Name = lo.ToPtr(name)
+		}
+
+		if viper.IsSet(LabelsKey) {
+			labels := cloudclient.LabelsToLabelInput(viper.GetStringMapString(LabelsKey))
+			params.Labels = lo.ToPtr(labels)
+		}
+
+		response, err := c.UpdateEnvironmentMutationWithResponse(ctxTimeout, id, params)
 		if err != nil {
 			return err
 		}
 
 		prints.PrintCliStderr("Environment updated")
-		output.FormatEnvs([]cloudapi.Environment{lo.FromPtr(r.JSON200)})
+		output.FormatEnvs([]cloudapi.Environment{lo.FromPtr(response.JSON200)})
 		return nil
 	},
 }
