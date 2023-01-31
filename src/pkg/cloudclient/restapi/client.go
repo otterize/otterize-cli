@@ -67,8 +67,12 @@ type doerWithErrorCheck struct {
 	doer Doer
 }
 
+type GqlError struct {
+	Message string `json:"message"`
+}
+
 type ResponseBody struct {
-	Message string `json:"message,omitempty"`
+	Errors []GqlError `json:"errors"`
 }
 
 func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
@@ -80,10 +84,8 @@ func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
 	if isErrorStatus(resp.StatusCode) {
 		var parsedBody ResponseBody
 		httpError := &HttpError{StatusCode: resp.StatusCode}
-		if err := json.NewDecoder(resp.Body).Decode(&parsedBody); err != nil {
-			httpError.Message = http.StatusText(resp.StatusCode)
-		} else {
-			httpError.Message = parsedBody.Message
+		if err := json.NewDecoder(resp.Body).Decode(&parsedBody); err == nil && len(parsedBody.Errors) > 0 {
+			httpError.Message = parsedBody.Errors[0].Message
 		}
 
 		if resp.StatusCode == http.StatusUnauthorized {
@@ -101,5 +103,8 @@ type HttpError struct {
 }
 
 func (err *HttpError) Error() string {
-	return fmt.Sprintf("HTTP error %d (%s)", err.StatusCode, err.Message)
+	if err.Message != "" {
+		return fmt.Sprintf("%s (HTTP error %d)", err.Message, err.StatusCode)
+	}
+	return fmt.Sprintf("HTTP error %d", err.StatusCode)
 }
