@@ -22,5 +22,5 @@ func init() {
 	IntegrationsCmd.AddCommand(delete.DeleteIntegrationCmd)
 	IntegrationsCmd.AddCommand(get.GetIntegrationCmd)
 	IntegrationsCmd.AddCommand(list.ListIntegrationsCmd)
-	IntegrationsCmd.AddCommand(update.UpdateIntegrationlicationCmd)
+	IntegrationsCmd.AddCommand(update.UpdateIntegrationCmd)
 }
