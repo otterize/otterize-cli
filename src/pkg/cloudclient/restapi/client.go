@@ -67,12 +67,10 @@ type doerWithErrorCheck struct {
 	doer Doer
 }
 
-type ResponseSingleError struct {
-	Message string `json:"message"`
-}
-
 type ResponseBody struct {
-	Errors []ResponseSingleError `json:"errors"`
+	Errors []struct {
+		Message string `json:"message"`
+	} `json:"errors"`
 }
 
 func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
