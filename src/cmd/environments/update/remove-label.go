@@ -33,9 +33,7 @@ var RemoveLabelCmd = &cobra.Command{
 		id := args[0]
 		r, err := c.DeleteEnvironmentLabelMutationWithResponse(ctxTimeout,
 			id,
-			&cloudapi.DeleteEnvironmentLabelMutationParams{
-				Key: viper.GetString(LabelKeyKey),
-			},
+			viper.GetString(LabelKeyKey),
 		)
 		if err != nil {
 			return err
