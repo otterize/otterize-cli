@@ -17,7 +17,7 @@ const (
 	NameShorthand = "n"
 )
 
-var UpdateGenericIntegrationlicationCmd = &cobra.Command{
+var UpdateGenericIntegrationCmd = &cobra.Command{
 	Use:          "generic <integration-id>",
 	Short:        "Update a generic integration",
 	Args:         cobra.ExactArgs(1),
@@ -48,5 +48,5 @@ var UpdateGenericIntegrationlicationCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateGenericIntegrationlicationCmd.Flags().StringP(NameKey, NameShorthand, "", "new integration name")
+	UpdateGenericIntegrationCmd.Flags().StringP(NameKey, NameShorthand, "", "new integration name")
 }

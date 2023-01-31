@@ -16,7 +16,7 @@ const (
 	EnvironmentIdKey = "env-id"
 )
 
-var UpdateKubernetesIntegrationlicationCmd = &cobra.Command{
+var UpdateKubernetesIntegrationCmd = &cobra.Command{
 	Use:          "kubernetes <integration-id>",
 	Short:        "Update a kubernetes integration",
 	Args:         cobra.ExactArgs(1),
@@ -47,5 +47,5 @@ var UpdateKubernetesIntegrationlicationCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateKubernetesIntegrationlicationCmd.Flags().String(EnvironmentIdKey, "", "new default environment")
+	UpdateKubernetesIntegrationCmd.Flags().String(EnvironmentIdKey, "", "new default environment")
 }

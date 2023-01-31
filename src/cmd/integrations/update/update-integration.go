@@ -10,6 +10,6 @@ var UpdateIntegrationCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateIntegrationCmd.AddCommand(UpdateGenericIntegrationlicationCmd)
-	UpdateIntegrationCmd.AddCommand(UpdateKubernetesIntegrationlicationCmd)
+	UpdateIntegrationCmd.AddCommand(UpdateGenericIntegrationCmd)
+	UpdateIntegrationCmd.AddCommand(UpdateKubernetesIntegrationCmd)
 }
