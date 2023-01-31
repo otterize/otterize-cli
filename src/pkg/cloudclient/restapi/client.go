@@ -67,12 +67,12 @@ type doerWithErrorCheck struct {
 	doer Doer
 }
 
-type GqlError struct {
+type ResponseSingleError struct {
 	Message string `json:"message"`
 }
 
 type ResponseBody struct {
-	Errors []GqlError `json:"errors"`
+	Errors []ResponseSingleError `json:"errors"`
 }
 
 func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
@@ -106,5 +106,5 @@ func (err *HttpError) Error() string {
 	if err.Message != "" {
 		return fmt.Sprintf("%s (HTTP error %d)", err.Message, err.StatusCode)
 	}
-	return fmt.Sprintf("HTTP error %d", err.StatusCode)
+	return fmt.Sprintf("HTTP error %d (%s)", err.StatusCode, http.StatusText(err.StatusCode))
 }
