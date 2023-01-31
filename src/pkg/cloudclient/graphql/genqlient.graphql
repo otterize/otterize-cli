@@ -1,0 +1,19 @@
+fragment MeFields on Me {
+    user {
+        id
+        email
+        name
+    }
+    organizations {
+        id
+    }
+}
+
+
+mutation CreateUserFromAuth0User {
+    me {
+        registerUser {
+            ...MeFields
+        }
+    }
+}
