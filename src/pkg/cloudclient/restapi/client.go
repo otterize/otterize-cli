@@ -9,6 +9,7 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/viper"
 	"net/http"
 )
@@ -101,8 +102,6 @@ type HttpError struct {
 }
 
 func (err *HttpError) Error() string {
-	if err.Message != "" {
-		return fmt.Sprintf("%s (HTTP error %d)", err.Message, err.StatusCode)
-	}
-	return fmt.Sprintf("HTTP error %d (%s)", err.StatusCode, http.StatusText(err.StatusCode))
+	message := lo.Ternary(err.Message != "", err.Message, http.StatusText(err.StatusCode))
+	return fmt.Sprintf("%s (HTTP error %d)", message, err.StatusCode)
 }
