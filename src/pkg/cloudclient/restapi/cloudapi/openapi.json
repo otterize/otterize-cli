@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "c18c195c9ffa67365b07e0f3d0d1cf41385f6dfa"
+    "x-revision": "4bfccf35a78497bbf5a81660e3a00dfef5f7620a"
   },
   "servers": [
     {
@@ -49,6 +49,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -100,6 +103,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -147,6 +153,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -210,6 +219,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -262,6 +274,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -319,6 +334,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -369,6 +387,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -418,6 +439,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -487,6 +511,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -534,6 +561,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -599,6 +629,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -661,6 +694,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -710,6 +746,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -792,6 +831,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -841,6 +883,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -904,6 +949,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -951,6 +999,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -1030,6 +1081,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -1079,6 +1133,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -1149,6 +1206,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -1214,6 +1274,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -1270,6 +1333,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -1320,6 +1386,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -1367,6 +1436,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -1425,6 +1497,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -1488,6 +1563,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -1528,6 +1606,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -1578,6 +1659,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -1640,6 +1724,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -1710,6 +1797,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -1776,6 +1866,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -1819,6 +1912,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -1869,6 +1965,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -1918,6 +2017,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -1984,6 +2086,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -2033,6 +2138,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -2103,6 +2211,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -2169,6 +2280,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -2212,6 +2326,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -2262,6 +2379,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -2330,6 +2450,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -2388,6 +2511,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -2445,6 +2571,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
           },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
@@ -2507,6 +2636,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -2565,6 +2697,9 @@
           "400": {
             "$ref": "#/components/responses/BAD_REQUEST"
           },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
           "403": {
             "$ref": "#/components/responses/FORBIDDEN"
           },
@@ -2586,20 +2721,20 @@
   },
   "components": {
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      },
       "oauth2": {
         "type": "oauth2",
-        "description": "Use a Client ID and Client secret from an Otterize integration to authenticate.",
+        "description": "Use a Client ID and Client secret from an Otterize integration to authenticate.\nTo create an Otterize integration, go to http://local.otterize.com:3000/integrations.",
         "flows": {
           "clientCredentials": {
             "tokenUrl": "/api/auth/tokens/token",
             "scopes": {}
           }
         }
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       },
       "organizationHeader": {
         "type": "apiKey",
@@ -2610,6 +2745,16 @@
     },
     "responses": {
       "UNEXPECTED_ERROR": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UNAUTHENTICATED": {
+        "description": "Unauthorized",
         "content": {
           "application/json": {
             "schema": {
@@ -3753,6 +3898,9 @@
     }
   },
   "security": [
+    {
+      "oauth2": []
+    },
     {
       "bearerAuth": [],
       "organizationHeader": []

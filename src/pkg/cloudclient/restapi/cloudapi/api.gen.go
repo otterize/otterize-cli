@@ -19,6 +19,7 @@ import (
 
 const (
 	BearerAuthScopes         = "bearerAuth.Scopes"
+	Oauth2Scopes             = "oauth2.Scopes"
 	OrganizationHeaderScopes = "organizationHeader.Scopes"
 )
 
@@ -556,6 +557,9 @@ type INTERNALSERVERERROR = Error
 
 // NOTFOUND defines model for NOT_FOUND.
 type NOTFOUND = Error
+
+// UNAUTHENTICATED defines model for UNAUTHENTICATED.
+type UNAUTHENTICATED = Error
 
 // UNEXPECTEDERROR defines model for UNEXPECTED_ERROR.
 type UNEXPECTEDERROR = Error
@@ -4074,6 +4078,7 @@ type AccessGraphQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *AccessGraph
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4102,6 +4107,7 @@ type OneClusterQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Cluster
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4130,6 +4136,7 @@ type ClustersQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *[]Cluster
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4158,6 +4165,7 @@ type CreateClusterMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Cluster
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4186,6 +4194,7 @@ type DeleteClusterMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *string
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4214,6 +4223,7 @@ type ClusterQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Cluster
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4242,6 +4252,7 @@ type UpdateClusterMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Cluster
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4270,6 +4281,7 @@ type OneEnvironmentQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Environment
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4298,6 +4310,7 @@ type EnvironmentsQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *[]Environment
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4326,6 +4339,7 @@ type CreateEnvironmentMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Environment
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4354,6 +4368,7 @@ type DeleteEnvironmentMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *string
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4382,6 +4397,7 @@ type EnvironmentQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Environment
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4410,6 +4426,7 @@ type UpdateEnvironmentMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Environment
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4438,6 +4455,7 @@ type AddEnvironmentLabelMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Environment
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4466,6 +4484,7 @@ type DeleteEnvironmentLabelMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Environment
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4494,6 +4513,7 @@ type OneIntegrationQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Integration
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4522,6 +4542,7 @@ type IntegrationsQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *[]Integration
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4550,6 +4571,7 @@ type CreateGenericIntegrationMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Integration
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4578,6 +4600,7 @@ type CreateKubernetesIntegrationMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Integration
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4606,6 +4629,7 @@ type DeleteIntegrationMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *string
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4634,6 +4658,7 @@ type IntegrationQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Integration
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4662,6 +4687,7 @@ type UpdateIntegrationMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Integration
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4690,6 +4716,7 @@ type IntentsQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *[]Intent
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4718,6 +4745,7 @@ type IntentQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Intent
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4746,6 +4774,7 @@ type OneInviteQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Invite
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4774,6 +4803,7 @@ type InvitesQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *[]Invite
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4802,6 +4832,7 @@ type CreateInviteMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Invite
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4830,6 +4861,7 @@ type DeleteInviteMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *string
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4858,6 +4890,7 @@ type InviteQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Invite
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4886,6 +4919,7 @@ type AcceptInviteMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Invite
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4914,6 +4948,7 @@ type MeQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Me
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4942,6 +4977,7 @@ type OneNamespaceQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Namespace
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4970,6 +5006,7 @@ type NamespacesQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *[]Namespace
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -4998,6 +5035,7 @@ type NamespaceQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Namespace
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5026,6 +5064,7 @@ type UpdateNamespaceMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Namespace
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5054,6 +5093,7 @@ type OrganizationsQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *[]Organization
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5082,6 +5122,7 @@ type CreateOrganizationMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Organization
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5110,6 +5151,7 @@ type OrganizationQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Organization
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5138,6 +5180,7 @@ type UpdateOrganizationMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Organization
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5166,6 +5209,7 @@ type RemoveUserFromOrganizationMutationResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *string
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5194,6 +5238,7 @@ type OneServiceQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Service
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5222,6 +5267,7 @@ type ServicesQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *[]Service
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5250,6 +5296,7 @@ type ServiceQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *Service
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5278,6 +5325,7 @@ type UsersQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *[]User
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5306,6 +5354,7 @@ type UserQueryResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *User
 	JSON400      *Error
+	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
 	JSON409      *Error
@@ -5874,6 +5923,13 @@ func ParseAccessGraphQueryResponse(rsp *http.Response) (*AccessGraphQueryRespons
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -5941,6 +5997,13 @@ func ParseOneClusterQueryResponse(rsp *http.Response) (*OneClusterQueryResponse,
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -6010,6 +6073,13 @@ func ParseClustersQueryResponse(rsp *http.Response) (*ClustersQueryResponse, err
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -6077,6 +6147,13 @@ func ParseCreateClusterMutationResponse(rsp *http.Response) (*CreateClusterMutat
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -6146,6 +6223,13 @@ func ParseDeleteClusterMutationResponse(rsp *http.Response) (*DeleteClusterMutat
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -6213,6 +6297,13 @@ func ParseClusterQueryResponse(rsp *http.Response) (*ClusterQueryResponse, error
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -6282,6 +6373,13 @@ func ParseUpdateClusterMutationResponse(rsp *http.Response) (*UpdateClusterMutat
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -6349,6 +6447,13 @@ func ParseOneEnvironmentQueryResponse(rsp *http.Response) (*OneEnvironmentQueryR
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -6418,6 +6523,13 @@ func ParseEnvironmentsQueryResponse(rsp *http.Response) (*EnvironmentsQueryRespo
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -6485,6 +6597,13 @@ func ParseCreateEnvironmentMutationResponse(rsp *http.Response) (*CreateEnvironm
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -6554,6 +6673,13 @@ func ParseDeleteEnvironmentMutationResponse(rsp *http.Response) (*DeleteEnvironm
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -6621,6 +6747,13 @@ func ParseEnvironmentQueryResponse(rsp *http.Response) (*EnvironmentQueryRespons
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -6690,6 +6823,13 @@ func ParseUpdateEnvironmentMutationResponse(rsp *http.Response) (*UpdateEnvironm
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -6757,6 +6897,13 @@ func ParseAddEnvironmentLabelMutationResponse(rsp *http.Response) (*AddEnvironme
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -6826,6 +6973,13 @@ func ParseDeleteEnvironmentLabelMutationResponse(rsp *http.Response) (*DeleteEnv
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -6893,6 +7047,13 @@ func ParseOneIntegrationQueryResponse(rsp *http.Response) (*OneIntegrationQueryR
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -6962,6 +7123,13 @@ func ParseIntegrationsQueryResponse(rsp *http.Response) (*IntegrationsQueryRespo
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -7029,6 +7197,13 @@ func ParseCreateGenericIntegrationMutationResponse(rsp *http.Response) (*CreateG
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -7098,6 +7273,13 @@ func ParseCreateKubernetesIntegrationMutationResponse(rsp *http.Response) (*Crea
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -7165,6 +7347,13 @@ func ParseDeleteIntegrationMutationResponse(rsp *http.Response) (*DeleteIntegrat
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -7234,6 +7423,13 @@ func ParseIntegrationQueryResponse(rsp *http.Response) (*IntegrationQueryRespons
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -7301,6 +7497,13 @@ func ParseUpdateIntegrationMutationResponse(rsp *http.Response) (*UpdateIntegrat
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -7370,6 +7573,13 @@ func ParseIntentsQueryResponse(rsp *http.Response) (*IntentsQueryResponse, error
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -7437,6 +7647,13 @@ func ParseIntentQueryResponse(rsp *http.Response) (*IntentQueryResponse, error) 
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -7506,6 +7723,13 @@ func ParseOneInviteQueryResponse(rsp *http.Response) (*OneInviteQueryResponse, e
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -7573,6 +7797,13 @@ func ParseInvitesQueryResponse(rsp *http.Response) (*InvitesQueryResponse, error
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -7642,6 +7873,13 @@ func ParseCreateInviteMutationResponse(rsp *http.Response) (*CreateInviteMutatio
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -7709,6 +7947,13 @@ func ParseDeleteInviteMutationResponse(rsp *http.Response) (*DeleteInviteMutatio
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -7778,6 +8023,13 @@ func ParseInviteQueryResponse(rsp *http.Response) (*InviteQueryResponse, error) 
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -7845,6 +8097,13 @@ func ParseAcceptInviteMutationResponse(rsp *http.Response) (*AcceptInviteMutatio
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -7914,6 +8173,13 @@ func ParseMeQueryResponse(rsp *http.Response) (*MeQueryResponse, error) {
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -7981,6 +8247,13 @@ func ParseOneNamespaceQueryResponse(rsp *http.Response) (*OneNamespaceQueryRespo
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -8050,6 +8323,13 @@ func ParseNamespacesQueryResponse(rsp *http.Response) (*NamespacesQueryResponse,
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -8117,6 +8397,13 @@ func ParseNamespaceQueryResponse(rsp *http.Response) (*NamespaceQueryResponse, e
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -8186,6 +8473,13 @@ func ParseUpdateNamespaceMutationResponse(rsp *http.Response) (*UpdateNamespaceM
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -8253,6 +8547,13 @@ func ParseOrganizationsQueryResponse(rsp *http.Response) (*OrganizationsQueryRes
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -8322,6 +8623,13 @@ func ParseCreateOrganizationMutationResponse(rsp *http.Response) (*CreateOrganiz
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -8389,6 +8697,13 @@ func ParseOrganizationQueryResponse(rsp *http.Response) (*OrganizationQueryRespo
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -8458,6 +8773,13 @@ func ParseUpdateOrganizationMutationResponse(rsp *http.Response) (*UpdateOrganiz
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -8525,6 +8847,13 @@ func ParseRemoveUserFromOrganizationMutationResponse(rsp *http.Response) (*Remov
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -8594,6 +8923,13 @@ func ParseOneServiceQueryResponse(rsp *http.Response) (*OneServiceQueryResponse,
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -8661,6 +8997,13 @@ func ParseServicesQueryResponse(rsp *http.Response) (*ServicesQueryResponse, err
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
@@ -8730,6 +9073,13 @@ func ParseServiceQueryResponse(rsp *http.Response) (*ServiceQueryResponse, error
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -8798,6 +9148,13 @@ func ParseUsersQueryResponse(rsp *http.Response) (*UsersQueryResponse, error) {
 		}
 		response.JSON400 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -8865,6 +9222,13 @@ func ParseUserQueryResponse(rsp *http.Response) (*UserQueryResponse, error) {
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest Error
