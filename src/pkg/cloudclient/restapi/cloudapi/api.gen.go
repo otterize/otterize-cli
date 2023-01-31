@@ -596,8 +596,7 @@ type OneEnvironmentQueryParams struct {
 
 // EnvironmentsQueryParams defines parameters for EnvironmentsQuery.
 type EnvironmentsQueryParams struct {
-	Name   *string       `form:"name,omitempty" json:"name,omitempty"`
-	Labels *[]LabelInput `form:"labels,omitempty" json:"labels,omitempty"`
+	Name *string `form:"name,omitempty" json:"name,omitempty"`
 }
 
 // CreateEnvironmentMutationJSONBody defines parameters for CreateEnvironmentMutation.
@@ -615,11 +614,6 @@ type UpdateEnvironmentMutationJSONBody struct {
 // AddEnvironmentLabelMutationJSONBody defines parameters for AddEnvironmentLabelMutation.
 type AddEnvironmentLabelMutationJSONBody struct {
 	Label LabelInput `json:"label"`
-}
-
-// DeleteEnvironmentLabelMutationParams defines parameters for DeleteEnvironmentLabelMutation.
-type DeleteEnvironmentLabelMutationParams struct {
-	Key string `form:"key" json:"key"`
 }
 
 // OneIntegrationQueryParams defines parameters for OneIntegrationQuery.
@@ -724,11 +718,6 @@ type CreateOrganizationMutationJSONBody = map[string]interface{}
 type UpdateOrganizationMutationJSONBody struct {
 	ImageURL *string `json:"imageURL,omitempty"`
 	Name     *string `json:"name,omitempty"`
-}
-
-// RemoveUserFromOrganizationMutationParams defines parameters for RemoveUserFromOrganizationMutation.
-type RemoveUserFromOrganizationMutationParams struct {
-	UserId string `form:"userId" json:"userId"`
 }
 
 // OneServiceQueryParams defines parameters for OneServiceQuery.
@@ -918,7 +907,7 @@ type ClientInterface interface {
 	AddEnvironmentLabelMutation(ctx context.Context, id string, body AddEnvironmentLabelMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteEnvironmentLabelMutation request
-	DeleteEnvironmentLabelMutation(ctx context.Context, id string, params *DeleteEnvironmentLabelMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	DeleteEnvironmentLabelMutation(ctx context.Context, id string, key string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// OneIntegrationQuery request
 	OneIntegrationQuery(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1014,7 +1003,7 @@ type ClientInterface interface {
 	UpdateOrganizationMutation(ctx context.Context, id string, body UpdateOrganizationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// RemoveUserFromOrganizationMutation request
-	RemoveUserFromOrganizationMutation(ctx context.Context, id string, params *RemoveUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	RemoveUserFromOrganizationMutation(ctx context.Context, id string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// OneServiceQuery request
 	OneServiceQuery(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1272,8 +1261,8 @@ func (c *Client) AddEnvironmentLabelMutation(ctx context.Context, id string, bod
 	return c.Client.Do(req)
 }
 
-func (c *Client) DeleteEnvironmentLabelMutation(ctx context.Context, id string, params *DeleteEnvironmentLabelMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteEnvironmentLabelMutationRequest(c.Server, id, params)
+func (c *Client) DeleteEnvironmentLabelMutation(ctx context.Context, id string, key string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteEnvironmentLabelMutationRequest(c.Server, id, key)
 	if err != nil {
 		return nil, err
 	}
@@ -1692,8 +1681,8 @@ func (c *Client) UpdateOrganizationMutation(ctx context.Context, id string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) RemoveUserFromOrganizationMutation(ctx context.Context, id string, params *RemoveUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewRemoveUserFromOrganizationMutationRequest(c.Server, id, params)
+func (c *Client) RemoveUserFromOrganizationMutation(ctx context.Context, id string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRemoveUserFromOrganizationMutationRequest(c.Server, id, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -2129,22 +2118,6 @@ func NewEnvironmentsQueryRequest(server string, params *EnvironmentsQueryParams)
 
 	}
 
-	if params.Labels != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "labels", runtime.ParamLocationQuery, *params.Labels); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
 	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -2358,7 +2331,7 @@ func NewAddEnvironmentLabelMutationRequestWithBody(server string, id string, con
 }
 
 // NewDeleteEnvironmentLabelMutationRequest generates requests for DeleteEnvironmentLabelMutation
-func NewDeleteEnvironmentLabelMutationRequest(server string, id string, params *DeleteEnvironmentLabelMutationParams) (*http.Request, error) {
+func NewDeleteEnvironmentLabelMutationRequest(server string, id string, key string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2368,12 +2341,19 @@ func NewDeleteEnvironmentLabelMutationRequest(server string, id string, params *
 		return nil, err
 	}
 
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "key", runtime.ParamLocationPath, key)
+	if err != nil {
+		return nil, err
+	}
+
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/environments/%s/labels/:key", pathParam0)
+	operationPath := fmt.Sprintf("/environments/%s/labels/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2382,22 +2362,6 @@ func NewDeleteEnvironmentLabelMutationRequest(server string, id string, params *
 	if err != nil {
 		return nil, err
 	}
-
-	queryValues := queryURL.Query()
-
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "key", runtime.ParamLocationQuery, params.Key); err != nil {
-		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
-	}
-
-	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
 	if err != nil {
@@ -3648,7 +3612,7 @@ func NewUpdateOrganizationMutationRequestWithBody(server string, id string, cont
 }
 
 // NewRemoveUserFromOrganizationMutationRequest generates requests for RemoveUserFromOrganizationMutation
-func NewRemoveUserFromOrganizationMutationRequest(server string, id string, params *RemoveUserFromOrganizationMutationParams) (*http.Request, error) {
+func NewRemoveUserFromOrganizationMutationRequest(server string, id string, userId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -3658,12 +3622,19 @@ func NewRemoveUserFromOrganizationMutationRequest(server string, id string, para
 		return nil, err
 	}
 
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/users/:user_id", pathParam0)
+	operationPath := fmt.Sprintf("/organizations/%s/users/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3672,22 +3643,6 @@ func NewRemoveUserFromOrganizationMutationRequest(server string, id string, para
 	if err != nil {
 		return nil, err
 	}
-
-	queryValues := queryURL.Query()
-
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "userId", runtime.ParamLocationQuery, params.UserId); err != nil {
-		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
-	}
-
-	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
 	if err != nil {
@@ -4048,7 +4003,7 @@ type ClientWithResponsesInterface interface {
 	AddEnvironmentLabelMutationWithResponse(ctx context.Context, id string, body AddEnvironmentLabelMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AddEnvironmentLabelMutationResponse, error)
 
 	// DeleteEnvironmentLabelMutation request
-	DeleteEnvironmentLabelMutationWithResponse(ctx context.Context, id string, params *DeleteEnvironmentLabelMutationParams, reqEditors ...RequestEditorFn) (*DeleteEnvironmentLabelMutationResponse, error)
+	DeleteEnvironmentLabelMutationWithResponse(ctx context.Context, id string, key string, reqEditors ...RequestEditorFn) (*DeleteEnvironmentLabelMutationResponse, error)
 
 	// OneIntegrationQuery request
 	OneIntegrationQueryWithResponse(ctx context.Context, params *OneIntegrationQueryParams, reqEditors ...RequestEditorFn) (*OneIntegrationQueryResponse, error)
@@ -4144,7 +4099,7 @@ type ClientWithResponsesInterface interface {
 	UpdateOrganizationMutationWithResponse(ctx context.Context, id string, body UpdateOrganizationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOrganizationMutationResponse, error)
 
 	// RemoveUserFromOrganizationMutation request
-	RemoveUserFromOrganizationMutationWithResponse(ctx context.Context, id string, params *RemoveUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*RemoveUserFromOrganizationMutationResponse, error)
+	RemoveUserFromOrganizationMutationWithResponse(ctx context.Context, id string, userId string, reqEditors ...RequestEditorFn) (*RemoveUserFromOrganizationMutationResponse, error)
 
 	// OneServiceQuery request
 	OneServiceQueryWithResponse(ctx context.Context, params *OneServiceQueryParams, reqEditors ...RequestEditorFn) (*OneServiceQueryResponse, error)
@@ -5671,8 +5626,8 @@ func (c *ClientWithResponses) AddEnvironmentLabelMutationWithResponse(ctx contex
 }
 
 // DeleteEnvironmentLabelMutationWithResponse request returning *DeleteEnvironmentLabelMutationResponse
-func (c *ClientWithResponses) DeleteEnvironmentLabelMutationWithResponse(ctx context.Context, id string, params *DeleteEnvironmentLabelMutationParams, reqEditors ...RequestEditorFn) (*DeleteEnvironmentLabelMutationResponse, error) {
-	rsp, err := c.DeleteEnvironmentLabelMutation(ctx, id, params, reqEditors...)
+func (c *ClientWithResponses) DeleteEnvironmentLabelMutationWithResponse(ctx context.Context, id string, key string, reqEditors ...RequestEditorFn) (*DeleteEnvironmentLabelMutationResponse, error) {
+	rsp, err := c.DeleteEnvironmentLabelMutation(ctx, id, key, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5977,8 +5932,8 @@ func (c *ClientWithResponses) UpdateOrganizationMutationWithResponse(ctx context
 }
 
 // RemoveUserFromOrganizationMutationWithResponse request returning *RemoveUserFromOrganizationMutationResponse
-func (c *ClientWithResponses) RemoveUserFromOrganizationMutationWithResponse(ctx context.Context, id string, params *RemoveUserFromOrganizationMutationParams, reqEditors ...RequestEditorFn) (*RemoveUserFromOrganizationMutationResponse, error) {
-	rsp, err := c.RemoveUserFromOrganizationMutation(ctx, id, params, reqEditors...)
+func (c *ClientWithResponses) RemoveUserFromOrganizationMutationWithResponse(ctx context.Context, id string, userId string, reqEditors ...RequestEditorFn) (*RemoveUserFromOrganizationMutationResponse, error) {
+	rsp, err := c.RemoveUserFromOrganizationMutation(ctx, id, userId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

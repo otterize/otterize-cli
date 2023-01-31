@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "041f6906d80f5cd7598c104f9c59d1298af808f5"
+    "x-revision": "99134f3596e49baaad8f8d6c9bc384640f0999ce"
   },
   "servers": [
     {
@@ -598,17 +598,6 @@
             "required": false,
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "labels",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/LabelInput"
-              }
             }
           }
         ],
@@ -2406,7 +2395,7 @@
         }
       }
     },
-    "/environments/{id}/labels/:key": {
+    "/environments/{id}/labels/{key}": {
       "delete": {
         "tags": [
           "environments"
@@ -2424,7 +2413,7 @@
             }
           },
           {
-            "in": "query",
+            "in": "path",
             "name": "key",
             "required": true,
             "schema": {
@@ -2726,7 +2715,7 @@
         }
       }
     },
-    "/organizations/{id}/users/:user_id": {
+    "/organizations/{id}/users/{userId}": {
       "delete": {
         "tags": [
           "organizations"
@@ -2744,7 +2733,7 @@
             }
           },
           {
-            "in": "query",
+            "in": "path",
             "name": "userId",
             "required": true,
             "schema": {
