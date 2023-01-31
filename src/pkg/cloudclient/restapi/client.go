@@ -9,6 +9,7 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/viper"
 	"net/http"
 )
@@ -68,7 +69,9 @@ type doerWithErrorCheck struct {
 }
 
 type ResponseBody struct {
-	Message string `json:"message,omitempty"`
+	Errors []struct {
+		Message string `json:"message"`
+	} `json:"errors"`
 }
 
 func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
@@ -80,10 +83,8 @@ func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
 	if isErrorStatus(resp.StatusCode) {
 		var parsedBody ResponseBody
 		httpError := &HttpError{StatusCode: resp.StatusCode}
-		if err := json.NewDecoder(resp.Body).Decode(&parsedBody); err != nil {
-			httpError.Message = http.StatusText(resp.StatusCode)
-		} else {
-			httpError.Message = parsedBody.Message
+		if err := json.NewDecoder(resp.Body).Decode(&parsedBody); err == nil && len(parsedBody.Errors) > 0 {
+			httpError.Message = parsedBody.Errors[0].Message
 		}
 
 		if resp.StatusCode == http.StatusUnauthorized {
@@ -101,5 +102,6 @@ type HttpError struct {
 }
 
 func (err *HttpError) Error() string {
-	return fmt.Sprintf("HTTP error %d (%s)", err.StatusCode, err.Message)
+	message := lo.Ternary(err.Message != "", err.Message, http.StatusText(err.StatusCode))
+	return fmt.Sprintf("%s (HTTP error %d)", message, err.StatusCode)
 }
