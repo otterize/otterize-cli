@@ -18,9 +18,9 @@ import (
 )
 
 const (
-	BearerAuthScopes         = "bearerAuth.Scopes"
+	AccessTokenCookieScopes  = "accessTokenCookie.Scopes"
 	Oauth2Scopes             = "oauth2.Scopes"
-	OrganizationHeaderScopes = "organizationHeader.Scopes"
+	OrganizationCookieScopes = "organizationCookie.Scopes"
 )
 
 // Defines values for ComponentStatusType.

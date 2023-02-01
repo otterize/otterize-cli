@@ -13,6 +13,7 @@ import (
 var InvitesCmd = &cobra.Command{
 	Use:     "invites",
 	GroupID: groups.AccountsGroup.ID,
+	Aliases: []string{"invite"},
 	Short:   "Manage Otterize user invites",
 }
 

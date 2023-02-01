@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "99134f3596e49baaad8f8d6c9bc384640f0999ce"
+    "x-revision": "c943207896d9996ee3ec6c0dfa67e577d20704b5"
   },
   "servers": [
     {
@@ -2781,7 +2781,7 @@
     "securitySchemes": {
       "oauth2": {
         "type": "oauth2",
-        "description": "Use a Client ID and Client secret from an Otterize integration to authenticate.\nTo create an Otterize integration, go to http://local.otterize.com:3000/integrations.",
+        "description": "Use client ID and client secret from an Otterize integration to authenticate.\nTo create an integration, go to https://app.staging.otterize.com/integrations.",
         "flows": {
           "clientCredentials": {
             "tokenUrl": "/api/auth/tokens/token",
@@ -2789,16 +2789,17 @@
           }
         }
       },
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      },
-      "organizationHeader": {
+      "accessTokenCookie": {
         "type": "apiKey",
-        "in": "header",
-        "description": "Selected organization ID. Leave blank to auto-select the first organization for the current user.",
-        "name": "X-Otterize-Organization"
+        "in": "cookie",
+        "description": "Otterize user JWT token. This session cookie is automatically set by logging in to Otterize Cloud at https://app.staging.otterize.com.",
+        "name": "access_token"
+      },
+      "organizationCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "description": "Selected organization ID cookie. This session cookie is automatically set by logging in to Otterize Cloud at https://app.staging.otterize.com.",
+        "name": "organization_id"
       }
     },
     "responses": {
@@ -3960,8 +3961,8 @@
       "oauth2": []
     },
     {
-      "bearerAuth": [],
-      "organizationHeader": []
+      "accessTokenCookie": [],
+      "organizationCookie": []
     }
   ]
 }
