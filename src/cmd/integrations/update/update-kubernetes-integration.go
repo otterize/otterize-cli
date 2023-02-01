@@ -13,39 +13,39 @@ import (
 )
 
 const (
-	LabelToDeleteKey = "key"
+	EnvironmentIdKey = "env-id"
 )
 
-var RemoveLabelCmd = &cobra.Command{
-	Use:          "remove-label <environment-id>",
-	Short:        "Remove a label from an environment",
+var UpdateKubernetesIntegrationCmd = &cobra.Command{
+	Use:          "kubernetes <integration-id>",
+	Short:        "Update a kubernetes integration",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-
 		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
 
 		id := args[0]
-		r, err := c.DeleteEnvironmentLabelMutationWithResponse(ctxTimeout,
+		r, err := c.UpdateKubernetesIntegrationMutationWithResponse(ctxTimeout,
 			id,
-			viper.GetString(LabelKeyKey),
+			cloudapi.UpdateKubernetesIntegrationMutationJSONRequestBody{
+				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIdKey), lo.ToPtr(viper.GetString(EnvironmentIdKey)), nil),
+			},
 		)
 		if err != nil {
 			return err
 		}
 
-		prints.PrintCliStderr("Environment updated")
-		output.FormatEnvs([]cloudapi.Environment{lo.FromPtr(r.JSON200)})
+		prints.PrintCliStderr("Integration updated")
+		output.FormatIntegrations([]cloudapi.Integration{lo.FromPtr(r.JSON200)}, false)
 		return nil
 	},
 }
 
 func init() {
-	RemoveLabelCmd.Flags().String(LabelToDeleteKey, "", "label key to delete")
-	cobra.CheckErr(RemoveLabelCmd.MarkFlagRequired(LabelToDeleteKey))
+	UpdateKubernetesIntegrationCmd.Flags().String(EnvironmentIdKey, "", "new default environment")
 }

@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "4bfccf35a78497bbf5a81660e3a00dfef5f7620a"
+    "x-revision": "99134f3596e49baaad8f8d6c9bc384640f0999ce"
   },
   "servers": [
     {
@@ -599,17 +599,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "in": "query",
-            "name": "labels",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/LabelInput"
-              }
-            }
           }
         ],
         "responses": {
@@ -873,71 +862,6 @@
         "responses": {
           "200": {
             "description": "Get integration",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Integration"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
-          },
-          "401": {
-            "$ref": "#/components/responses/UNAUTHENTICATED"
-          },
-          "403": {
-            "$ref": "#/components/responses/FORBIDDEN"
-          },
-          "404": {
-            "$ref": "#/components/responses/NOT_FOUND"
-          },
-          "409": {
-            "$ref": "#/components/responses/CONFLICT"
-          },
-          "500": {
-            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
-          },
-          "default": {
-            "$ref": "#/components/responses/UNEXPECTED_ERROR"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "integrations"
-        ],
-        "description": "Update integration",
-        "summary": "Update integration",
-        "operationId": "updateIntegration_mutation",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Update integration",
             "content": {
               "application/json": {
                 "schema": {
@@ -2471,7 +2395,7 @@
         }
       }
     },
-    "/environments/{id}/labels/:key": {
+    "/environments/{id}/labels/{key}": {
       "delete": {
         "tags": [
           "environments"
@@ -2489,7 +2413,7 @@
             }
           },
           {
-            "in": "query",
+            "in": "path",
             "name": "key",
             "required": true,
             "schema": {
@@ -2657,7 +2581,141 @@
         }
       }
     },
-    "/organizations/{id}/users/:user_id": {
+    "/integrations/generic/{id}": {
+      "patch": {
+        "tags": [
+          "integrations"
+        ],
+        "description": "Update Generic integration",
+        "summary": "Update Generic integration",
+        "operationId": "updateGenericIntegration_mutation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update Generic integration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        }
+      }
+    },
+    "/integrations/kubernetes/{id}": {
+      "patch": {
+        "tags": [
+          "integrations"
+        ],
+        "description": "Update Kubernetes integration",
+        "summary": "Update Kubernetes integration",
+        "operationId": "updateKubernetesIntegration_mutation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "environmentId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update Kubernetes integration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/users/{userId}": {
       "delete": {
         "tags": [
           "organizations"
@@ -2675,7 +2733,7 @@
             }
           },
           {
-            "in": "query",
+            "in": "path",
             "name": "userId",
             "required": true,
             "schema": {

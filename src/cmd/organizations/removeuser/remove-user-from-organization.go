@@ -3,7 +3,6 @@ package removeuser
 import (
 	"context"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
@@ -31,9 +30,7 @@ var RemoveUserFromOrganizationCmd = &cobra.Command{
 		id := args[0]
 		r, err := c.RemoveUserFromOrganizationMutationWithResponse(ctxTimeout,
 			id,
-			&cloudapi.RemoveUserFromOrganizationMutationParams{
-				UserId: viper.GetString(UserIDKey),
-			},
+			viper.GetString(UserIDKey),
 		)
 		if err != nil {
 			return err

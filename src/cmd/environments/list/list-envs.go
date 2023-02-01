@@ -12,10 +12,8 @@ import (
 )
 
 const (
-	NameKey         = "name"
-	NameShorthand   = "n"
-	LabelsKey       = "labels"
-	LabelsShorthand = "l"
+	NameKey       = "name"
+	NameShorthand = "n"
 )
 
 var ListEnvsCmd = &cobra.Command{
@@ -35,11 +33,6 @@ var ListEnvsCmd = &cobra.Command{
 		r, err := c.EnvironmentsQueryWithResponse(ctxTimeout,
 			&cloudapi.EnvironmentsQueryParams{
 				Name: lo.Ternary(viper.IsSet(NameKey), lo.ToPtr(NameKey), nil),
-				Labels: lo.Ternary(
-					viper.IsSet(LabelsKey),
-					lo.ToPtr(cloudclient.LabelsToLabelInput(viper.GetStringMapString(LabelsKey))),
-					nil,
-				),
 			},
 		)
 		if err != nil {
@@ -53,5 +46,4 @@ var ListEnvsCmd = &cobra.Command{
 
 func init() {
 	ListEnvsCmd.Flags().StringP(NameKey, NameShorthand, "", "environment name")
-	ListEnvsCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "environment labels in key=value format (value is optional): key1=val1,key2=val2,key3=")
 }

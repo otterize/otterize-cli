@@ -13,39 +13,40 @@ import (
 )
 
 const (
-	LabelToDeleteKey = "key"
+	NameKey       = "name"
+	NameShorthand = "n"
 )
 
-var RemoveLabelCmd = &cobra.Command{
-	Use:          "remove-label <environment-id>",
-	Short:        "Remove a label from an environment",
+var UpdateGenericIntegrationCmd = &cobra.Command{
+	Use:          "generic <integration-id>",
+	Short:        "Update a generic integration",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
-
 		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
 		}
 
 		id := args[0]
-		r, err := c.DeleteEnvironmentLabelMutationWithResponse(ctxTimeout,
+		r, err := c.UpdateGenericIntegrationMutationWithResponse(ctxTimeout,
 			id,
-			viper.GetString(LabelKeyKey),
+			cloudapi.UpdateGenericIntegrationMutationJSONRequestBody{
+				Name: lo.Ternary(viper.IsSet(NameKey), lo.ToPtr(viper.GetString(NameKey)), nil),
+			},
 		)
 		if err != nil {
 			return err
 		}
 
-		prints.PrintCliStderr("Environment updated")
-		output.FormatEnvs([]cloudapi.Environment{lo.FromPtr(r.JSON200)})
+		prints.PrintCliStderr("Integration updated")
+		output.FormatIntegrations([]cloudapi.Integration{lo.FromPtr(r.JSON200)}, false)
 		return nil
 	},
 }
 
 func init() {
-	RemoveLabelCmd.Flags().String(LabelToDeleteKey, "", "label key to delete")
-	cobra.CheckErr(RemoveLabelCmd.MarkFlagRequired(LabelToDeleteKey))
+	UpdateGenericIntegrationCmd.Flags().StringP(NameKey, NameShorthand, "", "new integration name")
 }
