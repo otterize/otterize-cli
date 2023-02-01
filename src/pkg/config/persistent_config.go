@@ -53,7 +53,7 @@ func LoadConfigFile(output any, filename string) (bool, error) {
 
 func LoadApiCredentialsFile() {
 	if viper.InConfig(ApiClientIdKey) || viper.InConfig(ApiClientSecretKey) {
-		logrus.Warningf("API client ID and client secret should not be set in config. Instead, store the credentials in ~/%s/%s", OtterizeConfigDirName, ApiCredentialsFilename)
+		logrus.Warningf("API client id and client secret should not be set in config. Instead, store the credentials in ~/%s/%s", OtterizeConfigDirName, ApiCredentialsFilename)
 	}
 
 	if viper.IsSet(ApiClientIdKey) && viper.IsSet(ApiClientSecretKey) {

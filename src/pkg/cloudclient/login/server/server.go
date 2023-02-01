@@ -90,7 +90,7 @@ func (l *LoginServer) callback(w http.ResponseWriter, req *http.Request) {
 
 	idToken, err := l.auth.VerifyIDToken(req.Context(), token)
 	if err != nil {
-		http.Error(w, "Failed to verify ID Token.", http.StatusInternalServerError)
+		http.Error(w, "Failed to verify id Token.", http.StatusInternalServerError)
 		return
 	}
 
