@@ -2,7 +2,6 @@ package networkmapper
 
 import (
 	"github.com/otterize/otterize-cli/src/cmd/groups"
-	"github.com/otterize/otterize-cli/src/cmd/networkmapper/convert"
 	"github.com/otterize/otterize-cli/src/cmd/networkmapper/export"
 	"github.com/otterize/otterize-cli/src/cmd/networkmapper/list"
 	"github.com/otterize/otterize-cli/src/cmd/networkmapper/reset"
@@ -25,5 +24,4 @@ func init() {
 	MapperCmd.AddCommand(export.ExportCmd)
 	MapperCmd.AddCommand(list.ListCmd)
 	MapperCmd.AddCommand(reset.ResetCmd)
-	MapperCmd.AddCommand(convert.ConvertCmd)
 }
