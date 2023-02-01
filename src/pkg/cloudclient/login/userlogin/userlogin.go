@@ -47,7 +47,7 @@ func (loginCtx *LoginContext) EnsureUserRegistered() error {
 		if err != nil {
 			return err
 		}
-		prints.PrintCliStderr("User registered as Otterize user with user ID: %s", me.User.Id)
+		prints.PrintCliStderr("User registered as Otterize user with user id: %s", me.User.Id)
 		meResponse, err = loginCtx.apiClient.MeQueryWithResponse(ctxTimeout)
 		if err != nil {
 			return err
@@ -110,7 +110,7 @@ func (loginCtx *LoginContext) interactiveSelectInvite() (*cloudapi.Invite, bool,
 	invites := loginCtx.me.Invites
 
 	for {
-		prints.PrintCliStderr("Input invite ID or blank to create a new organization: ")
+		prints.PrintCliStderr("Input invite id or blank to create a new organization: ")
 		reader := bufio.NewReader(os.Stdin)
 		inviteId, err := reader.ReadString('\n')
 		if err != nil {
@@ -178,7 +178,7 @@ func (loginCtx *LoginContext) interactiveSelectOrg(preSelectedOrgId string, swit
 	}
 
 	for {
-		prints.PrintCliStderr("Input organization ID (blank to select first organization): ")
+		prints.PrintCliStderr("Input organization id (blank to select first organization): ")
 		reader := bufio.NewReader(os.Stdin)
 		orgId, err := reader.ReadString('\n')
 		if err != nil {

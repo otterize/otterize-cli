@@ -107,14 +107,14 @@ func FormatOrganizations(organizations []cloudapi.Organization) {
 }
 
 func FormatUsers(users []cloudapi.User) {
-	columns := []string{"id", "email", "name", "image URL", "auth provider user ID"}
+	columns := []string{"id", "email", "name", "image URL", "auth provider user id"}
 	getColumnData := func(u cloudapi.User) []map[string]string {
 		return []map[string]string{{
 			"id":                    u.Id,
 			"email":                 u.Email,
 			"name":                  u.Name,
 			"image URL":             u.ImageURL,
-			"auth provider user ID": u.AuthProviderUserId,
+			"auth provider user id": u.AuthProviderUserId,
 		}}
 	}
 
