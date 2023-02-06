@@ -17,7 +17,7 @@ import (
 )
 
 type LoginContext struct {
-	apiClient *cloudapi.ClientWithResponses
+	apiClient *restapi.Client
 	gqlClient *graphql.Client
 	me        *cloudapi.Me
 }
