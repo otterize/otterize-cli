@@ -46,6 +46,9 @@ func NewClientFromToken(apiRoot string, token string) (*Client, error) {
 		}),
 		cloudapi.WithHTTPClient(&doerWithErrorCheck{doer: &http.Client{}}),
 	)
+	if err != nil {
+		return nil, err
+	}
 
 	c := &Client{cloudapiClient, restApiURL}
 	if err := c.checkAPIVersion(); err != nil {
