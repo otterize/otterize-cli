@@ -94,11 +94,12 @@ func FormatInvites(invites []cloudapi.Invite) {
 }
 
 func FormatOrganizations(organizations []cloudapi.Organization) {
-	columns := []string{"id", "name"}
+	columns := []string{"id", "name", "image URL"}
 	getColumnData := func(org cloudapi.Organization) []map[string]string {
 		return []map[string]string{{
-			"id":   org.Id,
-			"name": lo.FromPtr(org.Name),
+			"id":        org.Id,
+			"name":      lo.FromPtr(org.Name),
+			"image URL": lo.FromPtr(org.ImageURL),
 		}}
 	}
 
@@ -106,12 +107,13 @@ func FormatOrganizations(organizations []cloudapi.Organization) {
 }
 
 func FormatUsers(users []cloudapi.User) {
-	columns := []string{"id", "email", "name", "auth provider user id"}
+	columns := []string{"id", "email", "name", "image URL", "auth provider user id"}
 	getColumnData := func(u cloudapi.User) []map[string]string {
 		return []map[string]string{{
 			"id":                    u.Id,
 			"email":                 u.Email,
 			"name":                  u.Name,
+			"image URL":             u.ImageURL,
 			"auth provider user id": u.AuthProviderUserId,
 		}}
 	}
