@@ -19,7 +19,7 @@ type APIVersion struct {
 //go:embed cloudapi/openapi.json
 var openapispecs []byte
 
-func GetLocalApiVersion() (APIVersion, error) {
+func GetLocalAPIVersion() (APIVersion, error) {
 	loader := openapi3.NewLoader()
 	apiSpecs, err := loader.LoadFromData(openapispecs)
 	if err != nil {

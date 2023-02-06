@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var ApiVersionCmd = &cobra.Command{
+var APIVersionCmd = &cobra.Command{
 	Use:          "api-version",
 	Short:        "Get the Otterize API version",
 	Args:         cobra.NoArgs,
@@ -17,7 +17,7 @@ var ApiVersionCmd = &cobra.Command{
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
 
-		localApiVersion, err := cloudclient.GetLocalApiVersion()
+		localAPIVersion, err := cloudclient.GetLocalAPIVersion()
 		if err != nil {
 			return err
 		}
@@ -27,7 +27,7 @@ var ApiVersionCmd = &cobra.Command{
 			return err
 		}
 
-		cloudApiVersion, err := c.GetAPIVersion()
+		cloudAPIVersion, err := c.GetAPIVersion()
 		if err != nil {
 			return err
 		}
@@ -39,10 +39,10 @@ var ApiVersionCmd = &cobra.Command{
 This CLI was built against: 
     version: %s 
     revision: %s`,
-			cloudApiVersion.Version, cloudApiVersion.Revision,
-			localApiVersion.Version, localApiVersion.Revision)
+			cloudAPIVersion.Version, cloudAPIVersion.Revision,
+			localAPIVersion.Version, localAPIVersion.Revision)
 
-		if cloudApiVersion != localApiVersion {
+		if cloudAPIVersion != localAPIVersion {
 			prints.PrintCliStderr(`
 Caution: this CLI was built with a different version/revision of the Otterize Cloud API. 
 Some Cloud CLI commands may fail. 

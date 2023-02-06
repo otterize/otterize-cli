@@ -65,7 +65,7 @@ func (c *Client) GetAPIVersion() (APIVersion, error) {
 }
 
 func (c *Client) checkAPIVersion() error {
-	localApiVersion, err := GetLocalApiVersion()
+	localApiVersion, err := GetLocalAPIVersion()
 	if err != nil {
 		return err
 	}

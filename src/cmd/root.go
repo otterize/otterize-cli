@@ -89,7 +89,7 @@ func init() {
 	RootCmd.PersistentFlags().Bool(config.InteractiveModeKey, true, "Ask for missing flags interactively")
 	RootCmd.PersistentFlags().String(config.OutputKey, config.OutputDefault, "Output format - json/text")
 
-	RootCmd.AddCommand(version.ApiVersionCmd)
+	RootCmd.AddCommand(version.APIVersionCmd)
 
 	RootCmd.AddGroup(groups.AccountsGroup)
 	RootCmd.AddCommand(login.LoginCmd)
