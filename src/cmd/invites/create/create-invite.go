@@ -2,6 +2,7 @@ package create
 
 import (
 	"context"
+	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
@@ -31,7 +32,7 @@ var CreateInviteCmd = &cobra.Command{
 
 		r, err := c.CreateInviteMutationWithResponse(ctxTimeout,
 			cloudapi.CreateInviteMutationJSONRequestBody{
-				Email: viper.GetString(EmailKey),
+				Email: openapi_types.Email(viper.GetString(EmailKey)),
 			},
 		)
 		if err != nil {

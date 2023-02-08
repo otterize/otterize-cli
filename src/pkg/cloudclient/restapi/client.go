@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
+	"github.com/deepmap/oapi-codegen/pkg/util"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/auth"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
@@ -14,23 +15,67 @@ import (
 	"net/http"
 )
 
+type Client struct {
+	*cloudapi.ClientWithResponses
+	restApiURL string
+}
+
 type Doer interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-func NewClient(ctx context.Context) (*cloudapi.ClientWithResponses, error) {
+func NewClient(ctx context.Context) (*Client, error) {
 	return NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), auth.GetAPIToken(ctx))
 }
 
-func NewClientFromToken(address string, token string) (*cloudapi.ClientWithResponses, error) {
-	localApiVersion, err := GetLocalApiVersion()
+func NewClientFromToken(apiRoot string, token string) (*Client, error) {
+	restApiURL := apiRoot + "/rest/v1beta"
+	bearerTokenProvider, err := securityprovider.NewSecurityProviderBearerToken(token)
 	if err != nil {
 		return nil, err
 	}
 
-	cloudApiVersion, err := GetCloudApiVersion(address)
+	cloudapiClient, err := cloudapi.NewClientWithResponses(
+		restApiURL,
+		cloudapi.WithRequestEditorFn(bearerTokenProvider.Intercept),
+		cloudapi.WithRequestEditorFn(func(ctx context.Context, req *http.Request) error {
+			if viper.IsSet(config.ApiSelectedOrganizationId) {
+				req.Header.Set("X-Otterize-Organization", viper.GetString(config.ApiSelectedOrganizationId))
+			}
+			return nil
+		}),
+		cloudapi.WithHTTPClient(&doerWithErrorCheck{doer: &http.Client{}}),
+	)
 	if err != nil {
 		return nil, err
+	}
+
+	c := &Client{cloudapiClient, restApiURL}
+	if err := c.checkAPIVersion(); err != nil {
+		return nil, err
+	}
+
+	return c, nil
+}
+
+func (c *Client) GetAPIVersion() (APIVersion, error) {
+	apiSpecs, err := util.LoadSwagger(c.restApiURL + "/openapi.json")
+	if err != nil {
+		return APIVersion{}, err
+	}
+
+	return extractVersionInfo(apiSpecs)
+}
+
+func (c *Client) checkAPIVersion() error {
+	localApiVersion, err := GetLocalAPIVersion()
+	if err != nil {
+		return err
+	}
+
+	cloudApiVersion, err := c.GetAPIVersion()
+	if err != nil {
+		return err
 	}
 
 	if localApiVersion != cloudApiVersion {
@@ -41,23 +86,7 @@ Please run otterize api-version for more info.
 		)
 	}
 
-	address = address + "/rest/v1beta"
-	bearerTokenProvider, err := securityprovider.NewSecurityProviderBearerToken(token)
-	if err != nil {
-		return nil, err
-	}
-
-	return cloudapi.NewClientWithResponses(
-		address,
-		cloudapi.WithRequestEditorFn(bearerTokenProvider.Intercept),
-		cloudapi.WithRequestEditorFn(func(ctx context.Context, req *http.Request) error {
-			if viper.IsSet(config.ApiSelectedOrganizationId) {
-				req.Header.Set("X-Otterize-Organization", viper.GetString(config.ApiSelectedOrganizationId))
-			}
-			return nil
-		}),
-		cloudapi.WithHTTPClient(&doerWithErrorCheck{doer: &http.Client{}}),
-	)
+	return nil
 }
 
 func isErrorStatus(statusCode int) bool {

@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
-	"github.com/deepmap/oapi-codegen/pkg/util"
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
@@ -20,16 +19,7 @@ type APIVersion struct {
 //go:embed cloudapi/openapi.json
 var openapispecs []byte
 
-func GetCloudApiVersion(apiUrl string) (APIVersion, error) {
-	apiSpecs, err := util.LoadSwagger(apiUrl + "/openapi.json")
-	if err != nil {
-		return APIVersion{}, err
-	}
-
-	return extractVersionInfo(apiSpecs)
-}
-
-func GetLocalApiVersion() (APIVersion, error) {
+func GetLocalAPIVersion() (APIVersion, error) {
 	loader := openapi3.NewLoader()
 	apiSpecs, err := loader.LoadFromData(openapispecs)
 	if err != nil {

@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "c943207896d9996ee3ec6c0dfa67e577d20704b5"
+    "x-revision": "7af90b10d104c19f93785908f1e35405b4bfbd4a"
   },
   "servers": [
     {
@@ -62,6 +62,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -85,7 +88,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -115,6 +121,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -136,7 +145,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -166,6 +178,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -187,7 +202,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -231,6 +249,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -254,7 +275,10 @@
             "name": "name",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "custom-name",
+              "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+              "example": "Object name"
             }
           }
         ],
@@ -287,6 +311,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -310,7 +337,10 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "example": "Object name"
                   }
                 },
                 "required": [
@@ -346,6 +376,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -369,7 +402,10 @@
             "name": "name",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "custom-name",
+              "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+              "example": "Object name"
             }
           }
         ],
@@ -399,6 +435,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -422,7 +461,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -452,6 +494,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -473,7 +518,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -484,7 +532,10 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "example": "Object name"
                   },
                   "labels": {
                     "type": "array",
@@ -523,6 +574,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -544,7 +598,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -574,6 +631,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -597,7 +657,10 @@
             "name": "name",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "custom-name",
+              "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+              "example": "Object name"
             }
           }
         ],
@@ -630,6 +693,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -653,7 +719,10 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "example": "Object name"
                   },
                   "labels": {
                     "type": "array",
@@ -695,6 +764,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -718,7 +790,10 @@
             "name": "name",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "custom-name",
+              "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+              "example": "Object name"
             }
           }
         ],
@@ -748,6 +823,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -771,7 +849,10 @@
             "name": "name",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "custom-name",
+              "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+              "example": "Object name"
             }
           },
           {
@@ -791,7 +872,10 @@
             "name": "environmentId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -799,7 +883,10 @@
             "name": "clusterId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -832,6 +919,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -855,7 +945,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -885,6 +978,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -906,7 +1002,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -935,6 +1034,9 @@
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
           },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
@@ -971,7 +1073,10 @@
             "name": "environmentId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -979,7 +1084,10 @@
             "name": "clusterId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -987,7 +1095,10 @@
             "name": "name",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "custom-name",
+              "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+              "example": "Object name"
             }
           }
         ],
@@ -1017,6 +1128,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1040,7 +1154,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -1070,6 +1187,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1093,7 +1213,10 @@
             "name": "environmentId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -1101,7 +1224,10 @@
             "name": "clientId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -1109,7 +1235,10 @@
             "name": "serverId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -1142,6 +1271,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1165,7 +1297,8 @@
             "name": "email",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "email"
             }
           },
           {
@@ -1210,6 +1343,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1233,7 +1369,8 @@
                 "type": "object",
                 "properties": {
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "email"
                   }
                 },
                 "required": [
@@ -1269,6 +1406,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1292,7 +1432,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -1322,6 +1465,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1343,7 +1489,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -1373,6 +1522,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1394,7 +1546,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -1434,6 +1589,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1457,7 +1615,8 @@
             "name": "email",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "email"
             }
           },
           {
@@ -1498,6 +1657,9 @@
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
           },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
@@ -1543,6 +1705,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1566,7 +1731,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -1596,6 +1764,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1617,7 +1788,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -1628,7 +1802,10 @@
                 "type": "object",
                 "properties": {
                   "environmentId": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "ouid",
+                    "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+                    "example": "obj_12345"
                   }
                 }
               }
@@ -1661,6 +1838,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1684,7 +1864,10 @@
             "name": "environmentId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -1692,7 +1875,10 @@
             "name": "clusterId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -1700,7 +1886,10 @@
             "name": "name",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "k8s-name",
+              "pattern": "^[a-z0-9][a-z0-9-.]{0,252}$",
+              "example": "objects_name"
             }
           }
         ],
@@ -1733,6 +1922,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1756,7 +1948,10 @@
             "name": "environmentId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -1764,7 +1959,10 @@
             "name": "clusterId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -1772,7 +1970,10 @@
             "name": "name",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "k8s-name",
+              "pattern": "^[a-z0-9][a-z0-9-.]{0,252}$",
+              "example": "objects_name"
             }
           }
         ],
@@ -1801,6 +2002,9 @@
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
           },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
@@ -1848,6 +2052,9 @@
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
           },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
@@ -1901,6 +2108,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1924,7 +2134,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -1954,6 +2167,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -1975,7 +2191,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -1986,10 +2205,14 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "example": "Object name"
                   },
                   "imageURL": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "url"
                   }
                 }
               }
@@ -2022,6 +2245,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -2045,7 +2271,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -2075,6 +2304,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -2098,7 +2330,10 @@
             "name": "environmentId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -2106,7 +2341,10 @@
             "name": "namespaceId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -2114,7 +2352,10 @@
             "name": "name",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "k8s-name",
+              "pattern": "^[a-z0-9][a-z0-9-.]{0,252}$",
+              "example": "objects_name"
             }
           }
         ],
@@ -2147,6 +2388,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -2170,7 +2414,10 @@
             "name": "environmentId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -2178,7 +2425,10 @@
             "name": "namespaceId",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -2186,7 +2436,10 @@
             "name": "name",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "k8s-name",
+              "pattern": "^[a-z0-9][a-z0-9-.]{0,252}$",
+              "example": "objects_name"
             }
           }
         ],
@@ -2215,6 +2468,9 @@
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
           },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
@@ -2263,6 +2519,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -2286,7 +2545,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -2316,6 +2578,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -2330,8 +2595,8 @@
         "tags": [
           "environments"
         ],
-        "description": "Add labels to environment",
-        "summary": "Add labels to environment",
+        "description": "Add label to environment",
+        "summary": "Add label to environment",
         "operationId": "addEnvironmentLabel_mutation",
         "parameters": [
           {
@@ -2339,7 +2604,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -2362,7 +2630,7 @@
         },
         "responses": {
           "200": {
-            "description": "Add labels to environment",
+            "description": "Add label to environment",
             "content": {
               "application/json": {
                 "schema": {
@@ -2385,6 +2653,9 @@
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
           },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
@@ -2400,8 +2671,8 @@
         "tags": [
           "environments"
         ],
-        "description": "Remove labels from environment",
-        "summary": "Remove labels from environment",
+        "description": "Remove label from environment",
+        "summary": "Remove label from environment",
         "operationId": "deleteEnvironmentLabel_mutation",
         "parameters": [
           {
@@ -2409,7 +2680,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -2417,13 +2691,16 @@
             "name": "key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "label-name",
+              "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+              "example": "label-key-1"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Remove labels from environment",
+            "description": "Remove label from environment",
             "content": {
               "application/json": {
                 "schema": {
@@ -2446,6 +2723,9 @@
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
           },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
@@ -2472,7 +2752,10 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "example": "Object name"
                   }
                 },
                 "required": [
@@ -2508,6 +2791,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -2533,10 +2819,16 @@
                 "type": "object",
                 "properties": {
                   "environmentId": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "ouid",
+                    "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+                    "example": "obj_12345"
                   },
                   "clusterId": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "ouid",
+                    "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+                    "example": "obj_12345"
                   }
                 },
                 "required": [
@@ -2572,6 +2864,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -2595,7 +2890,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -2606,7 +2904,10 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "example": "Object name"
                   }
                 }
               }
@@ -2639,6 +2940,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -2662,7 +2966,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -2673,7 +2980,10 @@
                 "type": "object",
                 "properties": {
                   "environmentId": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "ouid",
+                    "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+                    "example": "obj_12345"
                   }
                 }
               }
@@ -2706,6 +3016,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -2729,7 +3042,10 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           {
@@ -2737,7 +3053,10 @@
             "name": "userId",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           }
         ],
@@ -2767,6 +3086,9 @@
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
           "500": {
             "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
           },
@@ -2781,7 +3103,7 @@
     "securitySchemes": {
       "oauth2": {
         "type": "oauth2",
-        "description": "Use client ID and client secret from an Otterize integration to authenticate.\nTo create an integration, go to https://app.staging.otterize.com/integrations.",
+        "description": "Use client ID and client secret from an Otterize integration to authenticate.\nTo create an integration, go to http://local.otterize.com:3000/integrations.",
         "flows": {
           "clientCredentials": {
             "tokenUrl": "/api/auth/tokens/token",
@@ -2792,14 +3114,26 @@
       "accessTokenCookie": {
         "type": "apiKey",
         "in": "cookie",
-        "description": "Otterize user JWT token. This session cookie is automatically set by logging in to Otterize Cloud at https://app.staging.otterize.com.",
+        "description": "Otterize user JWT token. This session cookie is automatically set by logging in to Otterize Cloud at http://local.otterize.com:3000.",
         "name": "access_token"
       },
       "organizationCookie": {
         "type": "apiKey",
         "in": "cookie",
-        "description": "Selected organization ID cookie. This session cookie is automatically set by logging in to Otterize Cloud at https://app.staging.otterize.com.",
+        "description": "Selected organization ID cookie. This session cookie is automatically set by logging in to Otterize Cloud at http://local.otterize.com:3000.",
         "name": "organization_id"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Otterize user JWT token.",
+        "bearerFormat": "JWT"
+      },
+      "organizationHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "description": "Selected organization ID. Leave blank to auto-select the first organization for the current user.",
+        "name": "X-Otterize-Organization"
       }
     },
     "responses": {
@@ -2871,6 +3205,16 @@
             }
           }
         }
+      },
+      "BAD_USER_INPUT": {
+        "description": "Unprocessable Entity",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
       }
     },
     "schemas": {
@@ -2880,25 +3224,37 @@
           "environmentIds": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           "clusterIds": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           "serviceIds": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           "namespaceIds": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "format": "ouid",
+              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "example": "obj_12345"
             }
           },
           "lastSeenAfter": {
@@ -3355,10 +3711,16 @@
         ],
         "properties": {
           "key": {
-            "type": "string"
+            "type": "string",
+            "format": "label-name",
+            "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+            "example": "label-key-1"
           },
           "value": {
-            "type": "string"
+            "type": "string",
+            "format": "non-empty",
+            "pattern": ".+",
+            "example": "label value"
           }
         }
       },
@@ -3963,6 +4325,10 @@
     {
       "accessTokenCookie": [],
       "organizationCookie": []
+    },
+    {
+      "bearerAuth": [],
+      "organizationHeader": []
     }
   ]
 }
