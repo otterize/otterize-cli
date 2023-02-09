@@ -3,7 +3,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "7af90b10d104c19f93785908f1e35405b4bfbd4a"
+    "x-revision": "30317f72011436d3d7e1a8e5111e9e05ab5a9257"
   },
   "servers": [
     {
@@ -89,7 +89,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -146,7 +146,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -203,7 +203,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -462,7 +462,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -519,7 +519,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -599,7 +599,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -873,7 +873,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -884,7 +884,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -946,7 +946,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1003,7 +1003,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1074,7 +1074,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1085,7 +1085,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1155,7 +1155,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1214,7 +1214,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1225,7 +1225,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1236,7 +1236,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1433,7 +1433,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1490,7 +1490,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1547,7 +1547,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1732,7 +1732,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1789,7 +1789,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1803,7 +1803,7 @@
                 "properties": {
                   "environmentId": {
                     "type": "string",
-                    "format": "ouid",
+                    "format": "object-id",
                     "pattern": "^[A-Za-z]+_[a-z0-9]+$",
                     "example": "obj_12345"
                   }
@@ -1865,7 +1865,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1876,7 +1876,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1949,7 +1949,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -1960,7 +1960,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2135,7 +2135,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2192,7 +2192,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2272,7 +2272,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2331,7 +2331,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2342,7 +2342,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2415,7 +2415,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2426,7 +2426,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2546,7 +2546,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2605,7 +2605,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2681,7 +2681,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2820,13 +2820,13 @@
                 "properties": {
                   "environmentId": {
                     "type": "string",
-                    "format": "ouid",
+                    "format": "object-id",
                     "pattern": "^[A-Za-z]+_[a-z0-9]+$",
                     "example": "obj_12345"
                   },
                   "clusterId": {
                     "type": "string",
-                    "format": "ouid",
+                    "format": "object-id",
                     "pattern": "^[A-Za-z]+_[a-z0-9]+$",
                     "example": "obj_12345"
                   }
@@ -2891,7 +2891,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2967,7 +2967,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -2981,7 +2981,7 @@
                 "properties": {
                   "environmentId": {
                     "type": "string",
-                    "format": "ouid",
+                    "format": "object-id",
                     "pattern": "^[A-Za-z]+_[a-z0-9]+$",
                     "example": "obj_12345"
                   }
@@ -3043,7 +3043,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -3054,7 +3054,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -3225,7 +3225,7 @@
             "type": "array",
             "items": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -3234,7 +3234,7 @@
             "type": "array",
             "items": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -3243,7 +3243,7 @@
             "type": "array",
             "items": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
@@ -3252,7 +3252,7 @@
             "type": "array",
             "items": {
               "type": "string",
-              "format": "ouid",
+              "format": "object-id",
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "example": "obj_12345"
             }
