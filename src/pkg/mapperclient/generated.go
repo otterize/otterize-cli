@@ -4,9 +4,22 @@ package mapperclient
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/Khan/genqlient/graphql"
 )
+
+// NamespacedNameFragment includes the GraphQL fields of OtterizeServiceIdentity requested by the fragment NamespacedNameFragment.
+type NamespacedNameFragment struct {
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+}
+
+// GetName returns NamespacedNameFragment.Name, and is useful for accessing the field via an interface.
+func (v *NamespacedNameFragment) GetName() string { return v.Name }
+
+// GetNamespace returns NamespacedNameFragment.Namespace, and is useful for accessing the field via an interface.
+func (v *NamespacedNameFragment) GetNamespace() string { return v.Namespace }
 
 // ResetCaptureResponse is returned by ResetCapture on success.
 type ResetCaptureResponse struct {
@@ -16,67 +29,375 @@ type ResetCaptureResponse struct {
 // GetResetCapture returns ResetCaptureResponse.ResetCapture, and is useful for accessing the field via an interface.
 func (v *ResetCaptureResponse) GetResetCapture() bool { return v.ResetCapture }
 
-// ServiceIntentsResponse is returned by ServiceIntents on success.
-type ServiceIntentsResponse struct {
-	ServiceIntents []ServiceIntentsServiceIntents `json:"serviceIntents"`
+// ServiceIntentsUpToMapperV017Response is returned by ServiceIntentsUpToMapperV017 on success.
+type ServiceIntentsUpToMapperV017Response struct {
+	ServiceIntents []ServiceIntentsUpToMapperV017ServiceIntents `json:"serviceIntents"`
 }
 
-// GetServiceIntents returns ServiceIntentsResponse.ServiceIntents, and is useful for accessing the field via an interface.
-func (v *ServiceIntentsResponse) GetServiceIntents() []ServiceIntentsServiceIntents {
+// GetServiceIntents returns ServiceIntentsUpToMapperV017Response.ServiceIntents, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsUpToMapperV017Response) GetServiceIntents() []ServiceIntentsUpToMapperV017ServiceIntents {
 	return v.ServiceIntents
 }
 
-// ServiceIntentsServiceIntents includes the requested fields of the GraphQL type ServiceIntents.
-type ServiceIntentsServiceIntents struct {
-	Client  ServiceIntentsServiceIntentsClientOtterizeServiceIdentity    `json:"client"`
-	Intents []ServiceIntentsServiceIntentsIntentsOtterizeServiceIdentity `json:"intents"`
+// ServiceIntentsUpToMapperV017ServiceIntents includes the requested fields of the GraphQL type ServiceIntents.
+type ServiceIntentsUpToMapperV017ServiceIntents struct {
+	Client  ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity    `json:"client"`
+	Intents []ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity `json:"intents"`
 }
 
-// GetClient returns ServiceIntentsServiceIntents.Client, and is useful for accessing the field via an interface.
-func (v *ServiceIntentsServiceIntents) GetClient() ServiceIntentsServiceIntentsClientOtterizeServiceIdentity {
+// GetClient returns ServiceIntentsUpToMapperV017ServiceIntents.Client, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsUpToMapperV017ServiceIntents) GetClient() ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity {
 	return v.Client
 }
 
-// GetIntents returns ServiceIntentsServiceIntents.Intents, and is useful for accessing the field via an interface.
-func (v *ServiceIntentsServiceIntents) GetIntents() []ServiceIntentsServiceIntentsIntentsOtterizeServiceIdentity {
+// GetIntents returns ServiceIntentsUpToMapperV017ServiceIntents.Intents, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsUpToMapperV017ServiceIntents) GetIntents() []ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity {
 	return v.Intents
 }
 
-// ServiceIntentsServiceIntentsClientOtterizeServiceIdentity includes the requested fields of the GraphQL type OtterizeServiceIdentity.
-type ServiceIntentsServiceIntentsClientOtterizeServiceIdentity struct {
-	Name      string `json:"name"`
+// ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity includes the requested fields of the GraphQL type OtterizeServiceIdentity.
+type ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity struct {
+	NamespacedNameFragment `json:"-"`
+}
+
+// GetName returns ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity.Name, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity) GetName() string {
+	return v.NamespacedNameFragment.Name
+}
+
+// GetNamespace returns ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity.Namespace, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity) GetNamespace() string {
+	return v.NamespacedNameFragment.Namespace
+}
+
+func (v *ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.NamespacedNameFragment)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity struct {
+	Name string `json:"name"`
+
 	Namespace string `json:"namespace"`
 }
 
-// GetName returns ServiceIntentsServiceIntentsClientOtterizeServiceIdentity.Name, and is useful for accessing the field via an interface.
-func (v *ServiceIntentsServiceIntentsClientOtterizeServiceIdentity) GetName() string { return v.Name }
-
-// GetNamespace returns ServiceIntentsServiceIntentsClientOtterizeServiceIdentity.Namespace, and is useful for accessing the field via an interface.
-func (v *ServiceIntentsServiceIntentsClientOtterizeServiceIdentity) GetNamespace() string {
-	return v.Namespace
+func (v *ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
 }
 
-// ServiceIntentsServiceIntentsIntentsOtterizeServiceIdentity includes the requested fields of the GraphQL type OtterizeServiceIdentity.
-type ServiceIntentsServiceIntentsIntentsOtterizeServiceIdentity struct {
-	Name      string `json:"name"`
+func (v *ServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity) __premarshalJSON() (*__premarshalServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity, error) {
+	var retval __premarshalServiceIntentsUpToMapperV017ServiceIntentsClientOtterizeServiceIdentity
+
+	retval.Name = v.NamespacedNameFragment.Name
+	retval.Namespace = v.NamespacedNameFragment.Namespace
+	return &retval, nil
+}
+
+// ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity includes the requested fields of the GraphQL type OtterizeServiceIdentity.
+type ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity struct {
+	NamespacedNameFragment `json:"-"`
+}
+
+// GetName returns ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity.Name, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity) GetName() string {
+	return v.NamespacedNameFragment.Name
+}
+
+// GetNamespace returns ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity.Namespace, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity) GetNamespace() string {
+	return v.NamespacedNameFragment.Namespace
+}
+
+func (v *ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.NamespacedNameFragment)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity struct {
+	Name string `json:"name"`
+
 	Namespace string `json:"namespace"`
 }
 
-// GetName returns ServiceIntentsServiceIntentsIntentsOtterizeServiceIdentity.Name, and is useful for accessing the field via an interface.
-func (v *ServiceIntentsServiceIntentsIntentsOtterizeServiceIdentity) GetName() string { return v.Name }
-
-// GetNamespace returns ServiceIntentsServiceIntentsIntentsOtterizeServiceIdentity.Namespace, and is useful for accessing the field via an interface.
-func (v *ServiceIntentsServiceIntentsIntentsOtterizeServiceIdentity) GetNamespace() string {
-	return v.Namespace
+func (v *ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
 }
 
-// __ServiceIntentsInput is used internally by genqlient
-type __ServiceIntentsInput struct {
+func (v *ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity) __premarshalJSON() (*__premarshalServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity, error) {
+	var retval __premarshalServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity
+
+	retval.Name = v.NamespacedNameFragment.Name
+	retval.Namespace = v.NamespacedNameFragment.Namespace
+	return &retval, nil
+}
+
+// ServiceIntentsWithLabelsResponse is returned by ServiceIntentsWithLabels on success.
+type ServiceIntentsWithLabelsResponse struct {
+	ServiceIntents []ServiceIntentsWithLabelsServiceIntents `json:"serviceIntents"`
+}
+
+// GetServiceIntents returns ServiceIntentsWithLabelsResponse.ServiceIntents, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsResponse) GetServiceIntents() []ServiceIntentsWithLabelsServiceIntents {
+	return v.ServiceIntents
+}
+
+// ServiceIntentsWithLabelsServiceIntents includes the requested fields of the GraphQL type ServiceIntents.
+type ServiceIntentsWithLabelsServiceIntents struct {
+	Client  ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity    `json:"client"`
+	Intents []ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity `json:"intents"`
+}
+
+// GetClient returns ServiceIntentsWithLabelsServiceIntents.Client, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntents) GetClient() ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity {
+	return v.Client
+}
+
+// GetIntents returns ServiceIntentsWithLabelsServiceIntents.Intents, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntents) GetIntents() []ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity {
+	return v.Intents
+}
+
+// ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity includes the requested fields of the GraphQL type OtterizeServiceIdentity.
+type ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity struct {
+	NamespacedNameFragment `json:"-"`
+	Labels                 []ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentityLabelsPodLabel `json:"labels"`
+}
+
+// GetLabels returns ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity.Labels, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) GetLabels() []ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentityLabelsPodLabel {
+	return v.Labels
+}
+
+// GetName returns ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity.Name, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) GetName() string {
+	return v.NamespacedNameFragment.Name
+}
+
+// GetNamespace returns ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity.Namespace, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) GetNamespace() string {
+	return v.NamespacedNameFragment.Namespace
+}
+
+func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.NamespacedNameFragment)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity struct {
+	Labels []ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentityLabelsPodLabel `json:"labels"`
+
+	Name string `json:"name"`
+
+	Namespace string `json:"namespace"`
+}
+
+func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) __premarshalJSON() (*__premarshalServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity, error) {
+	var retval __premarshalServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity
+
+	retval.Labels = v.Labels
+	retval.Name = v.NamespacedNameFragment.Name
+	retval.Namespace = v.NamespacedNameFragment.Namespace
+	return &retval, nil
+}
+
+// ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentityLabelsPodLabel includes the requested fields of the GraphQL type PodLabel.
+type ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentityLabelsPodLabel struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+// GetKey returns ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentityLabelsPodLabel.Key, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentityLabelsPodLabel) GetKey() string {
+	return v.Key
+}
+
+// GetValue returns ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentityLabelsPodLabel.Value, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentityLabelsPodLabel) GetValue() string {
+	return v.Value
+}
+
+// ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity includes the requested fields of the GraphQL type OtterizeServiceIdentity.
+type ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity struct {
+	NamespacedNameFragment `json:"-"`
+	Labels                 []ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentityLabelsPodLabel `json:"labels"`
+}
+
+// GetLabels returns ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity.Labels, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) GetLabels() []ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentityLabelsPodLabel {
+	return v.Labels
+}
+
+// GetName returns ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity.Name, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) GetName() string {
+	return v.NamespacedNameFragment.Name
+}
+
+// GetNamespace returns ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity.Namespace, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) GetNamespace() string {
+	return v.NamespacedNameFragment.Namespace
+}
+
+func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.NamespacedNameFragment)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity struct {
+	Labels []ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentityLabelsPodLabel `json:"labels"`
+
+	Name string `json:"name"`
+
+	Namespace string `json:"namespace"`
+}
+
+func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) __premarshalJSON() (*__premarshalServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity, error) {
+	var retval __premarshalServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity
+
+	retval.Labels = v.Labels
+	retval.Name = v.NamespacedNameFragment.Name
+	retval.Namespace = v.NamespacedNameFragment.Namespace
+	return &retval, nil
+}
+
+// ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentityLabelsPodLabel includes the requested fields of the GraphQL type PodLabel.
+type ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentityLabelsPodLabel struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+// GetKey returns ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentityLabelsPodLabel.Key, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentityLabelsPodLabel) GetKey() string {
+	return v.Key
+}
+
+// GetValue returns ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentityLabelsPodLabel.Value, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentityLabelsPodLabel) GetValue() string {
+	return v.Value
+}
+
+// __ServiceIntentsUpToMapperV017Input is used internally by genqlient
+type __ServiceIntentsUpToMapperV017Input struct {
 	Namespaces []string `json:"namespaces"`
 }
 
-// GetNamespaces returns __ServiceIntentsInput.Namespaces, and is useful for accessing the field via an interface.
-func (v *__ServiceIntentsInput) GetNamespaces() []string { return v.Namespaces }
+// GetNamespaces returns __ServiceIntentsUpToMapperV017Input.Namespaces, and is useful for accessing the field via an interface.
+func (v *__ServiceIntentsUpToMapperV017Input) GetNamespaces() []string { return v.Namespaces }
+
+// __ServiceIntentsWithLabelsInput is used internally by genqlient
+type __ServiceIntentsWithLabelsInput struct {
+	Namespaces     []string `json:"namespaces"`
+	IncludedLabels []string `json:"includedLabels"`
+}
+
+// GetNamespaces returns __ServiceIntentsWithLabelsInput.Namespaces, and is useful for accessing the field via an interface.
+func (v *__ServiceIntentsWithLabelsInput) GetNamespaces() []string { return v.Namespaces }
+
+// GetIncludedLabels returns __ServiceIntentsWithLabelsInput.IncludedLabels, and is useful for accessing the field via an interface.
+func (v *__ServiceIntentsWithLabelsInput) GetIncludedLabels() []string { return v.IncludedLabels }
 
 func ResetCapture(
 	ctx context.Context,
@@ -104,34 +425,87 @@ mutation ResetCapture {
 	return &data, err
 }
 
-func ServiceIntents(
+func ServiceIntentsUpToMapperV017(
 	ctx context.Context,
 	client graphql.Client,
 	namespaces []string,
-) (*ServiceIntentsResponse, error) {
+) (*ServiceIntentsUpToMapperV017Response, error) {
 	req := &graphql.Request{
-		OpName: "ServiceIntents",
+		OpName: "ServiceIntentsUpToMapperV017",
 		Query: `
-query ServiceIntents ($namespaces: [String!]) {
+query ServiceIntentsUpToMapperV017 ($namespaces: [String!]) {
 	serviceIntents(namespaces: $namespaces) {
 		client {
-			name
-			namespace
+			... NamespacedNameFragment
 		}
 		intents {
-			name
-			namespace
+			... NamespacedNameFragment
 		}
 	}
 }
+fragment NamespacedNameFragment on OtterizeServiceIdentity {
+	name
+	namespace
+}
 `,
-		Variables: &__ServiceIntentsInput{
+		Variables: &__ServiceIntentsUpToMapperV017Input{
 			Namespaces: namespaces,
 		},
 	}
 	var err error
 
-	var data ServiceIntentsResponse
+	var data ServiceIntentsUpToMapperV017Response
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
+
+func ServiceIntentsWithLabels(
+	ctx context.Context,
+	client graphql.Client,
+	namespaces []string,
+	includedLabels []string,
+) (*ServiceIntentsWithLabelsResponse, error) {
+	req := &graphql.Request{
+		OpName: "ServiceIntentsWithLabels",
+		Query: `
+query ServiceIntentsWithLabels ($namespaces: [String!], $includedLabels: [String!]) {
+	serviceIntents(namespaces: $namespaces, includeLabels: $includedLabels) {
+		client {
+			... NamespacedNameFragment
+			labels {
+				key
+				value
+			}
+		}
+		intents {
+			... NamespacedNameFragment
+			labels {
+				key
+				value
+			}
+		}
+	}
+}
+fragment NamespacedNameFragment on OtterizeServiceIdentity {
+	name
+	namespace
+}
+`,
+		Variables: &__ServiceIntentsWithLabelsInput{
+			Namespaces:     namespaces,
+			IncludedLabels: includedLabels,
+		},
+	}
+	var err error
+
+	var data ServiceIntentsWithLabelsResponse
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(

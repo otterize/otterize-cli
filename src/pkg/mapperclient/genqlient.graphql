@@ -1,12 +1,35 @@
-query ServiceIntents($namespaces: [String!]) {
+query ServiceIntentsUpToMapperV017($namespaces: [String!]) {
     serviceIntents(namespaces: $namespaces) {
         client {
-            name
-            namespace
+            ...NamespacedNameFragment
         }
         intents {
-            name
-            namespace
+            ...NamespacedNameFragment
+        }
+    }
+}
+
+fragment NamespacedNameFragment on OtterizeServiceIdentity {
+    name
+    namespace
+}
+
+
+query ServiceIntentsWithLabels($namespaces: [String!], $includedLabels: [String!]) {
+    serviceIntents(namespaces: $namespaces, includeLabels: $includedLabels) {
+        client {
+            ...NamespacedNameFragment
+            labels {
+                key
+                value
+            }
+        }
+        intents {
+            ...NamespacedNameFragment
+            labels {
+                key
+                value
+            }
         }
     }
 }

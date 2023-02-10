@@ -4,15 +4,20 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/amit7itz/goset"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/output"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	"net/http"
 	"os"
 	"path/filepath"
 	"time"
@@ -21,6 +26,7 @@ import (
 const (
 	NamespacesKey           = "namespaces"
 	NamespacesShorthand     = "n"
+	DistinctByLabelKey      = "distinct-by-label"
 	OutputLocationKey       = "output"
 	OutputLocationShorthand = "o"
 	OutputTypeKey           = "output-type"
@@ -32,6 +38,36 @@ const (
 	OutputFormatYAML        = "yaml"
 	OutputFormatJSON        = "json"
 )
+
+type distinctKey struct {
+	Name       string
+	Namespace  string
+	LabelValue string
+}
+
+func isCallsDifferent(a []v1alpha2.Intent, b []v1alpha2.Intent) bool {
+	aServices := goset.NewSet[string]()
+	bServices := goset.NewSet[string]()
+	for _, intent := range a {
+		aServices.Add(intent.Name)
+	}
+	for _, intent := range b {
+		bServices.Add(intent.Name)
+	}
+	return aServices.SymmetricDifference(bServices).Len() != 0
+}
+
+func (g distinctKey) String() string {
+	if len(g.Namespace) != 0 {
+		return fmt.Sprintf("%s.%s", g.Name, g.Namespace)
+	}
+
+	if len(g.LabelValue) != 0 {
+		return fmt.Sprintf("%s.%s", g.Name, g.LabelValue)
+	}
+
+	panic("unreachable code")
+}
 
 func writeIntentsFile(filePath string, intents []v1alpha2.ClientIntents) error {
 	f, err := os.Create(filePath)
@@ -64,15 +100,54 @@ var ExportCmd = &cobra.Command{
 			ctxTimeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
 			namespacesFilter := viper.GetStringSlice(NamespacesKey)
-			intentsFromMapper, err := c.ServiceIntents(ctxTimeout, namespacesFilter)
-			if err != nil {
-				return err
+			var intentsFromMapperWithLabels []mapperclient.ServiceIntentsWithLabelsServiceIntents
+			if viper.IsSet(DistinctByLabelKey) {
+				includeLabels := []string{viper.GetString(DistinctByLabelKey)}
+				intentsFromMapperV1018, err := c.ServiceIntentsWithLabels(ctxTimeout, namespacesFilter, includeLabels)
+				if err != nil {
+					if httpErr := (mapperclient.HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
+						prints.PrintCliStderr("You've specified --%s, but your network mapper does not support this capability. Please upgrade.", DistinctByLabelKey)
+					}
+					return err
+				}
+				intentsFromMapperWithLabels = intentsFromMapperV1018
+			} else {
+				intentsFromMapperV1017, err := c.ServiceIntents(ctxTimeout, namespacesFilter)
+				if err != nil {
+					return err
+				}
+				intentsFromMapperWithLabels = lo.Map(intentsFromMapperV1017,
+					func(item mapperclient.ServiceIntentsUpToMapperV017ServiceIntents, _ int) mapperclient.ServiceIntentsWithLabelsServiceIntents {
+						return mapperclient.ServiceIntentsWithLabelsServiceIntents{
+							Client: mapperclient.ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity{
+								NamespacedNameFragment: item.Client.NamespacedNameFragment,
+							},
+							Intents: lo.Map(item.Intents, func(item mapperclient.ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity, _ int) mapperclient.ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity {
+								return mapperclient.ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity{
+									NamespacedNameFragment: item.NamespacedNameFragment,
+								}
+							}),
+						}
+					})
 			}
 
-			outputList := make([]v1alpha2.ClientIntents, 0)
+			groupedIntents := make(map[distinctKey]v1alpha2.ClientIntents, 0)
 
-			for _, serviceIntents := range intentsFromMapper {
+			for _, serviceIntents := range intentsFromMapperWithLabels {
 				intentList := make([]v1alpha2.Intent, 0)
+				serviceDistinctKey := distinctKey{
+					Name:      serviceIntents.Client.Name,
+					Namespace: serviceIntents.Client.Namespace,
+				}
+
+				if viper.IsSet(DistinctByLabelKey) {
+					serviceDistinctKey.Namespace = ""
+					if len(serviceIntents.Client.Labels) == 1 && serviceIntents.Client.Labels[0].Key == viper.GetString(DistinctByLabelKey) {
+						serviceDistinctKey.LabelValue = serviceIntents.Client.Labels[0].Value
+					} else {
+						serviceDistinctKey.LabelValue = "no_value"
+					}
+				}
 
 				for _, serviceIntent := range serviceIntents.Intents {
 					intent := v1alpha2.Intent{
@@ -101,13 +176,20 @@ var ExportCmd = &cobra.Command{
 					intentsOutput.Spec.Calls = intentList
 				}
 
-				outputList = append(outputList, intentsOutput)
+				if currentIntents, ok := groupedIntents[serviceDistinctKey]; ok {
+					if isCallsDifferent(currentIntents.Spec.Calls, intentsOutput.Spec.Calls) {
+						prints.PrintCliStderr("Warning: intents for service `%s` in namespace `%s` differ from intents for service `%s` in namespace `%s`. Discarding intents from namespace %s. Unsafe to apply intents.",
+							currentIntents.Name, currentIntents.Namespace, intentsOutput.Name, intentsOutput.Namespace, intentsOutput.Namespace)
+						continue
+					}
+				}
+				groupedIntents[serviceDistinctKey] = intentsOutput
 			}
 
 			if viper.GetString(OutputLocationKey) != "" {
 				switch outputTypeVal := viper.GetString(OutputTypeKey); {
 				case outputTypeVal == OutputTypeSingleFile:
-					err := writeIntentsFile(viper.GetString(OutputLocationKey), outputList)
+					err := writeIntentsFile(viper.GetString(OutputLocationKey), lo.Values(groupedIntents))
 					if err != nil {
 						return err
 					}
@@ -118,11 +200,12 @@ var ExportCmd = &cobra.Command{
 						return fmt.Errorf("could not create dir %s: %w", viper.GetString(OutputLocationKey), err)
 					}
 
-					for _, intent := range outputList {
-						filePath := fmt.Sprintf("%s.%s.yaml", intent.Name, intent.Namespace)
+					for groupKey, intent := range groupedIntents {
+						filePath := fmt.Sprintf("%s.yaml", groupKey.String())
 						if err != nil {
 							return err
 						}
+
 						filePath = filepath.Join(viper.GetString(OutputLocationKey), filePath)
 						err := writeIntentsFile(filePath, []v1alpha2.ClientIntents{intent})
 						if err != nil {
@@ -135,7 +218,7 @@ var ExportCmd = &cobra.Command{
 				}
 
 			} else {
-				formatted, err := getFormattedIntents(outputList)
+				formatted, err := getFormattedIntents(lo.Values(groupedIntents))
 				if err != nil {
 					return err
 				}
@@ -188,4 +271,5 @@ func init() {
 	ExportCmd.Flags().String(OutputTypeKey, "", fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
 	ExportCmd.Flags().String(OutputFormatKey, OutputFormatDefault, fmt.Sprintf("format to output the intents - %s/%s", OutputFormatYAML, OutputFormatJSON))
 	ExportCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
+	ExportCmd.Flags().String(DistinctByLabelKey, "", "(EXPERIMENTAL) If specified, remove duplicates for exported ClientIntents by service and this label. Otherwise, outputs different intents for each namespace.")
 }
