@@ -14,7 +14,5 @@ func PrintCliStderr(format string, a ...any) {
 }
 
 func PrintCliOutput(format string, a ...any) {
-	if !viper.GetBool(config.QuietModeKey) {
-		fmt.Printf(format+"\n", a...)
-	}
+	fmt.Printf(format+"\n", a...)
 }
