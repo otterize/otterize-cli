@@ -100,11 +100,9 @@ var ExportCmd = &cobra.Command{
 			ctxTimeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
 			namespacesFilter := viper.GetStringSlice(NamespacesKey)
-			distinctByLabel := viper.GetString(DistinctByLabelKey)
-			includeLabels := make([]string, 0)
-			intentsFromMapperWithLabels := make([]mapperclient.ServiceIntentsWithLabelsServiceIntents, 0)
+			var intentsFromMapperWithLabels []mapperclient.ServiceIntentsWithLabelsServiceIntents
 			if viper.IsSet(DistinctByLabelKey) {
-				includeLabels = []string{distinctByLabel}
+				includeLabels := []string{viper.GetString(DistinctByLabelKey)}
 				intentsFromMapperV1018, err := c.ServiceIntentsWithLabels(ctxTimeout, namespacesFilter, includeLabels)
 				if err != nil {
 					if httpErr := (mapperclient.HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
