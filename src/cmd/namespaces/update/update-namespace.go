@@ -43,5 +43,8 @@ var UpdateNamespaceCmd = &cobra.Command{
 
 func init() {
 	UpdateNamespaceCmd.Flags().String(EnvironmentIDKey, "", "new environment id for the namespace")
-	UpdateNamespaceCmd.MarkFlagRequired(EnvironmentIDKey)
+	err := UpdateNamespaceCmd.MarkFlagRequired(EnvironmentIDKey)
+	if err != nil {
+		panic(err)
+	}
 }
