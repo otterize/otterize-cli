@@ -11,9 +11,9 @@ var (
 	AllIntegrationTypes = []cloudapi.IntegrationType{cloudapi.IntegrationTypeKUBERNETES, cloudapi.IntegrationTypeGENERIC}
 )
 
-func formatTypesSlice[T comparable](types []T) string {
+func formatTypesSlice[T ~string](types []T) string {
 	typeAsStrings := lo.Map(types, func(item T, _ int) string {
-		return fmt.Sprint(item)
+		return string(item)
 	})
 	return strings.Join(typeAsStrings, ", ")
 }
