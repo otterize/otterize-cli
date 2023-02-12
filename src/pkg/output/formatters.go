@@ -2,6 +2,7 @@ package output
 
 import (
 	"fmt"
+	"github.com/iancoleman/strcase"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/samber/lo"
 	"strings"
@@ -160,6 +161,49 @@ func FormatNamespaces(namespaces []cloudapi.Namespace) {
 	}
 
 	PrintFormatList(namespaces, columns, getColumnData)
+}
+
+func FormatAccessGraph(accessGraph cloudapi.AccessGraph) {
+	columns := []string{
+		"client id",
+		"server id",
+		"access status verdict",
+		"access status reason",
+		"discovered intent",
+		"applied intent",
+	}
+
+	getColumnData := func(service cloudapi.ServiceAccessGraph) []map[string]string {
+		edges := make([]map[string]string, 0)
+		for _, server := range service.Calls {
+			appliedIntentId := ""
+			if len(server.AppliedIntents) > 0 {
+				appliedIntentId = server.AppliedIntents[0].Id
+			}
+
+			discoveredIntentId := ""
+			if len(server.DiscoveredIntents) > 0 {
+				discoveredIntentId = server.DiscoveredIntents[0].Id
+			}
+
+			edges = append(edges, map[string]string{
+				"client id":             server.Client.Id,
+				"server id":             server.Server.Id,
+				"access status verdict": enumToString(string(server.AccessStatus.Verdict)),
+				"access status reason":  enumToString(string(server.AccessStatus.Reason)),
+				"discovered intent":     discoveredIntentId,
+				"applied intent":        appliedIntentId,
+			})
+		}
+		return edges
+	}
+
+	PrintFormatList(accessGraph.ServiceAccessGraphs, columns, getColumnData)
+}
+
+func enumToString(enumStr string) string {
+	lowerCaseStr := strings.ToLower(enumStr)
+	return strcase.ToDelimited(lowerCaseStr, ' ')
 }
 
 func getCertificateInformation(cert cloudapi.CertificateInformation) string {
