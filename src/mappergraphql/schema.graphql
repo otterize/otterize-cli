@@ -1,8 +1,13 @@
-
+scalar Time # Equivalent of Go's time.Time provided by gqlgen
 
 input CaptureResultForSrcIp {
     srcIp: String!
-    destinations: [String!]!
+    destinations: [Destination!]!
+}
+
+input Destination {
+    destination: String!
+    lastSeen: Time!
 }
 
 input CaptureResults {
@@ -11,16 +16,22 @@ input CaptureResults {
 
 input SocketScanResultForSrcIp {
     srcIp: String!
-    destIps: [String!]!
+    destIps: [Destination!]!
 }
 
 input SocketScanResults {
     results: [SocketScanResultForSrcIp!]!
 }
 
+type PodLabel {
+    key: String!
+    value: String!
+}
+
 type OtterizeServiceIdentity {
     name: String!
     namespace: String!
+    labels: [PodLabel!]
 }
 
 type ServiceIntents {
@@ -28,8 +39,9 @@ type ServiceIntents {
     intents: [OtterizeServiceIdentity!]!
 }
 
+
 type Query {
-    serviceIntents(namespaces: [String!]): [ServiceIntents!]!
+    serviceIntents(namespaces: [String!], includeLabels: [String!]): [ServiceIntents!]!
 }
 
 type Mutation {
