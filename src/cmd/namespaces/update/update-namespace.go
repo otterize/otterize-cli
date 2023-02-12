@@ -30,12 +30,7 @@ var UpdateNamespaceCmd = &cobra.Command{
 		}
 
 		id := args[0]
-		r, err := c.UpdateNamespaceMutationWithResponse(ctxTimeout,
-			id,
-			cloudapi.UpdateNamespaceMutationJSONRequestBody{
-				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIDKey), lo.ToPtr(viper.GetString(EnvironmentIDKey)), nil),
-			},
-		)
+		r, err := c.AssociateNamespaceToEnvMutationWithResponse(ctxTimeout, id, viper.GetString(EnvironmentIDKey), cloudapi.AssociateNamespaceToEnvMutationJSONRequestBody{})
 		if err != nil {
 			return err
 		}
@@ -47,5 +42,6 @@ var UpdateNamespaceCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateNamespaceCmd.Flags().String(EnvironmentIDKey, "", "environment id")
+	UpdateNamespaceCmd.Flags().String(EnvironmentIDKey, "", "new environment id for the namespace")
+	UpdateNamespaceCmd.MarkFlagRequired(EnvironmentIDKey)
 }
