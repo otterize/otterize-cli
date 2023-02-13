@@ -25,6 +25,7 @@ var GetAccessGraph = &cobra.Command{
 	Use:          "get",
 	Short:        "Get access graph",
 	SilenceUsage: true,
+	Args:         cobra.NoArgs,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
