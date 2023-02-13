@@ -1222,7 +1222,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "53ccf00b974e0bdd761b38e60c6862788a5724a2"
+    "x-revision": "110558604afcb7513f937d47ffc0beedde766830"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -3600,7 +3600,7 @@
         ]
       }
     },
-    "/namespaces/{id}/environment/{environmentId}": {
+    "/namespaces/{id}/environment": {
       "put": {
         "description": "Associate namespace to environment",
         "operationId": "associateNamespaceToEnv_mutation",
@@ -3615,17 +3615,6 @@
               "pattern": "^[A-Za-z]+_[a-z0-9]+$",
               "type": "string"
             }
-          },
-          {
-            "in": "path",
-            "name": "environmentId",
-            "required": false,
-            "schema": {
-              "example": "obj_12345",
-              "format": "ouid",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
-              "type": "string"
-            }
           }
         ],
         "requestBody": {
@@ -3633,6 +3622,12 @@
             "application/json": {
               "schema": {
                 "properties": {
+                  "environmentId": {
+                    "example": "obj_12345",
+                    "format": "ouid",
+                    "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+                    "type": "string"
+                  }
                 },
                 "type": "object"
               }

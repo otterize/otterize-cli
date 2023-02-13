@@ -713,7 +713,9 @@ type NamespacesQueryParams struct {
 }
 
 // AssociateNamespaceToEnvMutationJSONBody defines parameters for AssociateNamespaceToEnvMutation.
-type AssociateNamespaceToEnvMutationJSONBody = map[string]interface{}
+type AssociateNamespaceToEnvMutationJSONBody struct {
+	EnvironmentId *string `json:"environmentId,omitempty"`
+}
 
 // CreateOrganizationMutationJSONBody defines parameters for CreateOrganizationMutation.
 type CreateOrganizationMutationJSONBody = map[string]interface{}
@@ -775,7 +777,7 @@ type CreateInviteMutationJSONRequestBody CreateInviteMutationJSONBody
 type AcceptInviteMutationJSONRequestBody = AcceptInviteMutationJSONBody
 
 // AssociateNamespaceToEnvMutationJSONRequestBody defines body for AssociateNamespaceToEnvMutation for application/json ContentType.
-type AssociateNamespaceToEnvMutationJSONRequestBody = AssociateNamespaceToEnvMutationJSONBody
+type AssociateNamespaceToEnvMutationJSONRequestBody AssociateNamespaceToEnvMutationJSONBody
 
 // CreateOrganizationMutationJSONRequestBody defines body for CreateOrganizationMutation for application/json ContentType.
 type CreateOrganizationMutationJSONRequestBody = CreateOrganizationMutationJSONBody
@@ -986,9 +988,9 @@ type ClientInterface interface {
 	NamespaceQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AssociateNamespaceToEnvMutation request with any body
-	AssociateNamespaceToEnvMutationWithBody(ctx context.Context, id string, environmentId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AssociateNamespaceToEnvMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	AssociateNamespaceToEnvMutation(ctx context.Context, id string, environmentId string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AssociateNamespaceToEnvMutation(ctx context.Context, id string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// OrganizationsQuery request
 	OrganizationsQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1589,8 +1591,8 @@ func (c *Client) NamespaceQuery(ctx context.Context, id string, reqEditors ...Re
 	return c.Client.Do(req)
 }
 
-func (c *Client) AssociateNamespaceToEnvMutationWithBody(ctx context.Context, id string, environmentId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAssociateNamespaceToEnvMutationRequestWithBody(c.Server, id, environmentId, contentType, body)
+func (c *Client) AssociateNamespaceToEnvMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAssociateNamespaceToEnvMutationRequestWithBody(c.Server, id, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1601,8 +1603,8 @@ func (c *Client) AssociateNamespaceToEnvMutationWithBody(ctx context.Context, id
 	return c.Client.Do(req)
 }
 
-func (c *Client) AssociateNamespaceToEnvMutation(ctx context.Context, id string, environmentId string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAssociateNamespaceToEnvMutationRequest(c.Server, id, environmentId, body)
+func (c *Client) AssociateNamespaceToEnvMutation(ctx context.Context, id string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAssociateNamespaceToEnvMutationRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -3421,18 +3423,18 @@ func NewNamespaceQueryRequest(server string, id string) (*http.Request, error) {
 }
 
 // NewAssociateNamespaceToEnvMutationRequest calls the generic AssociateNamespaceToEnvMutation builder with application/json body
-func NewAssociateNamespaceToEnvMutationRequest(server string, id string, environmentId string, body AssociateNamespaceToEnvMutationJSONRequestBody) (*http.Request, error) {
+func NewAssociateNamespaceToEnvMutationRequest(server string, id string, body AssociateNamespaceToEnvMutationJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAssociateNamespaceToEnvMutationRequestWithBody(server, id, environmentId, "application/json", bodyReader)
+	return NewAssociateNamespaceToEnvMutationRequestWithBody(server, id, "application/json", bodyReader)
 }
 
 // NewAssociateNamespaceToEnvMutationRequestWithBody generates requests for AssociateNamespaceToEnvMutation with any type of body
-func NewAssociateNamespaceToEnvMutationRequestWithBody(server string, id string, environmentId string, contentType string, body io.Reader) (*http.Request, error) {
+func NewAssociateNamespaceToEnvMutationRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -3442,19 +3444,12 @@ func NewAssociateNamespaceToEnvMutationRequestWithBody(server string, id string,
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "environmentId", runtime.ParamLocationPath, environmentId)
-	if err != nil {
-		return nil, err
-	}
-
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/namespaces/%s/environment/%s", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/namespaces/%s/environment", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -4089,9 +4084,9 @@ type ClientWithResponsesInterface interface {
 	NamespaceQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*NamespaceQueryResponse, error)
 
 	// AssociateNamespaceToEnvMutation request with any body
-	AssociateNamespaceToEnvMutationWithBodyWithResponse(ctx context.Context, id string, environmentId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error)
+	AssociateNamespaceToEnvMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error)
 
-	AssociateNamespaceToEnvMutationWithResponse(ctx context.Context, id string, environmentId string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error)
+	AssociateNamespaceToEnvMutationWithResponse(ctx context.Context, id string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error)
 
 	// OrganizationsQuery request
 	OrganizationsQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*OrganizationsQueryResponse, error)
@@ -5920,16 +5915,16 @@ func (c *ClientWithResponses) NamespaceQueryWithResponse(ctx context.Context, id
 }
 
 // AssociateNamespaceToEnvMutationWithBodyWithResponse request with arbitrary body returning *AssociateNamespaceToEnvMutationResponse
-func (c *ClientWithResponses) AssociateNamespaceToEnvMutationWithBodyWithResponse(ctx context.Context, id string, environmentId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error) {
-	rsp, err := c.AssociateNamespaceToEnvMutationWithBody(ctx, id, environmentId, contentType, body, reqEditors...)
+func (c *ClientWithResponses) AssociateNamespaceToEnvMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error) {
+	rsp, err := c.AssociateNamespaceToEnvMutationWithBody(ctx, id, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
 	return ParseAssociateNamespaceToEnvMutationResponse(rsp)
 }
 
-func (c *ClientWithResponses) AssociateNamespaceToEnvMutationWithResponse(ctx context.Context, id string, environmentId string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error) {
-	rsp, err := c.AssociateNamespaceToEnvMutation(ctx, id, environmentId, body, reqEditors...)
+func (c *ClientWithResponses) AssociateNamespaceToEnvMutationWithResponse(ctx context.Context, id string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error) {
+	rsp, err := c.AssociateNamespaceToEnvMutation(ctx, id, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
