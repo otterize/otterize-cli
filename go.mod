@@ -8,6 +8,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.4.0
 	github.com/deepmap/oapi-codegen v1.12.4
 	github.com/getkin/kin-openapi v0.107.0
+	github.com/iancoleman/strcase v0.2.0
 	github.com/markkurossi/tabulate v0.0.0-20211112080948-67dabd3f2db2
 	github.com/otterize/intents-operator/src v0.0.0-20230124194649-72d5eaa4db3e
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
