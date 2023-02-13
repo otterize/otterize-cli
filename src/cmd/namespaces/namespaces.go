@@ -18,5 +18,5 @@ var NamespacesCmd = &cobra.Command{
 func init() {
 	NamespacesCmd.AddCommand(get.GetNamespaceCmd)
 	NamespacesCmd.AddCommand(list.ListNamespacesCmd)
-	NamespacesCmd.AddCommand(update.UpdateNamespaceCmd)
+	NamespacesCmd.AddCommand(update.AssociateToEnvironmentCmd)
 }

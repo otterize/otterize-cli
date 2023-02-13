@@ -9,17 +9,12 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-const (
-	EnvironmentIDKey = "env-id"
-)
-
-var UpdateNamespaceCmd = &cobra.Command{
-	Use:          "update <namespace-id>",
+var AssociateToEnvironmentCmd = &cobra.Command{
+	Use:          "associate-to-environment <namespace-id> <environment-id>",
 	Short:        "Update a namespace",
-	Args:         cobra.ExactArgs(1),
+	Args:         cobra.ExactArgs(2),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
@@ -30,7 +25,9 @@ var UpdateNamespaceCmd = &cobra.Command{
 		}
 
 		id := args[0]
-		r, err := c.AssociateNamespaceToEnvMutationWithResponse(ctxTimeout, id, viper.GetString(EnvironmentIDKey), cloudapi.AssociateNamespaceToEnvMutationJSONRequestBody{})
+		environmentID := args[1]
+
+		r, err := c.AssociateNamespaceToEnvMutationWithResponse(ctxTimeout, id, environmentID, cloudapi.AssociateNamespaceToEnvMutationJSONRequestBody{})
 		if err != nil {
 			return err
 		}
@@ -39,12 +36,4 @@ var UpdateNamespaceCmd = &cobra.Command{
 		output.FormatNamespaces([]cloudapi.Namespace{lo.FromPtr(r.JSON200)})
 		return nil
 	},
-}
-
-func init() {
-	UpdateNamespaceCmd.Flags().String(EnvironmentIDKey, "", "new environment id for the namespace")
-	err := UpdateNamespaceCmd.MarkFlagRequired(EnvironmentIDKey)
-	if err != nil {
-		panic(err)
-	}
 }
