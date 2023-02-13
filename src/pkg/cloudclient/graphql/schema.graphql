@@ -699,13 +699,13 @@ enum ServerProtectionStatusVerdict {
 
 type Service {
 	id: ID!
+	certificateInformation: CertificateInformation
 	tlsKeyPair: KeyPair!
 	name: String!
 	namespace: Namespace
 	environment: Environment!
 """If service is Kafka, its KafkaServerConfig."""
 	kafkaServerConfig: KafkaServerConfig
-	certificateInformation: CertificateInformation
 }
 
 type ServiceAccessGraph {
