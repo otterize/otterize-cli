@@ -63,7 +63,7 @@ var GetAccessGraph = &cobra.Command{
 func init() {
 	GetAccessGraph.Flags().StringSlice(clustersIdsKey, nil, "Cluster IDs")
 	GetAccessGraph.Flags().StringSlice(envIdsKey, nil, "Environment IDs")
-	GetAccessGraph.Flags().String(lastSeenAfterKey, "", "Last seen after in RFC3339 format")
+	GetAccessGraph.Flags().String(lastSeenAfterKey, "", "Last seen after in RFC3339 format (e.g. 2006-01-02T15:04:05Z)")
 	GetAccessGraph.Flags().StringSlice(namespacesIdsKey, nil, "Namespace IDs")
 	GetAccessGraph.Flags().StringSlice(servicesIdsKey, nil, "Service IDs")
 }
