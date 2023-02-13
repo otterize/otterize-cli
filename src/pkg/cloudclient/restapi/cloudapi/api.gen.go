@@ -712,8 +712,8 @@ type NamespacesQueryParams struct {
 	Name          *string `form:"name,omitempty" json:"name,omitempty"`
 }
 
-// UpdateNamespaceMutationJSONBody defines parameters for UpdateNamespaceMutation.
-type UpdateNamespaceMutationJSONBody struct {
+// AssociateNamespaceToEnvMutationJSONBody defines parameters for AssociateNamespaceToEnvMutation.
+type AssociateNamespaceToEnvMutationJSONBody struct {
 	EnvironmentId *string `json:"environmentId,omitempty"`
 }
 
@@ -776,8 +776,8 @@ type CreateInviteMutationJSONRequestBody CreateInviteMutationJSONBody
 // AcceptInviteMutationJSONRequestBody defines body for AcceptInviteMutation for application/json ContentType.
 type AcceptInviteMutationJSONRequestBody = AcceptInviteMutationJSONBody
 
-// UpdateNamespaceMutationJSONRequestBody defines body for UpdateNamespaceMutation for application/json ContentType.
-type UpdateNamespaceMutationJSONRequestBody UpdateNamespaceMutationJSONBody
+// AssociateNamespaceToEnvMutationJSONRequestBody defines body for AssociateNamespaceToEnvMutation for application/json ContentType.
+type AssociateNamespaceToEnvMutationJSONRequestBody AssociateNamespaceToEnvMutationJSONBody
 
 // CreateOrganizationMutationJSONRequestBody defines body for CreateOrganizationMutation for application/json ContentType.
 type CreateOrganizationMutationJSONRequestBody = CreateOrganizationMutationJSONBody
@@ -987,10 +987,10 @@ type ClientInterface interface {
 	// NamespaceQuery request
 	NamespaceQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpdateNamespaceMutation request with any body
-	UpdateNamespaceMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// AssociateNamespaceToEnvMutation request with any body
+	AssociateNamespaceToEnvMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	UpdateNamespaceMutation(ctx context.Context, id string, body UpdateNamespaceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AssociateNamespaceToEnvMutation(ctx context.Context, id string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// OrganizationsQuery request
 	OrganizationsQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1591,8 +1591,8 @@ func (c *Client) NamespaceQuery(ctx context.Context, id string, reqEditors ...Re
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateNamespaceMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateNamespaceMutationRequestWithBody(c.Server, id, contentType, body)
+func (c *Client) AssociateNamespaceToEnvMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAssociateNamespaceToEnvMutationRequestWithBody(c.Server, id, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1603,8 +1603,8 @@ func (c *Client) UpdateNamespaceMutationWithBody(ctx context.Context, id string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateNamespaceMutation(ctx context.Context, id string, body UpdateNamespaceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateNamespaceMutationRequest(c.Server, id, body)
+func (c *Client) AssociateNamespaceToEnvMutation(ctx context.Context, id string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAssociateNamespaceToEnvMutationRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -3422,19 +3422,19 @@ func NewNamespaceQueryRequest(server string, id string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewUpdateNamespaceMutationRequest calls the generic UpdateNamespaceMutation builder with application/json body
-func NewUpdateNamespaceMutationRequest(server string, id string, body UpdateNamespaceMutationJSONRequestBody) (*http.Request, error) {
+// NewAssociateNamespaceToEnvMutationRequest calls the generic AssociateNamespaceToEnvMutation builder with application/json body
+func NewAssociateNamespaceToEnvMutationRequest(server string, id string, body AssociateNamespaceToEnvMutationJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUpdateNamespaceMutationRequestWithBody(server, id, "application/json", bodyReader)
+	return NewAssociateNamespaceToEnvMutationRequestWithBody(server, id, "application/json", bodyReader)
 }
 
-// NewUpdateNamespaceMutationRequestWithBody generates requests for UpdateNamespaceMutation with any type of body
-func NewUpdateNamespaceMutationRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+// NewAssociateNamespaceToEnvMutationRequestWithBody generates requests for AssociateNamespaceToEnvMutation with any type of body
+func NewAssociateNamespaceToEnvMutationRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -3449,7 +3449,7 @@ func NewUpdateNamespaceMutationRequestWithBody(server string, id string, content
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/namespaces/%s", pathParam0)
+	operationPath := fmt.Sprintf("/namespaces/%s/environment", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3459,7 +3459,7 @@ func NewUpdateNamespaceMutationRequestWithBody(server string, id string, content
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -4083,10 +4083,10 @@ type ClientWithResponsesInterface interface {
 	// NamespaceQuery request
 	NamespaceQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*NamespaceQueryResponse, error)
 
-	// UpdateNamespaceMutation request with any body
-	UpdateNamespaceMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateNamespaceMutationResponse, error)
+	// AssociateNamespaceToEnvMutation request with any body
+	AssociateNamespaceToEnvMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error)
 
-	UpdateNamespaceMutationWithResponse(ctx context.Context, id string, body UpdateNamespaceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateNamespaceMutationResponse, error)
+	AssociateNamespaceToEnvMutationWithResponse(ctx context.Context, id string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error)
 
 	// OrganizationsQuery request
 	OrganizationsQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*OrganizationsQueryResponse, error)
@@ -5173,7 +5173,7 @@ func (r NamespaceQueryResponse) StatusCode() int {
 	return 0
 }
 
-type UpdateNamespaceMutationResponse struct {
+type AssociateNamespaceToEnvMutationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Namespace
@@ -5188,7 +5188,7 @@ type UpdateNamespaceMutationResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r UpdateNamespaceMutationResponse) Status() string {
+func (r AssociateNamespaceToEnvMutationResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -5196,7 +5196,7 @@ func (r UpdateNamespaceMutationResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r UpdateNamespaceMutationResponse) StatusCode() int {
+func (r AssociateNamespaceToEnvMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5914,21 +5914,21 @@ func (c *ClientWithResponses) NamespaceQueryWithResponse(ctx context.Context, id
 	return ParseNamespaceQueryResponse(rsp)
 }
 
-// UpdateNamespaceMutationWithBodyWithResponse request with arbitrary body returning *UpdateNamespaceMutationResponse
-func (c *ClientWithResponses) UpdateNamespaceMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateNamespaceMutationResponse, error) {
-	rsp, err := c.UpdateNamespaceMutationWithBody(ctx, id, contentType, body, reqEditors...)
+// AssociateNamespaceToEnvMutationWithBodyWithResponse request with arbitrary body returning *AssociateNamespaceToEnvMutationResponse
+func (c *ClientWithResponses) AssociateNamespaceToEnvMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error) {
+	rsp, err := c.AssociateNamespaceToEnvMutationWithBody(ctx, id, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseUpdateNamespaceMutationResponse(rsp)
+	return ParseAssociateNamespaceToEnvMutationResponse(rsp)
 }
 
-func (c *ClientWithResponses) UpdateNamespaceMutationWithResponse(ctx context.Context, id string, body UpdateNamespaceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateNamespaceMutationResponse, error) {
-	rsp, err := c.UpdateNamespaceMutation(ctx, id, body, reqEditors...)
+func (c *ClientWithResponses) AssociateNamespaceToEnvMutationWithResponse(ctx context.Context, id string, body AssociateNamespaceToEnvMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*AssociateNamespaceToEnvMutationResponse, error) {
+	rsp, err := c.AssociateNamespaceToEnvMutation(ctx, id, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseUpdateNamespaceMutationResponse(rsp)
+	return ParseAssociateNamespaceToEnvMutationResponse(rsp)
 }
 
 // OrganizationsQueryWithResponse request returning *OrganizationsQueryResponse
@@ -8907,15 +8907,15 @@ func ParseNamespaceQueryResponse(rsp *http.Response) (*NamespaceQueryResponse, e
 	return response, nil
 }
 
-// ParseUpdateNamespaceMutationResponse parses an HTTP response from a UpdateNamespaceMutationWithResponse call
-func ParseUpdateNamespaceMutationResponse(rsp *http.Response) (*UpdateNamespaceMutationResponse, error) {
+// ParseAssociateNamespaceToEnvMutationResponse parses an HTTP response from a AssociateNamespaceToEnvMutationWithResponse call
+func ParseAssociateNamespaceToEnvMutationResponse(rsp *http.Response) (*AssociateNamespaceToEnvMutationResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &UpdateNamespaceMutationResponse{
+	response := &AssociateNamespaceToEnvMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
