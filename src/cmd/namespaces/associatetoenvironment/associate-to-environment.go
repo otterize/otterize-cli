@@ -1,4 +1,4 @@
-package update
+package associatetoenvironment
 
 import (
 	"context"
@@ -16,8 +16,8 @@ const (
 	EnvironmentIDKey = "env-id"
 )
 
-var UpdateNamespaceCmd = &cobra.Command{
-	Use:          "update <namespace-id>",
+var AssociateToEnvironmentCmd = &cobra.Command{
+	Use:          "associate-to-environment <namespace-id>",
 	Short:        "Update a namespace",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
@@ -30,12 +30,13 @@ var UpdateNamespaceCmd = &cobra.Command{
 		}
 
 		id := args[0]
-		r, err := c.UpdateNamespaceMutationWithResponse(ctxTimeout,
-			id,
-			cloudapi.UpdateNamespaceMutationJSONRequestBody{
-				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIDKey), lo.ToPtr(viper.GetString(EnvironmentIDKey)), nil),
-			},
-		)
+		environmentID := viper.GetString(EnvironmentIDKey)
+
+		body := cloudapi.AssociateNamespaceToEnvMutationJSONRequestBody{
+			EnvironmentId: &environmentID,
+		}
+
+		r, err := c.AssociateNamespaceToEnvMutationWithResponse(ctxTimeout, id, body)
 		if err != nil {
 			return err
 		}
@@ -47,5 +48,6 @@ var UpdateNamespaceCmd = &cobra.Command{
 }
 
 func init() {
-	UpdateNamespaceCmd.Flags().String(EnvironmentIDKey, "", "environment id")
+	AssociateToEnvironmentCmd.Flags().String(EnvironmentIDKey, "", "new environment id for the namespace")
+	cobra.CheckErr(AssociateToEnvironmentCmd.MarkFlagRequired(EnvironmentIDKey))
 }
