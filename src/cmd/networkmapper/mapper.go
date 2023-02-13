@@ -5,6 +5,7 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/networkmapper/export"
 	"github.com/otterize/otterize-cli/src/cmd/networkmapper/list"
 	"github.com/otterize/otterize-cli/src/cmd/networkmapper/reset"
+	"github.com/otterize/otterize-cli/src/cmd/networkmapper/visualize"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/spf13/cobra"
 )
@@ -24,4 +25,5 @@ func init() {
 	MapperCmd.AddCommand(export.ExportCmd)
 	MapperCmd.AddCommand(list.ListCmd)
 	MapperCmd.AddCommand(reset.ResetCmd)
+	MapperCmd.AddCommand(visualize.VisualizeCmd)
 }
