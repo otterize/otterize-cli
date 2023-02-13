@@ -49,8 +49,5 @@ var AssociateToEnvironmentCmd = &cobra.Command{
 
 func init() {
 	AssociateToEnvironmentCmd.Flags().String(EnvironmentIDKey, "", "new environment id for the namespace")
-	err := AssociateToEnvironmentCmd.MarkFlagRequired(EnvironmentIDKey)
-	if err != nil {
-		panic(err)
-	}
+	cobra.CheckErr(AssociateToEnvironmentCmd.MarkFlagRequired(EnvironmentIDKey))
 }
