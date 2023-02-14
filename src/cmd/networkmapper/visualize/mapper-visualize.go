@@ -93,9 +93,10 @@ var VisualizeCmd = &cobra.Command{
 		return mapperclient.WithClient(func(c *mapperclient.Client) error {
 			namespacesFilter := viper.GetStringSlice(NamespacesKey)
 			format := viper.GetString(GraphFormatKey)
-			if err := validateOutputFormat(format); err != nil {
-				return err
+			if !lo.Contains(AllowedFormats, strings.ToLower(format)) {
+				return fmt.Errorf("unsupported format: %s", format)
 			}
+
 			outFile := viper.GetString(config.OutputPathKey)
 			servicesIntents, err := c.ServiceIntents(context.Background(), namespacesFilter)
 			if err != nil {
@@ -128,18 +129,10 @@ var VisualizeCmd = &cobra.Command{
 	},
 }
 
-func validateOutputFormat(format string) error {
-	if !lo.Contains(AllowedFormats, strings.ToLower(format)) {
-		return fmt.Errorf("unsupported format: %s", format)
-	}
-
-	return nil
-}
-
 func init() {
 	VisualizeCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
 	VisualizeCmd.Flags().String(GraphFormatKey, "svg", "Graph output format (png/svg/jpg/dot)")
-	VisualizeCmd.Flags().StringP(config.OutputPathKey, config.OutputPathShorthand, "", "filter for specific namespaces")
+	VisualizeCmd.Flags().StringP(config.OutputPathKey, config.OutputPathShorthand, "", "exported graph output file path")
 	cobra.CheckErr(VisualizeCmd.MarkFlagRequired(config.OutputPathKey))
 }
 
