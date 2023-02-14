@@ -16,7 +16,7 @@ func formatComponentStatus(status cloudapi.ComponentStatus) string {
 }
 
 func FormatEnvs(envs []cloudapi.Environment) {
-	columns := []string{"id", "name", "labels", "service count", "namespaces count", "applied intents count"}
+	columns := []string{"ID", "NAME", "LABELS", "SERVICE COUNT", "NAMESPACES COUNT", "APPLIED INTENTS COUNT"}
 
 	formatLabels := func(labels *[]cloudapi.Label) string {
 		if labels == nil {
@@ -35,41 +35,41 @@ func FormatEnvs(envs []cloudapi.Environment) {
 
 	getColumnData := func(e cloudapi.Environment) []map[string]string {
 		return []map[string]string{{
-			"id":                    e.Id,
-			"name":                  e.Name,
-			"labels":                formatLabels(e.Labels),
-			"service count":         fmt.Sprintf("%d", e.ServiceCount),
-			"namespaces count":      fmt.Sprintf("%d", len(e.Namespaces)),
-			"applied intents count": fmt.Sprintf("%d", e.AppliedIntentsCount),
+			"ID":                    e.Id,
+			"NAME":                  e.Name,
+			"LABELS":                formatLabels(e.Labels),
+			"SERVICE COUNT":         fmt.Sprintf("%d", e.ServiceCount),
+			"NAMESPACES COUNT":      fmt.Sprintf("%d", len(e.Namespaces)),
+			"APPLIED INTENTS COUNT": fmt.Sprintf("%d", e.AppliedIntentsCount),
 		}}
 	}
 	PrintFormatList(envs, columns, getColumnData)
 }
 
 func FormatIntegrations(integrations []cloudapi.Integration, includeCreds bool) {
-	columns := []string{"id", "type", "name", "cluster id", "default environment id",
-		"intents operator", "credentials operator", "network mapper"}
+	columns := []string{"ID", "TYPE", "NAME", "CLUSTER ID", "DEFAULT ENVIRONMENT ID",
+		"INTENTS OPERATOR", "CREDENTIALS OPERATOR", "NETWORK MAPPER"}
 	if includeCreds {
-		columns = append(columns, "client id", "client secret")
+		columns = append(columns, "CLIENT ID", "CLIENT SECRET")
 	}
 
 	getColumnData := func(integration cloudapi.Integration) []map[string]string {
 		integrationColumns := map[string]string{
-			"id":                     integration.Id,
-			"type":                   string(integration.Type),
-			"name":                   integration.Name,
-			"cluster id":             lo.FromPtr(integration.Cluster).Id,
-			"default environment id": lo.FromPtr(integration.DefaultEnvironment).Id,
+			"ID":                     integration.Id,
+			"TYPE":                   string(integration.Type),
+			"NAME":                   integration.Name,
+			"CLUSTER ID":             lo.FromPtr(integration.Cluster).Id,
+			"DEFAULT ENVIRONMENT ID": lo.FromPtr(integration.DefaultEnvironment).Id,
 		}
 		if integration.Components != nil {
-			integrationColumns["intents operator"] = formatComponentStatus(integration.Components.IntentsOperator.Status)
-			integrationColumns["credentials operator"] = formatComponentStatus(integration.Components.CredentialsOperator.Status)
-			integrationColumns["network mapper"] = formatComponentStatus(integration.Components.NetworkMapper.Status)
+			integrationColumns["INTENTS OPERATOR"] = formatComponentStatus(integration.Components.IntentsOperator.Status)
+			integrationColumns["CREDENTIALS OPERATOR"] = formatComponentStatus(integration.Components.CredentialsOperator.Status)
+			integrationColumns["NETWORK MAPPER"] = formatComponentStatus(integration.Components.NetworkMapper.Status)
 		}
 
 		if includeCreds {
-			integrationColumns["client id"] = integration.Credentials.ClientId
-			integrationColumns["client secret"] = integration.Credentials.ClientSecret
+			integrationColumns["CLIENT ID"] = integration.Credentials.ClientId
+			integrationColumns["CLIENT SECRET"] = integration.Credentials.ClientSecret
 		}
 
 		return []map[string]string{integrationColumns}
@@ -77,30 +77,28 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeCreds bool) 
 
 	PrintFormatList(integrations, columns, getColumnData)
 }
-
 func FormatInvites(invites []cloudapi.Invite) {
-	columns := []string{"id", "email", "organization id", "inviter user id", "status", "created at", "accepted at"}
+	columns := []string{"ID", "EMAIL", "ORGANIZATION ID", "INVITER USER ID", "STATUS", "CREATED AT", "ACCEPTED AT"}
 	getColumnData := func(invite cloudapi.Invite) []map[string]string {
 		return []map[string]string{{
-			"id":              invite.Id,
-			"email":           invite.Email,
-			"organization id": invite.Organization.Id,
-			"inviter user id": invite.Inviter.Id,
-			"status":          string(invite.Status),
-			"created at":      invite.Created.String(),
-			"accepted at":     lo.Ternary(invite.AcceptedAt != nil, lo.FromPtr(invite.AcceptedAt).String(), ""),
+			"ID":              invite.Id,
+			"EMAIL":           invite.Email,
+			"ORGANIZATION ID": invite.Organization.Id,
+			"INVITER USER ID": invite.Inviter.Id,
+			"STATUS":          string(invite.Status),
+			"CREATED AT":      invite.Created.String(),
+			"ACCEPTED AT":     lo.Ternary(invite.AcceptedAt != nil, lo.FromPtr(invite.AcceptedAt).String(), ""),
 		}}
 	}
 	PrintFormatList(invites, columns, getColumnData)
 }
-
 func FormatOrganizations(organizations []cloudapi.Organization) {
-	columns := []string{"id", "name", "image URL"}
+	columns := []string{"ID", "NAME", "IMAGE URL"}
 	getColumnData := func(org cloudapi.Organization) []map[string]string {
 		return []map[string]string{{
-			"id":        org.Id,
-			"name":      lo.FromPtr(org.Name),
-			"image URL": lo.FromPtr(org.ImageURL),
+			"ID":        org.Id,
+			"NAME":      lo.FromPtr(org.Name),
+			"IMAGE URL": lo.FromPtr(org.ImageURL),
 		}}
 	}
 
@@ -108,14 +106,14 @@ func FormatOrganizations(organizations []cloudapi.Organization) {
 }
 
 func FormatUsers(users []cloudapi.User) {
-	columns := []string{"id", "email", "name", "image URL", "auth provider user id"}
+	columns := []string{"ID", "EMAIL", "NAME", "IMAGE URL", "AUTH PROVIDER USER ID"}
 	getColumnData := func(u cloudapi.User) []map[string]string {
 		return []map[string]string{{
-			"id":                    u.Id,
-			"email":                 u.Email,
-			"name":                  u.Name,
-			"image URL":             u.ImageURL,
-			"auth provider user id": u.AuthProviderUserId,
+			"ID":                    u.Id,
+			"EMAIL":                 u.Email,
+			"NAME":                  u.Name,
+			"IMAGE URL":             u.ImageURL,
+			"AUTH PROVIDER USER ID": u.AuthProviderUserId,
 		}}
 	}
 
@@ -123,23 +121,23 @@ func FormatUsers(users []cloudapi.User) {
 }
 
 func FormatClusters(clusters []cloudapi.Cluster) {
-	columns := []string{"id", "name", "default environment id", "integration id", "namespace count", "service count",
-		"configuration", "intents operator", "credentials operator", "network mapper"}
+	columns := []string{"ID", "NAME", "DEFAULT ENVIRONMENT ID", "INTEGRATION ID", "NAMESPACE COUNT", "SERVICE COUNT",
+		"CONFIGURATION", "INTENTS OPERATOR", "CREDENTIALS OPERATOR", "NETWORK MAPPER"}
 
 	getColumnData := func(c cloudapi.Cluster) []map[string]string {
 		clusterColumns := map[string]string{
-			"id":                     c.Id,
-			"name":                   c.Name,
-			"default environment id": lo.FromPtr(c.DefaultEnvironment).Id,
-			"integration id":         lo.FromPtr(c.Integration).Id,
-			"namespace count":        fmt.Sprintf("%d", len(c.Name)),
-			"service count":          fmt.Sprintf("%d", c.ServiceCount),
-			"configuration":          fmt.Sprintf("%+v", lo.FromPtr(c.Configuration)),
+			"ID":                     c.Id,
+			"NAME":                   c.Name,
+			"DEFAULT ENVIRONMENT ID": lo.FromPtr(c.DefaultEnvironment).Id,
+			"INTEGRATION ID":         lo.FromPtr(c.Integration).Id,
+			"NAMESPACE COUNT":        fmt.Sprintf("%d", len(c.Name)),
+			"SERVICE COUNT":          fmt.Sprintf("%d", c.ServiceCount),
+			"CONFIGURATION":          fmt.Sprintf("%+v", lo.FromPtr(c.Configuration)),
 		}
 
-		clusterColumns["intents operator"] = formatComponentStatus(c.Components.IntentsOperator.Status)
-		clusterColumns["credentials operator"] = formatComponentStatus(c.Components.CredentialsOperator.Status)
-		clusterColumns["network mapper"] = formatComponentStatus(c.Components.NetworkMapper.Status)
+		clusterColumns["INTENTS OPERATOR"] = formatComponentStatus(c.Components.IntentsOperator.Status)
+		clusterColumns["CREDENTIALS OPERATOR"] = formatComponentStatus(c.Components.CredentialsOperator.Status)
+		clusterColumns["NETWORK MAPPER"] = formatComponentStatus(c.Components.NetworkMapper.Status)
 
 		return []map[string]string{clusterColumns}
 	}
@@ -148,15 +146,15 @@ func FormatClusters(clusters []cloudapi.Cluster) {
 }
 
 func FormatNamespaces(namespaces []cloudapi.Namespace) {
-	columns := []string{"id", "name", "cluster", "cluster id", "environment id", "service count"}
+	columns := []string{"ID", "NAME", "CLUSTER", "CLUSTER ID", "ENVIRONMENT ID", "SERVICE COUNT"}
 	getColumnData := func(ns cloudapi.Namespace) []map[string]string {
 		return []map[string]string{{
-			"id":             ns.Id,
-			"name":           ns.Name,
-			"cluster":        ns.Cluster.Name,
-			"cluster id":     ns.Cluster.Id,
-			"environment id": ns.Environment.Id,
-			"service count":  fmt.Sprintf("%d", ns.ServiceCount),
+			"ID":             ns.Id,
+			"NAME":           ns.Name,
+			"CLUSTER":        ns.Cluster.Name,
+			"CLUSTER ID":     ns.Cluster.Id,
+			"ENVIRONMENT ID": ns.Environment.Id,
+			"SERVICE COUNT":  fmt.Sprintf("%d", ns.ServiceCount),
 		}}
 	}
 
@@ -165,12 +163,12 @@ func FormatNamespaces(namespaces []cloudapi.Namespace) {
 
 func FormatAccessGraph(accessGraph cloudapi.AccessGraph) {
 	columns := []string{
-		"client id",
-		"server id",
-		"access status verdict",
-		"access status reason",
-		"discovered intent",
-		"applied intent",
+		"CLIENT ID",
+		"SERVER ID",
+		"ACCESS STATUS VERDICT",
+		"ACCESS STATUS REASON",
+		"DISCOVERED INTENT",
+		"APPLIED INTENT",
 	}
 
 	getColumnData := func(service cloudapi.ServiceAccessGraph) []map[string]string {
@@ -187,12 +185,12 @@ func FormatAccessGraph(accessGraph cloudapi.AccessGraph) {
 			}
 
 			edges = append(edges, map[string]string{
-				"client id":             server.Client.Id,
-				"server id":             server.Server.Id,
-				"access status verdict": enumToString(string(server.AccessStatus.Verdict)),
-				"access status reason":  enumToString(string(server.AccessStatus.Reason)),
-				"discovered intent":     discoveredIntentId,
-				"applied intent":        appliedIntentId,
+				"CLIENT ID":             server.Client.Id,
+				"SERVER ID":             server.Server.Id,
+				"ACCESS STATUS VERDICT": enumToString(string(server.AccessStatus.Verdict)),
+				"ACCESS STATUS REASON":  enumToString(string(server.AccessStatus.Reason)),
+				"DISCOVERED INTENT":     discoveredIntentId,
+				"APPLIED INTENT":        appliedIntentId,
 			})
 		}
 		return edges
@@ -248,22 +246,22 @@ func getKafkaInfo(ksc cloudapi.KafkaServerConfig) string {
 }
 
 func FormatServices(services []cloudapi.Service) {
-	columns := []string{"id", "name", "namespace", "namespace id", "environment id", "kafka info", "certificate info"}
+	columns := []string{"ID", "NAME", "NAMESPACE", "NAMESPACE ID", "ENVIRONMENT ID", "KAFKA INFO", "CERTIFICATE INFO"}
 	getColumnData := func(s cloudapi.Service) []map[string]string {
 		serviceColumns := map[string]string{
-			"id":             s.Id,
-			"name":           s.Name,
-			"namespace":      s.Namespace.Name,
-			"namespace id":   s.Namespace.Id,
-			"environment id": s.Environment.Id,
+			"ID":             s.Id,
+			"NAME":           s.Name,
+			"NAMESPACE":      s.Namespace.Name,
+			"NAMESPACE ID":   s.Namespace.Id,
+			"ENVIRONMENT ID": s.Environment.Id,
 		}
 
 		if s.KafkaServerConfig != nil {
-			serviceColumns["kafka info"] = getKafkaInfo(*s.KafkaServerConfig)
+			serviceColumns["KAFKA INFO"] = getKafkaInfo(*s.KafkaServerConfig)
 		}
 
 		if s.CertificateInformation != nil {
-			serviceColumns["certificate info"] = getCertificateInformation(*s.CertificateInformation)
+			serviceColumns["CERTIFICATE INFO"] = getCertificateInformation(*s.CertificateInformation)
 		}
 
 		return []map[string]string{serviceColumns}
@@ -273,14 +271,14 @@ func FormatServices(services []cloudapi.Service) {
 }
 
 func FormatIntents(intents []cloudapi.Intent) {
-	columns := []string{"id", "client service id", "server service id", "type", "object", "action"}
+	columns := []string{"ID", "CLIENT SERVICE ID", "SERVER SERVICE ID", "TYPE", "OBJECT", "ACTION"}
 
 	getColumnData := func(input cloudapi.Intent) []map[string]string {
 		columnDataTemplate := map[string]string{
-			"id":                input.Id,
-			"client service id": input.Client.Id,
-			"server service id": input.Server.Id,
-			"type":              string(lo.FromPtr(input.Type)),
+			"ID":                input.Id,
+			"CLIENT SERVICE ID": input.Client.Id,
+			"SERVER SERVICE ID": input.Server.Id,
+			"TYPE":              string(lo.FromPtr(input.Type)),
 		}
 
 		switch lo.FromPtr(input.Type) {
@@ -290,9 +288,9 @@ func FormatIntents(intents []cloudapi.Intent) {
 			}
 			return lo.Map(*input.KafkaTopics, func(resource cloudapi.KafkaConfig, _ int) map[string]string {
 				columnDataCopy := lo.Assign(columnDataTemplate)
-				columnDataCopy["object"] = resource.Name
+				columnDataCopy["OBJECT"] = resource.Name
 				if resource.Operations != nil && len(*resource.Operations) > 0 {
-					columnDataCopy["action"] = strings.Join(
+					columnDataCopy["ACTION"] = strings.Join(
 						lo.Map(*resource.Operations, func(op cloudapi.KafkaConfigOperations, _ int) string {
 							return string(op)
 						}), ",")
@@ -305,9 +303,9 @@ func FormatIntents(intents []cloudapi.Intent) {
 			}
 			return lo.Map(*input.HttpResources, func(resource cloudapi.HTTPConfig, _ int) map[string]string {
 				columnDataCopy := lo.Assign(columnDataTemplate)
-				columnDataCopy["object"] = lo.FromPtr(resource.Path)
+				columnDataCopy["OBJECT"] = lo.FromPtr(resource.Path)
 				if resource.Methods != nil && len(*resource.Methods) > 0 {
-					columnDataCopy["action"] = strings.Join(
+					columnDataCopy["ACTION"] = strings.Join(
 						lo.Map(*resource.Methods, func(method cloudapi.HTTPConfigMethods, _ int) string {
 							return string(method)
 						}), ",")
