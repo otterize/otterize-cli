@@ -16,6 +16,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.12.0
+	github.com/suessflorian/gqlfetch v0.6.0
 	golang.org/x/exp v0.0.0-20221012211006-4de253d81b95
 	golang.org/x/oauth2 v0.0.0-20220822191816-0ebed06d0094
 	k8s.io/apimachinery v0.25.2
@@ -77,6 +78,7 @@ require (
 	github.com/subosito/gotenv v1.3.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
+	github.com/vektah/gqlparser v1.3.1 // indirect
 	github.com/vektah/gqlparser/v2 v2.4.5 // indirect
 	golang.org/x/crypto v0.2.0 // indirect
 	golang.org/x/mod v0.7.0 // indirect
