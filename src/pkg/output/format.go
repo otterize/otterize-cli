@@ -2,6 +2,7 @@ package output
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/markkurossi/tabulate"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/utils/must"
@@ -36,10 +37,11 @@ func AsYaml(v any) (string, error) {
 	return string(output), nil
 }
 
-func AsTable[T any](dataList []T, columns []string, getColumnData func(T) []map[string]string) (string, error) {
+func AsTable[T any](dataList []T, dataName string, columns []string, getColumnData func(T) []map[string]string) (string, error) {
 	if len(dataList) == 0 {
-		return "no resources found", nil
+		return fmt.Sprintf("No %s found", dataName), nil
 	}
+
 	tab := tabulate.New(tabulate.Plain)
 
 	// Tabulate prints plain tables with padding to the left in plain mode, even if alignment is set to TL (top left).
@@ -66,7 +68,7 @@ func AsTable[T any](dataList []T, columns []string, getColumnData func(T) []map[
 	return tab.String(), nil
 }
 
-func FormatList[T any](dataList []T, columns []string, getColumnData func(T) []map[string]string) (string, error) {
+func FormatList[T any](dataList []T, dataName string, columns []string, getColumnData func(T) []map[string]string) (string, error) {
 	var output string
 	var err error
 	switch viper.GetString(config.OutputKey) {
@@ -75,7 +77,7 @@ func FormatList[T any](dataList []T, columns []string, getColumnData func(T) []m
 	case config.OutputYaml:
 		output, err = AsYaml(dataList)
 	default:
-		output, err = AsTable(dataList, columns, getColumnData)
+		output, err = AsTable(dataList, dataName, columns, getColumnData)
 	}
 
 	if err != nil {
@@ -85,8 +87,8 @@ func FormatList[T any](dataList []T, columns []string, getColumnData func(T) []m
 	return output, nil
 }
 
-func PrintFormatList[T any](dataList []T, columns []string, getColumnData func(T) []map[string]string) {
-	formatted, err := FormatList(dataList, columns, getColumnData)
+func PrintFormatList[T any](dataList []T, dataName string, columns []string, getColumnData func(T) []map[string]string) {
+	formatted, err := FormatList(dataList, dataName, columns, getColumnData)
 	must.Must(err)
 	prints.PrintCliOutput(formatted)
 }

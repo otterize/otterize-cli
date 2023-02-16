@@ -43,7 +43,8 @@ func FormatEnvs(envs []cloudapi.Environment) {
 			"APPLIED INTENTS COUNT": fmt.Sprintf("%d", e.AppliedIntentsCount),
 		}}
 	}
-	PrintFormatList(envs, columns, getColumnData)
+
+	PrintFormatList(envs, "environments", columns, getColumnData)
 }
 
 func FormatIntegrations(integrations []cloudapi.Integration, includeCreds bool) {
@@ -75,7 +76,7 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeCreds bool) 
 		return []map[string]string{integrationColumns}
 	}
 
-	PrintFormatList(integrations, columns, getColumnData)
+	PrintFormatList(integrations, "integrations", columns, getColumnData)
 }
 func FormatInvites(invites []cloudapi.Invite) {
 	columns := []string{"ID", "EMAIL", "ORGANIZATION ID", "INVITER USER ID", "STATUS", "CREATED AT", "ACCEPTED AT"}
@@ -90,7 +91,7 @@ func FormatInvites(invites []cloudapi.Invite) {
 			"ACCEPTED AT":     lo.Ternary(invite.AcceptedAt != nil, lo.FromPtr(invite.AcceptedAt).String(), ""),
 		}}
 	}
-	PrintFormatList(invites, columns, getColumnData)
+	PrintFormatList(invites, "invites", columns, getColumnData)
 }
 func FormatOrganizations(organizations []cloudapi.Organization) {
 	columns := []string{"ID", "NAME", "IMAGE URL"}
@@ -102,7 +103,7 @@ func FormatOrganizations(organizations []cloudapi.Organization) {
 		}}
 	}
 
-	PrintFormatList(organizations, columns, getColumnData)
+	PrintFormatList(organizations, "organizations", columns, getColumnData)
 }
 
 func FormatUsers(users []cloudapi.User) {
@@ -117,7 +118,7 @@ func FormatUsers(users []cloudapi.User) {
 		}}
 	}
 
-	PrintFormatList(users, columns, getColumnData)
+	PrintFormatList(users, "users", columns, getColumnData)
 }
 
 func FormatClusters(clusters []cloudapi.Cluster) {
@@ -142,7 +143,7 @@ func FormatClusters(clusters []cloudapi.Cluster) {
 		return []map[string]string{clusterColumns}
 	}
 
-	PrintFormatList(clusters, columns, getColumnData)
+	PrintFormatList(clusters, "clusters", columns, getColumnData)
 }
 
 func FormatNamespaces(namespaces []cloudapi.Namespace) {
@@ -158,7 +159,7 @@ func FormatNamespaces(namespaces []cloudapi.Namespace) {
 		}}
 	}
 
-	PrintFormatList(namespaces, columns, getColumnData)
+	PrintFormatList(namespaces, "namespaces", columns, getColumnData)
 }
 
 func FormatAccessGraph(accessGraph cloudapi.AccessGraph) {
@@ -196,7 +197,7 @@ func FormatAccessGraph(accessGraph cloudapi.AccessGraph) {
 		return edges
 	}
 
-	PrintFormatList(accessGraph.ServiceAccessGraphs, columns, getColumnData)
+	PrintFormatList(accessGraph.ServiceAccessGraphs, "services", columns, getColumnData)
 }
 
 func enumToString(enumStr string) string {
@@ -267,7 +268,7 @@ func FormatServices(services []cloudapi.Service) {
 		return []map[string]string{serviceColumns}
 	}
 
-	PrintFormatList(services, columns, getColumnData)
+	PrintFormatList(services, "services", columns, getColumnData)
 }
 
 func FormatIntents(intents []cloudapi.Intent) {
@@ -317,5 +318,5 @@ func FormatIntents(intents []cloudapi.Intent) {
 		}
 	}
 
-	PrintFormatList(intents, columns, getColumnData)
+	PrintFormatList(intents, "intents", columns, getColumnData)
 }
