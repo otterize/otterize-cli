@@ -36,7 +36,6 @@ builds:
     binary: otterize
     hooks:
       post:
-        - upx --lzma "{{ .Path }}"
         - gon gon_amd64.hcl
 
   - id: macos-arm
