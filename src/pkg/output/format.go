@@ -2,7 +2,6 @@ package output
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/markkurossi/tabulate"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/utils/must"
@@ -38,11 +37,14 @@ func AsYaml(v any) (string, error) {
 }
 
 func AsTable[T any](dataList []T, columns []string, getColumnData func(T) []map[string]string) (string, error) {
-	tab := tabulate.New(tabulate.Plain)
-	tab.Padding = 1
 	if len(dataList) == 0 {
-		return "", fmt.Errorf("no resources found")
+		return "no resources found", nil
 	}
+	tab := tabulate.New(tabulate.Plain)
+
+	// Tabulate prints plain tables with padding to the left in plain mode, even if alignment is set to TL (top left).
+	// When using padding of 1, it adds padding only to the right side of the table.
+	tab.Padding = 1
 
 	shouldPrintHeaders := !viper.GetBool(config.NoHeadersKey)
 	if shouldPrintHeaders {
