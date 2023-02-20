@@ -344,7 +344,6 @@ type IntegrationType string
 
 // IntegrationComponents defines model for IntegrationComponents.
 type IntegrationComponents struct {
-	ClusterId           string                       `json:"clusterId"`
 	CredentialsOperator CredentialsOperatorComponent `json:"credentialsOperator"`
 	IntentsOperator     IntentsOperatorComponent     `json:"intentsOperator"`
 	NetworkMapper       NetworkMapperComponent       `json:"networkMapper"`
