@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"image"
+	"image/color"
 	"image/draw"
 	"image/jpeg"
 	"image/png"
@@ -21,32 +22,31 @@ import (
 )
 
 const (
-	NamespacesKey       = "namespaces"
-	NamespacesShorthand = "n"
-	GraphFormatKey      = "format"
+	NamespacesKey                    = "namespaces"
+	NamespacesShorthand              = "n"
+	GraphFormatKey                   = "format"
+	WatermarkHeightPercentageOfGraph = 20
 )
-
-type Encoder interface {
-}
 
 type Visualizer struct {
 	*graphviz.Graphviz
-	graph           *cgraph.Graph
-	nodeCache       map[string]*cgraph.Node
-	singleNamespace bool
+	graph       *cgraph.Graph
+	nodeCache   map[string]*cgraph.Node
+	graphFormat graphviz.Format
 }
 
-func NewVisualizer(singleNamespace bool) *Visualizer {
+func NewVisualizer(format graphviz.Format) *Visualizer {
 	g := graphviz.New()
 	graph, err := g.Graph()
 	if err != nil {
 		panic(err)
 	}
+	graph.SetRankDir(cgraph.LRRank)
 	return &Visualizer{
-		Graphviz:        g,
-		graph:           graph,
-		nodeCache:       make(map[string]*cgraph.Node, 0),
-		singleNamespace: singleNamespace,
+		Graphviz:    g,
+		graph:       graph,
+		nodeCache:   make(map[string]*cgraph.Node, 0),
+		graphFormat: format,
 	}
 }
 
@@ -64,7 +64,7 @@ func (v *Visualizer) addToCache(nodeName string) error {
 
 func (v *Visualizer) populateNodeCache(serviceIntents []mapperclient.ServiceIntentsUpToMapperV017ServiceIntents) error {
 	for _, service := range serviceIntents {
-		clientName := lo.Ternary(v.singleNamespace, service.Client.Name, fmt.Sprintf("%s.%s", service.Client.Name, service.Client.Namespace))
+		clientName := fmt.Sprintf("%s.%s", service.Client.Name, service.Client.Namespace)
 		if err := v.addToCache(clientName); err != nil {
 			return err
 		}
@@ -80,7 +80,7 @@ func (v *Visualizer) populateNodeCache(serviceIntents []mapperclient.ServiceInte
 
 func (v *Visualizer) buildEdges(serviceIntents []mapperclient.ServiceIntentsUpToMapperV017ServiceIntents) error {
 	for _, service := range serviceIntents {
-		clientName := lo.Ternary(v.singleNamespace, service.Client.Name, fmt.Sprintf("%s.%s", service.Client.Name, service.Client.Namespace))
+		clientName := fmt.Sprintf("%s.%s", service.Client.Name, service.Client.Namespace)
 		for _, intent := range service.Intents {
 			targetNameWithNS := v.formatTargetServiceName(service.Client.Namespace, intent)
 			_, err := v.graph.CreateEdge(
@@ -113,7 +113,7 @@ var VisualizeCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			visualizer := NewVisualizer(len(namespacesFilter) == 1)
+			visualizer := NewVisualizer(graphFormat)
 			defer func() {
 				if err := visualizer.graph.Close(); err != nil {
 					panic(err)
@@ -132,7 +132,7 @@ var VisualizeCmd = &cobra.Command{
 			if err := visualizer.RenderFilename(visualizer.graph, graphFormat, outFile); err != nil {
 				return err
 			}
-			if err := visualizer.addWatermark(outFile, graphFormat); err != nil {
+			if err := visualizer.addWatermark(outFile); err != nil {
 				return err
 			}
 
@@ -157,7 +157,7 @@ func getGraphvizFormat(format string) (graphviz.Format, error) {
 
 func init() {
 	VisualizeCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
-	VisualizeCmd.Flags().String(GraphFormatKey, "jpg", "Graph output format (png/svg/jpg)")
+	VisualizeCmd.Flags().String(GraphFormatKey, "jpg", "Graph output format (png/jpg)")
 	VisualizeCmd.Flags().StringP(config.OutputPathKey, config.OutputPathShorthand, "", "exported graph output file path")
 	cobra.CheckErr(VisualizeCmd.MarkFlagRequired(config.OutputPathKey))
 }
@@ -167,13 +167,8 @@ func (v *Visualizer) formatTargetServiceName(clientNS string, target mapperclien
 	return fmt.Sprintf("%s.%s", target.Name, ns)
 }
 
-func (v *Visualizer) addWatermark(graphPath string, format graphviz.Format) error {
-	graphFile, err := os.Open(graphPath)
-	if err != nil {
-		return err
-	}
-	defer graphFile.Close()
-	graphImg, err := jpeg.Decode(graphFile)
+func (v *Visualizer) addWatermark(graphPath string) error {
+	graphImg, err := v.decodeImage(graphPath)
 	if err != nil {
 		return err
 	}
@@ -189,27 +184,57 @@ func (v *Visualizer) addWatermark(graphPath string, format graphviz.Format) erro
 	}
 
 	graphBounds := graphImg.Bounds()
-	height := graphBounds.Max.Y / 8
-	wmWidsh := height * (watermarkImg.Bounds().Max.Y / watermarkImg.Bounds().Max.X)
-	resizedWatermark := resize.Resize(uint(wmWidsh), uint(height), watermarkImg, resize.Lanczos3)
+	watermarkHeight := graphBounds.Max.Y / WatermarkHeightPercentageOfGraph
+	watermarkWidth := watermarkHeight * (watermarkImg.Bounds().Max.Y / watermarkImg.Bounds().Max.X)
 
-	offset := image.Pt(graphBounds.Dx()-resizedWatermark.Bounds().Dx(), graphBounds.Dy()-resizedWatermark.Bounds().Dy())
+	resizedWatermark := resize.Resize(uint(watermarkWidth), uint(watermarkHeight), watermarkImg, resize.Lanczos3)
+
 	graphImgBounds := graphImg.Bounds()
-	graphImgBounds.Max.X = graphImgBounds.Max.X + wmWidsh
-	graphImgBounds.Max.Y = graphImgBounds.Max.Y + height
+	graphImgBounds.Max.X = graphImgBounds.Max.X + watermarkWidth
+	graphImgBounds.Max.Y = graphImgBounds.Max.Y + watermarkHeight
+
+	watermarkOffset := image.Pt(graphImgBounds.Dx()-resizedWatermark.Bounds().Dx(), graphImgBounds.Dy()-resizedWatermark.Bounds().Dy())
+	whiteOffset := image.Pt(0, watermarkHeight)
 
 	graphImgWithWatermark := image.NewRGBA(graphImgBounds)
 	draw.Draw(graphImgWithWatermark, graphImgBounds, graphImg, image.Point{}, draw.Src)
-	draw.Draw(graphImgWithWatermark, resizedWatermark.Bounds().Add(offset), resizedWatermark, image.Point{}, draw.Over)
+	// Add a white offset matching watermark size, so we can add the watermark image under the graph
+	draw.Draw(graphImgWithWatermark, graphImgBounds.Bounds().Add(whiteOffset),
+		&image.Uniform{C: color.RGBA{R: 255, G: 255, B: 255}}, image.Point{}, draw.Over)
+	draw.Draw(graphImgWithWatermark, resizedWatermark.Bounds().Add(watermarkOffset), resizedWatermark, image.Point{}, draw.Over)
 
-	result, err := os.Create(graphPath)
-	defer result.Close()
+	return v.encodeImage(graphPath, graphImgWithWatermark)
+}
+
+func (v *Visualizer) encodeImage(path string, img image.Image) error {
+	outFile, err := os.Create(path)
+	defer outFile.Close()
 	if err != nil {
 		return err
 	}
 
-	if err := jpeg.Encode(result, graphImgWithWatermark, &jpeg.Options{jpeg.DefaultQuality}); err != nil {
-		return err
+	switch v.graphFormat {
+	case graphviz.JPG:
+		return jpeg.Encode(outFile, img, &jpeg.Options{Quality: jpeg.DefaultQuality})
+	case graphviz.PNG:
+		return png.Encode(outFile, img)
+	default:
+		return fmt.Errorf("unsupported format: %s", v.graphFormat)
 	}
-	return nil
+}
+
+func (v *Visualizer) decodeImage(path string) (image.Image, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	switch v.graphFormat {
+	case graphviz.JPG:
+		return jpeg.Decode(file)
+	case graphviz.PNG:
+		return png.Decode(file)
+	default:
+		return nil, fmt.Errorf("unsupported format: %s", v.graphFormat)
+	}
 }

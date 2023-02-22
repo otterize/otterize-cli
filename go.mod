@@ -11,6 +11,7 @@ require (
 	github.com/goccy/go-graphviz v0.1.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/markkurossi/tabulate v0.0.0-20211112080948-67dabd3f2db2
+	github.com/nfnt/resize v0.0.0-20160724205520-891127d8d1b5
 	github.com/otterize/intents-operator/src v0.0.0-20230124194649-72d5eaa4db3e
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/samber/lo v1.33.0
@@ -84,6 +85,8 @@ require (
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/vektah/gqlparser v1.3.1 // indirect
 	github.com/vektah/gqlparser/v2 v2.4.5 // indirect
+	github.com/xyproto/png2svg v1.5.2 // indirect
+	github.com/xyproto/tinysvg v1.0.1 // indirect
 	golang.org/x/crypto v0.2.0 // indirect
 	golang.org/x/image v0.0.0-20200119044424-58c23975cae1 // indirect
 	golang.org/x/mod v0.7.0 // indirect

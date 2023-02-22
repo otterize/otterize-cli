@@ -425,6 +425,10 @@ github.com/vektah/gqlparser v1.3.1/go.mod h1:bkVf0FX+Stjg/MHnm8mEyubuaArhNEqfQhF
 github.com/vektah/gqlparser/v2 v2.4.0/go.mod h1:flJWIR04IMQPGz+BXLrORkrARBxv/rtyIAFvd/MceW0=
 github.com/vektah/gqlparser/v2 v2.4.5 h1:C02NsyEsL4TXJB7ndonqTfuQOL4XPIu0aAWugdmTgmc=
 github.com/vektah/gqlparser/v2 v2.4.5/go.mod h1:flJWIR04IMQPGz+BXLrORkrARBxv/rtyIAFvd/MceW0=
+github.com/xyproto/png2svg v1.5.2 h1:gSesmUxjcg+4wSc4sWtc7w9pFwUqeueDntzvklBvqQ4=
+github.com/xyproto/png2svg v1.5.2/go.mod h1:m2S2eswnAUNMaZM/8kxqwoeqI3+1Zvjfosw1+oBuZSQ=
+github.com/xyproto/tinysvg v1.0.1 h1:UwuNaudh95O0BzdBJ4zQ0lTft5a4ToHKfo6xvKb3it0=
+github.com/xyproto/tinysvg v1.0.1/go.mod h1:DKgmaYuFIvJab9ug4nH4ZG356VtUaKXG2mUU07GIurs=
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
