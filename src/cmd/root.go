@@ -89,6 +89,7 @@ func init() {
 	RootCmd.PersistentFlags().Bool(config.DebugKey, config.DebugDefault, "Debug logs")
 	RootCmd.PersistentFlags().Bool(config.InteractiveModeKey, true, "Ask for missing flags interactively")
 	RootCmd.PersistentFlags().String(config.OutputKey, config.OutputDefault, "Output format - json/text")
+	RootCmd.PersistentFlags().Bool(config.NoHeadersKey, config.NoHeadersDefault, "Do not print headers")
 
 	RootCmd.AddCommand(version.APIVersionCmd)
 

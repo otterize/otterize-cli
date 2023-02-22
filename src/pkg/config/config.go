@@ -45,6 +45,8 @@ const OutputText = "text"
 const OutputJson = "json"
 const OutputYaml = "yaml"
 const DefaultTimeout = 60 * time.Second
+const NoHeadersKey = "no-headers"
+const NoHeadersDefault = false
 
 var CfgFile string // used for flag
 
