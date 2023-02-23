@@ -28,7 +28,7 @@ const (
 	GraphFormatKey                = "format"
 	OutputPathKey                 = "output-path"
 	OutputPathShorthand           = "o"
-	WatermarkHeightDivisorOfGraph = 20
+	WatermarkHeightDivisorOfGraph = 15
 )
 
 //go:embed watermark.png
@@ -188,24 +188,25 @@ func (v *Visualizer) addWatermark(graphImg image.Image) (image.Image, error) {
 	}
 
 	graphBounds := graphImg.Bounds()
-	watermarkHeight := graphBounds.Max.Y / WatermarkHeightDivisorOfGraph
-	watermarkWidth := watermarkHeight * (watermarkImg.Bounds().Max.Y / watermarkImg.Bounds().Max.X)
+	watermarkWidth := int(float64(graphBounds.Max.X) * (20.0 / 100.0))
+	watermarkHeight := int(float64(watermarkWidth) * (float64(watermarkImg.Bounds().Dy()) / float64(watermarkImg.Bounds().Dx())))
 
 	resizedWatermark := resize.Resize(uint(watermarkWidth), uint(watermarkHeight), watermarkImg, resize.Lanczos3)
 
-	graphImgBounds := graphImg.Bounds()
-	graphImgBounds.Max.X = graphImgBounds.Max.X + watermarkWidth
-	graphImgBounds.Max.Y = graphImgBounds.Max.Y + watermarkHeight
+	graphImgWithWatermarkBounds := graphImg.Bounds()
+	graphImgWithWatermarkBounds.Max.Y = graphImgWithWatermarkBounds.Max.Y + watermarkHeight
 
-	watermarkOffset := image.Pt(graphImgBounds.Dx()-resizedWatermark.Bounds().Dx(), graphImgBounds.Dy()-resizedWatermark.Bounds().Dy())
-	whiteOffset := image.Pt(0, graphImgBounds.Dy()-watermarkHeight)
-
-	graphImgWithWatermark := image.NewRGBA(graphImgBounds)
-	draw.Draw(graphImgWithWatermark, graphImgBounds, graphImg, image.Point{}, draw.Src)
+	graphImgWithWatermark := image.NewRGBA(graphImgWithWatermarkBounds)
+	whiteBounds := graphImgWithWatermark.Bounds()
+	whiteBounds.Min.Y = graphImgWithWatermark.Bounds().Dy() - watermarkHeight - 1
+	watermarkBounds := graphImgWithWatermark.Bounds()
+	watermarkBounds.Min.X = watermarkBounds.Min.X + (watermarkBounds.Max.X - resizedWatermark.Bounds().Dx())
+	watermarkBounds.Min.Y = watermarkBounds.Min.Y + (watermarkBounds.Max.Y - resizedWatermark.Bounds().Dy())
+	draw.Draw(graphImgWithWatermark, graphImgWithWatermarkBounds, graphImg, image.Point{}, draw.Src)
 	// Add a white offset matching watermark size, so we can add the watermark image under the graph
-	draw.Draw(graphImgWithWatermark, graphImgBounds.Bounds().Add(whiteOffset),
-		&image.Uniform{C: color.RGBA{R: 255, G: 255, B: 255, A: 255}}, image.Point{}, draw.Over)
-	draw.Draw(graphImgWithWatermark, resizedWatermark.Bounds().Add(watermarkOffset), resizedWatermark, image.Point{}, draw.Over)
+	draw.Draw(graphImgWithWatermark, whiteBounds,
+		&image.Uniform{C: color.RGBA{R: 255, G: 255, B: 255, A: 255}}, image.Point{}, draw.Src)
+	draw.Draw(graphImgWithWatermark, watermarkBounds, resizedWatermark, image.Point{}, draw.Over)
 
 	return graphImgWithWatermark, nil
 }
