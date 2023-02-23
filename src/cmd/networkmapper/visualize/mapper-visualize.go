@@ -8,7 +8,6 @@ import (
 	"github.com/goccy/go-graphviz"
 	"github.com/goccy/go-graphviz/cgraph"
 	"github.com/nfnt/resize"
-	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/samber/lo"
@@ -27,7 +26,9 @@ const (
 	NamespacesKey                    = "namespaces"
 	NamespacesShorthand              = "n"
 	GraphFormatKey                   = "format"
-	WatermarkHeightPercentageOfGraph = 20
+	OutputPathKey                    = "output-path"
+	OutputPathShorthand              = "o"
+	WatermarkHeightPercentageOfGraph = 15
 )
 
 //go:embed watermark.png
@@ -113,7 +114,7 @@ var VisualizeCmd = &cobra.Command{
 				return err
 			}
 
-			outFile := viper.GetString(config.OutputPathKey)
+			outFile := viper.GetString(OutputPathKey)
 			servicesIntents, err := c.ServiceIntents(context.Background(), namespacesFilter)
 			if err != nil {
 				return err
@@ -141,7 +142,7 @@ var VisualizeCmd = &cobra.Command{
 				return err
 			}
 
-			output.PrintStdout("Exported graph as %s format to path %s", format, outFile)
+			output.PrintStderr("Exported graph as %s format to path %s", format, outFile)
 			return nil
 		})
 	},
@@ -153,8 +154,6 @@ func getGraphvizFormat(format string) (graphviz.Format, error) {
 		return graphviz.PNG, nil
 	case "jpg", "jpeg":
 		return graphviz.JPG, nil
-	case "svg":
-		return graphviz.SVG, nil
 	default:
 		return "", fmt.Errorf("unsupported format: %s", format)
 	}
@@ -235,6 +234,6 @@ func (v *Visualizer) decodeImage(path string) (image.Image, error) {
 func init() {
 	VisualizeCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
 	VisualizeCmd.Flags().String(GraphFormatKey, "jpg", "Graph output format (png/jpg)")
-	VisualizeCmd.Flags().StringP(config.OutputPathKey, config.OutputPathShorthand, "", "exported graph output file path")
-	cobra.CheckErr(VisualizeCmd.MarkFlagRequired(config.OutputPathKey))
+	VisualizeCmd.Flags().StringP(OutputPathKey, OutputPathShorthand, "", "exported graph output file path")
+	cobra.CheckErr(VisualizeCmd.MarkFlagRequired(OutputPathKey))
 }
