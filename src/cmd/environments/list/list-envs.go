@@ -52,5 +52,7 @@ var ListEnvsCmd = &cobra.Command{
 
 func init() {
 	ListEnvsCmd.Flags().StringP(NameKey, NameShorthand, "", "environment name")
-	ListEnvsCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil, "environment labels in key=value format (value is optional): key1=val1,key2=val2,key3=")
+	ListEnvsCmd.Flags().StringToStringP(LabelsKey, LabelsShorthand, nil,
+		"environment `labels` in key=value format (value is optional): key1=val1,key2=val2,key3=", // the backticks around `labels` make it appear in place of the type name, e.g. stringToString in this case
+	)
 }
