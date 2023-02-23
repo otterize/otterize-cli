@@ -1218,7 +1218,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "8cb9084cfb5ba5de06df85efb33a037606e03c67"
+    "x-revision": "f23026c8ade7d957e45fc0eb092d9cb034a8317b"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -1732,6 +1732,21 @@
               "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
               "type": "string"
             }
+          },
+          {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LabelInput"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "in": "query",
+            "name": "labels",
+            "required": false
           }
         ],
         "responses": {
