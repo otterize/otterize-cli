@@ -601,7 +601,8 @@ type OneEnvironmentQueryParams struct {
 
 // EnvironmentsQueryParams defines parameters for EnvironmentsQuery.
 type EnvironmentsQueryParams struct {
-	Name *string `form:"name,omitempty" json:"name,omitempty"`
+	Name   *string       `form:"name,omitempty" json:"name,omitempty"`
+	Labels *[]LabelInput `form:"labels,omitempty" json:"labels,omitempty"`
 }
 
 // CreateEnvironmentMutationJSONBody defines parameters for CreateEnvironmentMutation.
@@ -2119,6 +2120,16 @@ func NewEnvironmentsQueryRequest(server string, params *EnvironmentsQueryParams)
 					queryValues.Add(k, v2)
 				}
 			}
+		}
+
+	}
+
+	if params.Labels != nil {
+
+		if queryParamBuf, err := json.Marshal(*params.Labels); err != nil {
+			return nil, err
+		} else {
+			queryValues.Add("labels", string(queryParamBuf))
 		}
 
 	}
