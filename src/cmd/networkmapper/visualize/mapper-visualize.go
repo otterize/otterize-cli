@@ -23,12 +23,12 @@ import (
 )
 
 const (
-	NamespacesKey                    = "namespaces"
-	NamespacesShorthand              = "n"
-	GraphFormatKey                   = "format"
-	OutputPathKey                    = "output-path"
-	OutputPathShorthand              = "o"
-	WatermarkHeightPercentageOfGraph = 15
+	NamespacesKey                 = "namespaces"
+	NamespacesShorthand           = "n"
+	GraphFormatKey                = "format"
+	OutputPathKey                 = "output-path"
+	OutputPathShorthand           = "o"
+	WatermarkHeightDivisorOfGraph = 20
 )
 
 //go:embed watermark.png
@@ -114,7 +114,7 @@ var VisualizeCmd = &cobra.Command{
 				return err
 			}
 
-			outFile := viper.GetString(OutputPathKey)
+			outputFilepath := viper.GetString(OutputPathKey)
 			servicesIntents, err := c.ServiceIntents(context.Background(), namespacesFilter)
 			if err != nil {
 				return err
@@ -135,14 +135,27 @@ var VisualizeCmd = &cobra.Command{
 			if err := visualizer.buildEdges(servicesIntents); err != nil {
 				return err
 			}
-			if err := visualizer.RenderFilename(visualizer.graph, graphFormat, outFile); err != nil {
+			outputImg, err := visualizer.RenderImage(visualizer.graph)
+			if err != nil {
 				return err
 			}
-			if err := visualizer.addWatermark(outFile); err != nil {
+			watermarkedImg, err := visualizer.addWatermark(outputImg)
+			if err != nil {
 				return err
 			}
 
-			output.PrintStderr("Exported graph as %s format to path %s", format, outFile)
+			outputFile, err := os.Create(outputFilepath)
+			if err != nil {
+				return err
+			}
+			defer outputFile.Close()
+			outputImgBytes, err := visualizer.encodeImage(watermarkedImg)
+			_, err = outputFile.Write(outputImgBytes)
+			if err != nil {
+				return err
+			}
+
+			output.PrintStderr("Exported graph as %s format to path %s", format, outputFilepath)
 			return nil
 		})
 	},
@@ -164,19 +177,14 @@ func (v *Visualizer) formatTargetServiceName(clientNS string, target mapperclien
 	return fmt.Sprintf("%s.%s", target.Name, ns)
 }
 
-func (v *Visualizer) addWatermark(graphPath string) error {
-	graphImg, err := v.decodeImage(graphPath)
-	if err != nil {
-		return err
-	}
-
+func (v *Visualizer) addWatermark(graphImg image.Image) (image.Image, error) {
 	watermarkImg, err := png.Decode(bytes.NewReader(watermarkFile))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	graphBounds := graphImg.Bounds()
-	watermarkHeight := graphBounds.Max.Y / WatermarkHeightPercentageOfGraph
+	watermarkHeight := graphBounds.Max.Y / WatermarkHeightDivisorOfGraph
 	watermarkWidth := watermarkHeight * (watermarkImg.Bounds().Max.Y / watermarkImg.Bounds().Max.X)
 
 	resizedWatermark := resize.Resize(uint(watermarkWidth), uint(watermarkHeight), watermarkImg, resize.Lanczos3)
@@ -186,49 +194,38 @@ func (v *Visualizer) addWatermark(graphPath string) error {
 	graphImgBounds.Max.Y = graphImgBounds.Max.Y + watermarkHeight
 
 	watermarkOffset := image.Pt(graphImgBounds.Dx()-resizedWatermark.Bounds().Dx(), graphImgBounds.Dy()-resizedWatermark.Bounds().Dy())
-	whiteOffset := image.Pt(0, watermarkHeight)
+	whiteOffset := image.Pt(0, graphImgBounds.Dy()-watermarkHeight)
 
 	graphImgWithWatermark := image.NewRGBA(graphImgBounds)
 	draw.Draw(graphImgWithWatermark, graphImgBounds, graphImg, image.Point{}, draw.Src)
 	// Add a white offset matching watermark size, so we can add the watermark image under the graph
 	draw.Draw(graphImgWithWatermark, graphImgBounds.Bounds().Add(whiteOffset),
-		&image.Uniform{C: color.RGBA{R: 255, G: 255, B: 255}}, image.Point{}, draw.Over)
+		&image.Uniform{C: color.RGBA{R: 255, G: 255, B: 255, A: 255}}, image.Point{}, draw.Over)
 	draw.Draw(graphImgWithWatermark, resizedWatermark.Bounds().Add(watermarkOffset), resizedWatermark, image.Point{}, draw.Over)
 
-	return v.encodeImage(graphPath, graphImgWithWatermark)
+	return graphImgWithWatermark, nil
 }
 
-func (v *Visualizer) encodeImage(path string, img image.Image) error {
-	outFile, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer outFile.Close()
+func (v *Visualizer) encodeImage(img image.Image) ([]byte, error) {
+	out := make([]byte, 0)
+	writer := bytes.NewBuffer(out)
 
 	switch v.graphFormat {
 	case graphviz.JPG:
-		return jpeg.Encode(outFile, img, &jpeg.Options{Quality: jpeg.DefaultQuality})
+		err := jpeg.Encode(writer, img, &jpeg.Options{Quality: jpeg.DefaultQuality})
+		if err != nil {
+			return nil, err
+		}
 	case graphviz.PNG:
-		return png.Encode(outFile, img)
-	default:
-		return fmt.Errorf("unsupported format: %s", v.graphFormat)
-	}
-}
-
-func (v *Visualizer) decodeImage(path string) (image.Image, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	switch v.graphFormat {
-	case graphviz.JPG:
-		return jpeg.Decode(file)
-	case graphviz.PNG:
-		return png.Decode(file)
+		err := png.Encode(writer, img)
+		if err != nil {
+			return nil, err
+		}
 	default:
 		return nil, fmt.Errorf("unsupported format: %s", v.graphFormat)
 	}
+
+	return writer.Bytes(), nil
 }
 
 func init() {
