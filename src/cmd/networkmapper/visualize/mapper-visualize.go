@@ -1,7 +1,9 @@
 package visualize
 
 import (
+	"bytes"
 	"context"
+	_ "embed"
 	"fmt"
 	"github.com/goccy/go-graphviz"
 	"github.com/goccy/go-graphviz/cgraph"
@@ -27,6 +29,9 @@ const (
 	GraphFormatKey                   = "format"
 	WatermarkHeightPercentageOfGraph = 20
 )
+
+//go:embed watermark.png
+var watermarkFile []byte
 
 type Visualizer struct {
 	*graphviz.Graphviz
@@ -155,13 +160,6 @@ func getGraphvizFormat(format string) (graphviz.Format, error) {
 	}
 }
 
-func init() {
-	VisualizeCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
-	VisualizeCmd.Flags().String(GraphFormatKey, "jpg", "Graph output format (png/jpg)")
-	VisualizeCmd.Flags().StringP(config.OutputPathKey, config.OutputPathShorthand, "", "exported graph output file path")
-	cobra.CheckErr(VisualizeCmd.MarkFlagRequired(config.OutputPathKey))
-}
-
 func (v *Visualizer) formatTargetServiceName(clientNS string, target mapperclient.ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity) string {
 	ns := lo.Ternary(len(target.Namespace) != 0, target.Namespace, clientNS)
 	return fmt.Sprintf("%s.%s", target.Name, ns)
@@ -173,12 +171,7 @@ func (v *Visualizer) addWatermark(graphPath string) error {
 		return err
 	}
 
-	watermarkFile, err := os.Open("/home/evya/watermark.png")
-	if err != nil {
-		return err
-	}
-	defer watermarkFile.Close()
-	watermarkImg, err := png.Decode(watermarkFile)
+	watermarkImg, err := png.Decode(bytes.NewReader(watermarkFile))
 	if err != nil {
 		return err
 	}
@@ -237,4 +230,11 @@ func (v *Visualizer) decodeImage(path string) (image.Image, error) {
 	default:
 		return nil, fmt.Errorf("unsupported format: %s", v.graphFormat)
 	}
+}
+
+func init() {
+	VisualizeCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
+	VisualizeCmd.Flags().String(GraphFormatKey, "jpg", "Graph output format (png/jpg)")
+	VisualizeCmd.Flags().StringP(config.OutputPathKey, config.OutputPathShorthand, "", "exported graph output file path")
+	cobra.CheckErr(VisualizeCmd.MarkFlagRequired(config.OutputPathKey))
 }

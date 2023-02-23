@@ -85,8 +85,6 @@ require (
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/vektah/gqlparser v1.3.1 // indirect
 	github.com/vektah/gqlparser/v2 v2.4.5 // indirect
-	github.com/xyproto/png2svg v1.5.2 // indirect
-	github.com/xyproto/tinysvg v1.0.1 // indirect
 	golang.org/x/crypto v0.2.0 // indirect
 	golang.org/x/image v0.0.0-20200119044424-58c23975cae1 // indirect
 	golang.org/x/mod v0.7.0 // indirect
