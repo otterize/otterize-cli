@@ -201,10 +201,10 @@ func (v *Visualizer) addWatermark(graphPath string) error {
 
 func (v *Visualizer) encodeImage(path string, img image.Image) error {
 	outFile, err := os.Create(path)
-	defer outFile.Close()
 	if err != nil {
 		return err
 	}
+	defer outFile.Close()
 
 	switch v.graphFormat {
 	case graphviz.JPG:
