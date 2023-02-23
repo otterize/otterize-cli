@@ -150,6 +150,10 @@ var VisualizeCmd = &cobra.Command{
 			}
 			defer outputFile.Close()
 			outputImgBytes, err := visualizer.encodeImage(watermarkedImg)
+			if err != nil {
+				return err
+			}
+
 			_, err = outputFile.Write(outputImgBytes)
 			if err != nil {
 				return err
