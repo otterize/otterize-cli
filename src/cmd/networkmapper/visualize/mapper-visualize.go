@@ -23,12 +23,11 @@ import (
 )
 
 const (
-	NamespacesKey                 = "namespaces"
-	NamespacesShorthand           = "n"
-	GraphFormatKey                = "format"
-	OutputPathKey                 = "output-path"
-	OutputPathShorthand           = "o"
-	WatermarkHeightDivisorOfGraph = 15
+	NamespacesKey       = "namespaces"
+	NamespacesShorthand = "n"
+	GraphFormatKey      = "format"
+	OutputPathKey       = "output-path"
+	OutputPathShorthand = "o"
 )
 
 //go:embed watermark.png
@@ -235,7 +234,7 @@ func (v *Visualizer) encodeImage(img image.Image) ([]byte, error) {
 
 func init() {
 	VisualizeCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
-	VisualizeCmd.Flags().String(GraphFormatKey, "jpg", "Graph output format (png/jpg)")
+	VisualizeCmd.Flags().String(GraphFormatKey, "png", "Graph output format (png/jpg)")
 	VisualizeCmd.Flags().StringP(OutputPathKey, OutputPathShorthand, "", "exported graph output file path")
 	cobra.CheckErr(VisualizeCmd.MarkFlagRequired(OutputPathKey))
 }
