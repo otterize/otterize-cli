@@ -60,7 +60,7 @@ scoop bucket add otterize-cli https://github.com/otterize/scoop-otterize-cli
 scoop update
 scoop install otterize-cli
 ```
-For more platforms, see [the installation guide](https://docs.otterize.com/k8s-installation/#install-the-otterize-cli).
+For more platforms, see [the installation guide](https://docs.otterize.com/installation#install-the-otterize-cli).
 
 
 ## Contributing
