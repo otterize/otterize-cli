@@ -1,4 +1,4 @@
-source = ["./dist/macos-arm_darwin_arm64/otterize"]
+source = ["./dist/darwin/macos-arm_darwin_arm64/otterize"]
 bundle_id = "com.otterize.cli.arm64"
 
 apple_id {
@@ -11,5 +11,5 @@ sign {
 }
 
 zip {
-  output_path = "./dist/macos-arm_darwin_arm64/otterize_macOS_arm64_notarized.zip"
+  output_path = "./dist/darwin/macos-arm_darwin_arm64/otterize_macOS_arm64_notarized.zip"
 }

@@ -1,14 +1,7 @@
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
-before:
-  hooks:
-    # You may remove this if you don't use go modules.
-    - go mod tidy
-
 builds:
   - id: default
-    env:
-      - CGO_ENABLED=0
     goos:
       - linux
       - windows
@@ -19,14 +12,15 @@ builds:
         goarch: arm
       - goos: windows
         goarch: arm64
+      - goos: windows
+        goarch: "386"
+      - goos: linux
+        goarch: "386"
+      - goos: linux
+        goarch: arm64
     binary: otterize
-    hooks:
-      post:
-        - upx --lzma "{{ .Path }}"
 
   - id: macos-amd
-    env:
-      - CGO_ENABLED=0
     goos:
       - darwin
     goarch:
@@ -36,11 +30,10 @@ builds:
     binary: otterize
     hooks:
       post:
-        - gon gon_amd64.hcl
+        - output: true
+          cmd: gon -log-level=debug gon_amd64.hcl
 
   - id: macos-arm
-    env:
-      - CGO_ENABLED=0
     goos:
       - darwin
     goarch:
@@ -50,7 +43,8 @@ builds:
     binary: otterize
     hooks:
       post:
-        - gon gon_arm64.hcl
+        - output: true
+          cmd: gon -log-level=debug gon_arm64.hcl
     # no upx for mac arm - causes invalid instructions
 
 
@@ -61,7 +55,6 @@ archives:
       darwin: macOS
       linux: Linux
       windows: Windows
-      386: i386
       amd64: x86_64
     format: binary
     files:
@@ -71,7 +64,6 @@ archives:
     replacements:
       linux: Linux
       windows: Windows
-      386: i386
       amd64: x86_64
       darwin: macOS
     format: tar.gz
@@ -93,8 +85,8 @@ changelog:
 
 release:
   extra_files:
-    - glob: dist/macos-amd_darwin_amd64_v1/otterize*
-    - glob: dist/macos-arm_darwin_arm64/otterize*
+    - glob: dist/darwin/macos-amd_darwin_amd64_v1/otterize*
+    - glob: dist/darwin/macos-arm_darwin_arm64/otterize*
 
 brews:
   - name: otterize-cli
@@ -194,5 +186,5 @@ blobs:
       - binary
       - archives
     extra_files:
-      - glob: dist/macos-amd_darwin_amd64_v1/otterize*
-      - glob: dist/macos-arm_darwin_arm64/otterize*
+      - glob: dist/darwin/macos-amd_darwin_amd64_v1/otterize*
+      - glob: dist/darwin/macos-arm_darwin_arm64/otterize*
