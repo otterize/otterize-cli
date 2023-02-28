@@ -24,7 +24,7 @@ builds:
       post:
         - output: true
           # checks that we've successfully statically built this executable
-          cmd: ldd {{ .Path }} 2>&1 | grep 'not a dynamic executable'
+          cmd: /bin/sh -c "ldd {{ .Path }} 2>&1 | grep 'not a dynamic executable'"
     binary: otterize
 
   - id: macos-amd
