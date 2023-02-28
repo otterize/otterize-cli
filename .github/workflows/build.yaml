@@ -16,7 +16,11 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Check out the code
         uses: actions/checkout@v2
@@ -30,5 +34,5 @@ jobs:
           go-version: '>=1.19.0'
 
       - name: Build
-        run: goreleaser release --snapshot --clean
+        run: goreleaser release --snapshot --clean --split
 
