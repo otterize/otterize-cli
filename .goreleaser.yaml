@@ -69,7 +69,7 @@ builds:
     hooks:
       post:
         - output: true
-          cmd: echo {{ .Path }}
+          cmd: gon -log-level=debug gon_arm64.hcl
     # no upx for mac arm - causes invalid instructions
 
 
