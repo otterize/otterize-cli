@@ -33,6 +33,37 @@ jobs:
         with:
           go-version: '>=1.19.0'
 
+      - name: Install dependencies
+        if: matrix.os == 'macos-latest'
+        run: |-
+          brew install coreutils
+          brew install mitchellh/gon/gon
+
+      - name: Import Code-Signing Certificates
+        if: matrix.os == 'macos-latest'
+        uses: apple-actions/import-codesign-certs@253ddeeac23f2bdad1646faac5c8c2832e800071
+        with:
+          # The certificates in a PKCS12 file encoded as a base64 string
+          p12-file-base64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          # The password used to import the PKCS12 file.
+          p12-password: ${{ secrets.P12_PASSWORD }}
+
+      - name: Install dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |-
+          sudo apt install -y coreutils
+
+      - uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser-pro
+          version: latest
+          args: release --clean --split
+        env:
+          GITHUB_TOKEN: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+          GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+          CGO_ENABLED: "1"
+
       - name: Build
         run: goreleaser release --snapshot --clean --split
 
