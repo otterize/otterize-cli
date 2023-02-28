@@ -24,7 +24,7 @@ builds:
       post:
         - output: true
           # checks that we've successfully statically built this executable
-          cmd: ldd otterize 2>&1 | grep 'not a dynamic executable'
+          cmd: ldd {{ .Path }} 2>&1 | grep 'not a dynamic executable'
     binary: otterize
 
   - id: macos-amd
@@ -55,7 +55,7 @@ builds:
     hooks:
       post:
         - output: true
-          cmd: gon -log-level=debug gon_arm64.hcl
+          cmd: echo {{ .Path }}
     # no upx for mac arm - causes invalid instructions
 
 
