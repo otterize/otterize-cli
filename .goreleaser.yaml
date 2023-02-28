@@ -1,9 +1,27 @@
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
 builds:
-  - id: default
+  - id: linux
     goos:
       - linux
+    ldflags:
+      - -linkmode 'external' -extldflags '-static'
+    main:
+      ./src/cmd
+    ignore:
+      - goos: linux
+        goarch: "386"
+      - goos: linux
+        goarch: arm64
+    hooks:
+      post:
+        - output: true
+          # checks that we've successfully statically built this executable
+          cmd: /bin/sh -c "ldd {{ .Path }} 2>&1 | grep 'not a dynamic executable'"
+    binary: otterize
+
+  - id: windows
+    goos:
       - windows
     ldflags:
       - -linkmode 'external' -extldflags '-static'
@@ -16,15 +34,11 @@ builds:
         goarch: arm64
       - goos: windows
         goarch: "386"
-      - goos: linux
-        goarch: "386"
-      - goos: linux
-        goarch: arm64
     hooks:
       post:
         - output: true
           # checks that we've successfully statically built this executable
-          cmd: /bin/sh -c "ldd {{ .Path }} 2>&1 | grep 'not a dynamic executable'"
+          cmd: ldd {{ .Path }} 2>&1 | grep 'not a dynamic executable'
     binary: otterize
 
   - id: macos-amd
