@@ -29,8 +29,8 @@ builds:
       - amd64
     main:
       ./src/cmd
-    ldflags:
-      - -linkmode 'external' -extldflags '-static'
+    # intentionally no static linking for macOS - from the man page for `gcc` on `-static`:
+    # This option will not work on Mac OS X unless all libraries (including libgcc.a) have also been compiled with -static. Since neither a static version of libSystem.dylib nor crt0.o are provided, this option is not useful to most people.
     binary: otterize
     hooks:
       post:
@@ -44,8 +44,8 @@ builds:
       - arm64
     main:
       ./src/cmd
-    ldflags:
-      - -linkmode 'external' -extldflags '-static'
+    # intentionally no static linking for macOS - from the man page for `gcc` on `-static`:
+    # This option will not work on Mac OS X unless all libraries (including libgcc.a) have also been compiled with -static. Since neither a static version of libSystem.dylib nor crt0.o are provided, this option is not useful to most people.
     binary: otterize
     hooks:
       post:
