@@ -1,10 +1,30 @@
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
 builds:
-  - id: default
+  - id: linux
     goos:
       - linux
+    ldflags:
+      - -linkmode 'external' -extldflags '-static'
+    main:
+      ./src/cmd
+    ignore:
+      - goos: linux
+        goarch: "386"
+      - goos: linux
+        goarch: arm64
+    hooks:
+      post:
+        - output: true
+          # checks that we've successfully statically built this executable
+          cmd: /bin/sh -c "ldd {{ .Path }} 2>&1 | grep 'not a dynamic executable'"
+    binary: otterize
+
+  - id: windows
+    goos:
       - windows
+    ldflags:
+      - -linkmode 'external' -extldflags '-static'
     main:
       ./src/cmd
     ignore:
@@ -14,10 +34,11 @@ builds:
         goarch: arm64
       - goos: windows
         goarch: "386"
-      - goos: linux
-        goarch: "386"
-      - goos: linux
-        goarch: arm64
+    hooks:
+      post:
+        - output: true
+          # checks that we've successfully statically built this executable
+          cmd: ldd {{ .Path }} 2>&1 | grep 'not a dynamic executable'
     binary: otterize
 
   - id: macos-amd
@@ -27,6 +48,8 @@ builds:
       - amd64
     main:
       ./src/cmd
+    # intentionally no static linking for macOS - from the man page for `gcc` on `-static`:
+    # This option will not work on Mac OS X unless all libraries (including libgcc.a) have also been compiled with -static. Since neither a static version of libSystem.dylib nor crt0.o are provided, this option is not useful to most people.
     binary: otterize
     hooks:
       post:
@@ -40,11 +63,13 @@ builds:
       - arm64
     main:
       ./src/cmd
+    # intentionally no static linking for macOS - from the man page for `gcc` on `-static`:
+    # This option will not work on Mac OS X unless all libraries (including libgcc.a) have also been compiled with -static. Since neither a static version of libSystem.dylib nor crt0.o are provided, this option is not useful to most people.
     binary: otterize
     hooks:
       post:
         - output: true
-          cmd: gon -log-level=debug gon_arm64.hcl
+          cmd: echo {{ .Path }}
     # no upx for mac arm - causes invalid instructions
 
 
