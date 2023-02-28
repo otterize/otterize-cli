@@ -20,6 +20,11 @@ builds:
         goarch: "386"
       - goos: linux
         goarch: arm64
+    hooks:
+      post:
+        - output: true
+          # checks that we've successfully statically built this executable
+          cmd: ldd otterize 2>&1 | grep 'not a dynamic executable'
     binary: otterize
 
   - id: macos-amd
