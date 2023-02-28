@@ -38,7 +38,8 @@ builds:
       post:
         - output: true
           # checks that we've successfully statically built this executable
-          cmd: ldd {{ .Path }} 2>&1 | grep 'not a dynamic executable'
+          cmd: powershell -Command "if ( -Not (ldd {{ .Path }} 2>&1 | findstr 'not a dynamic executable')) { exit 1 }"
+
     binary: otterize
 
   - id: macos-amd
