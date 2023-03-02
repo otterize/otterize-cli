@@ -1,6 +1,7 @@
 package visualize
 
 import (
+	"aqwari.net/xml/xmltree"
 	"bytes"
 	"context"
 	_ "embed"
@@ -33,8 +34,11 @@ const (
 //go:embed watermark.png
 var watermarkFile []byte
 
+//go:embed watermark.svg
+var watermarkSVG []byte
+
 type Visualizer struct {
-	*graphviz.Graphviz
+	graphviz    *graphviz.Graphviz
 	graph       *cgraph.Graph
 	nodeCache   map[string]*cgraph.Node
 	graphFormat graphviz.Format
@@ -48,7 +52,7 @@ func NewVisualizer(format graphviz.Format) *Visualizer {
 	}
 	graph.SetRankDir(cgraph.LRRank)
 	return &Visualizer{
-		Graphviz:    g,
+		graphviz:    g,
 		graph:       graph,
 		nodeCache:   make(map[string]*cgraph.Node, 0),
 		graphFormat: format,
@@ -123,7 +127,7 @@ var VisualizeCmd = &cobra.Command{
 				if err := visualizer.graph.Close(); err != nil {
 					panic(err)
 				}
-				if err := visualizer.Close(); err != nil {
+				if err := visualizer.graphviz.Close(); err != nil {
 					panic(err)
 				}
 			}()
@@ -134,11 +138,7 @@ var VisualizeCmd = &cobra.Command{
 			if err := visualizer.buildEdges(servicesIntents); err != nil {
 				return err
 			}
-			outputImg, err := visualizer.RenderImage(visualizer.graph)
-			if err != nil {
-				return err
-			}
-			watermarkedImg, err := visualizer.addWatermark(outputImg)
+			outputData, err := visualizer.renderOutputByFormat(graphFormat)
 			if err != nil {
 				return err
 			}
@@ -148,12 +148,8 @@ var VisualizeCmd = &cobra.Command{
 				return err
 			}
 			defer outputFile.Close()
-			outputImgBytes, err := visualizer.encodeImage(watermarkedImg)
-			if err != nil {
-				return err
-			}
 
-			_, err = outputFile.Write(outputImgBytes)
+			_, err = outputFile.Write(outputData)
 			if err != nil {
 				return err
 			}
@@ -164,12 +160,63 @@ var VisualizeCmd = &cobra.Command{
 	},
 }
 
+func (v *Visualizer) renderOutputByFormat(format graphviz.Format) ([]byte, error) {
+	if format == graphviz.SVG {
+		return v.renderSVG()
+	}
+
+	return v.renderImage()
+}
+
+func (v *Visualizer) renderSVG() ([]byte, error) {
+	outputBuf := &bytes.Buffer{}
+	err := v.graphviz.Render(v.graph, graphviz.SVG, outputBuf)
+	if err != nil {
+		return nil, err
+	}
+
+	doc, err := xmltree.Parse(outputBuf.Bytes())
+	if err != nil {
+		return nil, err
+	}
+
+	watermark, err := xmltree.Parse(watermarkSVG)
+	if err != nil {
+		return nil, err
+	}
+
+	doc.Children = append(doc.Children, *watermark)
+
+	outputWithWatermark := xmltree.Marshal(doc)
+	return outputWithWatermark, err
+}
+
+func (v *Visualizer) renderImage() ([]byte, error) {
+	outputImg, err := v.graphviz.RenderImage(v.graph)
+	if err != nil {
+		return nil, err
+	}
+	watermarkedImg, err := v.addWatermarkToImage(outputImg)
+	if err != nil {
+		return nil, err
+	}
+
+	outputImgBytes, err := v.encodeImage(watermarkedImg)
+	if err != nil {
+		return nil, err
+	}
+
+	return outputImgBytes, nil
+}
+
 func getGraphvizFormat(format string) (graphviz.Format, error) {
 	switch strings.ToLower(format) {
 	case "png":
 		return graphviz.PNG, nil
 	case "jpg", "jpeg":
 		return graphviz.JPG, nil
+	case "svg":
+		return graphviz.SVG, nil
 	default:
 		return "", fmt.Errorf("unsupported format: %s", format)
 	}
@@ -180,7 +227,7 @@ func (v *Visualizer) formatTargetServiceName(clientNS string, target mapperclien
 	return fmt.Sprintf("%s.%s", target.Name, ns)
 }
 
-func (v *Visualizer) addWatermark(graphImg image.Image) (image.Image, error) {
+func (v *Visualizer) addWatermarkToImage(graphImg image.Image) (image.Image, error) {
 	watermarkImg, err := png.Decode(bytes.NewReader(watermarkFile))
 	if err != nil {
 		return nil, err
@@ -205,7 +252,8 @@ func (v *Visualizer) addWatermark(graphImg image.Image) (image.Image, error) {
 	// Add a white offset matching watermark size, so we can add the watermark image under the graph
 	draw.Draw(graphImgWithWatermark, whiteBounds,
 		&image.Uniform{C: color.RGBA{R: 255, G: 255, B: 255, A: 255}}, image.Point{}, draw.Src)
-	draw.Draw(graphImgWithWatermark, watermarkBounds, resizedWatermark, image.Point{}, draw.Over)
+	fiftyPercentOpacityMask := image.NewUniform(color.Alpha{A: 128})
+	draw.DrawMask(graphImgWithWatermark, watermarkBounds, resizedWatermark, image.Point{}, fiftyPercentOpacityMask, image.Point{}, draw.Over)
 
 	return graphImgWithWatermark, nil
 }
