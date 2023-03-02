@@ -3,6 +3,7 @@ module github.com/otterize/otterize-cli
 go 1.18
 
 require (
+	aqwari.net/xml v0.0.0-20210331023308-d9421b293817
 	github.com/Khan/genqlient v0.5.0
 	github.com/amit7itz/goset v1.1.0
 	github.com/coreos/go-oidc/v3 v3.4.0
