@@ -22,7 +22,6 @@ const (
 	AccessTokenCookieScopes  = "accessTokenCookie.Scopes"
 	BearerAuthScopes         = "bearerAuth.Scopes"
 	Oauth2Scopes             = "oauth2.Scopes"
-	OrganizationCookieScopes = "organizationCookie.Scopes"
 	OrganizationHeaderScopes = "organizationHeader.Scopes"
 )
 
@@ -592,6 +591,7 @@ type CreateClusterMutationJSONBody struct {
 // UpdateClusterMutationJSONBody defines parameters for UpdateClusterMutation.
 type UpdateClusterMutationJSONBody struct {
 	Configuration *ClusterConfigurationInput `json:"configuration,omitempty"`
+	Name          *string                    `json:"name,omitempty"`
 }
 
 // OneEnvironmentQueryParams defines parameters for OneEnvironmentQuery.
