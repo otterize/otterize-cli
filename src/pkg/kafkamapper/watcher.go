@@ -5,12 +5,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/Shopify/sarama"
 	"github.com/oriser/regroup"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/samber/lo"
-	"github.com/vishalkuo/bimap"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -25,15 +23,6 @@ var (
 	)
 )
 
-type ServiceKey struct {
-	Name      string `regroup:"name"`
-	Namespace string `regroup:"namespace"`
-}
-
-func (sk ServiceKey) String() string {
-	return fmt.Sprintf("%s.%s", sk.Name, sk.Namespace)
-}
-
 type AuthorizerRecord struct {
 	Date             string `regroup:"date"`
 	Level            string `regroup:"level"`
@@ -45,13 +34,6 @@ type AuthorizerRecord struct {
 	Topic            string `regroup:"topic"`
 	Request          string `regroup:"request"`
 	ResourceRefCount int    `regroup:"resourceRefCount"`
-}
-
-func (r AuthorizerRecord) ClientService() ServiceKey {
-	return ServiceKey{
-		Name:      r.ServiceName,
-		Namespace: r.Namespace,
-	}
 }
 
 type Watcher struct {
@@ -76,9 +58,9 @@ func NewWatcher() (*Watcher, error) {
 	return w, nil
 }
 
-func (w *Watcher) MapKafkaAuthorizerLogs(ctx context.Context, server ServiceKey, mapperFn func(r AuthorizerRecord) error) error {
+func (w *Watcher) MapKafkaAuthorizerLogs(ctx context.Context, serverName string, serverNamespace string, mapperFn func(r AuthorizerRecord) error) error {
 	podLogOpts := corev1.PodLogOptions{}
-	req := w.clientset.CoreV1().Pods(server.Namespace).GetLogs(server.Name, &podLogOpts)
+	req := w.clientset.CoreV1().Pods(serverNamespace).GetLogs(serverName, &podLogOpts)
 	logsReader, err := req.Stream(ctx)
 	if err != nil {
 		return err
@@ -103,39 +85,7 @@ func (w *Watcher) MapKafkaAuthorizerLogs(ctx context.Context, server ServiceKey,
 	return nil
 }
 
-var (
-	kafkaOperationToAclOperation = map[v1alpha2.KafkaOperation]sarama.AclOperation{
-		v1alpha2.KafkaOperationAll:             sarama.AclOperationAll,
-		v1alpha2.KafkaOperationConsume:         sarama.AclOperationRead,
-		v1alpha2.KafkaOperationProduce:         sarama.AclOperationWrite,
-		v1alpha2.KafkaOperationCreate:          sarama.AclOperationCreate,
-		v1alpha2.KafkaOperationDelete:          sarama.AclOperationDelete,
-		v1alpha2.KafkaOperationAlter:           sarama.AclOperationAlter,
-		v1alpha2.KafkaOperationDescribe:        sarama.AclOperationDescribe,
-		v1alpha2.KafkaOperationClusterAction:   sarama.AclOperationClusterAction,
-		v1alpha2.KafkaOperationDescribeConfigs: sarama.AclOperationDescribeConfigs,
-		v1alpha2.KafkaOperationAlterConfigs:    sarama.AclOperationAlterConfigs,
-		v1alpha2.KafkaOperationIdempotentWrite: sarama.AclOperationIdempotentWrite,
-	}
-	KafkaOperationToAclOperationBMap = bimap.NewBiMapFromMap(kafkaOperationToAclOperation)
-)
-
-func KafkaOpFromText(text string) (v1alpha2.KafkaOperation, error) {
-	var saramaOp sarama.AclOperation
-	if err := saramaOp.UnmarshalText([]byte(text)); err != nil {
-		return "", err
-	}
-
-	apiOp, ok := KafkaOperationToAclOperationBMap.GetInverse(saramaOp)
-	if !ok {
-		return "", fmt.Errorf("failed parsing op %s", saramaOp.String())
-	}
-	return apiOp, nil
-}
-
-func (r AuthorizerRecord) ToIntent(server ServiceKey) (v1alpha2.ClientIntents, error) {
-	client := r.ClientService()
-
+func (r AuthorizerRecord) ToIntent(serverName string, serverNamespace string) (v1alpha2.ClientIntents, error) {
 	op, err := KafkaOpFromText(r.Operation)
 	if err != nil {
 		return v1alpha2.ClientIntents{}, err
@@ -147,16 +97,16 @@ func (r AuthorizerRecord) ToIntent(server ServiceKey) (v1alpha2.ClientIntents, e
 			APIVersion: consts.IntentsAPIVersion,
 		},
 		ObjectMeta: v1.ObjectMeta{
-			Name:      client.Name,
-			Namespace: client.Namespace,
+			Name:      r.ServiceName,
+			Namespace: r.Namespace,
 		},
 		Spec: &v1alpha2.IntentsSpec{
 			Service: v1alpha2.Service{
-				Name: client.String(),
+				Name: fmt.Sprintf("%s.%s", r.ServiceName, r.Namespace),
 			},
 			Calls: []v1alpha2.Intent{
 				{
-					Name: server.String(),
+					Name: fmt.Sprintf("%s.%s", serverName, serverNamespace),
 					Type: v1alpha2.IntentTypeKafka,
 					Topics: []v1alpha2.KafkaTopic{
 						{
@@ -193,16 +143,16 @@ func mergeIntents(existingIntents v1alpha2.ClientIntents, newIntent v1alpha2.Int
 	existingTopic.Operations = lo.Uniq(append(existingTopic.Operations, newTopic.Operations...))
 }
 
-func (w *Watcher) LoadIntents(ctx context.Context, server ServiceKey) ([]v1alpha2.ClientIntents, error) {
+func (w *Watcher) LoadIntents(ctx context.Context, serverName string, serverNamespace string) ([]v1alpha2.ClientIntents, error) {
 	intentsByClient := map[string]v1alpha2.ClientIntents{}
 
 	mapperFn := func(r AuthorizerRecord) error {
-		intent, err := r.ToIntent(server)
+		intent, err := r.ToIntent(serverName, serverNamespace)
 		if err != nil {
 			return err
 		}
 
-		clientName := ServiceKey{intent.Name, intent.Namespace}.String()
+		clientName := intent.GetServiceName()
 		if existingIntent, ok := intentsByClient[clientName]; ok {
 			mergeIntents(existingIntent, intent.Spec.Calls[0])
 		} else {
@@ -211,7 +161,7 @@ func (w *Watcher) LoadIntents(ctx context.Context, server ServiceKey) ([]v1alpha
 
 		return nil
 	}
-	if err := w.MapKafkaAuthorizerLogs(ctx, server, mapperFn); err != nil {
+	if err := w.MapKafkaAuthorizerLogs(ctx, serverName, serverNamespace, mapperFn); err != nil {
 		return nil, err
 	}
 

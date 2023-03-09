@@ -3,8 +3,9 @@ package list
 import (
 	"context"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
 	"github.com/otterize/otterize-cli/src/pkg/kafkamapper"
-	"github.com/sirupsen/logrus"
+	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -30,12 +31,17 @@ var ListCmd = &cobra.Command{
 			return err
 		}
 
-		intents, err := w.LoadIntents(ctxTimeout, kafkamapper.ServiceKey{
-			Name:      podName,
-			Namespace: namespace,
-		})
+		intents, err := w.LoadIntents(ctxTimeout, podName, namespace)
 
-		logrus.Info(intents)
+		if err != nil {
+			return err
+		}
+
+		if len(intents) == 0 {
+			output.PrintStderr("No intents found.")
+		} else {
+			intentsprinter.ListFormattedIntents(intents)
+		}
 
 		return nil
 	},
