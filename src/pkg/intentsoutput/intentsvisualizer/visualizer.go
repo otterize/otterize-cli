@@ -1,4 +1,4 @@
-package intentsprinter
+package intentsvisualizer
 
 import (
 	"aqwari.net/xml/xmltree"

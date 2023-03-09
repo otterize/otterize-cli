@@ -3,7 +3,8 @@ package visualize
 import (
 	"context"
 	_ "embed"
-	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentsvisualizer"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -27,13 +28,13 @@ var VisualizeCmd = &cobra.Command{
 				return err
 			}
 
-			visualizer, err := intentsprinter.NewVisualizer()
+			visualizer, err := intentsvisualizer.NewVisualizer()
 			if err != nil {
 				return err
 			}
 			defer visualizer.Close()
 
-			if err := visualizer.Build(intentsprinter.MapperIntentsToAPIIntents(servicesIntents)); err != nil {
+			if err := visualizer.Build(intentsoutput.MapperIntentsToAPIIntents(servicesIntents)); err != nil {
 				return err
 			}
 
@@ -48,5 +49,5 @@ var VisualizeCmd = &cobra.Command{
 
 func init() {
 	VisualizeCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
-	intentsprinter.InitVisualizeOutputFlags(VisualizeCmd)
+	intentsvisualizer.InitVisualizeOutputFlags(VisualizeCmd)
 }

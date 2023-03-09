@@ -1,10 +1,11 @@
-package intentsprinter
+package intentsexporter
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -48,7 +49,7 @@ func getFormattedIntents(intentList []v1alpha2.ClientIntents) (string, error) {
 	case outputFormatVal == OutputFormatYAML:
 		buf := bytes.Buffer{}
 
-		printer := IntentsPrinter{}
+		printer := intentsoutput.IntentsPrinter{}
 		for _, intentYAML := range intentList {
 			err := printer.PrintObj(&intentYAML, &buf)
 			if err != nil {

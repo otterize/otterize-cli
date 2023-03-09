@@ -2,7 +2,8 @@ package list
 
 import (
 	"context"
-	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentslister"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
@@ -28,7 +29,7 @@ var ListCmd = &cobra.Command{
 			if len(servicesIntents) == 0 {
 				output.PrintStderr("No connections found. The network mapper detects (1) connections that are currently open and (2) DNS lookups while a connection is being initiated, for connections between pods on this cluster.")
 			} else {
-				intentsprinter.ListFormattedIntents(intentsprinter.MapperIntentsToAPIIntents(servicesIntents))
+				intentslister.ListFormattedIntents(intentsoutput.MapperIntentsToAPIIntents(servicesIntents))
 			}
 
 			return nil

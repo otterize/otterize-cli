@@ -1,4 +1,4 @@
-package intentsprinter
+package intentsoutput
 
 import (
 	"fmt"
@@ -106,7 +106,6 @@ func MapperIntentsWithLabelsToAPIIntents(intentsFromMapperWithLabels []mappercli
 		}
 
 		if currentIntents, ok := groupedIntents[serviceDistinctKey]; ok {
-			// TODO: hah?
 			if isCallsDifferent(currentIntents.Spec.Calls, intentsOutput.Spec.Calls) {
 				prints.PrintCliStderr("Warning: intents for service `%s` in namespace `%s` differ from intents for service `%s` in namespace `%s`. Discarding intents from namespace %s. Unsafe to apply intents.",
 					currentIntents.Name, currentIntents.Namespace, intentsOutput.Name, intentsOutput.Namespace, intentsOutput.Namespace)

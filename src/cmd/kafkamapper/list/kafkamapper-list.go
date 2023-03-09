@@ -3,7 +3,7 @@ package list
 import (
 	"context"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentslister"
 	"github.com/otterize/otterize-cli/src/pkg/kafkamapper"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
@@ -39,7 +39,7 @@ var ListCmd = &cobra.Command{
 		if len(intents) == 0 {
 			output.PrintStderr("No intents found.")
 		} else {
-			intentsprinter.ListFormattedIntents(intents)
+			intentslister.ListFormattedIntents(intents)
 		}
 
 		return nil

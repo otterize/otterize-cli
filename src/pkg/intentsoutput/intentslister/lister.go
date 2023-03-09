@@ -1,4 +1,4 @@
-package intentsprinter
+package intentslister
 
 import (
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"

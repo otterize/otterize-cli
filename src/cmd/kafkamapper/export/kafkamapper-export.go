@@ -3,7 +3,7 @@ package export
 import (
 	"context"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentsexporter"
 	"github.com/otterize/otterize-cli/src/pkg/kafkamapper"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -35,7 +35,7 @@ var ExportCmd = &cobra.Command{
 			return err
 		}
 
-		exporter, err := intentsprinter.NewExporter()
+		exporter, err := intentsexporter.NewExporter()
 		if err != nil {
 			return err
 		}
@@ -49,7 +49,7 @@ var ExportCmd = &cobra.Command{
 }
 
 func init() {
-	intentsprinter.InitExporterOutputFlags(ExportCmd)
+	intentsexporter.InitExporterOutputFlags(ExportCmd)
 	ExportCmd.Flags().String(PodKey, "", "kafka pod name")
 	cobra.CheckErr(ExportCmd.MarkFlagRequired(PodKey))
 	ExportCmd.Flags().String(NamespacesKey, "", "kafka namespace")

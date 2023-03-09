@@ -3,7 +3,7 @@ package visualize
 import (
 	"context"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentsvisualizer"
 	"github.com/otterize/otterize-cli/src/pkg/kafkamapper"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -35,7 +35,7 @@ var VisualizeCmd = &cobra.Command{
 			return err
 		}
 
-		visualizer, err := intentsprinter.NewVisualizer()
+		visualizer, err := intentsvisualizer.NewVisualizer()
 		if err != nil {
 			return err
 		}
@@ -58,5 +58,5 @@ func init() {
 	cobra.CheckErr(VisualizeCmd.MarkFlagRequired(PodKey))
 	VisualizeCmd.Flags().String(NamespacesKey, "", "kafka namespace")
 	cobra.CheckErr(VisualizeCmd.MarkFlagRequired(NamespacesKey))
-	intentsprinter.InitVisualizeOutputFlags(VisualizeCmd)
+	intentsvisualizer.InitVisualizeOutputFlags(VisualizeCmd)
 }

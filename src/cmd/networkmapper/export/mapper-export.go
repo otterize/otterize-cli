@@ -3,7 +3,8 @@ package export
 import (
 	"context"
 	"errors"
-	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentsexporter"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
@@ -25,7 +26,7 @@ var ExportCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return mapperclient.WithClient(func(c *mapperclient.Client) error {
-			if err := intentsprinter.ValidateExporterOutputFlags(); err != nil {
+			if err := intentsexporter.ValidateExporterOutputFlags(); err != nil {
 				return err
 			}
 
@@ -63,12 +64,12 @@ var ExportCmd = &cobra.Command{
 					})
 			}
 
-			exporter, err := intentsprinter.NewExporter()
+			exporter, err := intentsexporter.NewExporter()
 			if err != nil {
 				return err
 			}
 
-			intents := intentsprinter.MapperIntentsWithLabelsToAPIIntents(intentsFromMapperWithLabels, viper.GetString(DistinctByLabelKey))
+			intents := intentsoutput.MapperIntentsWithLabelsToAPIIntents(intentsFromMapperWithLabels, viper.GetString(DistinctByLabelKey))
 			if err := exporter.ExportIntents(intents); err != nil {
 				return err
 			}
@@ -79,7 +80,7 @@ var ExportCmd = &cobra.Command{
 }
 
 func init() {
-	intentsprinter.InitExporterOutputFlags(ExportCmd)
+	intentsexporter.InitExporterOutputFlags(ExportCmd)
 	ExportCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
 	ExportCmd.Flags().String(DistinctByLabelKey, "", "(EXPERIMENTAL) If specified, remove duplicates for exported ClientIntents by service and this label. Otherwise, outputs different intents for each namespace.")
 }
