@@ -1179,19 +1179,13 @@
     },
     "securitySchemes": {
       "accessTokenCookie": {
-        "description": "Otterize user JWT token. This session cookie is automatically set by logging in to Otterize Cloud at http://local.otterize.com:3000.",
+        "description": "Otterize user JWT token. This session cookie is automatically set by logging in to Otterize Cloud.",
         "in": "cookie",
         "name": "access_token",
         "type": "apiKey"
       },
-      "bearerAuth": {
-        "bearerFormat": "JWT",
-        "description": "Otterize user JWT token.",
-        "scheme": "bearer",
-        "type": "http"
-      },
       "oauth2": {
-        "description": "Use client ID and client secret from an Otterize integration to authenticate.\nTo create an integration, go to http://local.otterize.com:3000/integrations.",
+        "description": "Use client ID and client secret from an Otterize integration to authenticate.",
         "flows": {
           "clientCredentials": {
             "scopes": {
@@ -1200,12 +1194,6 @@
           }
         },
         "type": "oauth2"
-      },
-      "organizationCookie": {
-        "description": "Selected organization ID cookie. This session cookie is automatically set by logging in to Otterize Cloud at http://local.otterize.com:3000.",
-        "in": "cookie",
-        "name": "organization_id",
-        "type": "apiKey"
       },
       "organizationHeader": {
         "description": "Selected organization ID. Leave blank to auto-select the first organization for the current user.",
@@ -1218,7 +1206,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "f23026c8ade7d957e45fc0eb092d9cb034a8317b"
+    "x-revision": "caead657cc0ed9aaa8849597c3562e1d7421897b"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -1609,6 +1597,12 @@
                 "properties": {
                   "configuration": {
                     "$ref": "#/components/schemas/ClusterConfigurationInput"
+                  },
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "type": "string"
                   }
                 },
                 "type": "object"
@@ -4344,12 +4338,6 @@
     },
     {
       "accessTokenCookie": [
-      ],
-      "organizationCookie": [
-      ]
-    },
-    {
-      "bearerAuth": [
       ],
       "organizationHeader": [
       ]
