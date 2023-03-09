@@ -13,6 +13,7 @@ var KafkaMapperCmd = &cobra.Command{
 	GroupID: groups.OSSGroup.ID,
 	Aliases: []string{"kafka"},
 	Short:   "Map kafka topic-level access",
+	Hidden:  true,
 }
 
 func init() {
