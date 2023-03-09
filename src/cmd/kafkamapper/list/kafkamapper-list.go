@@ -26,12 +26,12 @@ var ListCmd = &cobra.Command{
 		podName := viper.GetString(PodKey)
 		namespace := viper.GetString(NamespacesKey)
 
-		w, err := kafkamapper.NewWatcher()
+		m, err := kafkamapper.NewMapper()
 		if err != nil {
 			return err
 		}
 
-		intents, err := w.LoadIntents(ctxTimeout, podName, namespace)
+		intents, err := m.LoadIntents(ctxTimeout, podName, namespace)
 		if err != nil {
 			return err
 		}

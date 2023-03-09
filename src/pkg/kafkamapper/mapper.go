@@ -36,11 +36,11 @@ type AuthorizerRecord struct {
 	ResourceRefCount int    `regroup:"resourceRefCount"`
 }
 
-type Watcher struct {
+type Mapper struct {
 	clientset *kubernetes.Clientset
 }
 
-func NewWatcher() (*Watcher, error) {
+func NewMapper() (*Mapper, error) {
 	config, err := clientcmd.BuildConfigFromFlags("", filepath.Join(homedir.HomeDir(), ".kube", "config"))
 	if err != nil {
 		return nil, err
@@ -51,16 +51,16 @@ func NewWatcher() (*Watcher, error) {
 		return nil, err
 	}
 
-	w := &Watcher{
+	m := &Mapper{
 		clientset: clientset,
 	}
 
-	return w, nil
+	return m, nil
 }
 
-func (w *Watcher) MapKafkaAuthorizerLogs(ctx context.Context, serverName string, serverNamespace string, mapperFn func(r AuthorizerRecord) error) error {
+func (m *Mapper) MapKafkaAuthorizerLogs(ctx context.Context, serverName string, serverNamespace string, mapperFn func(r AuthorizerRecord) error) error {
 	podLogOpts := corev1.PodLogOptions{}
-	req := w.clientset.CoreV1().Pods(serverNamespace).GetLogs(serverName, &podLogOpts)
+	req := m.clientset.CoreV1().Pods(serverNamespace).GetLogs(serverName, &podLogOpts)
 	logsReader, err := req.Stream(ctx)
 	if err != nil {
 		return err
@@ -143,7 +143,7 @@ func mergeIntents(existingIntents v1alpha2.ClientIntents, newIntent v1alpha2.Int
 	existingTopic.Operations = lo.Uniq(append(existingTopic.Operations, newTopic.Operations...))
 }
 
-func (w *Watcher) LoadIntents(ctx context.Context, serverName string, serverNamespace string) ([]v1alpha2.ClientIntents, error) {
+func (m *Mapper) LoadIntents(ctx context.Context, serverName string, serverNamespace string) ([]v1alpha2.ClientIntents, error) {
 	intentsByClient := map[string]v1alpha2.ClientIntents{}
 
 	mapperFn := func(r AuthorizerRecord) error {
@@ -161,7 +161,7 @@ func (w *Watcher) LoadIntents(ctx context.Context, serverName string, serverName
 
 		return nil
 	}
-	if err := w.MapKafkaAuthorizerLogs(ctx, serverName, serverNamespace, mapperFn); err != nil {
+	if err := m.MapKafkaAuthorizerLogs(ctx, serverName, serverNamespace, mapperFn); err != nil {
 		return nil, err
 	}
 
