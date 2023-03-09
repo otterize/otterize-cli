@@ -7,7 +7,7 @@ import (
 	"github.com/amit7itz/goset"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
-	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"io"
@@ -40,7 +40,7 @@ var ConvertCmd = &cobra.Command{
 	Short: "Converts Otterize intents to Kubernetes ClientIntents resources",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		printer := intentsprinter.IntentsPrinter{}
+		printer := intentsoutput.IntentsPrinter{}
 		allowedExts := goset.NewSet(".yaml", ".yml")
 		fileInfo, err := os.Stat(viper.GetString(FilepathKey))
 		if err != nil {
