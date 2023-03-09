@@ -1,11 +1,10 @@
-package list
+package visualize
 
 import (
 	"context"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
 	"github.com/otterize/otterize-cli/src/pkg/kafkamapper"
-	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -15,9 +14,9 @@ const (
 	NamespacesKey = "namespace"
 )
 
-var ListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List intents discovered by the kafka mapper",
+var VisualizeCmd = &cobra.Command{
+	Use:   "visualize",
+	Short: "Visualize an access graph for kafka mapper intents using go-graphviz",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
@@ -36,10 +35,18 @@ var ListCmd = &cobra.Command{
 			return err
 		}
 
-		if len(intents) == 0 {
-			output.PrintStderr("No intents found.")
-		} else {
-			intentsprinter.ListFormattedIntents(intents)
+		visualizer, err := intentsprinter.NewVisualizer()
+		if err != nil {
+			return err
+		}
+		defer visualizer.Close()
+
+		if err := visualizer.Build(intents); err != nil {
+			return err
+		}
+
+		if err := visualizer.RenderOutputToFile(); err != nil {
+			return err
 		}
 
 		return nil
@@ -47,8 +54,9 @@ var ListCmd = &cobra.Command{
 }
 
 func init() {
-	ListCmd.Flags().String(PodKey, "", "kafka pod name")
-	cobra.CheckErr(ListCmd.MarkFlagRequired(PodKey))
-	ListCmd.Flags().String(NamespacesKey, "", "kafka namespace")
-	cobra.CheckErr(ListCmd.MarkFlagRequired(NamespacesKey))
+	VisualizeCmd.Flags().String(PodKey, "", "kafka pod name")
+	cobra.CheckErr(VisualizeCmd.MarkFlagRequired(PodKey))
+	VisualizeCmd.Flags().String(NamespacesKey, "", "kafka namespace")
+	cobra.CheckErr(VisualizeCmd.MarkFlagRequired(NamespacesKey))
+	intentsprinter.InitVisualizeOutputFlags(VisualizeCmd)
 }

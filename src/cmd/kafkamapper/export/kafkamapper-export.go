@@ -1,11 +1,10 @@
-package list
+package export
 
 import (
 	"context"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/intentsprinter"
 	"github.com/otterize/otterize-cli/src/pkg/kafkamapper"
-	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -15,9 +14,9 @@ const (
 	NamespacesKey = "namespace"
 )
 
-var ListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List intents discovered by the kafka mapper",
+var ExportCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export Otterize intents from the kafka mapper",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
@@ -36,10 +35,13 @@ var ListCmd = &cobra.Command{
 			return err
 		}
 
-		if len(intents) == 0 {
-			output.PrintStderr("No intents found.")
-		} else {
-			intentsprinter.ListFormattedIntents(intents)
+		exporter, err := intentsprinter.NewExporter()
+		if err != nil {
+			return err
+		}
+
+		if err := exporter.ExportIntents(intents); err != nil {
+			return err
 		}
 
 		return nil
@@ -47,8 +49,9 @@ var ListCmd = &cobra.Command{
 }
 
 func init() {
-	ListCmd.Flags().String(PodKey, "", "kafka pod name")
-	cobra.CheckErr(ListCmd.MarkFlagRequired(PodKey))
-	ListCmd.Flags().String(NamespacesKey, "", "kafka namespace")
-	cobra.CheckErr(ListCmd.MarkFlagRequired(NamespacesKey))
+	intentsprinter.InitExporterOutputFlags(ExportCmd)
+	ExportCmd.Flags().String(PodKey, "", "kafka pod name")
+	cobra.CheckErr(ExportCmd.MarkFlagRequired(PodKey))
+	ExportCmd.Flags().String(NamespacesKey, "", "kafka namespace")
+	cobra.CheckErr(ExportCmd.MarkFlagRequired(NamespacesKey))
 }
