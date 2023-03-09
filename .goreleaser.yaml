@@ -38,7 +38,9 @@ builds:
       post:
         - output: true
           # checks that we've successfully statically built this executable
-          cmd: powershell -Command "if ( -Not (ldd {{ .Path }} 2>&1 | findstr 'not a dynamic executable')) { exit 1 }"
+          cmd: |
+            powershell -Command "$output = ldd {{ .Path }} 2>&1; echo $output; if ( -Not ( echo $output | findstr 'not a dynamic executable')) { exit 1 }";
+            
 
     binary: otterize
 
