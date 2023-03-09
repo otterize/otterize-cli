@@ -28,6 +28,18 @@ spec:
 {{- if $intent.Type }}
       type: {{ $intent.Type }}
 {{- end -}}
+{{- if $intent.Topics }}
+      topic:
+{{- range $topic := $intent.Topics }}
+        - name: {{ $topic.Name }}
+{{- if $topic.Operations }}
+          operations:
+{{- range $op := $topic.Operations }}
+            - {{ $op }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
 {{ end }}`
 
 var crdTemplateParsed = template.Must(template.New("intents").Parse(crdTemplate))
@@ -40,6 +52,10 @@ var _ = v1alpha2.ClientIntents{
 		Service: v1alpha2.Service{Name: ""},
 		Calls: []v1alpha2.Intent{{
 			Type: "", Name: "",
+			Topics: []v1alpha2.KafkaTopic{{
+				Name:       "",
+				Operations: []v1alpha2.KafkaOperation{},
+			}},
 		}},
 	},
 }
