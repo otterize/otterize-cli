@@ -445,6 +445,7 @@ type Mutation {
 """Update cluster"""
 	updateCluster(
 		id: ID!
+		name: String
 		configuration: ClusterConfigurationInput
 	): Cluster!
 """Create a new environment"""
