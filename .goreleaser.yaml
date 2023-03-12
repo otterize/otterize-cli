@@ -48,7 +48,7 @@ builds:
     goos:
       - darwin
     goarch:
-      - amd64,
+      - amd64
     main:
       ./src/cmd
     # intentionally no static linking for macOS - from the man page for `gcc` on `-static`:
