@@ -122,41 +122,58 @@ func (r AuthorizerRecord) ToIntent(serverName string, serverNamespace string) (v
 	return intent, nil
 }
 
-func mergeIntents(existingIntents v1alpha2.ClientIntents, newIntent v1alpha2.Intent) {
-	existingCall, serverCallFound := lo.Find(existingIntents.Spec.Calls, func(existingCall v1alpha2.Intent) bool {
-		return existingCall.Name == newIntent.Name
-	})
-	if !serverCallFound {
-		existingIntents.Spec.Calls = append(existingIntents.Spec.Calls, newIntent)
-		return
-	}
-
-	newTopic := newIntent.Topics[0] // assumption: only one topic in newIntent
-	existingTopic, topicFound := lo.Find(existingCall.Topics, func(existingTopic v1alpha2.KafkaTopic) bool {
-		return existingTopic.Name == newTopic.Name
+func mergeTopics(intent v1alpha2.Intent, newTopic v1alpha2.KafkaTopic) v1alpha2.Intent {
+	topicFound := false
+	newTopics := lo.Map(intent.Topics, func(existingTopic v1alpha2.KafkaTopic, _ int) v1alpha2.KafkaTopic {
+		if existingTopic.Name != newTopic.Name {
+			return existingTopic
+		}
+		topicFound = true
+		existingTopic.Operations = lo.Uniq(append(existingTopic.Operations, newTopic.Operations...))
+		return existingTopic
 	})
 	if !topicFound {
-		existingCall.Topics = append(existingCall.Topics, newTopic)
-		return
+		newTopics = append(newTopics, newTopic)
 	}
 
-	existingTopic.Operations = lo.Uniq(append(existingTopic.Operations, newTopic.Operations...))
+	intent.Topics = newTopics
+	return intent
+}
+
+func mergeIntents(existingIntents v1alpha2.ClientIntents, newIntent v1alpha2.Intent) v1alpha2.ClientIntents {
+	newTopic := newIntent.Topics[0] // assumption: only one topic in newIntent
+
+	serverCallFound := false
+	newCalls := lo.Map(existingIntents.Spec.Calls, func(existingCall v1alpha2.Intent, _ int) v1alpha2.Intent {
+		if existingCall.Name != newIntent.Name {
+			return existingCall
+		}
+
+		serverCallFound = true
+		return mergeTopics(existingCall, newTopic)
+	})
+
+	if !serverCallFound {
+		newCalls = append(newCalls, newIntent)
+	}
+	existingIntents.Spec.Calls = newCalls
+	return existingIntents
 }
 
 func (m *Mapper) LoadIntents(ctx context.Context, serverName string, serverNamespace string) ([]v1alpha2.ClientIntents, error) {
 	intentsByClient := map[string]v1alpha2.ClientIntents{}
 
 	mapperFn := func(r AuthorizerRecord) error {
-		intent, err := r.ToIntent(serverName, serverNamespace)
+		newIntent, err := r.ToIntent(serverName, serverNamespace)
 		if err != nil {
 			return err
 		}
 
-		clientName := intent.GetServiceName()
+		clientName := newIntent.GetServiceName()
 		if existingIntent, ok := intentsByClient[clientName]; ok {
-			mergeIntents(existingIntent, intent.Spec.Calls[0])
+			intentsByClient[clientName] = mergeIntents(existingIntent, newIntent.Spec.Calls[0])
 		} else {
-			intentsByClient[clientName] = intent
+			intentsByClient[clientName] = newIntent
 		}
 
 		return nil
