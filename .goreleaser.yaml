@@ -40,7 +40,8 @@ builds:
           # checks that we've successfully statically built this executable
           cmd: |
             ldd {{ .Path }} 2>&1;
-            ldd {{ .Path }} 2>&1 | grep -i dll | if [ $(wc -l) -gt 5 ]; then echo "Found unknown DLL link, terminating build" & exit 1; fi            
+            ldd {{ .Path }} 2>&1 | grep -v ntdll.dll | grep -v KERNEL32.DLL | grep -v KERNELBASE.dll | grep -v apphelp.dll | grep -v msvcrt.dll
+            if [ $? -ne 1 ]; then echo "Found unexpected DLL, terminating build" & exit 1
 
     binary: otterize
 
