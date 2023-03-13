@@ -8,7 +8,7 @@
 
 ## About
 
-The Otterize CLI is a command-line utility used to control and interact with the [Otterize network mapper](https://github.com/otterize/network-mapper), manipulate local intents files, and (coming soon!) interact with Otterize Cloud.
+The Otterize CLI is a command-line utility used to control and interact with the [Otterize network mapper](https://github.com/otterize/network-mapper), manipulate local intents files, and interact with Otterize Cloud.
 
 See the [CLI command reference](https://docs.otterize.com/cli/) for how to use it.
 
