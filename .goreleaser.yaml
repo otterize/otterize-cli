@@ -38,7 +38,10 @@ builds:
       post:
         - output: true
           # checks that we've successfully statically built this executable
-          cmd: ldd {{ .Path }} 2>&1 | grep 'not a dynamic executable'
+          cmd: |
+            ldd {{ .Path }} 2>&1;
+            if ldd {{ .Path }} 2>&1 | grep -v 'ntdll.dll' | grep -v 'KERNEL32.DLL' | grep -v 'KERNELBASE.dll' | grep -v 'apphelp.dll' | grep -v 'msvcrt.dll'; then echo "Found unexpected DLL, terminating build" && exit 1; fi
+
     binary: otterize
 
   - id: macos-amd
