@@ -90,12 +90,13 @@ func (v *Visualizer) addToCache(nodeName string) error {
 
 func (v *Visualizer) populateNodeCache(intents []v1alpha2.ClientIntents) error {
 	for _, intent := range intents {
-		clientName := intent.Spec.Service.Name
+		clientNS := intent.Namespace
+		clientName := getServiceNameWithNamespace(clientNS, intent.GetServiceName())
 		if err := v.addToCache(clientName); err != nil {
 			return err
 		}
 		for _, call := range intent.GetCallsList() {
-			targetServiceName := call.Name
+			targetServiceName := getServiceNameWithNamespace(clientNS, call.Name)
 			if err := v.addToCache(targetServiceName); err != nil {
 				return err
 			}
@@ -106,9 +107,10 @@ func (v *Visualizer) populateNodeCache(intents []v1alpha2.ClientIntents) error {
 
 func (v *Visualizer) buildEdges(intents []v1alpha2.ClientIntents) error {
 	for _, intent := range intents {
-		clientName := intent.Spec.Service.Name
+		clientNS := intent.Namespace
+		clientName := getServiceNameWithNamespace(clientNS, intent.GetServiceName())
 		for _, call := range intent.GetCallsList() {
-			targetServiceName := call.Name
+			targetServiceName := getServiceNameWithNamespace(clientNS, call.Name)
 			_, err := v.graph.CreateEdge(
 				fmt.Sprintf("%s to %s", clientName, targetServiceName),
 				v.nodeCache[clientName],
@@ -266,6 +268,13 @@ func (v *Visualizer) Build(intents []v1alpha2.ClientIntents) error {
 	}
 
 	return nil
+}
+
+func getServiceNameWithNamespace(clientNS, name string) string {
+	if len(strings.Split(name, ".")) > 1 {
+		return name
+	}
+	return fmt.Sprintf("%s.%s", name, clientNS)
 }
 
 func InitVisualizeOutputFlags(cmd *cobra.Command) {
