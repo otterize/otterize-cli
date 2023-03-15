@@ -9,7 +9,6 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/integrations"
 	"github.com/otterize/otterize-cli/src/cmd/intents"
 	"github.com/otterize/otterize-cli/src/cmd/invites"
-	"github.com/otterize/otterize-cli/src/cmd/kafkamapper"
 	"github.com/otterize/otterize-cli/src/cmd/login"
 	"github.com/otterize/otterize-cli/src/cmd/namespaces"
 	"github.com/otterize/otterize-cli/src/cmd/networkmapper"
@@ -111,7 +110,6 @@ func init() {
 
 	RootCmd.AddGroup(groups.OSSGroup)
 	RootCmd.AddCommand(networkmapper.MapperCmd)
-	RootCmd.AddCommand(kafkamapper.KafkaMapperCmd)
 }
 
 func initLogger() {
