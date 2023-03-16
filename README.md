@@ -9,38 +9,6 @@
 ## About
 
 The Otterize CLI is a command-line utility used to control and interact with the [Otterize network mapper](https://github.com/otterize/network-mapper), manipulate local intents files, and interact with Otterize Cloud.
-Please see the [contributing guidelines](CONTRIBUTING.md) for how to create and submit a high-quality PR for this repo. This template is based on Auth0's excellent template.
-
-### Description
-
-Describe the purpose of this PR along with any background information and the impacts of the proposed change. For the benefit of the community, please do not assume prior context.
-
-Provide details that support your chosen implementation, including: breaking changes, alternatives considered, changes to the API, etc.
-
-
-### References
-
-Include any links supporting this change such as a:
-
-- GitHub Issue/PR number addressed or fixed
-- StackOverflow post
-- Related pull requests/issues from other repos
-
-If there are no references, simply delete this section.
-
-### Testing
-
-Describe how this can be tested by reviewers. Be specific about anything not tested and reasons why. If this library has unit and/or integration testing, tests should be added for new functionality and existing tests should complete without errors.
-
-Please include any manual steps for testing end-to-end or functionality not covered by unit/integration tests.
-
-Also include details of the environment this PR was developed in (language/platform/browser version).
-
-- [ ] This change adds test coverage for new/changed/fixed functionality
-
-### Checklist
-
-- [ ] I have added documentation for new/changed functionality in this PR and in github.com/otterize/docs
 
 See the [CLI command reference](https://docs.otterize.com/cli/) for how to use it.
 
@@ -82,7 +50,7 @@ brew install otterize/otterize/otterize-cli
 ```
 Linux 64-bit
 ```bash
-wget https://get.otterize.com/otterize-cli/v0.1.20/otterize_Linux_x86_64.tar.gz
+wget https://get.otterize.com/otterize-cli/v0.1.18/otterize_Linux_x86_64.tar.gz
 tar xf otterize_Linux_x86_64.tar.gz
 sudo cp otterize /usr/local/bin
 ```
