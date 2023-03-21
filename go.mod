@@ -25,6 +25,7 @@ require (
 	github.com/vishalkuo/bimap v0.0.0-20220726225509-e0b4f20de28b
 	golang.org/x/exp v0.0.0-20221012211006-4de253d81b95
 	golang.org/x/oauth2 v0.0.0-20220822191816-0ebed06d0094
+	golang.org/x/sync v0.1.0
 	k8s.io/api v0.25.2
 	k8s.io/apimachinery v0.25.2
 	k8s.io/client-go v0.25.2
