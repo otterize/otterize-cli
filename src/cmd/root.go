@@ -5,11 +5,11 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/accessgraph"
 	"github.com/otterize/otterize-cli/src/cmd/clusters"
 	"github.com/otterize/otterize-cli/src/cmd/environments"
+	"github.com/otterize/otterize-cli/src/cmd/exp"
 	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/otterize/otterize-cli/src/cmd/integrations"
 	"github.com/otterize/otterize-cli/src/cmd/intents"
 	"github.com/otterize/otterize-cli/src/cmd/invites"
-	"github.com/otterize/otterize-cli/src/cmd/kafkamapper"
 	"github.com/otterize/otterize-cli/src/cmd/login"
 	"github.com/otterize/otterize-cli/src/cmd/namespaces"
 	"github.com/otterize/otterize-cli/src/cmd/networkmapper"
@@ -93,6 +93,7 @@ func init() {
 	RootCmd.PersistentFlags().Bool(config.NoHeadersKey, config.NoHeadersDefault, "Do not print headers")
 
 	RootCmd.AddCommand(version.APIVersionCmd)
+	RootCmd.AddCommand(exp.ExpCmd)
 
 	RootCmd.AddGroup(groups.AccountsGroup)
 	RootCmd.AddCommand(login.LoginCmd)
@@ -111,7 +112,6 @@ func init() {
 
 	RootCmd.AddGroup(groups.OSSGroup)
 	RootCmd.AddCommand(networkmapper.MapperCmd)
-	RootCmd.AddCommand(kafkamapper.KafkaMapperCmd)
 }
 
 func initLogger() {
