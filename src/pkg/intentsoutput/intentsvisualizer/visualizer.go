@@ -278,7 +278,7 @@ func getServiceNameWithNamespace(clientNS, name string) string {
 }
 
 func InitVisualizeOutputFlags(cmd *cobra.Command) {
-	cmd.Flags().String(GraphFormatKey, "png", "Graph output format (png/jpg)")
+	cmd.Flags().String(GraphFormatKey, "png", "Graph output format (png/jpg/svg)")
 	cmd.Flags().StringP(OutputPathKey, OutputPathShorthand, "", "exported graph output file path")
 	cobra.CheckErr(cmd.MarkFlagRequired(OutputPathKey))
 }
