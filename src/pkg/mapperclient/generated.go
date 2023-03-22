@@ -31,6 +31,11 @@ func (v *ResetCaptureResponse) GetResetCapture() bool { return v.ResetCapture }
 
 // ServiceIntentsUpToMapperV017Response is returned by ServiceIntentsUpToMapperV017 on success.
 type ServiceIntentsUpToMapperV017Response struct {
+	// Kept for backwards compatibility with CLI -
+	// query intents as (source+destinations) pairs, without any additional intent info.
+	// namespaces: Namespaces filter.
+	// includeLabels: Labels to include in the response. Ignored if includeAllLabels is specified.
+	// includeAllLabels: Return all labels for the pod in the response.
 	ServiceIntents []ServiceIntentsUpToMapperV017ServiceIntents `json:"serviceIntents"`
 }
 
@@ -181,6 +186,11 @@ func (v *ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentit
 
 // ServiceIntentsWithLabelsResponse is returned by ServiceIntentsWithLabels on success.
 type ServiceIntentsWithLabelsResponse struct {
+	// Kept for backwards compatibility with CLI -
+	// query intents as (source+destinations) pairs, without any additional intent info.
+	// namespaces: Namespaces filter.
+	// includeLabels: Labels to include in the response. Ignored if includeAllLabels is specified.
+	// includeAllLabels: Return all labels for the pod in the response.
 	ServiceIntents []ServiceIntentsWithLabelsServiceIntents `json:"serviceIntents"`
 }
 
