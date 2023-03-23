@@ -122,12 +122,8 @@ func serviceIntentsWithLabelsToIntents(serviceIntentsWithLabels []ServiceIntents
 	for _, serviceIntent := range serviceIntentsWithLabels {
 		for _, call := range serviceIntent.Intents {
 			intent := IntentsIntentsIntent{
-				Client: IntentsIntentsIntentClientOtterizeServiceIdentity{
-					NamespacedNameWithLabelsFragment: serviceIntent.Client.NamespacedNameWithLabelsFragment,
-				},
-				Server: IntentsIntentsIntentServerOtterizeServiceIdentity{
-					NamespacedNameWithLabelsFragment: call.NamespacedNameWithLabelsFragment,
-				},
+				Client: IntentsIntentsIntentClientOtterizeServiceIdentity(serviceIntent.Client),
+				Server: IntentsIntentsIntentServerOtterizeServiceIdentity(call),
 			}
 
 			intents = append(intents, intent)
