@@ -2,6 +2,7 @@ package mapperclient
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/Khan/genqlient/graphql"
 	"github.com/otterize/otterize-cli/src/pkg/portforwarder"
@@ -73,6 +74,7 @@ func WithClient(f func(c *Client) error) error {
 	return f(c)
 }
 
+// ServiceIntents is supported for network-mapper version < 0.1.13
 func (c *Client) ServiceIntents(ctx context.Context, namespaces []string) ([]ServiceIntentsUpToMapperV017ServiceIntents, error) {
 	res, err := ServiceIntentsUpToMapperV017(ctx, c.client, namespaces)
 	if err != nil {
@@ -81,12 +83,98 @@ func (c *Client) ServiceIntents(ctx context.Context, namespaces []string) ([]Ser
 	return res.ServiceIntents, nil
 }
 
+func serviceIntentsToIntents(serviceIntents []ServiceIntentsUpToMapperV017ServiceIntents) []IntentsIntentsIntent {
+	var intents []IntentsIntentsIntent
+
+	for _, serviceIntent := range serviceIntents {
+		for _, call := range serviceIntent.Intents {
+			intent := IntentsIntentsIntent{
+				Client: IntentsIntentsIntentClientOtterizeServiceIdentity{
+					NamespacedNameWithLabelsFragment: NamespacedNameWithLabelsFragment{
+						NamespacedNameFragment: serviceIntent.Client.NamespacedNameFragment,
+					},
+				},
+				Server: IntentsIntentsIntentServerOtterizeServiceIdentity{
+					NamespacedNameWithLabelsFragment: NamespacedNameWithLabelsFragment{
+						NamespacedNameFragment: call.NamespacedNameFragment,
+					},
+				},
+			}
+
+			intents = append(intents, intent)
+		}
+	}
+
+	return intents
+}
+
+// ServiceIntentsWithLabels is supported for network-mapper version == 0.1.13
 func (c *Client) ServiceIntentsWithLabels(ctx context.Context, namespaces []string, labels []string) ([]ServiceIntentsWithLabelsServiceIntents, error) {
 	res, err := ServiceIntentsWithLabels(ctx, c.client, namespaces, labels)
 	if err != nil {
 		return nil, err
 	}
 	return res.ServiceIntents, nil
+}
+
+func serviceIntentsWithLabelsToIntents(serviceIntentsWithLabels []ServiceIntentsWithLabelsServiceIntents) []IntentsIntentsIntent {
+	var intents []IntentsIntentsIntent
+	for _, serviceIntent := range serviceIntentsWithLabels {
+		for _, call := range serviceIntent.Intents {
+			intent := IntentsIntentsIntent{
+				Client: IntentsIntentsIntentClientOtterizeServiceIdentity{
+					NamespacedNameWithLabelsFragment: serviceIntent.Client.NamespacedNameWithLabelsFragment,
+				},
+				Server: IntentsIntentsIntentServerOtterizeServiceIdentity{
+					NamespacedNameWithLabelsFragment: call.NamespacedNameWithLabelsFragment,
+				},
+			}
+
+			intents = append(intents, intent)
+		}
+	}
+
+	return intents
+}
+
+// Intents is supported for network-mapper version >= 0.1.14
+func (c *Client) Intents(ctx context.Context, namespaces []string, labels []string) ([]IntentsIntentsIntent, error) {
+	res, err := Intents(ctx, c.client, namespaces, labels)
+	if err != nil {
+		return nil, err
+	}
+	return res.Intents, nil
+}
+
+func (c *Client) ListIntents(ctx context.Context, namespaces []string, withLabelsFilter bool, labels []string, withKafkaIntents bool) ([]IntentsIntentsIntent, error) {
+	if !withLabelsFilter && !withKafkaIntents {
+		serviceIntents, err := c.ServiceIntents(ctx, namespaces)
+		if err != nil {
+			return nil, err
+		}
+
+		return serviceIntentsToIntents(serviceIntents), nil
+	} else if !withKafkaIntents {
+		serviceIntentsWithLabels, err := c.ServiceIntentsWithLabels(ctx, namespaces, labels)
+		if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
+			err = errors.New("listing intents with labels filter is not supported by your network mapper. Please upgrade")
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		return serviceIntentsWithLabelsToIntents(serviceIntentsWithLabels), nil
+	} else {
+		intents, err := c.Intents(ctx, namespaces, labels)
+		if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
+			err = errors.New("listing intents including kafka intents is not supported by your network mapper. Please upgrade")
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		return intents, err
+	}
 }
 
 func (c *Client) ResetCapture(ctx context.Context) error {

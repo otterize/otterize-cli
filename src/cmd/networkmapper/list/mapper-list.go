@@ -8,11 +8,14 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"time"
 )
 
 const (
-	NamespacesKey       = "namespaces"
-	NamespacesShorthand = "n"
+	NamespacesKey          = "namespaces"
+	NamespacesShorthand    = "n"
+	DistinctByLabelKey     = "distinct-by-label"
+	IncludeKafkaIntentsKey = "include-kafka-intents"
 )
 
 var ListCmd = &cobra.Command{
@@ -21,16 +24,28 @@ var ListCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return mapperclient.WithClient(func(c *mapperclient.Client) error {
+			ctxTimeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+
 			namespacesFilter := viper.GetStringSlice(NamespacesKey)
-			servicesIntents, err := c.ServiceIntents(context.Background(), namespacesFilter)
+			includeKafkaIntents := viper.GetBool(IncludeKafkaIntentsKey)
+			withLabelsFilter := viper.IsSet(DistinctByLabelKey)
+			var labelsFilter []string
+			distinctByLabel := ""
+			if withLabelsFilter {
+				distinctByLabel = viper.GetString(DistinctByLabelKey)
+				labelsFilter = []string{distinctByLabel}
+			}
+			intents, err := c.ListIntents(ctxTimeout, namespacesFilter, withLabelsFilter, labelsFilter, includeKafkaIntents)
 			if err != nil {
 				return err
 			}
-			if len(servicesIntents) == 0 {
-				output.PrintStderr("No connections found. The network mapper detects (1) connections that are currently open and (2) DNS lookups while a connection is being initiated, for connections between pods on this cluster.")
-			} else {
-				intentslister.ListFormattedIntents(intentsoutput.MapperIntentsToAPIIntents(servicesIntents))
+			if len(intents) == 0 {
+				output.PrintStderr("No connections found.")
+				return nil
 			}
+
+			intentslister.ListFormattedIntents(intentsoutput.MapperIntentsToAPIIntents(intents, distinctByLabel))
 
 			return nil
 		})
@@ -39,4 +54,6 @@ var ListCmd = &cobra.Command{
 
 func init() {
 	ListCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
+	ListCmd.Flags().String(DistinctByLabelKey, "", "(EXPERIMENTAL) If specified, remove duplicates for exported ClientIntents by service and this label. Otherwise, outputs different intents for each namespace. (supported starting network-mapper version 0.1.13)")
+	ListCmd.Flags().Bool(IncludeKafkaIntentsKey, false, "(EXPERIMENTAL) include intents discovered by kafka-watcher (supported starting network-mapper version 0.1.14)")
 }

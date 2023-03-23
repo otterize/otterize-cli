@@ -2,22 +2,20 @@ package export
 
 import (
 	"context"
-	"errors"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentsexporter"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
-	"github.com/samber/lo"
+	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"net/http"
 	"time"
 )
 
 const (
-	NamespacesKey       = "namespaces"
-	NamespacesShorthand = "n"
-	DistinctByLabelKey  = "distinct-by-label"
+	NamespacesKey          = "namespaces"
+	NamespacesShorthand    = "n"
+	DistinctByLabelKey     = "distinct-by-label"
+	IncludeKafkaIntentsKey = "include-kafka-intents"
 )
 
 var ExportCmd = &cobra.Command{
@@ -32,36 +30,23 @@ var ExportCmd = &cobra.Command{
 
 			ctxTimeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
+
 			namespacesFilter := viper.GetStringSlice(NamespacesKey)
-			var intentsFromMapperWithLabels []mapperclient.ServiceIntentsWithLabelsServiceIntents
-			if viper.IsSet(DistinctByLabelKey) {
-				includeLabels := []string{viper.GetString(DistinctByLabelKey)}
-				intentsFromMapperV1018, err := c.ServiceIntentsWithLabels(ctxTimeout, namespacesFilter, includeLabels)
-				if err != nil {
-					if httpErr := (mapperclient.HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
-						prints.PrintCliStderr("You've specified --%s, but your network mapper does not support this capability. Please upgrade.", DistinctByLabelKey)
-					}
-					return err
-				}
-				intentsFromMapperWithLabels = intentsFromMapperV1018
-			} else {
-				intentsFromMapperV1017, err := c.ServiceIntents(ctxTimeout, namespacesFilter)
-				if err != nil {
-					return err
-				}
-				intentsFromMapperWithLabels = lo.Map(intentsFromMapperV1017,
-					func(item mapperclient.ServiceIntentsUpToMapperV017ServiceIntents, _ int) mapperclient.ServiceIntentsWithLabelsServiceIntents {
-						return mapperclient.ServiceIntentsWithLabelsServiceIntents{
-							Client: mapperclient.ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity{
-								NamespacedNameFragment: item.Client.NamespacedNameFragment,
-							},
-							Intents: lo.Map(item.Intents, func(item mapperclient.ServiceIntentsUpToMapperV017ServiceIntentsIntentsOtterizeServiceIdentity, _ int) mapperclient.ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity {
-								return mapperclient.ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity{
-									NamespacedNameFragment: item.NamespacedNameFragment,
-								}
-							}),
-						}
-					})
+			includeKafkaIntents := viper.GetBool(IncludeKafkaIntentsKey)
+			withLabelsFilter := viper.IsSet(DistinctByLabelKey)
+			var labelsFilter []string
+			distinctByLabel := ""
+			if withLabelsFilter {
+				distinctByLabel = viper.GetString(DistinctByLabelKey)
+				labelsFilter = []string{distinctByLabel}
+			}
+			intents, err := c.ListIntents(ctxTimeout, namespacesFilter, withLabelsFilter, labelsFilter, includeKafkaIntents)
+			if err != nil {
+				return err
+			}
+			if len(intents) == 0 {
+				output.PrintStderr("No connections found.")
+				return nil
 			}
 
 			exporter, err := intentsexporter.NewExporter()
@@ -69,8 +54,7 @@ var ExportCmd = &cobra.Command{
 				return err
 			}
 
-			intents := intentsoutput.MapperIntentsWithLabelsToAPIIntents(intentsFromMapperWithLabels, viper.GetString(DistinctByLabelKey))
-			if err := exporter.ExportIntents(intents); err != nil {
+			if err := exporter.ExportIntents(intentsoutput.MapperIntentsToAPIIntents(intents, distinctByLabel)); err != nil {
 				return err
 			}
 
@@ -82,5 +66,6 @@ var ExportCmd = &cobra.Command{
 func init() {
 	intentsexporter.InitExporterOutputFlags(ExportCmd)
 	ExportCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
-	ExportCmd.Flags().String(DistinctByLabelKey, "", "(EXPERIMENTAL) If specified, remove duplicates for exported ClientIntents by service and this label. Otherwise, outputs different intents for each namespace.")
+	ExportCmd.Flags().String(DistinctByLabelKey, "", "(EXPERIMENTAL) If specified, remove duplicates for exported ClientIntents by service and this label. Otherwise, outputs different intents for each namespace. (supported starting network-mapper version 0.1.13)")
+	ExportCmd.Flags().Bool(IncludeKafkaIntentsKey, false, "(EXPERIMENTAL) include intents discovered by kafka-watcher (supported starting network-mapper version 0.1.14)")
 }
