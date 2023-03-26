@@ -3,6 +3,7 @@ package list
 import (
 	"context"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentslister"
 	"github.com/otterize/otterize-cli/src/pkg/istiomapper"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -27,10 +28,11 @@ var ListCmd = &cobra.Command{
 			return err
 		}
 
-		_, err = m.LoadIntents(ctxTimeout, namespace)
+		intents, err := m.LoadIntents(ctxTimeout, namespace)
 		if err != nil {
 			return err
 		}
+		intentslister.ListFormattedIntents(intents)
 		return nil
 	},
 }
