@@ -14,26 +14,46 @@ fragment NamespacedNameFragment on OtterizeServiceIdentity {
     namespace
 }
 
+fragment LabelsFragment on OtterizeServiceIdentity {
+    labels {
+        key
+        value
+    }
+}
+
+fragment NamespacedNameWithLabelsFragment on OtterizeServiceIdentity {
+    ...NamespacedNameFragment
+    ...LabelsFragment
+}
+
 
 query ServiceIntentsWithLabels($namespaces: [String!], $includedLabels: [String!]) {
     serviceIntents(namespaces: $namespaces, includeLabels: $includedLabels) {
         client {
-            ...NamespacedNameFragment
-            labels {
-                key
-                value
-            }
+            ...NamespacedNameWithLabelsFragment
         }
         intents {
-            ...NamespacedNameFragment
-            labels {
-                key
-                value
-            }
+            ...NamespacedNameWithLabelsFragment
         }
     }
 }
 
 mutation ResetCapture {
     resetCapture
+}
+
+query Intents($namespaces: [String!], $includedLabels: [String!]) {
+    intents(namespaces: $namespaces, includeLabels: $includedLabels) {
+        client {
+            ...NamespacedNameWithLabelsFragment
+        }
+        server {
+            ...NamespacedNameWithLabelsFragment
+        }
+        type
+        kafkaTopics {
+            name
+            operations
+        }
+    }
 }
