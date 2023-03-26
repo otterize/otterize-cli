@@ -9,7 +9,7 @@ import (
 var IstioMapperCmd = &cobra.Command{
 	Use:     "istio-mapper",
 	GroupID: groups.OSSGroup.ID,
-	Aliases: []string{"kafka"},
+	Aliases: []string{"istio"},
 	Short:   "Map Istio traffic with ",
 	Hidden:  true,
 }
