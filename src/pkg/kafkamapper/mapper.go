@@ -190,6 +190,7 @@ type KafkaAccessRecord struct {
 	Principal string
 	Host      string
 	Pod       types.NamespacedName
+	Service   ServiceIdentity
 	Topics    []v1alpha2.KafkaTopic
 }
 
@@ -200,8 +201,11 @@ func (m *Mapper) LoadAccessRecords(ctx context.Context, serverName string, serve
 	}
 	recordsByClient := map[PrincipalHostPair]KafkaAccessRecord{}
 
-	serviceMapper := NewServiceMapper(m.clientset)
-	if err := serviceMapper.InitIndexes(ctx); err != nil {
+	podMapper, err := NewPodMapper()
+	if err != nil {
+		return nil, err
+	}
+	if err := podMapper.InitIndexes(ctx); err != nil {
 		return nil, err
 	}
 
@@ -222,16 +226,22 @@ func (m *Mapper) LoadAccessRecords(ctx context.Context, serverName string, serve
 			recordsByClient[client] = existingRecord
 		} else {
 			podName := types.NamespacedName{}
-			pod, err := serviceMapper.GetPodByIP(r.Host)
+			serviceID := ServiceIdentity{}
+			pod, err := podMapper.GetPodByIP(r.Host)
 			if err != nil {
-				logrus.WithError(err).Warning("Skipping resolution to pod")
+				logrus.WithField("host", r.Host).WithError(err).Warning("Skipping resolution to pod")
 			} else {
 				podName = types.NamespacedName{Namespace: pod.Namespace, Name: pod.Name}
+				serviceID, err = podMapper.GetServiceIDByPod(ctx, pod)
+				if err != nil {
+					logrus.WithField("pod", podName).WithError(err).Warning("Skipping resolution to service")
+				}
 			}
 			recordsByClient[client] = KafkaAccessRecord{
 				Principal: r.Principal,
 				Host:      r.Host,
 				Pod:       podName,
+				Service:   serviceID,
 				Topics:    []v1alpha2.KafkaTopic{topic},
 			}
 		}
