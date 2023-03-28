@@ -3,7 +3,9 @@ package output
 import (
 	"fmt"
 	"github.com/iancoleman/strcase"
+	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
+	"github.com/otterize/otterize-cli/src/pkg/kafkamapper"
 	"github.com/samber/lo"
 	"strings"
 )
@@ -319,4 +321,22 @@ func FormatIntents(intents []cloudapi.Intent) {
 	}
 
 	PrintFormatList(intents, "intents", columns, getColumnData)
+}
+
+func FormatKafkaAccessRecords(records []kafkamapper.KafkaAccessRecord) {
+	columns := []string{"PRINCIPAL", "HOST", "TOPIC", "OPERATIONS"}
+	getColumnData := func(r kafkamapper.KafkaAccessRecord) []map[string]string {
+		return lo.Map(r.Topics, func(t v1alpha2.KafkaTopic, _ int) map[string]string {
+			return map[string]string{
+				"PRINCIPAL": r.Principal,
+				"HOST":      r.Host,
+				"TOPIC":     t.Name,
+				"OPERATIONS": strings.Join(lo.Map(t.Operations, func(op v1alpha2.KafkaOperation, _ int) string {
+					return string(op)
+				}), ","),
+			}
+		})
+	}
+
+	PrintFormatList(records, "kafka access records", columns, getColumnData)
 }

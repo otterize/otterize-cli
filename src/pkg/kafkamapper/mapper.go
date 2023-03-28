@@ -19,13 +19,14 @@ import (
 
 var (
 	AclAuthorizerRegex = regroup.MustCompile(
-		`^\[(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+)\] (?P<level>[A-Z]+) Principal = User:\S+CN=(?P<serviceName>[a-z0-9-.]+)\.(?P<namespace>[a-z0-9-.]+),\S+ is (?P<access>\S+) Operation = (?P<operation>\S+) from host = (?P<host>\S+) on resource = Topic:LITERAL:(?P<topic>.+) for request = (?P<request>\S+) with resourceRefCount = (?P<resourceRefCount>\d+) \(kafka\.authorizer\.logger\)$`,
+		`^\[(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+)\] (?P<level>[A-Z]+) Principal = (?P<principal>User:\S+CN=(?P<serviceName>[a-z0-9-.]+)\.(?P<namespace>[a-z0-9-.]+),\S+) is (?P<access>\S+) Operation = (?P<operation>\S+) from host = (?P<host>\S+) on resource = Topic:LITERAL:(?P<topic>.+) for request = (?P<request>\S+) with resourceRefCount = (?P<resourceRefCount>\d+) \(kafka\.authorizer\.logger\)$`,
 	)
 )
 
 type AuthorizerRecord struct {
 	Date             string `regroup:"date"`
 	Level            string `regroup:"level"`
+	Principal        string `regroup:"principal""`
 	ServiceName      string `regroup:"serviceName"`
 	Namespace        string `regroup:"namespace"`
 	Access           string `regroup:"access"`
@@ -122,22 +123,19 @@ func (r AuthorizerRecord) ToIntent(serverName string, serverNamespace string) (v
 	return intent, nil
 }
 
-func mergeTopics(intent v1alpha2.Intent, newTopic v1alpha2.KafkaTopic) v1alpha2.Intent {
-	topicFound := false
-	newTopics := lo.Map(intent.Topics, func(existingTopic v1alpha2.KafkaTopic, _ int) v1alpha2.KafkaTopic {
-		if existingTopic.Name != newTopic.Name {
-			return existingTopic
-		}
-		topicFound = true
-		existingTopic.Operations = lo.Uniq(append(existingTopic.Operations, newTopic.Operations...))
-		return existingTopic
+func mergeTopics(topics []v1alpha2.KafkaTopic, newTopic v1alpha2.KafkaTopic) []v1alpha2.KafkaTopic {
+	topicsByName := lo.SliceToMap(topics, func(t v1alpha2.KafkaTopic) (string, v1alpha2.KafkaTopic) {
+		return t.Name, t
 	})
-	if !topicFound {
-		newTopics = append(newTopics, newTopic)
+	existingTopic, ok := topicsByName[newTopic.Name]
+	if ok {
+		existingTopic.Operations = lo.Uniq(append(existingTopic.Operations, newTopic.Operations...))
+		topicsByName[newTopic.Name] = existingTopic
+	} else {
+		topicsByName[newTopic.Name] = newTopic
 	}
 
-	intent.Topics = newTopics
-	return intent
+	return lo.Values(topicsByName)
 }
 
 func mergeIntents(existingIntents v1alpha2.ClientIntents, newIntent v1alpha2.Intent) v1alpha2.ClientIntents {
@@ -150,7 +148,8 @@ func mergeIntents(existingIntents v1alpha2.ClientIntents, newIntent v1alpha2.Int
 		}
 
 		serverCallFound = true
-		return mergeTopics(existingCall, newTopic)
+		existingCall.Topics = mergeTopics(existingCall.Topics, newTopic)
+		return existingCall
 	})
 
 	if !serverCallFound {
@@ -183,4 +182,49 @@ func (m *Mapper) LoadIntents(ctx context.Context, serverName string, serverNames
 	}
 
 	return lo.Values(intentsByClient), nil
+}
+
+type KafkaAccessRecord struct {
+	Principal string
+	Host      string
+	Topics    []v1alpha2.KafkaTopic
+}
+
+func (m *Mapper) LoadAccessRecords(ctx context.Context, serverName string, serverNamespace string) ([]KafkaAccessRecord, error) {
+	type PrincipalHostPair struct {
+		Principal string
+		Host      string
+	}
+	recordsByClient := map[PrincipalHostPair]KafkaAccessRecord{}
+
+	mapperFn := func(r AuthorizerRecord) error {
+		client := PrincipalHostPair{Principal: r.Principal, Host: r.Host}
+		op, err := KafkaOpFromText(r.Operation)
+		if err != nil {
+			return err
+		}
+
+		topic := v1alpha2.KafkaTopic{
+			Name:       r.Topic,
+			Operations: []v1alpha2.KafkaOperation{op},
+		}
+		existingRecord, ok := recordsByClient[client]
+		if ok {
+			existingRecord.Topics = mergeTopics(existingRecord.Topics, topic)
+			recordsByClient[client] = existingRecord
+		} else {
+			recordsByClient[client] = KafkaAccessRecord{
+				Principal: r.Principal,
+				Host:      r.Host,
+				Topics:    []v1alpha2.KafkaTopic{topic},
+			}
+		}
+
+		return nil
+	}
+
+	if err := m.MapKafkaAuthorizerLogs(ctx, serverName, serverNamespace, mapperFn); err != nil {
+		return nil, err
+	}
+	return lo.Values(recordsByClient), nil
 }

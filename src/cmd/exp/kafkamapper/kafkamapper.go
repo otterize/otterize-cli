@@ -1,6 +1,7 @@
 package kafkamapper
 
 import (
+	"github.com/otterize/otterize-cli/src/cmd/exp/kafkamapper/clients_map"
 	"github.com/otterize/otterize-cli/src/cmd/exp/kafkamapper/export"
 	"github.com/otterize/otterize-cli/src/cmd/exp/kafkamapper/list"
 	"github.com/otterize/otterize-cli/src/cmd/exp/kafkamapper/visualize"
@@ -18,4 +19,5 @@ func init() {
 	KafkaMapperCmd.AddCommand(list.ListCmd)
 	KafkaMapperCmd.AddCommand(export.ExportCmd)
 	KafkaMapperCmd.AddCommand(visualize.VisualizeCmd)
+	KafkaMapperCmd.AddCommand(clients_map.MapClientsCmd)
 }
