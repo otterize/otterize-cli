@@ -21,22 +21,30 @@ import (
 
 var (
 	AclAuthorizerRegex = regroup.MustCompile(
-		`^\[(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+)\] (?P<level>[A-Z]+) Principal = (?P<principal>User:\S+CN=(?P<serviceName>[a-z0-9-.]+)\.(?P<namespace>[a-z0-9-.]+),\S+) is (?P<access>\S+) Operation = (?P<operation>\S+) from host = (?P<host>\S+) on resource = Topic:LITERAL:(?P<topic>.+) for request = (?P<request>\S+) with resourceRefCount = (?P<resourceRefCount>\d+) \(kafka\.authorizer\.logger\)$`,
+		`^\[(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+)\] (?P<level>[A-Z]+) Principal = User:(?P<principal>\S+) is (?P<access>\S+) Operation = (?P<operation>\S+) from host = (?P<host>\S+) on resource = Topic:LITERAL:(?P<topic>.+) for request = (?P<request>\S+) with resourceRefCount = (?P<resourceRefCount>\d+) \(kafka\.authorizer\.logger\)$`,
 	)
+
+	PrincipalServiceRegex = regroup.MustCompile(`^\S*CN=(?P<serviceName>[a-z0-9-.]+)\.(?P<namespace>[a-z0-9-.]+)\S*$`)
 )
 
 type AuthorizerRecord struct {
 	Date             string `regroup:"date"`
 	Level            string `regroup:"level"`
 	Principal        string `regroup:"principal"`
-	ServiceName      string `regroup:"serviceName"`
-	Namespace        string `regroup:"namespace"`
 	Access           string `regroup:"access"`
 	Operation        string `regroup:"operation"`
 	Host             string `regroup:"host"`
 	Topic            string `regroup:"topic"`
 	Request          string `regroup:"request"`
 	ResourceRefCount int    `regroup:"resourceRefCount"`
+
+	ServiceName string
+	Namespace   string
+}
+
+type ServiceRecord struct {
+	ServiceName string `regroup:"serviceName"`
+	Namespace   string `regroup:"namespace"`
 }
 
 type Mapper struct {
@@ -74,10 +82,20 @@ func (m *Mapper) MapKafkaAuthorizerLogs(ctx context.Context, serverName string, 
 	s.Split(bufio.ScanLines)
 	for s.Scan() {
 		r := AuthorizerRecord{}
-		if err := AclAuthorizerRegex.MatchToTarget(s.Text(), &r); errors.Is(err, &regroup.NoMatchFoundError{}) {
+		t := s.Text()
+		if err := AclAuthorizerRegex.MatchToTarget(t, &r); errors.Is(err, &regroup.NoMatchFoundError{}) {
 			continue
 		} else if err != nil {
 			return err
+		}
+
+		s := ServiceRecord{}
+		if err := PrincipalServiceRegex.MatchToTarget(r.Principal, &s); errors.Is(err, &regroup.NoMatchFoundError{}) {
+		} else if err != nil {
+			return err
+		} else {
+			r.ServiceName = s.ServiceName
+			r.Namespace = s.Namespace
 		}
 
 		if err := mapperFn(r); err != nil {
@@ -237,6 +255,7 @@ func (m *Mapper) LoadAccessRecords(ctx context.Context, serverName string, serve
 					logrus.WithField("pod", podName).WithError(err).Warning("Skipping resolution to service")
 				}
 			}
+
 			recordsByClient[client] = KafkaAccessRecord{
 				Principal: r.Principal,
 				Host:      r.Host,

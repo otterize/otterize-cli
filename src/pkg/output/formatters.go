@@ -324,15 +324,15 @@ func FormatIntents(intents []cloudapi.Intent) {
 }
 
 func FormatKafkaAccessRecords(records []kafkamapper.KafkaAccessRecord) {
-	columns := []string{"PRINCIPAL", "HOST", "POD", "SERVICE", "TOPIC", "OPERATIONS"}
+	columns := []string{"POD", "SERVICE ID", "HOST", "TOPIC", "OPERATIONS", "PRINCIPAL"}
 	getColumnData := func(r kafkamapper.KafkaAccessRecord) []map[string]string {
 		return lo.Map(r.Topics, func(t v1alpha2.KafkaTopic, _ int) map[string]string {
 			return map[string]string{
-				"PRINCIPAL": r.Principal,
-				"HOST":      r.Host,
-				"POD":       r.Pod.String(),
-				"SERVICE":   r.Service.Name,
-				"TOPIC":     t.Name,
+				"PRINCIPAL":  r.Principal,
+				"HOST":       r.Host,
+				"POD":        r.Pod.String(),
+				"SERVICE ID": r.Service.Name,
+				"TOPIC":      t.Name,
 				"OPERATIONS": strings.Join(lo.Map(t.Operations, func(op v1alpha2.KafkaOperation, _ int) string {
 					return string(op)
 				}), ","),
