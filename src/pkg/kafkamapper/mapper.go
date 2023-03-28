@@ -9,8 +9,10 @@ import (
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/samber/lo"
+	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
@@ -26,7 +28,7 @@ var (
 type AuthorizerRecord struct {
 	Date             string `regroup:"date"`
 	Level            string `regroup:"level"`
-	Principal        string `regroup:"principal""`
+	Principal        string `regroup:"principal"`
 	ServiceName      string `regroup:"serviceName"`
 	Namespace        string `regroup:"namespace"`
 	Access           string `regroup:"access"`
@@ -187,6 +189,7 @@ func (m *Mapper) LoadIntents(ctx context.Context, serverName string, serverNames
 type KafkaAccessRecord struct {
 	Principal string
 	Host      string
+	Pod       types.NamespacedName
 	Topics    []v1alpha2.KafkaTopic
 }
 
@@ -196,6 +199,11 @@ func (m *Mapper) LoadAccessRecords(ctx context.Context, serverName string, serve
 		Host      string
 	}
 	recordsByClient := map[PrincipalHostPair]KafkaAccessRecord{}
+
+	serviceMapper := NewServiceMapper(m.clientset)
+	if err := serviceMapper.InitIndexes(ctx); err != nil {
+		return nil, err
+	}
 
 	mapperFn := func(r AuthorizerRecord) error {
 		client := PrincipalHostPair{Principal: r.Principal, Host: r.Host}
@@ -213,9 +221,17 @@ func (m *Mapper) LoadAccessRecords(ctx context.Context, serverName string, serve
 			existingRecord.Topics = mergeTopics(existingRecord.Topics, topic)
 			recordsByClient[client] = existingRecord
 		} else {
+			podName := types.NamespacedName{}
+			pod, err := serviceMapper.GetPodByIP(r.Host)
+			if err != nil {
+				logrus.WithError(err).Warning("Skipping resolution to pod")
+			} else {
+				podName = types.NamespacedName{Namespace: pod.Namespace, Name: pod.Name}
+			}
 			recordsByClient[client] = KafkaAccessRecord{
 				Principal: r.Principal,
 				Host:      r.Host,
+				Pod:       podName,
 				Topics:    []v1alpha2.KafkaTopic{topic},
 			}
 		}
