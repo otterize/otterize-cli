@@ -6,6 +6,7 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/samber/lo"
+	"golang.org/x/exp/slices"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -43,6 +44,43 @@ func getServiceKey(mapperIntent mapperclient.IntentsIntentsIntent, distinctByLab
 	}
 
 	return clientServiceKey
+}
+
+func eliminateDupUntypedIntents(intents []v1alpha2.ClientIntents) {
+	for _, clientIntents := range intents {
+		typedIntents := lo.Filter(clientIntents.Spec.Calls, func(intent v1alpha2.Intent, _ int) bool {
+			return intent.Type != ""
+		})
+		if len(typedIntents) > 0 {
+			clientIntents.Spec.Calls = typedIntents
+		}
+	}
+}
+
+func sortIntents(intents []v1alpha2.ClientIntents) {
+	slices.SortFunc(intents, func(intenta, intentb v1alpha2.ClientIntents) bool {
+		namea, nameb := intenta.Name, intentb.Name
+		namespacea, namespaceb := intenta.Namespace, intentb.Namespace
+
+		if namea != nameb {
+			return namea < nameb
+		}
+
+		return namespacea < namespaceb
+	})
+
+	for _, clientIntents := range intents {
+		slices.SortFunc(clientIntents.Spec.Calls, func(intenta, intentb v1alpha2.Intent) bool {
+			namea, nameb := intenta.GetServerName(), intentb.GetServerName()
+			namespacea, namespaceb := intenta.GetServerNamespace(clientIntents.Namespace), intentb.GetServerNamespace(clientIntents.Namespace)
+
+			if namea != nameb {
+				return namea < nameb
+			}
+
+			return namespacea < namespaceb
+		})
+	}
 }
 
 func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent, distinctByLabelKey string) []v1alpha2.ClientIntents {
@@ -87,5 +125,8 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 		}
 	}
 
-	return lo.Values(apiIntentsByClientService)
+	clientIntents := lo.Values(apiIntentsByClientService)
+	eliminateDupUntypedIntents(clientIntents)
+	sortIntents(clientIntents)
+	return clientIntents
 }
