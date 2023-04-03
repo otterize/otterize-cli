@@ -2,6 +2,7 @@ package intentsoutput
 
 import (
 	"fmt"
+	"github.com/amit7itz/goset"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
@@ -46,14 +47,15 @@ func getServiceKey(mapperIntent mapperclient.IntentsIntentsIntent, distinctByLab
 	return clientServiceKey
 }
 
-func eliminateDupUntypedIntents(intents []v1alpha2.ClientIntents) {
+func removeUntypedIntentsIfTypedIntentExistsForServer(intents map[ServiceKey]v1alpha2.ClientIntents) {
 	for _, clientIntents := range intents {
-		typedIntents := lo.Filter(clientIntents.Spec.Calls, func(intent v1alpha2.Intent, _ int) bool {
-			return intent.Type != ""
+		serversWithTypedIntents := goset.NewSet[string]()
+		clientIntents.Spec.Calls = lo.Filter(clientIntents.Spec.Calls, func(item v1alpha2.Intent, _ int) bool {
+			if item.Type != "" {
+				serversWithTypedIntents.Add(item.Name)
+			}
+			return item.Type != "" || (item.Type == "" && !serversWithTypedIntents.Contains(item.Name))
 		})
-		if len(typedIntents) > 0 {
-			clientIntents.Spec.Calls = typedIntents
-		}
 	}
 }
 
@@ -87,6 +89,14 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 	apiIntentsByClientService := make(map[ServiceKey]v1alpha2.ClientIntents, 0)
 	for _, mapperIntent := range mapperIntents {
 		clientServiceKey := getServiceKey(mapperIntent, distinctByLabelKey)
+		if clientServiceKey.Name == "otterize-haproxy-ingress" && clientServiceKey.Namespace == "infra" && mapperIntent.Server.Name == "website" {
+			mapperIntent.KafkaTopics = []mapperclient.IntentsIntentsIntentKafkaTopicsKafkaConfig{
+				{Name: "woot", Operations: []mapperclient.KafkaOperation{
+					mapperclient.KafkaOperationAll,
+				}},
+			}
+			mapperIntent.Type = mapperclient.IntentTypeKafka
+		}
 		apiIntent := v1alpha2.Intent{
 			Name: lo.Ternary(
 				// For a simpler output we explicitly mention server namespace only when it's outside of client namespace
@@ -125,8 +135,8 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 		}
 	}
 
+	removeUntypedIntentsIfTypedIntentExistsForServer(apiIntentsByClientService)
 	clientIntents := lo.Values(apiIntentsByClientService)
-	eliminateDupUntypedIntents(clientIntents)
 	sortIntents(clientIntents)
 	return clientIntents
 }
