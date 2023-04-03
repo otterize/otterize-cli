@@ -2,10 +2,12 @@ package intentsoutput
 
 import (
 	"fmt"
+	"github.com/amit7itz/goset"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/samber/lo"
+	"golang.org/x/exp/slices"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -43,6 +45,44 @@ func getServiceKey(mapperIntent mapperclient.IntentsIntentsIntent, distinctByLab
 	}
 
 	return clientServiceKey
+}
+
+func removeUntypedIntentsIfTypedIntentExistsForServer(intents map[ServiceKey]v1alpha2.ClientIntents) {
+	for _, clientIntents := range intents {
+		serversWithTypedIntents := goset.NewSet[string]()
+		clientIntents.Spec.Calls = lo.Filter(clientIntents.Spec.Calls, func(item v1alpha2.Intent, _ int) bool {
+			if item.Type != "" {
+				serversWithTypedIntents.Add(item.Name)
+			}
+			return item.Type != "" || (item.Type == "" && !serversWithTypedIntents.Contains(item.Name))
+		})
+	}
+}
+
+func sortIntents(intents []v1alpha2.ClientIntents) {
+	slices.SortFunc(intents, func(intenta, intentb v1alpha2.ClientIntents) bool {
+		namea, nameb := intenta.Name, intentb.Name
+		namespacea, namespaceb := intenta.Namespace, intentb.Namespace
+
+		if namea != nameb {
+			return namea < nameb
+		}
+
+		return namespacea < namespaceb
+	})
+
+	for _, clientIntents := range intents {
+		slices.SortFunc(clientIntents.Spec.Calls, func(intenta, intentb v1alpha2.Intent) bool {
+			namea, nameb := intenta.GetServerName(), intentb.GetServerName()
+			namespacea, namespaceb := intenta.GetServerNamespace(clientIntents.Namespace), intentb.GetServerNamespace(clientIntents.Namespace)
+
+			if namea != nameb {
+				return namea < nameb
+			}
+
+			return namespacea < namespaceb
+		})
+	}
 }
 
 func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent, distinctByLabelKey string) []v1alpha2.ClientIntents {
@@ -87,5 +127,8 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 		}
 	}
 
-	return lo.Values(apiIntentsByClientService)
+	removeUntypedIntentsIfTypedIntentExistsForServer(apiIntentsByClientService)
+	clientIntents := lo.Values(apiIntentsByClientService)
+	sortIntents(clientIntents)
+	return clientIntents
 }
