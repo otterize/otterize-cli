@@ -149,8 +149,8 @@ func (c *Client) ListIntents(ctx context.Context, namespaces []string, withLabel
 	if withLabelsFilter {
 		intents, err := c.Intents(ctx, namespaces, labels)
 		if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
-			logrus.Warnf("Using an old network mapper version. A newer version is available " +
-				"which includes Kafka topics & HTTP resources for Istio. Please upgrade: https://github.com/otterize/network-mapper")
+			logrus.Warn("Using an old network mapper version. A newer version is available " +
+				"which includes Kafka topics & HTTP resources for Istio. To use these features, please deploy a new version of the network mapper.")
 
 			serviceIntentsWithLabels, err := c.ServiceIntentsWithLabels(ctx, namespaces, labels)
 			if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
@@ -167,8 +167,8 @@ func (c *Client) ListIntents(ctx context.Context, namespaces []string, withLabel
 
 	intents, err := c.Intents(ctx, namespaces, labels)
 	if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
-		logrus.Warnf("Using an old network mapper version. A newer version is available " +
-			"which includes Kafka topics & HTTP resources for Istio. Please upgrade: https://github.com/otterize/network-mapper")
+		logrus.Warn("Using an old network mapper version. A newer version is available " +
+			"which includes Kafka topics & HTTP resources for Istio. To use these features, please deploy a new version of the network mapper.")
 
 		serviceIntents, err := c.ServiceIntents(ctx, namespaces)
 		if err != nil {
