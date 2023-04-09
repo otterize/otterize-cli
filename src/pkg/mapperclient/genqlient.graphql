@@ -55,5 +55,9 @@ query Intents($namespaces: [String!], $includedLabels: [String!]) {
             name
             operations
         }
+        httpResources {
+            path
+            methods
+        }
     }
 }

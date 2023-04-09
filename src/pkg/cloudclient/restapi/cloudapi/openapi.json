@@ -476,7 +476,8 @@
                 "OPTIONS",
                 "TRACE",
                 "PATCH",
-                "CONNECT"
+                "CONNECT",
+                "ALL"
               ],
               "type": "string"
             },
@@ -486,6 +487,9 @@
             "type": "string"
           }
         },
+        "required": [
+          "path"
+        ],
         "type": "object"
       },
       "InputAccessGraphFilter": {
@@ -1206,7 +1210,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "caead657cc0ed9aaa8849597c3562e1d7421897b"
+    "x-revision": "8e57604b48a74d0d829edf7a7b469064403c3a70"
   },
   "openapi": "3.0.0",
   "paths": {

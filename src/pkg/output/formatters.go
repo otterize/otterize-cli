@@ -304,7 +304,7 @@ func FormatIntents(intents []cloudapi.Intent) {
 			}
 			return lo.Map(*input.HttpResources, func(resource cloudapi.HTTPConfig, _ int) map[string]string {
 				columnDataCopy := lo.Assign(columnDataTemplate)
-				columnDataCopy["OBJECT"] = lo.FromPtr(resource.Path)
+				columnDataCopy["OBJECT"] = resource.Path
 				if resource.Methods != nil && len(*resource.Methods) > 0 {
 					columnDataCopy["ACTION"] = strings.Join(
 						lo.Map(*resource.Methods, func(method cloudapi.HTTPConfigMethods, _ int) string {

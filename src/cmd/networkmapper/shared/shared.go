@@ -12,16 +12,14 @@ import (
 )
 
 const (
-	NamespacesKey          = "namespaces"
-	NamespacesShorthand    = "n"
-	DistinctByLabelKey     = "distinct-by-label"
-	IncludeKafkaIntentsKey = "include-kafka-intents"
+	NamespacesKey       = "namespaces"
+	NamespacesShorthand = "n"
+	DistinctByLabelKey  = "distinct-by-label"
 )
 
 func InitMapperQueryFlags(cmd *cobra.Command) {
 	cmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
 	cmd.Flags().String(DistinctByLabelKey, "", "(EXPERIMENTAL) If specified, remove duplicates for exported ClientIntents by service and this label. Otherwise, outputs different intents for each namespace. (supported starting network-mapper version 0.1.13)")
-	cmd.Flags().Bool(IncludeKafkaIntentsKey, false, "(EXPERIMENTAL) include intents discovered by kafka-watcher (supported starting network-mapper version 0.1.14)")
 }
 
 func QueryIntents() ([]v1alpha2.ClientIntents, error) {
@@ -29,7 +27,6 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 	defer cancel()
 
 	namespacesFilter := viper.GetStringSlice(NamespacesKey)
-	includeKafkaIntents := viper.GetBool(IncludeKafkaIntentsKey)
 	withLabelsFilter := viper.IsSet(DistinctByLabelKey)
 	var labelsFilter []string
 	distinctByLabel := ""
@@ -40,7 +37,7 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 
 	var mapperIntents []mapperclient.IntentsIntentsIntent
 	if err := mapperclient.WithClient(func(c *mapperclient.Client) error {
-		intents, err := c.ListIntents(ctxTimeout, namespacesFilter, withLabelsFilter, labelsFilter, includeKafkaIntents)
+		intents, err := c.ListIntents(ctxTimeout, namespacesFilter, withLabelsFilter, labelsFilter)
 		if err != nil {
 			return err
 		}

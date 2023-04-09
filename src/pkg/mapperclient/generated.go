@@ -9,18 +9,34 @@ import (
 	"github.com/Khan/genqlient/graphql"
 )
 
+type HttpMethod string
+
+const (
+	HttpMethodGet     HttpMethod = "GET"
+	HttpMethodPost    HttpMethod = "POST"
+	HttpMethodPut     HttpMethod = "PUT"
+	HttpMethodDelete  HttpMethod = "DELETE"
+	HttpMethodOptions HttpMethod = "OPTIONS"
+	HttpMethodTrace   HttpMethod = "TRACE"
+	HttpMethodPatch   HttpMethod = "PATCH"
+	HttpMethodConnect HttpMethod = "CONNECT"
+	HttpMethodAll     HttpMethod = "ALL"
+)
+
 type IntentType string
 
 const (
 	IntentTypeKafka IntentType = "KAFKA"
+	IntentTypeHttp  IntentType = "HTTP"
 )
 
 // IntentsIntentsIntent includes the requested fields of the GraphQL type Intent.
 type IntentsIntentsIntent struct {
-	Client      IntentsIntentsIntentClientOtterizeServiceIdentity `json:"client"`
-	Server      IntentsIntentsIntentServerOtterizeServiceIdentity `json:"server"`
-	Type        IntentType                                        `json:"type"`
-	KafkaTopics []IntentsIntentsIntentKafkaTopicsKafkaConfig      `json:"kafkaTopics"`
+	Client        IntentsIntentsIntentClientOtterizeServiceIdentity `json:"client"`
+	Server        IntentsIntentsIntentServerOtterizeServiceIdentity `json:"server"`
+	Type          IntentType                                        `json:"type"`
+	KafkaTopics   []IntentsIntentsIntentKafkaTopicsKafkaConfig      `json:"kafkaTopics"`
+	HttpResources []IntentsIntentsIntentHttpResourcesHttpResource   `json:"httpResources"`
 }
 
 // GetClient returns IntentsIntentsIntent.Client, and is useful for accessing the field via an interface.
@@ -39,6 +55,11 @@ func (v *IntentsIntentsIntent) GetType() IntentType { return v.Type }
 // GetKafkaTopics returns IntentsIntentsIntent.KafkaTopics, and is useful for accessing the field via an interface.
 func (v *IntentsIntentsIntent) GetKafkaTopics() []IntentsIntentsIntentKafkaTopicsKafkaConfig {
 	return v.KafkaTopics
+}
+
+// GetHttpResources returns IntentsIntentsIntent.HttpResources, and is useful for accessing the field via an interface.
+func (v *IntentsIntentsIntent) GetHttpResources() []IntentsIntentsIntentHttpResourcesHttpResource {
+	return v.HttpResources
 }
 
 // IntentsIntentsIntentClientOtterizeServiceIdentity includes the requested fields of the GraphQL type OtterizeServiceIdentity.
@@ -110,6 +131,18 @@ func (v *IntentsIntentsIntentClientOtterizeServiceIdentity) __premarshalJSON() (
 	retval.Labels = v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
 	return &retval, nil
 }
+
+// IntentsIntentsIntentHttpResourcesHttpResource includes the requested fields of the GraphQL type HttpResource.
+type IntentsIntentsIntentHttpResourcesHttpResource struct {
+	Path    string       `json:"path"`
+	Methods []HttpMethod `json:"methods"`
+}
+
+// GetPath returns IntentsIntentsIntentHttpResourcesHttpResource.Path, and is useful for accessing the field via an interface.
+func (v *IntentsIntentsIntentHttpResourcesHttpResource) GetPath() string { return v.Path }
+
+// GetMethods returns IntentsIntentsIntentHttpResourcesHttpResource.Methods, and is useful for accessing the field via an interface.
+func (v *IntentsIntentsIntentHttpResourcesHttpResource) GetMethods() []HttpMethod { return v.Methods }
 
 // IntentsIntentsIntentKafkaTopicsKafkaConfig includes the requested fields of the GraphQL type KafkaConfig.
 type IntentsIntentsIntentKafkaTopicsKafkaConfig struct {
@@ -716,6 +749,10 @@ query Intents ($namespaces: [String!], $includedLabels: [String!]) {
 		kafkaTopics {
 			name
 			operations
+		}
+		httpResources {
+			path
+			methods
 		}
 	}
 }

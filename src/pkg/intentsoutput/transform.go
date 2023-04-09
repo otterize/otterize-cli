@@ -105,6 +105,7 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 					}),
 				}
 			}),
+			HTTPResources: mapperHTTPResourcesToAPI(mapperIntent.HttpResources),
 		}
 
 		if currentIntents, ok := apiIntentsByClientService[clientServiceKey]; ok {
@@ -131,4 +132,17 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 	clientIntents := lo.Values(apiIntentsByClientService)
 	sortIntents(clientIntents)
 	return clientIntents
+}
+
+func mapperHTTPResourcesToAPI(mapperHTTPResources []mapperclient.IntentsIntentsIntentHttpResourcesHttpResource) []v1alpha2.HTTPResource {
+	httpResources := make([]v1alpha2.HTTPResource, 0)
+	for _, mapperHTTPResource := range mapperHTTPResources {
+		httpResources = append(httpResources, v1alpha2.HTTPResource{
+			Path: mapperHTTPResource.Path,
+			Methods: lo.Map(mapperHTTPResource.Methods, func(method mapperclient.HttpMethod, _ int) v1alpha2.HTTPMethod {
+				return v1alpha2.HTTPMethod(method)
+			}),
+		})
+	}
+	return httpResources
 }

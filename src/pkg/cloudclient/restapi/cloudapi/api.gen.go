@@ -61,6 +61,7 @@ const (
 
 // Defines values for HTTPConfigMethods.
 const (
+	HTTPConfigMethodsALL     HTTPConfigMethods = "ALL"
 	HTTPConfigMethodsCONNECT HTTPConfigMethods = "CONNECT"
 	HTTPConfigMethodsDELETE  HTTPConfigMethods = "DELETE"
 	HTTPConfigMethodsGET     HTTPConfigMethods = "GET"
@@ -306,7 +307,7 @@ type Error struct {
 // HTTPConfig defines model for HTTPConfig.
 type HTTPConfig struct {
 	Methods *[]HTTPConfigMethods `json:"methods,omitempty"`
-	Path    *string              `json:"path,omitempty"`
+	Path    string               `json:"path"`
 }
 
 // HTTPConfigMethods defines model for HTTPConfig.Methods.
