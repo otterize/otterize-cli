@@ -5,7 +5,6 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/accessgraph"
 	"github.com/otterize/otterize-cli/src/cmd/clusters"
 	"github.com/otterize/otterize-cli/src/cmd/environments"
-	"github.com/otterize/otterize-cli/src/cmd/exp"
 	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/otterize/otterize-cli/src/cmd/integrations"
 	"github.com/otterize/otterize-cli/src/cmd/intents"
@@ -93,7 +92,6 @@ func init() {
 	RootCmd.PersistentFlags().Bool(config.NoHeadersKey, config.NoHeadersDefault, "Do not print headers")
 
 	RootCmd.AddCommand(version.APIVersionCmd)
-	RootCmd.AddCommand(exp.ExpCmd)
 
 	RootCmd.AddGroup(groups.AccountsGroup)
 	RootCmd.AddCommand(login.LoginCmd)

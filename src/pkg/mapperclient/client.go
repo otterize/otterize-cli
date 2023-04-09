@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Khan/genqlient/graphql"
 	"github.com/otterize/otterize-cli/src/pkg/portforwarder"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"io"
 
@@ -75,6 +76,7 @@ func WithClient(f func(c *Client) error) error {
 }
 
 // ServiceIntents is supported for network-mapper version < 0.1.13
+// Deprecated: Please use Client.Intents
 func (c *Client) ServiceIntents(ctx context.Context, namespaces []string) ([]ServiceIntentsUpToMapperV017ServiceIntents, error) {
 	res, err := ServiceIntentsUpToMapperV017(ctx, c.client, namespaces)
 	if err != nil {
@@ -109,6 +111,7 @@ func serviceIntentsToIntents(serviceIntents []ServiceIntentsUpToMapperV017Servic
 }
 
 // ServiceIntentsWithLabels is supported for network-mapper version == 0.1.13
+// Deprecated: Please use Client.Intents
 func (c *Client) ServiceIntentsWithLabels(ctx context.Context, namespaces []string, labels []string) ([]ServiceIntentsWithLabelsServiceIntents, error) {
 	res, err := ServiceIntentsWithLabels(ctx, c.client, namespaces, labels)
 	if err != nil {
@@ -142,35 +145,40 @@ func (c *Client) Intents(ctx context.Context, namespaces []string, labels []stri
 	return res.Intents, nil
 }
 
-func (c *Client) ListIntents(ctx context.Context, namespaces []string, withLabelsFilter bool, labels []string, withKafkaIntents bool) ([]IntentsIntentsIntent, error) {
-	if !withLabelsFilter && !withKafkaIntents {
+func (c *Client) ListIntents(ctx context.Context, namespaces []string, withLabelsFilter bool, labels []string) ([]IntentsIntentsIntent, error) {
+	if withLabelsFilter {
+		intents, err := c.Intents(ctx, namespaces, labels)
+		if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
+			logrus.Warnf("Using an old network mapper version. A newer version is available " +
+				"which includes Kafka topics & HTTP resources for Istio. Please upgrade: https://github.com/otterize/network-mapper")
+
+			serviceIntentsWithLabels, err := c.ServiceIntentsWithLabels(ctx, namespaces, labels)
+			if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
+				err = errors.New("listing intents with labels filter is not supported by your network mapper. Please upgrade")
+			}
+			if err != nil {
+				return nil, err
+			}
+
+			return serviceIntentsWithLabelsToIntents(serviceIntentsWithLabels), nil
+		}
+		return intents, nil
+	}
+
+	intents, err := c.Intents(ctx, namespaces, labels)
+	if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
+		logrus.Warnf("Using an old network mapper version. A newer version is available " +
+			"which includes Kafka topics & HTTP resources for Istio. Please upgrade: https://github.com/otterize/network-mapper")
+
 		serviceIntents, err := c.ServiceIntents(ctx, namespaces)
 		if err != nil {
 			return nil, err
 		}
 
 		return serviceIntentsToIntents(serviceIntents), nil
-	} else if !withKafkaIntents {
-		serviceIntentsWithLabels, err := c.ServiceIntentsWithLabels(ctx, namespaces, labels)
-		if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
-			err = errors.New("listing intents with labels filter is not supported by your network mapper. Please upgrade")
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		return serviceIntentsWithLabelsToIntents(serviceIntentsWithLabels), nil
-	} else {
-		intents, err := c.Intents(ctx, namespaces, labels)
-		if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
-			err = errors.New("listing intents including kafka intents is not supported by your network mapper. Please upgrade")
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		return intents, err
 	}
+
+	return intents, nil
 }
 
 func (c *Client) ResetCapture(ctx context.Context) error {
