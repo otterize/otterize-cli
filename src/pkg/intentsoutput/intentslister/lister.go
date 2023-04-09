@@ -14,7 +14,7 @@ func ListFormattedIntents(intents []v1alpha2.ClientIntents) {
 				output.PrintStderr("    - Kafka topic: %s, operations: %s", topic.Name, topic.Operations)
 			}
 			for _, resource := range call.HTTPResources {
-				output.PrintStderr("    - HTTP route %s, methods: %s", resource.Path, resource.Methods)
+				output.PrintStderr("    - path %s, methods: %s", resource.Path, resource.Methods)
 			}
 		}
 	}

@@ -5,9 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Khan/genqlient/graphql"
-	"github.com/otterize/otterize-cli/src/pkg/portforwarder"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"io"
 
 	// This import makes it possible to authenticate with GKE with the new-style auth. For more info see:
@@ -64,14 +62,14 @@ func NewClient(address string) *Client {
 }
 
 func WithClient(f func(c *Client) error) error {
-	portFwdCtx, cancelFunc := context.WithCancel(context.Background())
-	defer cancelFunc()
-	portForwarder := portforwarder.NewPortForwarder(viper.GetString(MapperNamespaceKey), viper.GetString(MapperServiceNameKey), viper.GetInt(MapperServicePortKey))
-	localPort, err := portForwarder.Start(portFwdCtx)
-	if err != nil {
-		return err
-	}
-	c := NewClient(fmt.Sprintf("http://localhost:%d", localPort))
+	//portFwdCtx, cancelFunc := context.WithCancel(context.Background())
+	//defer cancelFunc()
+	//portForwarder := portforwarder.NewPortForwarder(viper.GetString(MapperNamespaceKey), viper.GetString(MapperServiceNameKey), viper.GetInt(MapperServicePortKey))
+	//localPort, err := portForwarder.Start(portFwdCtx)
+	//if err != nil {
+	//	return err
+	//}
+	c := NewClient(fmt.Sprintf("http://localhost:%d", 9090))
 	return f(c)
 }
 
