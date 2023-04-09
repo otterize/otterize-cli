@@ -40,6 +40,18 @@ spec:
 {{- end -}}
 {{- end -}}
 {{- end -}}
+{{- if $intent.HTTPResources }}
+      resource:
+{{- range $resource := $intent.HTTPResources }}
+        - path: {{ $resource.Path }}
+{{- if $resource.Methods }}
+          methods:
+{{- range $method := $resource.Methods }}
+            - {{ $method }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
 {{ end }}`
 
 var crdTemplateParsed = template.Must(template.New("intents").Parse(crdTemplate))
@@ -55,6 +67,10 @@ var _ = v1alpha2.ClientIntents{
 			Topics: []v1alpha2.KafkaTopic{{
 				Name:       "",
 				Operations: []v1alpha2.KafkaOperation{},
+			}},
+			HTTPResources: []v1alpha2.HTTPResource{{
+				Path:    "",
+				Methods: []v1alpha2.HTTPMethod{},
 			}},
 		}},
 	},
