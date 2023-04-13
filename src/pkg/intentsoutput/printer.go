@@ -41,7 +41,7 @@ spec:
 {{- end -}}
 {{- end -}}
 {{- if $intent.HTTPResources }}
-      resource:
+      resources:
 {{- range $resource := $intent.HTTPResources }}
         - path: {{ $resource.Path }}
 {{- if $resource.Methods }}

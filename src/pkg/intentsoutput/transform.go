@@ -50,10 +50,12 @@ func getServiceKey(mapperIntent mapperclient.IntentsIntentsIntent, distinctByLab
 func removeUntypedIntentsIfTypedIntentExistsForServer(intents map[ServiceKey]v1alpha2.ClientIntents) {
 	for _, clientIntents := range intents {
 		serversWithTypedIntents := goset.NewSet[string]()
-		clientIntents.Spec.Calls = lo.Filter(clientIntents.Spec.Calls, func(item v1alpha2.Intent, _ int) bool {
-			if item.Type != "" {
-				serversWithTypedIntents.Add(item.Name)
+		for _, intent := range clientIntents.Spec.Calls {
+			if intent.Type != "" {
+				serversWithTypedIntents.Add(intent.Name)
 			}
+		}
+		clientIntents.Spec.Calls = lo.Filter(clientIntents.Spec.Calls, func(item v1alpha2.Intent, _ int) bool {
 			return item.Type != "" || (item.Type == "" && !serversWithTypedIntents.Contains(item.Name))
 		})
 	}
@@ -96,12 +98,12 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 				mapperIntent.Server.Name,
 				fmt.Sprintf("%s.%s", mapperIntent.Server.Name, mapperIntent.Server.Namespace),
 			),
-			Type: v1alpha2.IntentType(mapperIntent.Type),
+			Type: mapperIntentTypeToAPI(mapperIntent.Type),
 			Topics: lo.Map(mapperIntent.KafkaTopics, func(mapperTopic mapperclient.IntentsIntentsIntentKafkaTopicsKafkaConfig, _ int) v1alpha2.KafkaTopic {
 				return v1alpha2.KafkaTopic{
 					Name: mapperTopic.Name,
 					Operations: lo.Map(mapperTopic.Operations, func(op mapperclient.KafkaOperation, _ int) v1alpha2.KafkaOperation {
-						return v1alpha2.KafkaOperation(op)
+						return mapperKafkaOperationToAPI(op)
 					}),
 				}
 			}),
@@ -134,13 +136,81 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 	return clientIntents
 }
 
+func mapperHTTPMethodToAPI(method mapperclient.HttpMethod) v1alpha2.HTTPMethod {
+	switch method {
+	case mapperclient.HttpMethodGet:
+		return v1alpha2.HTTPMethodGet
+	case mapperclient.HttpMethodPut:
+		return v1alpha2.HTTPMethodPut
+	case mapperclient.HttpMethodPost:
+		return v1alpha2.HTTPMethodPost
+	case mapperclient.HttpMethodDelete:
+		return v1alpha2.HTTPMethodDelete
+	case mapperclient.HttpMethodOptions:
+		return v1alpha2.HTTPMethodOptions
+	case mapperclient.HttpMethodTrace:
+		return v1alpha2.HTTPMethodTrace
+	case mapperclient.HttpMethodPatch:
+		return v1alpha2.HTTPMethodPatch
+	case mapperclient.HttpMethodConnect:
+		return v1alpha2.HTTPMethodConnect
+	default:
+		panic("should never happen")
+	}
+}
+
+func mapperKafkaOperationToAPI(operation mapperclient.KafkaOperation) v1alpha2.KafkaOperation {
+	switch operation {
+	case mapperclient.KafkaOperationAll:
+		return v1alpha2.KafkaOperationAll
+	case mapperclient.KafkaOperationConsume:
+		return v1alpha2.KafkaOperationConsume
+	case mapperclient.KafkaOperationProduce:
+		return v1alpha2.KafkaOperationProduce
+	case mapperclient.KafkaOperationCreate:
+		return v1alpha2.KafkaOperationCreate
+	case mapperclient.KafkaOperationAlter:
+		return v1alpha2.KafkaOperationAlter
+	case mapperclient.KafkaOperationDelete:
+		return v1alpha2.KafkaOperationDelete
+	case mapperclient.KafkaOperationDescribe:
+		return v1alpha2.KafkaOperationDescribe
+	case mapperclient.KafkaOperationClusterAction:
+		return v1alpha2.KafkaOperationClusterAction
+	case mapperclient.KafkaOperationIdempotentWrite:
+		return v1alpha2.KafkaOperationIdempotentWrite
+	case mapperclient.KafkaOperationAlterConfigs:
+		return v1alpha2.KafkaOperationAlterConfigs
+	default:
+		panic("should never happen")
+	}
+
+}
+
+func mapperIntentTypeToAPI(intentType mapperclient.IntentType) v1alpha2.IntentType {
+	switch intentType {
+	case mapperclient.IntentTypeKafka:
+		return v1alpha2.IntentTypeKafka
+	case mapperclient.IntentTypeHttp:
+		return v1alpha2.IntentTypeHTTP
+	case "":
+		return "" // for convenience, allow passing through an empty string
+	default:
+		panic("should never happen")
+	}
+
+}
+
 func mapperHTTPResourcesToAPI(mapperHTTPResources []mapperclient.IntentsIntentsIntentHttpResourcesHttpResource) []v1alpha2.HTTPResource {
 	httpResources := make([]v1alpha2.HTTPResource, 0)
 	for _, mapperHTTPResource := range mapperHTTPResources {
+		mapperHTTPResource.Methods = lo.Filter(mapperHTTPResource.Methods, func(item mapperclient.HttpMethod, _ int) bool {
+			return item != mapperclient.HttpMethodAll
+		})
 		httpResources = append(httpResources, v1alpha2.HTTPResource{
 			Path: mapperHTTPResource.Path,
 			Methods: lo.Map(mapperHTTPResource.Methods, func(method mapperclient.HttpMethod, _ int) v1alpha2.HTTPMethod {
-				return v1alpha2.HTTPMethod(method)
+				return mapperHTTPMethodToAPI(method)
 			}),
 		})
 	}
