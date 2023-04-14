@@ -29,7 +29,7 @@ spec:
       type: {{ $intent.Type }}
 {{- end -}}
 {{- if $intent.Topics }}
-      topic:
+      topics:
 {{- range $topic := $intent.Topics }}
         - name: {{ $topic.Name }}
 {{- if $topic.Operations }}
