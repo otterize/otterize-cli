@@ -1,6 +1,6 @@
 module github.com/otterize/otterize-cli
 
-go 1.18
+go 1.19
 
 require (
 	aqwari.net/xml v0.0.0-20210331023308-d9421b293817
