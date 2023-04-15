@@ -4,13 +4,13 @@
 ![go report](https://img.shields.io/static/v1?label=go%20report&message=A%2B&color=success)
 [![community](https://img.shields.io/badge/slack-Otterize_Slack-purple.svg?logo=slack)](https://joinslack.otterize.com)
 
-[About](#about) | [Installation & usage with the network mapper](#installation-instructions--usage-with-the-network-mapper) | [Docs](https://docs.otterize.com/cli/) | [Contributing](#contributing) | [Slack](#slack)
+[About](#about) | [Installation & usage with the network mapper](#installation-instructions--usage-with-the-network-mapper) | [Docs](https://docs.otterize.com/reference/cli) | [Contributing](#contributing) | [Slack](#slack)
 
 ## About
 
 The Otterize CLI is a command-line utility used to control and interact with the [Otterize network mapper](https://github.com/otterize/network-mapper), manipulate local intents files, and interact with Otterize Cloud.
 
-See the [CLI command reference](https://docs.otterize.com/cli/) for how to use it.
+See the [CLI command reference](https://docs.otterize.com/reference/cli) for how to use it.
 
 Example output from running the network mapper on the [Google Cloud microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo):
 ```bash
