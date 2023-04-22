@@ -21,6 +21,7 @@ func init() {
 	MapperCmd.PersistentFlags().String(mapperclient.MapperServiceNameKey, mapperclient.MapperServiceNameDefault, "mapper service name")
 	MapperCmd.PersistentFlags().String(mapperclient.MapperNamespaceKey, mapperclient.MapperNamespaceDefault, "mapper service namespace")
 	MapperCmd.PersistentFlags().Int(mapperclient.MapperServicePortKey, mapperclient.MapperServicePortDefault, "mapper service port")
+	MapperCmd.PersistentFlags().StringSlice(mapperclient.MapperExcludeServices, []string{}, `a list of service to exclude from list/export. example: "service1,service2"`)
 
 	MapperCmd.AddCommand(export.ExportCmd)
 	MapperCmd.AddCommand(list.ListCmd)

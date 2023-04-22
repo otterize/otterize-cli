@@ -2,12 +2,14 @@ package mappershared
 
 import (
 	"context"
+	"github.com/amit7itz/goset"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"strings"
 	"time"
 )
 
@@ -54,4 +56,33 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 	}
 
 	return intentsoutput.MapperIntentsToAPIIntents(mapperIntents, distinctByLabel), nil
+}
+
+func RemoveExcludedServices(intents []v1alpha2.ClientIntents) []v1alpha2.ClientIntents {
+	excludedServices := viper.GetStringSlice(mapperclient.MapperExcludeServices)
+	excludedServicesSet := goset.FromSlice(excludedServices)
+	//excludedLabels := viper.GetStringMapString(mapperclient.MapperExcludeLabels)
+	cleanIntents := make([]v1alpha2.ClientIntents, 0)
+
+	for _, intent := range intents {
+		if excludedServicesSet.Contains(intent.GetServiceName()) {
+			continue
+		}
+
+		calls := make([]v1alpha2.Intent, 0)
+		for _, target := range intent.GetCallsList() {
+			namespacedName := strings.Split(target.Name, ".")
+			if excludedServicesSet.Contains(target.Name) || (len(namespacedName) == 2 && excludedServicesSet.Contains(namespacedName[0])) {
+				continue
+			}
+			calls = append(calls, target)
+		}
+		intent.Spec.Calls = calls
+
+		if len(calls) != 0 {
+			cleanIntents = append(cleanIntents, intent)
+		}
+	}
+
+	return cleanIntents
 }

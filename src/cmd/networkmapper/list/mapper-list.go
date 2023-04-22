@@ -5,6 +5,7 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentslister"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var ListCmd = &cobra.Command{
@@ -16,6 +17,9 @@ var ListCmd = &cobra.Command{
 			intents, err := mappershared.QueryIntents()
 			if err != nil {
 				return err
+			}
+			if viper.IsSet(mapperclient.MapperExcludeServices) || viper.IsSet(mapperclient.MapperExcludeLabels) {
+				intents = mappershared.RemoveExcludedServices(intents)
 			}
 
 			intentslister.ListFormattedIntents(intents)

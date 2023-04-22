@@ -1,8 +1,10 @@
 package intentslister
 
 import (
+	"fmt"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/output"
+	"strings"
 )
 
 func ListFormattedIntents(intents []v1alpha2.ClientIntents) {
@@ -14,7 +16,7 @@ func ListFormattedIntents(intents []v1alpha2.ClientIntents) {
 				output.PrintStderr("    - Kafka topic: %s, operations: %s", topic.Name, topic.Operations)
 			}
 			for _, resource := range call.HTTPResources {
-				output.PrintStderr("    - path %s, methods: %s", resource.Path, resource.Methods)
+				output.PrintStderr("    - path %s, methods: %s", resource.Path, strings.ReplaceAll(fmt.Sprintf("%s", resource.Methods), " ", ","))
 			}
 		}
 	}
