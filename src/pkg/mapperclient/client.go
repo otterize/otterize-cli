@@ -137,17 +137,17 @@ func serviceIntentsWithLabelsToIntents(serviceIntentsWithLabels []ServiceIntents
 }
 
 // Intents is supported for network-mapper version >= 0.1.14
-func (c *Client) Intents(ctx context.Context, namespaces []string, labels []string) ([]IntentsIntentsIntent, error) {
-	res, err := Intents(ctx, c.client, namespaces, labels)
+func (c *Client) Intents(ctx context.Context, namespaces, labels, excludeServiceWithLabels []string) ([]IntentsIntentsIntent, error) {
+	res, err := Intents(ctx, c.client, namespaces, labels, excludeServiceWithLabels)
 	if err != nil {
 		return nil, err
 	}
 	return res.Intents, nil
 }
 
-func (c *Client) ListIntents(ctx context.Context, namespaces []string, withLabelsFilter bool, labels []string) ([]IntentsIntentsIntent, error) {
+func (c *Client) ListIntents(ctx context.Context, namespaces []string, withLabelsFilter bool, labels, excludeServiceWithLabels []string) ([]IntentsIntentsIntent, error) {
 	if withLabelsFilter {
-		intents, err := c.Intents(ctx, namespaces, labels)
+		intents, err := c.Intents(ctx, namespaces, labels, excludeServiceWithLabels)
 		if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
 			logrus.Warn("Using an old network mapper version. A newer version is available " +
 				"which includes Kafka topics & HTTP resources for Istio. To use these features, please deploy a new version of the network mapper.")
@@ -165,7 +165,7 @@ func (c *Client) ListIntents(ctx context.Context, namespaces []string, withLabel
 		return intents, nil
 	}
 
-	intents, err := c.Intents(ctx, namespaces, labels)
+	intents, err := c.Intents(ctx, namespaces, labels, excludeServiceWithLabels)
 	if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
 		logrus.Warn("Using an old network mapper version. A newer version is available " +
 			"which includes Kafka topics & HTTP resources for Istio. To use these features, please deploy a new version of the network mapper.")

@@ -18,7 +18,7 @@ var ListCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			if viper.IsSet(mapperclient.MapperExcludeServices) || viper.IsSet(mapperclient.MapperExcludeLabels) {
+			if viper.IsSet(mapperclient.MapperExcludeServices) {
 				intents = mappershared.RemoveExcludedServices(intents)
 			}
 

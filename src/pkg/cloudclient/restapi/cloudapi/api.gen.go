@@ -40,14 +40,56 @@ const (
 
 // Defines values for EdgeAccessStatusReason.
 const (
-	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTS                         EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS"
-	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE         EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
-	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENY                            EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY"
-	EdgeAccessStatusReasonINTENTSOPERATORNEVERCONNECTED                   EdgeAccessStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
-	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCING                     EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
-	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCINGMISSINGAPPLIEDINTENT EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT"
-	EdgeAccessStatusReasonMISSINGAPPLIEDINTENT                            EdgeAccessStatusReason = "MISSING_APPLIED_INTENT"
-	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED                     EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
+	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTS                                    EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS"
+	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSHTTPOVERLYPERMISSIVE                EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSKAFKAOVERLYPERMISSIVE               EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE                    EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSHTTPRESOURCEMISMATCH                EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_HTTP_RESOURCE_MISMATCH"
+	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSHTTPUNDERPERMISSIVE                 EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE"
+	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSKAFKARESOURCEMISMATCH               EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_KAFKA_RESOURCE_MISMATCH"
+	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSKAFKAUNDERPERMISSIVE                EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_KAFKA_UNDER_PERMISSIVE"
+	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSRESOURCEMISMATCH                    EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH"
+	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSUNDERPERMISSIVE                     EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE"
+	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENY                                       EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY"
+	EdgeAccessStatusReasonBLOCKEDBYKAFKAENFORCEMENTCONFIGMISSINGAPPLIEDINTENTS       EdgeAccessStatusReason = "BLOCKED_BY_KAFKA_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS"
+	EdgeAccessStatusReasonCLIENTISTIOSIDECARMISSING                                  EdgeAccessStatusReason = "CLIENT_ISTIO_SIDECAR_MISSING"
+	EdgeAccessStatusReasonIGNOREDINCALCULATION                                       EdgeAccessStatusReason = "IGNORED_IN_CALCULATION"
+	EdgeAccessStatusReasonINTENTSOPERATORNEVERCONNECTED                              EdgeAccessStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
+	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCING                                EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
+	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCINGKAFKAINTENTSNOTREQUIREDFORTOPIC EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING_KAFKA_INTENTS_NOT_REQUIRED_FOR_TOPIC"
+	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCINGMISSINGAPPLIEDINTENT            EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT"
+	EdgeAccessStatusReasonMISSINGAPPLIEDINTENT                                       EdgeAccessStatusReason = "MISSING_APPLIED_INTENT"
+	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED                                EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
+	EdgeAccessStatusReasonNOINTENTSFOUNDOFRELEVANTTYPE                               EdgeAccessStatusReason = "NO_INTENTS_FOUND_OF_RELEVANT_TYPE"
+	EdgeAccessStatusReasonSERVERISTIOSIDECARMISSING                                  EdgeAccessStatusReason = "SERVER_ISTIO_SIDECAR_MISSING"
+	EdgeAccessStatusReasonSHAREDSERVICEACCOUNT                                       EdgeAccessStatusReason = "SHARED_SERVICE_ACCOUNT"
+)
+
+// Defines values for EdgeAccessStatusReasons.
+const (
+	EdgeAccessStatusReasonsALLOWEDBYAPPLIEDINTENTS                                    EdgeAccessStatusReasons = "ALLOWED_BY_APPLIED_INTENTS"
+	EdgeAccessStatusReasonsALLOWEDBYAPPLIEDINTENTSHTTPOVERLYPERMISSIVE                EdgeAccessStatusReasons = "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonsALLOWEDBYAPPLIEDINTENTSKAFKAOVERLYPERMISSIVE               EdgeAccessStatusReasons = "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonsALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE                    EdgeAccessStatusReasons = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSHTTPRESOURCEMISMATCH                EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_HTTP_RESOURCE_MISMATCH"
+	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSHTTPUNDERPERMISSIVE                 EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE"
+	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSKAFKARESOURCEMISMATCH               EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_KAFKA_RESOURCE_MISMATCH"
+	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSKAFKAUNDERPERMISSIVE                EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_KAFKA_UNDER_PERMISSIVE"
+	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSRESOURCEMISMATCH                    EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH"
+	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSUNDERPERMISSIVE                     EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE"
+	EdgeAccessStatusReasonsBLOCKEDBYDEFAULTDENY                                       EdgeAccessStatusReasons = "BLOCKED_BY_DEFAULT_DENY"
+	EdgeAccessStatusReasonsBLOCKEDBYKAFKAENFORCEMENTCONFIGMISSINGAPPLIEDINTENTS       EdgeAccessStatusReasons = "BLOCKED_BY_KAFKA_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS"
+	EdgeAccessStatusReasonsCLIENTISTIOSIDECARMISSING                                  EdgeAccessStatusReasons = "CLIENT_ISTIO_SIDECAR_MISSING"
+	EdgeAccessStatusReasonsIGNOREDINCALCULATION                                       EdgeAccessStatusReasons = "IGNORED_IN_CALCULATION"
+	EdgeAccessStatusReasonsINTENTSOPERATORNEVERCONNECTED                              EdgeAccessStatusReasons = "INTENTS_OPERATOR_NEVER_CONNECTED"
+	EdgeAccessStatusReasonsINTENTSOPERATORNOTENFORCING                                EdgeAccessStatusReasons = "INTENTS_OPERATOR_NOT_ENFORCING"
+	EdgeAccessStatusReasonsINTENTSOPERATORNOTENFORCINGKAFKAINTENTSNOTREQUIREDFORTOPIC EdgeAccessStatusReasons = "INTENTS_OPERATOR_NOT_ENFORCING_KAFKA_INTENTS_NOT_REQUIRED_FOR_TOPIC"
+	EdgeAccessStatusReasonsINTENTSOPERATORNOTENFORCINGMISSINGAPPLIEDINTENT            EdgeAccessStatusReasons = "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT"
+	EdgeAccessStatusReasonsMISSINGAPPLIEDINTENT                                       EdgeAccessStatusReasons = "MISSING_APPLIED_INTENT"
+	EdgeAccessStatusReasonsNETWORKMAPPERNEVERCONNECTED                                EdgeAccessStatusReasons = "NETWORK_MAPPER_NEVER_CONNECTED"
+	EdgeAccessStatusReasonsNOINTENTSFOUNDOFRELEVANTTYPE                               EdgeAccessStatusReasons = "NO_INTENTS_FOUND_OF_RELEVANT_TYPE"
+	EdgeAccessStatusReasonsSERVERISTIOSIDECARMISSING                                  EdgeAccessStatusReasons = "SERVER_ISTIO_SIDECAR_MISSING"
+	EdgeAccessStatusReasonsSHAREDSERVICEACCOUNT                                       EdgeAccessStatusReasons = "SHARED_SERVICE_ACCOUNT"
 )
 
 // Defines values for EdgeAccessStatusVerdict.
@@ -145,11 +187,19 @@ const (
 
 // Defines values for ServerProtectionStatusReason.
 const (
-	INTENTSOPERATORNEVERCONNECTED  ServerProtectionStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
-	INTENTSOPERATORNOTENFORCING    ServerProtectionStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
-	PROTECTEDBYDEFAULTDENY         ServerProtectionStatusReason = "PROTECTED_BY_DEFAULT_DENY"
-	PROTECTEDBYSERVERNETWORKPOLICY ServerProtectionStatusReason = "PROTECTED_BY_SERVER_NETWORK_POLICY"
-	SERVERHASNONETWORKPOLICY       ServerProtectionStatusReason = "SERVER_HAS_NO_NETWORK_POLICY"
+	ServerProtectionStatusReasonIGNOREDINCALCULATION                              ServerProtectionStatusReason = "IGNORED_IN_CALCULATION"
+	ServerProtectionStatusReasonINTENTSOPERATORNEVERCONNECTED                     ServerProtectionStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
+	ServerProtectionStatusReasonINTENTSOPERATORNOTENFORCING                       ServerProtectionStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
+	ServerProtectionStatusReasonPROTECTEDBYDEFAULTDENY                            ServerProtectionStatusReason = "PROTECTED_BY_DEFAULT_DENY"
+	ServerProtectionStatusReasonPROTECTEDBYKAFKAIDENTITYREQUIREDNOINTENTSREQUIRED ServerProtectionStatusReason = "PROTECTED_BY_KAFKA_IDENTITY_REQUIRED_NO_INTENTS_REQUIRED"
+	ServerProtectionStatusReasonPROTECTEDBYKAFKAINTENTSREQUIRED                   ServerProtectionStatusReason = "PROTECTED_BY_KAFKA_INTENTS_REQUIRED"
+	ServerProtectionStatusReasonPROTECTEDBYSERVERISTIOPOLICY                      ServerProtectionStatusReason = "PROTECTED_BY_SERVER_ISTIO_POLICY"
+	ServerProtectionStatusReasonPROTECTEDBYSERVERNETWORKPOLICY                    ServerProtectionStatusReason = "PROTECTED_BY_SERVER_NETWORK_POLICY"
+	ServerProtectionStatusReasonSERVERHASKAFKASERVERCONFIGNOENFORCEMENT           ServerProtectionStatusReason = "SERVER_HAS_KAFKASERVERCONFIG_NO_ENFORCEMENT"
+	ServerProtectionStatusReasonSERVERHASNOISTIOPOLICY                            ServerProtectionStatusReason = "SERVER_HAS_NO_ISTIO_POLICY"
+	ServerProtectionStatusReasonSERVERHASNOISTIOSIDECAR                           ServerProtectionStatusReason = "SERVER_HAS_NO_ISTIO_SIDECAR"
+	ServerProtectionStatusReasonSERVERHASNOKAFKASERVERCONFIG                      ServerProtectionStatusReason = "SERVER_HAS_NO_KAFKA_SERVER_CONFIG"
+	ServerProtectionStatusReasonSERVERHASNONETWORKPOLICY                          ServerProtectionStatusReason = "SERVER_HAS_NO_NETWORK_POLICY"
 )
 
 // Defines values for ServerProtectionStatusVerdict.
@@ -247,13 +297,19 @@ type Cluster struct {
 // ClusterConfiguration defines model for ClusterConfiguration.
 type ClusterConfiguration struct {
 	GlobalDefaultDeny                     bool `json:"globalDefaultDeny"`
+	IstioGlobalDefaultDeny                bool `json:"istioGlobalDefaultDeny"`
+	UseIstioPoliciesInAccessGraphStates   bool `json:"useIstioPoliciesInAccessGraphStates"`
+	UseKafkaACLsInAccessGraphStates       bool `json:"useKafkaACLsInAccessGraphStates"`
 	UseNetworkPoliciesInAccessGraphStates bool `json:"useNetworkPoliciesInAccessGraphStates"`
 }
 
 // ClusterConfigurationInput defines model for ClusterConfigurationInput.
 type ClusterConfigurationInput struct {
-	GlobalDefaultDeny                     bool `json:"globalDefaultDeny"`
-	UseNetworkPoliciesInAccessGraphStates bool `json:"useNetworkPoliciesInAccessGraphStates"`
+	GlobalDefaultDeny                     bool  `json:"globalDefaultDeny"`
+	IstioGlobalDefaultDeny                *bool `json:"istioGlobalDefaultDeny,omitempty"`
+	UseIstioPoliciesInAccessGraphStates   *bool `json:"useIstioPoliciesInAccessGraphStates,omitempty"`
+	UseKafkaACLsInAccessGraphStates       *bool `json:"useKafkaACLsInAccessGraphStates,omitempty"`
+	UseNetworkPoliciesInAccessGraphStates bool  `json:"useNetworkPoliciesInAccessGraphStates"`
 }
 
 // ComponentStatus defines model for ComponentStatus.
@@ -276,13 +332,19 @@ type CredentialsOperatorComponentType string
 
 // EdgeAccessStatus defines model for EdgeAccessStatus.
 type EdgeAccessStatus struct {
-	Reason                                EdgeAccessStatusReason  `json:"reason"`
-	UseNetworkPoliciesInAccessGraphStates bool                    `json:"useNetworkPoliciesInAccessGraphStates"`
-	Verdict                               EdgeAccessStatusVerdict `json:"verdict"`
+	Reason                                EdgeAccessStatusReason    `json:"reason"`
+	Reasons                               []EdgeAccessStatusReasons `json:"reasons"`
+	UseIstioPoliciesInAccessGraphStates   bool                      `json:"useIstioPoliciesInAccessGraphStates"`
+	UseKafkaPoliciesInAccessGraphStates   bool                      `json:"useKafkaPoliciesInAccessGraphStates"`
+	UseNetworkPoliciesInAccessGraphStates bool                      `json:"useNetworkPoliciesInAccessGraphStates"`
+	Verdict                               EdgeAccessStatusVerdict   `json:"verdict"`
 }
 
 // EdgeAccessStatusReason defines model for EdgeAccessStatus.Reason.
 type EdgeAccessStatusReason string
+
+// EdgeAccessStatusReasons defines model for EdgeAccessStatus.Reasons.
+type EdgeAccessStatusReasons string
 
 // EdgeAccessStatusVerdict defines model for EdgeAccessStatus.Verdict.
 type EdgeAccessStatusVerdict string
@@ -365,11 +427,20 @@ type Intent struct {
 	Server        struct {
 		Id string `json:"id"`
 	} `json:"server"`
-	Type *IntentType `json:"type,omitempty"`
+	Status *IntentStatus `json:"status,omitempty"`
+	Type   *IntentType   `json:"type,omitempty"`
 }
 
 // IntentType defines model for Intent.Type.
 type IntentType string
+
+// IntentStatus defines model for IntentStatus.
+type IntentStatus struct {
+	IsClientMissingSidecar bool   `json:"isClientMissingSidecar"`
+	IsServerMissingSidecar bool   `json:"isServerMissingSidecar"`
+	IsServiceAccountShared bool   `json:"isServiceAccountShared"`
+	ServiceAccountName     string `json:"serviceAccountName"`
+}
 
 // IntentsOperatorComponent defines model for IntentsOperatorComponent.
 type IntentsOperatorComponent struct {
@@ -384,6 +455,7 @@ type IntentsOperatorComponentType string
 // IntentsOperatorConfiguration defines model for IntentsOperatorConfiguration.
 type IntentsOperatorConfiguration struct {
 	GlobalEnforcementEnabled        bool `json:"globalEnforcementEnabled"`
+	IstioPolicyEnforcementEnabled   bool `json:"istioPolicyEnforcementEnabled"`
 	KafkaACLEnforcementEnabled      bool `json:"kafkaACLEnforcementEnabled"`
 	NetworkPolicyEnforcementEnabled bool `json:"networkPolicyEnforcementEnabled"`
 }
@@ -505,6 +577,13 @@ type ServerProtectionStatusReason string
 // ServerProtectionStatusVerdict defines model for ServerProtectionStatus.Verdict.
 type ServerProtectionStatusVerdict string
 
+// ServerProtectionStatuses defines model for ServerProtectionStatuses.
+type ServerProtectionStatuses struct {
+	IstioPolicies   ServerProtectionStatus `json:"istioPolicies"`
+	KafkaACLs       ServerProtectionStatus `json:"kafkaACLs"`
+	NetworkPolicies ServerProtectionStatus `json:"networkPolicies"`
+}
+
 // Service defines model for Service.
 type Service struct {
 	CertificateInformation *CertificateInformation `json:"certificateInformation,omitempty"`
@@ -515,6 +594,7 @@ type Service struct {
 	KafkaServerConfig *KafkaServerConfig `json:"kafkaServerConfig,omitempty"`
 	Name              string             `json:"name"`
 	Namespace         *Namespace         `json:"namespace,omitempty"`
+	ServiceAccount    *string            `json:"serviceAccount,omitempty"`
 }
 
 // ServiceAccessGraph defines model for ServiceAccessGraph.
@@ -529,10 +609,13 @@ type ServiceAccessGraph struct {
 
 // ServiceAccessStatus defines model for ServiceAccessStatus.
 type ServiceAccessStatus struct {
-	BlockingStatus                        ServerBlockingStatus   `json:"blockingStatus"`
-	HasAppliedIntents                     bool                   `json:"hasAppliedIntents"`
-	ProtectionStatus                      ServerProtectionStatus `json:"protectionStatus"`
-	UseNetworkPoliciesInAccessGraphStates bool                   `json:"useNetworkPoliciesInAccessGraphStates"`
+	BlockingStatus                        ServerBlockingStatus     `json:"blockingStatus"`
+	HasAppliedIntents                     bool                     `json:"hasAppliedIntents"`
+	ProtectionStatus                      ServerProtectionStatus   `json:"protectionStatus"`
+	ProtectionStatuses                    ServerProtectionStatuses `json:"protectionStatuses"`
+	UseIstioPoliciesInAccessGraphStates   bool                     `json:"useIstioPoliciesInAccessGraphStates"`
+	UseKafkaACLsInAccessGraphStates       bool                     `json:"useKafkaACLsInAccessGraphStates"`
+	UseNetworkPoliciesInAccessGraphStates bool                     `json:"useNetworkPoliciesInAccessGraphStates"`
 }
 
 // User defines model for User.

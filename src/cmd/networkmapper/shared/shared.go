@@ -29,6 +29,7 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 	defer cancel()
 
 	namespacesFilter := viper.GetStringSlice(NamespacesKey)
+	excludeServiceWithLabels := viper.GetStringSlice(mapperclient.MapperExcludeLabels)
 	withLabelsFilter := viper.IsSet(DistinctByLabelKey)
 	var labelsFilter []string
 	distinctByLabel := ""
@@ -39,7 +40,7 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 
 	var mapperIntents []mapperclient.IntentsIntentsIntent
 	if err := mapperclient.WithClient(func(c *mapperclient.Client) error {
-		intents, err := c.ListIntents(ctxTimeout, namespacesFilter, withLabelsFilter, labelsFilter)
+		intents, err := c.ListIntents(ctxTimeout, namespacesFilter, withLabelsFilter, labelsFilter, excludeServiceWithLabels)
 		if err != nil {
 			return err
 		}
@@ -61,7 +62,6 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 func RemoveExcludedServices(intents []v1alpha2.ClientIntents) []v1alpha2.ClientIntents {
 	excludedServices := viper.GetStringSlice(mapperclient.MapperExcludeServices)
 	excludedServicesSet := goset.FromSlice(excludedServices)
-	//excludedLabels := viper.GetStringMapString(mapperclient.MapperExcludeLabels)
 	cleanIntents := make([]v1alpha2.ClientIntents, 0)
 
 	for _, intent := range intents {
