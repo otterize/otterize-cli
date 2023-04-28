@@ -59,8 +59,7 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 	return intentsoutput.MapperIntentsToAPIIntents(mapperIntents, distinctByLabel), nil
 }
 
-func RemoveExcludedServices(intents []v1alpha2.ClientIntents) []v1alpha2.ClientIntents {
-	excludedServices := viper.GetStringSlice(mapperclient.MapperExcludeServices)
+func RemoveExcludedServices(intents []v1alpha2.ClientIntents, excludedServices []string) []v1alpha2.ClientIntents {
 	excludedServicesSet := goset.FromSlice(excludedServices)
 	cleanIntents := make([]v1alpha2.ClientIntents, 0)
 

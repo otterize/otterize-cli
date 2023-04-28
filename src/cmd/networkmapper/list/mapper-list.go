@@ -19,7 +19,7 @@ var ListCmd = &cobra.Command{
 				return err
 			}
 			if viper.IsSet(mapperclient.MapperExcludeServices) {
-				intents = mappershared.RemoveExcludedServices(intents)
+				intents = mappershared.RemoveExcludedServices(intents, nil)
 			}
 
 			intentslister.ListFormattedIntents(intents)
