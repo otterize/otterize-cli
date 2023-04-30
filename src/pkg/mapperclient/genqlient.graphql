@@ -42,8 +42,8 @@ mutation ResetCapture {
     resetCapture
 }
 
-query Intents($namespaces: [String!], $includedLabels: [String!]) {
-    intents(namespaces: $namespaces, includeLabels: $includedLabels) {
+query Intents($namespaces: [String!], $includedLabels: [String!], $excludeServiceWithLabels: [String!]) {
+    intents(namespaces: $namespaces, includeLabels: $includedLabels, excludeServiceWithLabels: $excludeServiceWithLabels) {
         client {
             ...NamespacedNameWithLabelsFragment
         }

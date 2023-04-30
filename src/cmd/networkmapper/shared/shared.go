@@ -2,12 +2,14 @@ package mappershared
 
 import (
 	"context"
+	"github.com/amit7itz/goset"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"strings"
 	"time"
 )
 
@@ -27,6 +29,7 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 	defer cancel()
 
 	namespacesFilter := viper.GetStringSlice(NamespacesKey)
+	excludeServiceWithLabels := viper.GetStringSlice(mapperclient.MapperExcludeLabels)
 	withLabelsFilter := viper.IsSet(DistinctByLabelKey)
 	var labelsFilter []string
 	distinctByLabel := ""
@@ -37,7 +40,7 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 
 	var mapperIntents []mapperclient.IntentsIntentsIntent
 	if err := mapperclient.WithClient(func(c *mapperclient.Client) error {
-		intents, err := c.ListIntents(ctxTimeout, namespacesFilter, withLabelsFilter, labelsFilter)
+		intents, err := c.ListIntents(ctxTimeout, namespacesFilter, withLabelsFilter, labelsFilter, excludeServiceWithLabels)
 		if err != nil {
 			return err
 		}
@@ -54,4 +57,31 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 	}
 
 	return intentsoutput.MapperIntentsToAPIIntents(mapperIntents, distinctByLabel), nil
+}
+
+func RemoveExcludedServices(intents []v1alpha2.ClientIntents, excludedServices []string) []v1alpha2.ClientIntents {
+	excludedServicesSet := goset.FromSlice(excludedServices)
+	cleanIntents := make([]v1alpha2.ClientIntents, 0)
+
+	for _, intent := range intents {
+		if excludedServicesSet.Contains(intent.GetServiceName()) {
+			continue
+		}
+
+		calls := make([]v1alpha2.Intent, 0)
+		for _, target := range intent.GetCallsList() {
+			namespacedName := strings.Split(target.Name, ".")
+			if excludedServicesSet.Contains(target.Name) || (len(namespacedName) == 2 && excludedServicesSet.Contains(namespacedName[0])) {
+				continue
+			}
+			calls = append(calls, target)
+		}
+		intent.Spec.Calls = calls
+
+		if len(calls) != 0 {
+			cleanIntents = append(cleanIntents, intent)
+		}
+	}
+
+	return cleanIntents
 }

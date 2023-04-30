@@ -42,6 +42,10 @@ var ExportCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
+			excludedServices := viper.GetStringSlice(mapperclient.MapperExcludeServices)
+			if len(excludedServices) != 0 {
+				intents = mappershared.RemoveExcludedServices(intents, excludedServices)
+			}
 
 			if err := exportIntents(intents); err != nil {
 				return err

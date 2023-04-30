@@ -233,6 +233,7 @@ type IntentsResponse struct {
 	// Query intents list.
 	// namespaces: Namespaces filter.
 	// includeLabels: Labels to include in the response. Ignored if includeAllLabels is specified.
+	// excludeLabels: Labels to exclude from the response. Ignored if includeAllLabels is specified.
 	// includeAllLabels: Return all labels for the pod in the response.
 	Intents []IntentsIntentsIntent `json:"intents"`
 }
@@ -698,8 +699,9 @@ func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) _
 
 // __IntentsInput is used internally by genqlient
 type __IntentsInput struct {
-	Namespaces     []string `json:"namespaces"`
-	IncludedLabels []string `json:"includedLabels"`
+	Namespaces               []string `json:"namespaces"`
+	IncludedLabels           []string `json:"includedLabels"`
+	ExcludeServiceWithLabels []string `json:"excludeServiceWithLabels"`
 }
 
 // GetNamespaces returns __IntentsInput.Namespaces, and is useful for accessing the field via an interface.
@@ -707,6 +709,9 @@ func (v *__IntentsInput) GetNamespaces() []string { return v.Namespaces }
 
 // GetIncludedLabels returns __IntentsInput.IncludedLabels, and is useful for accessing the field via an interface.
 func (v *__IntentsInput) GetIncludedLabels() []string { return v.IncludedLabels }
+
+// GetExcludeServiceWithLabels returns __IntentsInput.ExcludeServiceWithLabels, and is useful for accessing the field via an interface.
+func (v *__IntentsInput) GetExcludeServiceWithLabels() []string { return v.ExcludeServiceWithLabels }
 
 // __ServiceIntentsUpToMapperV017Input is used internally by genqlient
 type __ServiceIntentsUpToMapperV017Input struct {
@@ -733,12 +738,13 @@ func Intents(
 	client graphql.Client,
 	namespaces []string,
 	includedLabels []string,
+	excludeServiceWithLabels []string,
 ) (*IntentsResponse, error) {
 	req := &graphql.Request{
 		OpName: "Intents",
 		Query: `
-query Intents ($namespaces: [String!], $includedLabels: [String!]) {
-	intents(namespaces: $namespaces, includeLabels: $includedLabels) {
+query Intents ($namespaces: [String!], $includedLabels: [String!], $excludeServiceWithLabels: [String!]) {
+	intents(namespaces: $namespaces, includeLabels: $includedLabels, excludeServiceWithLabels: $excludeServiceWithLabels) {
 		client {
 			... NamespacedNameWithLabelsFragment
 		}
@@ -772,8 +778,9 @@ fragment LabelsFragment on OtterizeServiceIdentity {
 }
 `,
 		Variables: &__IntentsInput{
-			Namespaces:     namespaces,
-			IncludedLabels: includedLabels,
+			Namespaces:               namespaces,
+			IncludedLabels:           includedLabels,
+			ExcludeServiceWithLabels: excludeServiceWithLabels,
 		},
 	}
 	var err error

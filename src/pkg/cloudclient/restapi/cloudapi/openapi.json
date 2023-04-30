@@ -306,19 +306,40 @@
           "globalDefaultDeny": {
             "type": "boolean"
           },
+          "istioGlobalDefaultDeny": {
+            "type": "boolean"
+          },
+          "useIstioPoliciesInAccessGraphStates": {
+            "type": "boolean"
+          },
+          "useKafkaACLsInAccessGraphStates": {
+            "type": "boolean"
+          },
           "useNetworkPoliciesInAccessGraphStates": {
             "type": "boolean"
           }
         },
         "required": [
           "globalDefaultDeny",
-          "useNetworkPoliciesInAccessGraphStates"
+          "istioGlobalDefaultDeny",
+          "useNetworkPoliciesInAccessGraphStates",
+          "useIstioPoliciesInAccessGraphStates",
+          "useKafkaACLsInAccessGraphStates"
         ],
         "type": "object"
       },
       "ClusterConfigurationInput": {
         "properties": {
           "globalDefaultDeny": {
+            "type": "boolean"
+          },
+          "istioGlobalDefaultDeny": {
+            "type": "boolean"
+          },
+          "useIstioPoliciesInAccessGraphStates": {
+            "type": "boolean"
+          },
+          "useKafkaACLsInAccessGraphStates": {
             "type": "boolean"
           },
           "useNetworkPoliciesInAccessGraphStates": {
@@ -377,14 +398,66 @@
             "enum": [
               "ALLOWED_BY_APPLIED_INTENTS",
               "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE",
+              "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE",
+              "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
+              "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
+              "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
+              "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE",
+              "BLOCKED_BY_APPLIED_INTENTS_HTTP_RESOURCE_MISMATCH",
+              "BLOCKED_BY_APPLIED_INTENTS_KAFKA_UNDER_PERMISSIVE",
+              "BLOCKED_BY_APPLIED_INTENTS_KAFKA_RESOURCE_MISMATCH",
+              "BLOCKED_BY_KAFKA_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS",
               "BLOCKED_BY_DEFAULT_DENY",
+              "SHARED_SERVICE_ACCOUNT",
+              "CLIENT_ISTIO_SIDECAR_MISSING",
+              "SERVER_ISTIO_SIDECAR_MISSING",
               "INTENTS_OPERATOR_NOT_ENFORCING",
               "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT",
+              "INTENTS_OPERATOR_NOT_ENFORCING_KAFKA_INTENTS_NOT_REQUIRED_FOR_TOPIC",
               "MISSING_APPLIED_INTENT",
               "INTENTS_OPERATOR_NEVER_CONNECTED",
-              "NETWORK_MAPPER_NEVER_CONNECTED"
+              "NETWORK_MAPPER_NEVER_CONNECTED",
+              "NO_INTENTS_FOUND_OF_RELEVANT_TYPE",
+              "IGNORED_IN_CALCULATION"
             ],
             "type": "string"
+          },
+          "reasons": {
+            "items": {
+              "enum": [
+                "ALLOWED_BY_APPLIED_INTENTS",
+                "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE",
+                "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE",
+                "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
+                "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
+                "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
+                "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE",
+                "BLOCKED_BY_APPLIED_INTENTS_HTTP_RESOURCE_MISMATCH",
+                "BLOCKED_BY_APPLIED_INTENTS_KAFKA_UNDER_PERMISSIVE",
+                "BLOCKED_BY_APPLIED_INTENTS_KAFKA_RESOURCE_MISMATCH",
+                "BLOCKED_BY_KAFKA_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS",
+                "BLOCKED_BY_DEFAULT_DENY",
+                "SHARED_SERVICE_ACCOUNT",
+                "CLIENT_ISTIO_SIDECAR_MISSING",
+                "SERVER_ISTIO_SIDECAR_MISSING",
+                "INTENTS_OPERATOR_NOT_ENFORCING",
+                "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT",
+                "INTENTS_OPERATOR_NOT_ENFORCING_KAFKA_INTENTS_NOT_REQUIRED_FOR_TOPIC",
+                "MISSING_APPLIED_INTENT",
+                "INTENTS_OPERATOR_NEVER_CONNECTED",
+                "NETWORK_MAPPER_NEVER_CONNECTED",
+                "NO_INTENTS_FOUND_OF_RELEVANT_TYPE",
+                "IGNORED_IN_CALCULATION"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "useIstioPoliciesInAccessGraphStates": {
+            "type": "boolean"
+          },
+          "useKafkaPoliciesInAccessGraphStates": {
+            "type": "boolean"
           },
           "useNetworkPoliciesInAccessGraphStates": {
             "type": "boolean"
@@ -402,8 +475,11 @@
         },
         "required": [
           "useNetworkPoliciesInAccessGraphStates",
+          "useIstioPoliciesInAccessGraphStates",
+          "useKafkaPoliciesInAccessGraphStates",
           "verdict",
-          "reason"
+          "reason",
+          "reasons"
         ],
         "type": "object"
       },
@@ -665,6 +741,9 @@
             ],
             "type": "object"
           },
+          "status": {
+            "$ref": "#/components/schemas/IntentStatus"
+          },
           "type": {
             "enum": [
               "HTTP",
@@ -677,6 +756,29 @@
           "id",
           "server",
           "client"
+        ],
+        "type": "object"
+      },
+      "IntentStatus": {
+        "properties": {
+          "isClientMissingSidecar": {
+            "type": "boolean"
+          },
+          "isServerMissingSidecar": {
+            "type": "boolean"
+          },
+          "isServiceAccountShared": {
+            "type": "boolean"
+          },
+          "serviceAccountName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "serviceAccountName",
+          "isServiceAccountShared",
+          "isServerMissingSidecar",
+          "isClientMissingSidecar"
         ],
         "type": "object"
       },
@@ -708,6 +810,9 @@
           "globalEnforcementEnabled": {
             "type": "boolean"
           },
+          "istioPolicyEnforcementEnabled": {
+            "type": "boolean"
+          },
           "kafkaACLEnforcementEnabled": {
             "type": "boolean"
           },
@@ -718,7 +823,8 @@
         "required": [
           "globalEnforcementEnabled",
           "networkPolicyEnforcementEnabled",
-          "kafkaACLEnforcementEnabled"
+          "kafkaACLEnforcementEnabled",
+          "istioPolicyEnforcementEnabled"
         ],
         "type": "object"
       },
@@ -1036,8 +1142,16 @@
               "INTENTS_OPERATOR_NEVER_CONNECTED",
               "INTENTS_OPERATOR_NOT_ENFORCING",
               "SERVER_HAS_NO_NETWORK_POLICY",
+              "SERVER_HAS_NO_ISTIO_POLICY",
+              "SERVER_HAS_NO_ISTIO_SIDECAR",
               "PROTECTED_BY_DEFAULT_DENY",
-              "PROTECTED_BY_SERVER_NETWORK_POLICY"
+              "PROTECTED_BY_SERVER_NETWORK_POLICY",
+              "PROTECTED_BY_SERVER_ISTIO_POLICY",
+              "PROTECTED_BY_KAFKA_IDENTITY_REQUIRED_NO_INTENTS_REQUIRED",
+              "PROTECTED_BY_KAFKA_INTENTS_REQUIRED",
+              "SERVER_HAS_KAFKASERVERCONFIG_NO_ENFORCEMENT",
+              "SERVER_HAS_NO_KAFKA_SERVER_CONFIG",
+              "IGNORED_IN_CALCULATION"
             ],
             "type": "string"
           },
@@ -1053,6 +1167,25 @@
         "required": [
           "verdict",
           "reason"
+        ],
+        "type": "object"
+      },
+      "ServerProtectionStatuses": {
+        "properties": {
+          "istioPolicies": {
+            "$ref": "#/components/schemas/ServerProtectionStatus"
+          },
+          "kafkaACLs": {
+            "$ref": "#/components/schemas/ServerProtectionStatus"
+          },
+          "networkPolicies": {
+            "$ref": "#/components/schemas/ServerProtectionStatus"
+          }
+        },
+        "required": [
+          "networkPolicies",
+          "kafkaACLs",
+          "istioPolicies"
         ],
         "type": "object"
       },
@@ -1084,6 +1217,9 @@
           },
           "namespace": {
             "$ref": "#/components/schemas/Namespace"
+          },
+          "serviceAccount": {
+            "type": "string"
           }
         },
         "required": [
@@ -1141,13 +1277,25 @@
           "protectionStatus": {
             "$ref": "#/components/schemas/ServerProtectionStatus"
           },
+          "protectionStatuses": {
+            "$ref": "#/components/schemas/ServerProtectionStatuses"
+          },
+          "useIstioPoliciesInAccessGraphStates": {
+            "type": "boolean"
+          },
+          "useKafkaACLsInAccessGraphStates": {
+            "type": "boolean"
+          },
           "useNetworkPoliciesInAccessGraphStates": {
             "type": "boolean"
           }
         },
         "required": [
           "useNetworkPoliciesInAccessGraphStates",
+          "useKafkaACLsInAccessGraphStates",
+          "useIstioPoliciesInAccessGraphStates",
           "protectionStatus",
+          "protectionStatuses",
           "blockingStatus",
           "hasAppliedIntents"
         ],
@@ -1210,7 +1358,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "8e57604b48a74d0d829edf7a7b469064403c3a70"
+    "x-revision": "731552bf5d105d0858240cbbf05f2fe035744caf"
   },
   "openapi": "3.0.0",
   "paths": {
