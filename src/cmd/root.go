@@ -92,6 +92,7 @@ func init() {
 	RootCmd.PersistentFlags().Bool(config.NoHeadersKey, config.NoHeadersDefault, "Do not print headers")
 
 	RootCmd.AddCommand(version.APIVersionCmd)
+	RootCmd.AddCommand(version.VersionCmd)
 
 	RootCmd.AddGroup(groups.AccountsGroup)
 	RootCmd.AddCommand(login.LoginCmd)
