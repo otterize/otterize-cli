@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var Tag string
+var Version string
 var Commit string
 
 var VersionCmd = &cobra.Command{
@@ -14,7 +14,12 @@ var VersionCmd = &cobra.Command{
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
-		prints.PrintCliOutput("Version: %s\tCommit: %s", Tag, Commit)
+		// If no tag is provided use commit
+		if Version == "v0.0.0" || Version == "" {
+			prints.PrintCliOutput("Version: %s", Commit)
+		} else {
+			prints.PrintCliOutput("Version: %s", Version)
+		}
 		return nil
 	},
 }
