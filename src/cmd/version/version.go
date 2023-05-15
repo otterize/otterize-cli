@@ -6,7 +6,7 @@ import (
 )
 
 var Tag string
-var Build string
+var Commit string
 
 var VersionCmd = &cobra.Command{
 	Use:          "version",
@@ -14,7 +14,7 @@ var VersionCmd = &cobra.Command{
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
-		prints.PrintCliOutput("Version: %s\tBuild: %s", Tag, Build)
+		prints.PrintCliOutput("Version: %s\tCommit: %s", Tag, Commit)
 		return nil
 	},
 }
