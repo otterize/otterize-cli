@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/otterize/otterize-cli/src/cmd/accessgraph"
 	"github.com/otterize/otterize-cli/src/cmd/clusters"
@@ -19,11 +20,14 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/utils/must"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/sync/errgroup"
 	"os"
 	"path/filepath"
-
-	"github.com/spf13/cobra"
+	"strings"
+	"sync"
+	"time"
 )
 
 var RootCmd = &cobra.Command{
@@ -35,7 +39,38 @@ var RootCmd = &cobra.Command{
 `,
 }
 
-func preRunHook(cmd *cobra.Command, args []string) {
+var telemetryErrGroup *errgroup.Group
+var telemetryErrGroupOnce sync.Once
+
+func initErrGroupIfNeeded() {
+	telemetryErrGroupOnce.Do(func() {
+		telemetryErrGroup, _ = errgroup.WithContext(context.Background())
+	})
+}
+
+func sendAnonymousUsageTelemetry(cmd *cobra.Command) {
+	initErrGroupIfNeeded()
+	// every otterize CLI command can be broken into: otterize <noun> <verb>
+	commandParts := strings.Split(cmd.CommandPath(), " ")
+	if len(commandParts) < 3 {
+		return
+	}
+	noun := commandParts[1]
+	verb := commandParts[2]
+	modifiers := commandParts[3:]
+	telemetryErrGroup.Go(func() error {
+		time.Sleep(time.Second * 4)
+		// send telemetry
+		print(fmt.Sprintf("The command is: %s\t\t%s\t%s", noun, verb, modifiers))
+		return nil
+	})
+
+	// in post-run hook
+	initErrGroupIfNeeded()
+
+}
+
+func bindFlagHook(cmd *cobra.Command, args []string) {
 	// This makes BindPFlags occur only for commands that are about to be executed (in the PreRun hook).
 	// If we don't do this and commands have flags with the same name, then they'll overwrite each other in the config,
 	// making it impossible to get the value.
@@ -43,13 +78,17 @@ func preRunHook(cmd *cobra.Command, args []string) {
 }
 
 func addPreRunHook(cmd *cobra.Command) {
+	otterizePreRun := func(cmd *cobra.Command, args []string) {
+		bindFlagHook(cmd, args)
+		sendAnonymousUsageTelemetry(cmd)
+	}
 	if cmd.PreRun != nil {
 		cmd.PreRun = func(cmd *cobra.Command, args []string) {
 			cmd.PreRun(cmd, args)
-			preRunHook(cmd, args)
+			otterizePreRun(cmd, args)
 		}
 	} else {
-		cmd.PreRun = preRunHook
+		cmd.PreRun = otterizePreRun
 	}
 }
 
@@ -60,8 +99,24 @@ func addPreRunHookRecursively(cmd *cobra.Command) {
 	}
 }
 
+func waitForTelemetry() {
+	doneCtx, cancel := context.WithCancel(context.Background())
+	go func() {
+		_ = telemetryErrGroup.Wait()
+		cancel()
+	}()
+
+	select {
+	case <-time.After(10 * time.Second):
+		print("timeout")
+	case <-doneCtx.Done():
+		// completed
+	}
+}
+
 func Execute() {
 	addPreRunHookRecursively(RootCmd)
+	cobra.OnFinalize(waitForTelemetry)
 	err := RootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
@@ -90,6 +145,7 @@ func init() {
 	RootCmd.PersistentFlags().Bool(config.InteractiveModeKey, true, "Ask for missing flags interactively")
 	RootCmd.PersistentFlags().String(config.OutputKey, config.OutputDefault, "Output format - json/text")
 	RootCmd.PersistentFlags().Bool(config.NoHeadersKey, config.NoHeadersDefault, "Do not print headers")
+	RootCmd.PersistentFlags().Bool(config.TelemetryEnabledKey, config.TelemetryEnabledDefault, "Do not send anonymous usage telemetry to Otterize")
 
 	RootCmd.AddCommand(version.APIVersionCmd)
 
