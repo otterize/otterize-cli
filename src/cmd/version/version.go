@@ -13,6 +13,7 @@ var Commit string
 
 var Cmd = &cobra.Command{
 	Use:          "version",
+	Aliases:      []string{"api-version"},
 	Short:        "Get the Otterize CLI and API versions",
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
