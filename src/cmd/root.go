@@ -147,7 +147,7 @@ func init() {
 	RootCmd.PersistentFlags().Bool(config.NoHeadersKey, config.NoHeadersDefault, "Do not print headers")
 	RootCmd.PersistentFlags().Bool(config.TelemetryEnabledKey, config.TelemetryEnabledDefault, "Do not send anonymous usage telemetry to Otterize")
 
-	RootCmd.AddCommand(version.APIVersionCmd)
+	RootCmd.AddCommand(version.Cmd)
 
 	RootCmd.AddGroup(groups.AccountsGroup)
 	RootCmd.AddCommand(login.LoginCmd)

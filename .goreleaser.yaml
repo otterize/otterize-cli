@@ -6,6 +6,8 @@ builds:
       - linux
     ldflags:
       - -linkmode 'external' -extldflags '-static'
+      - -X "github.com/otterize/otterize-cli/src/cmd/version.Commit={{ .Commit }}"
+      - -X "github.com/otterize/otterize-cli/src/cmd/version.Version={{ .Tag }}"
     main:
       ./src/cmd
     ignore:
@@ -25,6 +27,8 @@ builds:
       - windows
     ldflags:
       - -linkmode 'external' -extldflags '-static'
+      - -X "github.com/otterize/otterize-cli/src/cmd/version.Commit={{ .Commit }}"
+      - -X "github.com/otterize/otterize-cli/src/cmd/version.Version={{ .Tag }}"
     main:
       ./src/cmd
     ignore:
@@ -47,6 +51,9 @@ builds:
   - id: macos-amd
     goos:
       - darwin
+    ldflags:
+      - -X "github.com/otterize/otterize-cli/src/cmd/version.Commit={{ .Commit }}"
+      - -X "github.com/otterize/otterize-cli/src/cmd/version.Version={{ .Tag }}"
     goarch:
       - amd64
     main:
@@ -62,6 +69,9 @@ builds:
   - id: macos-arm
     goos:
       - darwin
+    ldflags:
+      - -X "github.com/otterize/otterize-cli/src/cmd/version.Commit={{ .Commit }}"
+      - -X "github.com/otterize/otterize-cli/src/cmd/version.Version={{ .Tag }}"
     goarch:
       - arm64
     main:
