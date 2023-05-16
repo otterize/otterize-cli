@@ -68,17 +68,17 @@ func getLocalAndCloudAPIVersions() (localAPIVersion cloudclient.APIVersion, clou
 
 	localAPIVersion, err = cloudclient.GetLocalAPIVersion()
 	if err != nil {
-		return
+		return localAPIVersion, cloudAPIVersion, err
 	}
 
 	c, err := cloudclient.NewClient(ctxTimeout)
 	if err != nil {
-		return
+		return localAPIVersion, cloudAPIVersion, err
 	}
 
 	cloudAPIVersion, err = c.GetAPIVersion()
 	if err != nil {
-		return
+		return localAPIVersion, cloudAPIVersion, err
 	}
 	return
 }
