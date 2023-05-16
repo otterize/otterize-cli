@@ -209,12 +209,7 @@ blobs:
     # s3 for AWS S3 Storage
     # azblob for Azure Blob Storage
     # gs for Google Cloud Storage
-    provider: s3
-
-    # Sets the bucket region.
-    # Requires provider to be `s3`
-    # Defaults to empty.
-    region: us-east-1
+    provider: gs
 
     # Template for the bucket name
     bucket: get.otterize.com
