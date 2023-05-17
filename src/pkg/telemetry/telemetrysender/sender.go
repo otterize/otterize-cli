@@ -14,7 +14,6 @@ import (
 )
 
 var (
-	contextIdGlobal       string
 	versionGlobal         string
 	telemetryErrGroup     *errgroup.Group
 	telemetryErrGroupOnce sync.Once
