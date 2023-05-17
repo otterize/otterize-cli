@@ -198,3 +198,10 @@ func (loginCtx *LoginContext) interactiveSelectOrg(preSelectedOrgId string, swit
 		prints.PrintCliStderr("Invalid organization id selected, try again.")
 	}
 }
+
+func (loginCtx *LoginContext) GetUserId() string {
+	if loginCtx.me == nil {
+		return ""
+	}
+	return loginCtx.me.User.Id
+}

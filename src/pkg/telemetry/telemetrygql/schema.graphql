@@ -1,0 +1,112 @@
+"""The @deprecated built-in directive is used within the type system definition language to indicate deprecated portions of a GraphQL service's schema, such as deprecated fields on a type, arguments on a field, input fields on an input type, or values of an enum type."""
+directive @deprecated(
+	reason: String
+) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE
+
+"""The @include directive may be provided for fields, fragment spreads, and inline fragments, and allows for conditional inclusion during execution as described by the if argument."""
+directive @include(
+	if: Boolean!
+) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"""The @skip directive may be provided for fields, fragment spreads, and inline fragments, and allows for conditional exclusion during execution as described by the if argument."""
+directive @skip(
+	if: Boolean!
+) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"""The @specifiedBy built-in directive is used within the type system definition language to provide a scalar specification URL for specifying the behavior of custom scalar types."""
+directive @specifiedBy(
+	url: String!
+) on SCALAR
+
+"""The `Boolean` scalar type represents `true` or `false`."""
+scalar Boolean
+
+input CLICommand {
+	noun: String!
+	verb: String!
+	modifiers: [String!]
+}
+
+input CLIIdentifier {
+	version: String!
+	contextId: String!
+	cloudClientId: String
+}
+
+input CLITelemetry {
+	identifier: CLIIdentifier!
+	command: CLICommand!
+}
+
+input Component {
+	componentType: ComponentType!
+	componentInstanceId: ID!
+	contextId: ID!
+	version: String!
+	cloudClientId: String
+}
+
+enum ComponentType {
+	INTENTS_OPERATOR
+	CREDENTIALS_OPERATOR
+	NETWORK_MAPPER
+	CLI
+}
+
+enum EventType {
+	INTENTS_DELETED
+	INTENTS_APPLIED
+	INTENTS_DISCOVERED
+	INTENTS_DISCOVERED_SOCKET_SCAN
+	INTENTS_DISCOVERED_CAPTURE
+	INTENTS_DISCOVERED_KAFKA
+	INTENTS_DISCOVERED_ISTIO
+	MAPPER_EXPORT
+	MAPPER_VISUALIZE
+	KAFKA_SERVER_CONFIG_APPLIED
+	KAFKA_SERVER_CONFIG_DELETED
+	NETWORK_POLICIES_CREATED
+	NETWORK_POLICIES_DELETED
+	KAFKA_ACLS_CREATED
+	KAFKA_ACLS_DELETED
+	ISTIO_POLICIES_CREATED
+	ISTIO_POLICIES_DELETED
+	STARTED
+}
+
+"""The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point)."""
+scalar Float
+
+"""The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as "4") or integer (such as 4) input value will be accepted as an ID."""
+scalar ID
+
+"""The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1."""
+scalar Int
+
+type Mutation {
+	sendTelemetries(
+		telemetries: [TelemetryInput!]!
+	): Boolean!
+	sendCLITelemetries(
+		telemetries: [CLITelemetry!]!
+	): Boolean!
+}
+
+type Query {
+	dummy: Boolean
+}
+
+"""The `String`scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text."""
+scalar String
+
+input TelemetryData {
+	eventType: EventType!
+	count: Int
+}
+
+input TelemetryInput {
+	component: Component!
+	data: TelemetryData!
+}
+
+
