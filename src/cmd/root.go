@@ -91,7 +91,7 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(config.InitConfig, initLogger, config.LoadApiCredentialsFile)
+	cobra.OnInitialize(config.InitConfig, initLogger, config.LoadApiCredentialsFile, config.InitContextId)
 	telemetrysender.SetVersion(version.Version)
 	defaultConfigDir, err := config.OtterizeConfigDirPath()
 	if err != nil {

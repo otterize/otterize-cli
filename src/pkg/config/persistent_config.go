@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/otterize/otterize-cli/src/pkg/utils/must"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -14,6 +15,7 @@ import (
 )
 
 const ApiCredentialsFilename = "credentials"
+const OtterizeContextIdFileName = "contextId"
 
 type Config struct {
 	ClientId       string    `json:"client_id,omitempty"`
@@ -112,4 +114,44 @@ func SaveJSONConfig(config any, filename string) error {
 	}
 
 	return nil
+}
+
+func getContextId() string {
+	dirPath, err := OtterizeConfigDirPath()
+	if err != nil {
+		return ""
+	}
+
+	err = os.MkdirAll(dirPath, 0700)
+	if err != nil {
+		return ""
+	}
+
+	contextFilePath := path.Join(dirPath, OtterizeContextIdFileName)
+	if _, err := os.Stat(contextFilePath); errors.Is(err, os.ErrNotExist) {
+		file, err := os.Create(contextFilePath)
+		if err != nil {
+			return ""
+		}
+		contextId := uuid.NewString()
+		_, err = file.Write([]byte(contextId))
+		if err != nil {
+			return ""
+		}
+		return contextId
+	} else if err != nil {
+		return ""
+	} else {
+		contextId, err := os.ReadFile(contextFilePath)
+		if err != nil {
+			return ""
+		}
+		return string(contextId)
+
+	}
+}
+
+func InitContextId() {
+	contextId := getContextId()
+	viper.Set(ContextIdKey, contextId)
 }

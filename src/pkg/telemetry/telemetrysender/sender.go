@@ -26,10 +26,6 @@ func initErrGroupIfNeeded() {
 	})
 }
 
-func SetContextId(contextId string) {
-	contextIdGlobal = contextId
-}
-
 func SetVersion(version string) {
 	versionGlobal = version
 }
@@ -44,7 +40,7 @@ func sendCLITelemetry(noun string, verb string, modifiers []string) {
 		context.Background(),
 		client,
 		telemetrygql.CLITelemetry{
-			Identifier: telemetrygql.CLIIdentifier{Version: versionGlobal, ContextId: contextIdGlobal, CloudClientId: viper.GetString(config.ApiClientIdKey)},
+			Identifier: telemetrygql.CLIIdentifier{Version: versionGlobal, ContextId: viper.GetString(config.ContextIdKey), CloudClientId: viper.GetString(config.ApiClientIdKey)},
 			Command:    telemetrygql.CLICommand{Noun: noun, Verb: verb, Modifiers: modifiers},
 		})
 }
