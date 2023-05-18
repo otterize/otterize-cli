@@ -7,10 +7,6 @@ on:
     tags:
       - 'v*.*.*'
 
-env:
-  REGISTRY: 353146681200.dkr.ecr.us-east-1.amazonaws.com/otterize
-  REPOSITORY_NAME: otterize
-
 jobs:
   build:
     name: Build
@@ -91,6 +87,11 @@ jobs:
         with:
           go-version: 1.19
           cache: true
+
+      - name: GCP auth
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: ${{ secrets.B64_GCLOUD_SERVICE_ACCOUNT_JSON }}
 
       # copy the caches from prepare
       - shell: bash
