@@ -1,11 +1,17 @@
 package list
 
 import (
+	"fmt"
 	mappershared "github.com/otterize/otterize-cli/src/cmd/networkmapper/shared"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentslister"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+)
+
+const (
+	OutputFormatKey  = "format"
+	OutputFormatJSON = "json"
 )
 
 var ListCmd = &cobra.Command{
@@ -19,10 +25,13 @@ var ListCmd = &cobra.Command{
 				return err
 			}
 			if viper.IsSet(mapperclient.MapperExcludeServices) {
-				intents = mappershared.RemoveExcludedServices(intents, nil)
+				intents = mappershared.RemoveExcludedServices(intents, viper.GetStringSlice(mapperclient.MapperExcludeServices))
 			}
-
-			intentslister.ListFormattedIntents(intents)
+			if viper.GetString(OutputFormatKey) == OutputFormatJSON {
+				intentslister.ListFormattedIntentsJSON(intents)
+			} else {
+				intentslister.ListFormattedIntents(intents)
+			}
 			return nil
 		})
 	},
@@ -30,4 +39,5 @@ var ListCmd = &cobra.Command{
 
 func init() {
 	mappershared.InitMapperQueryFlags(ListCmd)
+	ListCmd.Flags().String(OutputFormatKey, "text", fmt.Sprintf("format to output the intents - %s/%s", "text", OutputFormatJSON))
 }
