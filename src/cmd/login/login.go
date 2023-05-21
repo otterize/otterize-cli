@@ -63,7 +63,6 @@ var LoginCmd = &cobra.Command{
 			UserToken:      authResult.AccessToken,
 			Expiry:         authResult.Expiry,
 			OrganizationId: selectedOrgId,
-			ClientId:       loginCtx.GetUserId(),
 		}); err != nil {
 			return err
 		}

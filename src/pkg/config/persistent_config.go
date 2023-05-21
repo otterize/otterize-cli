@@ -117,38 +117,7 @@ func SaveJSONConfig(config any, filename string) error {
 }
 
 func getContextId() string {
-	dirPath, err := OtterizeConfigDirPath()
-	if err != nil {
-		return ""
-	}
-
-	err = os.MkdirAll(dirPath, 0700)
-	if err != nil {
-		return ""
-	}
-
-	contextFilePath := path.Join(dirPath, OtterizeContextIdFileName)
-	if _, err := os.Stat(contextFilePath); errors.Is(err, os.ErrNotExist) {
-		file, err := os.Create(contextFilePath)
-		if err != nil {
-			return ""
-		}
-		contextId := uuid.NewString()
-		_, err = file.Write([]byte(contextId))
-		if err != nil {
-			return ""
-		}
-		return contextId
-	} else if err != nil {
-		return ""
-	} else {
-		contextId, err := os.ReadFile(contextFilePath)
-		if err != nil {
-			return ""
-		}
-		return string(contextId)
-
-	}
+	return uuid.NewString()
 }
 
 func InitContextId() {
