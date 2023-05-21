@@ -62,7 +62,7 @@ func WaitForTelemetry() {
 
 	select {
 	case <-time.After(10 * time.Second):
-		print("timeout")
+		// timeout
 	case <-doneCtx.Done():
 		// completed
 	}
