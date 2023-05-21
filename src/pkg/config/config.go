@@ -45,6 +45,9 @@ const OutputYaml = "yaml"
 const DefaultTimeout = 60 * time.Second
 const NoHeadersKey = "no-headers"
 const NoHeadersDefault = false
+const TelemetryEnabledKey = "telemetry-enabled"
+const TelemetryEnabledDefault = true
+const ContextIdKey = "context-id"
 
 var CfgFile string // used for flag
 
