@@ -28,7 +28,9 @@ var ListCmd = &cobra.Command{
 				intents = mappershared.RemoveExcludedServices(intents, viper.GetStringSlice(mapperclient.MapperExcludeServices))
 			}
 			if viper.GetString(OutputFormatKey) == OutputFormatJSON {
-				intentslister.ListFormattedIntentsJSON(intents)
+				if err := intentslister.ListFormattedIntentsJSON(intents); err != nil {
+					return err
+				}
 			} else {
 				intentslister.ListFormattedIntents(intents)
 			}
