@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/otterize/otterize-cli/src/pkg/utils/must"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -14,6 +15,7 @@ import (
 )
 
 const ApiCredentialsFilename = "credentials"
+const OtterizeContextIdFileName = "contextId"
 
 type Config struct {
 	ClientId       string    `json:"client_id,omitempty"`
@@ -112,4 +114,13 @@ func SaveJSONConfig(config any, filename string) error {
 	}
 
 	return nil
+}
+
+func getContextId() string {
+	return uuid.NewString()
+}
+
+func InitContextId() {
+	contextId := getContextId()
+	viper.Set(ContextIdKey, contextId)
 }

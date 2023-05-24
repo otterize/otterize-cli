@@ -17,13 +17,14 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/users"
 	"github.com/otterize/otterize-cli/src/cmd/version"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/telemetry/telemetrysender"
 	"github.com/otterize/otterize-cli/src/pkg/utils/must"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
 	"path/filepath"
-
-	"github.com/spf13/cobra"
+	"strings"
 )
 
 var RootCmd = &cobra.Command{
@@ -35,7 +36,23 @@ var RootCmd = &cobra.Command{
 `,
 }
 
-func preRunHook(cmd *cobra.Command, args []string) {
+func sendAnonymousUsageTelemetry(cmd *cobra.Command) {
+	if !viper.GetBool(config.TelemetryEnabledKey) {
+		return
+	}
+	// every otterize CLI command can be broken into: otterize <noun> <verb>
+	commandParts := strings.Split(cmd.CommandPath(), " ")
+	if len(commandParts) < 3 {
+		return
+	}
+	noun := commandParts[1]
+	verb := commandParts[2]
+	modifiers := commandParts[3:]
+	telemetrysender.SendCLITelemetry(noun, verb, modifiers)
+
+}
+
+func bindFlagHook(cmd *cobra.Command, args []string) {
 	// This makes BindPFlags occur only for commands that are about to be executed (in the PreRun hook).
 	// If we don't do this and commands have flags with the same name, then they'll overwrite each other in the config,
 	// making it impossible to get the value.
@@ -43,13 +60,17 @@ func preRunHook(cmd *cobra.Command, args []string) {
 }
 
 func addPreRunHook(cmd *cobra.Command) {
+	otterizePreRun := func(cmd *cobra.Command, args []string) {
+		bindFlagHook(cmd, args)
+		sendAnonymousUsageTelemetry(cmd)
+	}
 	if cmd.PreRun != nil {
 		cmd.PreRun = func(cmd *cobra.Command, args []string) {
 			cmd.PreRun(cmd, args)
-			preRunHook(cmd, args)
+			otterizePreRun(cmd, args)
 		}
 	} else {
-		cmd.PreRun = preRunHook
+		cmd.PreRun = otterizePreRun
 	}
 }
 
@@ -62,6 +83,7 @@ func addPreRunHookRecursively(cmd *cobra.Command) {
 
 func Execute() {
 	addPreRunHookRecursively(RootCmd)
+	cobra.OnFinalize(telemetrysender.WaitForTelemetry)
 	err := RootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
@@ -69,7 +91,8 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(config.InitConfig, initLogger, config.LoadApiCredentialsFile)
+	cobra.OnInitialize(config.InitConfig, initLogger, config.LoadApiCredentialsFile, config.InitContextId)
+	telemetrysender.SetVersion(version.Version)
 	defaultConfigDir, err := config.OtterizeConfigDirPath()
 	if err != nil {
 		panic(err)
@@ -90,6 +113,7 @@ func init() {
 	RootCmd.PersistentFlags().Bool(config.InteractiveModeKey, true, "Ask for missing flags interactively")
 	RootCmd.PersistentFlags().String(config.OutputFormatKey, config.OutputFormatDefault, "Output format - json/text/yaml")
 	RootCmd.PersistentFlags().Bool(config.NoHeadersKey, config.NoHeadersDefault, "Do not print headers")
+	RootCmd.PersistentFlags().Bool(config.TelemetryEnabledKey, config.TelemetryEnabledDefault, "Whether to enable anonymous usage telemetry to Otterize or not")
 
 	RootCmd.AddCommand(version.Cmd)
 

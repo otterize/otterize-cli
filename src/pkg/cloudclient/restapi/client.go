@@ -81,7 +81,7 @@ func (c *Client) checkAPIVersion() error {
 	if localApiVersion != cloudApiVersion {
 		prints.PrintCliStderr(`
 Caution: this CLI was built with a different version/revision of the Otterize Cloud API.
-Please run otterize api-version for more info.
+Please run otterize version for more info.
 `,
 		)
 	}

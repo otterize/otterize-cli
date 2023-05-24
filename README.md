@@ -70,3 +70,14 @@ For more platforms, see [the installation guide](https://docs.otterize.com/insta
 
 ## Slack
 [Join the Otterize Slack!](https://joinslack.otterize.com)
+
+## Usage Telemetry 
+The CLI reports anonymous usage information back to the Otterize team, to help the team understand how the software is used in the community and what aspects users find useful. No personal or organizational identifying information is transmitted in these metrics: they only reflect patterns of usage. You may opt out at any time through a single configuration flag.
+
+To **disable** sending usage information:
+- Using a flag: `--telemetry-enabled=false`.
+- Via an environment variable: `OTTERIZE_TELEMETRY_ENABLED=false`.
+
+If the `telemetry` flag is omitted or set to `true`, telemetry will be enabled: usage information will be reported.
+
+Read more about it in the [Usage telemetry Documentation](https://docs.otterize.com/otterize-oss/usage-telemetry)
