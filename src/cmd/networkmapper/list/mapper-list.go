@@ -1,17 +1,13 @@
 package list
 
 import (
-	"fmt"
 	mappershared "github.com/otterize/otterize-cli/src/cmd/networkmapper/shared"
+	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentslister"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-)
-
-const (
-	OutputFormatKey  = "format"
-	OutputFormatJSON = "json"
 )
 
 var ListCmd = &cobra.Command{
@@ -27,13 +23,10 @@ var ListCmd = &cobra.Command{
 			if viper.IsSet(mapperclient.MapperExcludeServices) {
 				intents = mappershared.RemoveExcludedServices(intents, viper.GetStringSlice(mapperclient.MapperExcludeServices))
 			}
-			if viper.GetString(OutputFormatKey) == OutputFormatJSON {
-				if err := intentslister.ListFormattedIntentsJSON(intents); err != nil {
-					return err
-				}
-			} else {
-				intentslister.ListFormattedIntents(intents)
+			if viper.Get(config.OutputFormatKey) != config.OutputFormatDefault {
+				logrus.Warn("Different output formats are not supported in 'network-mapper list' command;")
 			}
+			intentslister.ListFormattedIntents(intents)
 			return nil
 		})
 	},
@@ -41,5 +34,4 @@ var ListCmd = &cobra.Command{
 
 func init() {
 	mappershared.InitMapperQueryFlags(ListCmd)
-	ListCmd.Flags().String(OutputFormatKey, "text", fmt.Sprintf("format to output the intents - %s/%s", "text", OutputFormatJSON))
 }

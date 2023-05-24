@@ -1,7 +1,6 @@
 package intentslister
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/output"
@@ -21,29 +20,4 @@ func ListFormattedIntents(intents []v1alpha2.ClientIntents) {
 			}
 		}
 	}
-}
-
-type ListedIntent struct {
-	Name      string            `json:"name"`
-	Namespace string            `json:"namespace"`
-	Calls     []v1alpha2.Intent `json:"calls"`
-}
-
-func ListFormattedIntentsJSON(intents []v1alpha2.ClientIntents) error {
-	var listedIntents []ListedIntent
-	for _, intent := range intents {
-		listedIntents = append(listedIntents, ListedIntent{
-			Name:      intent.Name,
-			Namespace: intent.Namespace,
-			Calls:     intent.GetCallsList(),
-		})
-	}
-
-	formatted, err := json.MarshalIndent(listedIntents, "", "  ")
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(string(formatted))
-	return nil
 }

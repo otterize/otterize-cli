@@ -71,10 +71,10 @@ func AsTable[T any](dataList []T, dataName string, columns []string, getColumnDa
 func FormatList[T any](dataList []T, dataName string, columns []string, getColumnData func(T) []map[string]string) (string, error) {
 	var output string
 	var err error
-	switch viper.GetString(config.OutputKey) {
-	case config.OutputJson:
+	switch viper.GetString(config.OutputFormatKey) {
+	case config.OutputFormatJSON:
 		output, err = AsJson(dataList)
-	case config.OutputYaml:
+	case config.OutputFormatYAML:
 		output, err = AsYaml(dataList)
 	default:
 		output, err = AsTable(dataList, dataName, columns, getColumnData)
