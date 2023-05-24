@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/telemetry/telemetrysender"
 	"github.com/otterize/otterize-cli/src/pkg/utils/must"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -49,5 +50,6 @@ func GetAPIToken(ctx context.Context) string {
 func Fail(err error) {
 	logrus.Errorf("Authentication failed: %s. To refresh your credentials, run '%s login'.",
 		err.Error(), filepath.Base(os.Args[0]))
+	telemetrysender.WaitForTelemetry()
 	logrus.Exit(1)
 }
