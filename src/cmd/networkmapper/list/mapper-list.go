@@ -1,11 +1,11 @@
 package list
 
 import (
+	"fmt"
 	mappershared "github.com/otterize/otterize-cli/src/cmd/networkmapper/shared"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput/intentslister"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -23,8 +23,9 @@ var ListCmd = &cobra.Command{
 			if viper.IsSet(mapperclient.MapperExcludeServices) {
 				intents = mappershared.RemoveExcludedServices(intents, viper.GetStringSlice(mapperclient.MapperExcludeServices))
 			}
-			if viper.Get(config.OutputFormatKey) != config.OutputFormatDefault {
-				logrus.Warn("Different output formats are not supported in 'network-mapper list' command;")
+			outputFormat := viper.Get(config.OutputFormatKey)
+			if outputFormat != config.OutputFormatDefault {
+				return fmt.Errorf("%s output format is not supported in 'list' command. Try using 'export' instead", outputFormat)
 			}
 			intentslister.ListFormattedIntents(intents)
 			return nil
