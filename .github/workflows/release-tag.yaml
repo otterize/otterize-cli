@@ -176,10 +176,56 @@ jobs:
       - name: Update docs
         run: |-
           cd ./docs
+          # Find a line with get.otterize.com split by "/" and take the 5th part that contains the version
           LAST_TAG=`cat docs/_common/install-otterize-cli.md | grep get.otterize.com | head -n 1 | awk -F '/' '{print $5}'`
-          sed -i.bak "s/$A/${{ github.ref }}/g" docs/_common/install-otterize-cli.md
+          sed -i.bak "s/$LAST_TAG/${{ github.ref }}/g" docs/_common/install-otterize-cli.md
           git config --global user.name "otterizebot"
           git config --global user.email "otterizebot@users.noreply.github.com"
           git add ./docs/_common/install-otterize-cli.md
-          git commit -m 'Update for otterize-cli version ${{ github.ref }}'
+          git commit -m 'Update otterize-cli version to ${{ github.ref }}'
+          git push origin main
+
+  update-mapper-readme:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Checkout docs
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
+          repository: otterize/network-mapper
+          path: ./network-mapper
+
+      - name: Update readme
+        run: |-
+          cd ./network-mapper
+          # Find a line with get.otterize.com split by "/" and take the 5th part that contains the version
+          LAST_TAG=`cat README.md | grep get.otterize.com | head -n 1 | awk -F '/' '{print $5}'`
+          sed -i.bak "s/$LAST_TAG/${{ github.ref }}/g" README.md
+          git config --global user.name "otterizebot"
+          git config --global user.email "otterizebot@users.noreply.github.com"
+          git add README.md
+          git commit -m 'Update otterize-cli version to ${{ github.ref }}'
+          git push origin main
+
+  update-cli-readme:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Checkout docs
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
+          path: ./cli
+
+      - name: Update readme
+        run: |-
+          cd ./cli
+          # Find a line with get.otterize.com split by "/" and take the 5th part that contains the version
+          LAST_TAG=`cat README.md | grep get.otterize.com | head -n 1 | awk -F '/' '{print $5}'`
+          sed -i.bak "s/$LAST_TAG/${{ github.ref }}/g" README.md
+          git config --global user.name "otterizebot"
+          git config --global user.email "otterizebot@users.noreply.github.com"
+          git add README.md
+          git commit -m 'Update otterize-cli version to ${{ github.ref }}'
           git push origin main
