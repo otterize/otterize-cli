@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	mappershared "github.com/otterize/otterize-cli/src/cmd/networkmapper/shared"
+	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/output"
@@ -22,10 +23,6 @@ const (
 	OutputTypeDefault       = OutputTypeSingleFile
 	OutputTypeSingleFile    = "single-file"
 	OutputTypeDirectory     = "dir"
-	OutputFormatKey         = "format"
-	OutputFormatDefault     = OutputFormatYAML
-	OutputFormatYAML        = "yaml"
-	OutputFormatJSON        = "json"
 )
 
 var ExportCmd = &cobra.Command{
@@ -57,15 +54,15 @@ var ExportCmd = &cobra.Command{
 }
 
 func getFormattedIntents(intentList []v1alpha2.ClientIntents) (string, error) {
-	switch outputFormatVal := viper.GetString(OutputFormatKey); {
-	case outputFormatVal == OutputFormatJSON:
+	switch outputFormatVal := viper.GetString(config.OutputFormatKey); {
+	case outputFormatVal == config.OutputFormatJSON:
 		formatted, err := json.MarshalIndent(intentList, "", "  ")
 		if err != nil {
 			return "", err
 		}
 
 		return string(formatted), nil
-	case outputFormatVal == OutputFormatYAML:
+	case outputFormatVal == config.OutputFormatYAML:
 		buf := bytes.Buffer{}
 
 		printer := intentsoutput.IntentsPrinter{}
@@ -77,7 +74,7 @@ func getFormattedIntents(intentList []v1alpha2.ClientIntents) (string, error) {
 		}
 		return buf.String(), nil
 	default:
-		return "", fmt.Errorf("unexpected output format %s, use one of (%s, %s)", outputFormatVal, OutputFormatJSON, OutputFormatYAML)
+		return "", fmt.Errorf("unexpected output format %s, use one of (%s, %s)", outputFormatVal, config.OutputFormatJSON, config.OutputFormatYAML)
 	}
 }
 
@@ -129,7 +126,6 @@ func exportIntents(intents []v1alpha2.ClientIntents) error {
 		default:
 			return fmt.Errorf("unexpected output type %s, use one of (%s, %s)", outputTypeVal, OutputTypeSingleFile, OutputTypeDirectory)
 		}
-
 	} else {
 		formatted, err := getFormattedIntents(intents)
 		if err != nil {
@@ -157,5 +153,5 @@ func init() {
 	mappershared.InitMapperQueryFlags(ExportCmd)
 	ExportCmd.Flags().StringP(OutputLocationKey, OutputLocationShorthand, "", "file or dir path to write the output into")
 	ExportCmd.Flags().String(OutputTypeKey, "", fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
-	ExportCmd.Flags().String(OutputFormatKey, OutputFormatDefault, fmt.Sprintf("format to output the intents - %s/%s", OutputFormatYAML, OutputFormatJSON))
+	ExportCmd.Flags().String(config.OutputFormatKey, config.OutputFormatYAML, fmt.Sprintf("Output format - %s/%s", config.OutputFormatYAML, config.OutputFormatJSON))
 }
