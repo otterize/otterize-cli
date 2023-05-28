@@ -178,11 +178,11 @@ jobs:
           cd ./docs
           # Find a line with get.otterize.com split by "/" and take the 5th part that contains the version
           LAST_TAG=`cat docs/_common/install-otterize-cli.md | grep get.otterize.com | head -n 1 | awk -F '/' '{print $5}'`
-          sed -i.bak "s/$LAST_TAG/${{ github.ref }}/g" docs/_common/install-otterize-cli.md
+          sed -i.bak "s/$LAST_TAG/${{ github.ref_name }}/g" docs/_common/install-otterize-cli.md
           git config --global user.name "otterizebot"
           git config --global user.email "otterizebot@users.noreply.github.com"
           git add ./docs/_common/install-otterize-cli.md
-          git commit -m 'Update otterize-cli version to ${{ github.ref }}'
+          git commit -m 'Update otterize-cli version to ${{ github.ref_name }}'
           git push origin main
 
   update-mapper-readme:
@@ -201,11 +201,11 @@ jobs:
           cd ./network-mapper
           # Find a line with get.otterize.com split by "/" and take the 5th part that contains the version
           LAST_TAG=`cat README.md | grep get.otterize.com | head -n 1 | awk -F '/' '{print $5}'`
-          sed -i.bak "s/$LAST_TAG/${{ github.ref }}/g" README.md
+          sed -i.bak "s/$LAST_TAG/${{ github.ref_name }}/g" README.md
           git config --global user.name "otterizebot"
           git config --global user.email "otterizebot@users.noreply.github.com"
           git add README.md
-          git commit -m 'Update otterize-cli version to ${{ github.ref }}'
+          git commit -m 'Update otterize-cli version to ${{ github.ref_name }}'
           git push origin main
 
   update-cli-readme:
@@ -223,9 +223,9 @@ jobs:
           cd ./cli
           # Find a line with get.otterize.com split by "/" and take the 5th part that contains the version
           LAST_TAG=`cat README.md | grep get.otterize.com | head -n 1 | awk -F '/' '{print $5}'`
-          sed -i.bak "s/$LAST_TAG/${{ github.ref }}/g" README.md
+          sed -i.bak "s/$LAST_TAG/${{ github.ref_name }}/g" README.md
           git config --global user.name "otterizebot"
           git config --global user.email "otterizebot@users.noreply.github.com"
           git add README.md
-          git commit -m 'Update otterize-cli version to ${{ github.ref }}'
+          git commit -m 'Update otterize-cli version to ${{ github.ref_name }}'
           git push origin main
