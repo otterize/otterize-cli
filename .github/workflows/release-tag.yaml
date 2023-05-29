@@ -212,11 +212,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: release
     steps:
-      - name: Checkout docs
+      - name: Checkout CLI
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
           path: ./cli
+          ref: main
 
       - name: Update readme
         run: |-
