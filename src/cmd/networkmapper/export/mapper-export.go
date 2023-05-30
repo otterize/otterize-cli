@@ -111,7 +111,7 @@ func exportIntents(intents []v1alpha2.ClientIntents) error {
 			}
 
 			for _, intent := range intents {
-				filePath := fmt.Sprintf("%s.yaml", intent.GetServiceName())
+				filePath := fmt.Sprintf("%s.%s.yaml", intent.GetServiceName(), intent.Namespace)
 				if err != nil {
 					return err
 				}
