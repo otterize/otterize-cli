@@ -2,6 +2,7 @@ package mappershared
 
 import (
 	"context"
+	"errors"
 	"github.com/amit7itz/goset"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
@@ -16,7 +17,10 @@ import (
 const (
 	NamespacesKey       = "namespaces"
 	NamespacesShorthand = "n"
-	DistinctByLabelKey  = "distinct-by-label"
+
+	ServerKey = "server"
+
+	DistinctByLabelKey = "distinct-by-label"
 )
 
 func InitMapperQueryFlags(cmd *cobra.Command) {
@@ -31,6 +35,12 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 	namespacesFilter := viper.GetStringSlice(NamespacesKey)
 	excludeServiceWithLabels := viper.GetStringSlice(mapperclient.MapperExcludeLabels)
 	withLabelsFilter := viper.IsSet(DistinctByLabelKey)
+	serverFilter := viper.GetString(ServerKey)
+
+	if serverFilter != "" && len(namespacesFilter) == 0 {
+		return nil, errors.New("when supplying --server, --namespace must also be provided")
+	}
+
 	var labelsFilter []string
 	distinctByLabel := ""
 	if withLabelsFilter {
@@ -40,7 +50,7 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 
 	var mapperIntents []mapperclient.IntentsIntentsIntent
 	if err := mapperclient.WithClient(func(c *mapperclient.Client) error {
-		intents, err := c.ListIntents(ctxTimeout, namespacesFilter, withLabelsFilter, labelsFilter, excludeServiceWithLabels)
+		intents, err := c.ListIntents(ctxTimeout, namespacesFilter, withLabelsFilter, labelsFilter, excludeServiceWithLabels, serverFilter)
 		if err != nil {
 			return err
 		}
