@@ -38,7 +38,7 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 	serverFilter := viper.GetString(ServerKey)
 
 	if serverFilter != "" && len(namespacesFilter) == 0 {
-		return nil, errors.New("when supplying --server, --namespace must also be provided")
+		return nil, errors.New("when supplying --server, --namespaces must also be provided")
 	}
 
 	var labelsFilter []string

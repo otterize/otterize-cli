@@ -154,6 +154,6 @@ func init() {
 	ExportCmd.Flags().StringP(OutputLocationKey, OutputLocationShorthand, "", "file or dir path to write the output into")
 	ExportCmd.Flags().String(OutputTypeKey, "", fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
 	ExportCmd.Flags().String(config.OutputFormatKey, config.OutputFormatYAML, fmt.Sprintf("Output format - %s/%s", config.OutputFormatYAML, config.OutputFormatJSON))
-	ExportCmd.Flags().String(mappershared.ServerKey, "", "Export from this server")
+	ExportCmd.Flags().String(mappershared.ServerKey, "", "Export only intents that call this server")
 
 }

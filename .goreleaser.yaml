@@ -64,7 +64,11 @@ builds:
     hooks:
       post:
         - output: true
-          cmd: gon -log-level=debug gon_amd64.hcl
+          cmd: 'codesign --timestamp --options=runtime -s "Developer ID Application: Otterize, Inc." -v {{ .Path }}'
+        - output: true
+          cmd: zip "{{ .Path }}.zip"  "{{ .Path }}"
+        - output: true
+          cmd: xcrun notarytool submit "{{ .Path }}_macOS_amd64_notarized.zip" --apple-id "ori@otterize.com" --team-id "3X6Z7976XD" --password "{{ .Env.AC_PASSWORD }}" --wait
 
   - id: macos-arm
     goos:
@@ -82,7 +86,11 @@ builds:
     hooks:
       post:
         - output: true
-          cmd: gon -log-level=debug gon_arm64.hcl
+          cmd: 'codesign --timestamp --options=runtime -s "Developer ID Application: Otterize, Inc." -v {{ .Path }}'
+        - output: true
+          cmd: zip "{{ .Path }}.zip"  "{{ .Path }}"
+        - output: true
+          cmd: xcrun notarytool submit "{{ .Path }}_macOS_arm64_notarized.zip" --apple-id "ori@otterize.com" --team-id "3X6Z7976XD" --password "{{ .Env.AC_PASSWORD }}" --wait
     # no upx for mac arm - causes invalid instructions
 
 
