@@ -702,6 +702,7 @@ type __IntentsInput struct {
 	Namespaces               []string `json:"namespaces"`
 	IncludedLabels           []string `json:"includedLabels"`
 	ExcludeServiceWithLabels []string `json:"excludeServiceWithLabels"`
+	ServerName               string   `json:"serverName"`
 }
 
 // GetNamespaces returns __IntentsInput.Namespaces, and is useful for accessing the field via an interface.
@@ -712,6 +713,9 @@ func (v *__IntentsInput) GetIncludedLabels() []string { return v.IncludedLabels 
 
 // GetExcludeServiceWithLabels returns __IntentsInput.ExcludeServiceWithLabels, and is useful for accessing the field via an interface.
 func (v *__IntentsInput) GetExcludeServiceWithLabels() []string { return v.ExcludeServiceWithLabels }
+
+// GetServerName returns __IntentsInput.ServerName, and is useful for accessing the field via an interface.
+func (v *__IntentsInput) GetServerName() string { return v.ServerName }
 
 // __ServiceIntentsUpToMapperV017Input is used internally by genqlient
 type __ServiceIntentsUpToMapperV017Input struct {
@@ -739,12 +743,13 @@ func Intents(
 	namespaces []string,
 	includedLabels []string,
 	excludeServiceWithLabels []string,
+	serverName string,
 ) (*IntentsResponse, error) {
 	req := &graphql.Request{
 		OpName: "Intents",
 		Query: `
-query Intents ($namespaces: [String!], $includedLabels: [String!], $excludeServiceWithLabels: [String!]) {
-	intents(namespaces: $namespaces, includeLabels: $includedLabels, excludeServiceWithLabels: $excludeServiceWithLabels) {
+query Intents ($namespaces: [String!], $includedLabels: [String!], $excludeServiceWithLabels: [String!], $serverName: String) {
+	intents(namespaces: $namespaces, includeLabels: $includedLabels, excludeServiceWithLabels: $excludeServiceWithLabels, serverName: $serverName) {
 		client {
 			... NamespacedNameWithLabelsFragment
 		}
@@ -781,6 +786,7 @@ fragment LabelsFragment on OtterizeServiceIdentity {
 			Namespaces:               namespaces,
 			IncludedLabels:           includedLabels,
 			ExcludeServiceWithLabels: excludeServiceWithLabels,
+			ServerName:               serverName,
 		},
 	}
 	var err error
