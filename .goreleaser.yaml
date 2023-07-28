@@ -66,7 +66,7 @@ builds:
         - output: true
           cmd: 'codesign --timestamp --options=runtime -s "Developer ID Application: Otterize, Inc." -v {{ .Path }}'
         - output: true
-          cmd: zip "{{ .Path }}.zip"  "{{ .Path }}"
+          cmd: zip "{{ .Path }}_macOS_amd64_notarized.zip"  "{{ .Path }}"
         - output: true
           cmd: xcrun notarytool submit "{{ .Path }}_macOS_amd64_notarized.zip" --apple-id "ori@otterize.com" --team-id "3X6Z7976XD" --password "{{ .Env.AC_PASSWORD }}" --wait
 
@@ -88,7 +88,7 @@ builds:
         - output: true
           cmd: 'codesign --timestamp --options=runtime -s "Developer ID Application: Otterize, Inc." -v {{ .Path }}'
         - output: true
-          cmd: zip "{{ .Path }}.zip"  "{{ .Path }}"
+          cmd: zip "{{ .Path }}_macOS_arm64_notarized.zip"  "{{ .Path }}"
         - output: true
           cmd: xcrun notarytool submit "{{ .Path }}_macOS_arm64_notarized.zip" --apple-id "ori@otterize.com" --team-id "3X6Z7976XD" --password "{{ .Env.AC_PASSWORD }}" --wait
     # no upx for mac arm - causes invalid instructions
