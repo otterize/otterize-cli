@@ -37,8 +37,15 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 	withLabelsFilter := viper.IsSet(DistinctByLabelKey)
 	serverFilter := viper.GetString(ServerKey)
 
-	if serverFilter != "" && len(namespacesFilter) == 0 {
-		return nil, errors.New("when supplying --server, --namespaces must also be provided")
+	if viper.IsSet(ServerKey) {
+		if viper.IsSet(NamespacesKey) {
+			return nil, errors.New("server filter cannot be used with namespaces filter")
+		}
+
+		splitServerFilter := strings.Split(serverFilter, ".")
+		if len(splitServerFilter) != 2 {
+			return nil, errors.New("invalid server filter. Expected format: <server-name>.<namespace>")
+		}
 	}
 
 	var labelsFilter []string
