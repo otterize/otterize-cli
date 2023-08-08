@@ -371,6 +371,17 @@ type ResetCaptureResponse struct {
 // GetResetCapture returns ResetCaptureResponse.ResetCapture, and is useful for accessing the field via an interface.
 func (v *ResetCaptureResponse) GetResetCapture() bool { return v.ResetCapture }
 
+type ServerFilter struct {
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+}
+
+// GetName returns ServerFilter.Name, and is useful for accessing the field via an interface.
+func (v *ServerFilter) GetName() string { return v.Name }
+
+// GetNamespace returns ServerFilter.Namespace, and is useful for accessing the field via an interface.
+func (v *ServerFilter) GetNamespace() string { return v.Namespace }
+
 // ServiceIntentsUpToMapperV017Response is returned by ServiceIntentsUpToMapperV017 on success.
 type ServiceIntentsUpToMapperV017Response struct {
 	// Kept for backwards compatibility with CLI -
@@ -699,10 +710,10 @@ func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) _
 
 // __IntentsInput is used internally by genqlient
 type __IntentsInput struct {
-	Namespaces               []string `json:"namespaces"`
-	IncludedLabels           []string `json:"includedLabels"`
-	ExcludeServiceWithLabels []string `json:"excludeServiceWithLabels"`
-	ServerName               string   `json:"serverName"`
+	Namespaces               []string      `json:"namespaces"`
+	IncludedLabels           []string      `json:"includedLabels"`
+	ExcludeServiceWithLabels []string      `json:"excludeServiceWithLabels"`
+	Server                   *ServerFilter `json:"server"`
 }
 
 // GetNamespaces returns __IntentsInput.Namespaces, and is useful for accessing the field via an interface.
@@ -714,8 +725,8 @@ func (v *__IntentsInput) GetIncludedLabels() []string { return v.IncludedLabels 
 // GetExcludeServiceWithLabels returns __IntentsInput.ExcludeServiceWithLabels, and is useful for accessing the field via an interface.
 func (v *__IntentsInput) GetExcludeServiceWithLabels() []string { return v.ExcludeServiceWithLabels }
 
-// GetServerName returns __IntentsInput.ServerName, and is useful for accessing the field via an interface.
-func (v *__IntentsInput) GetServerName() string { return v.ServerName }
+// GetServer returns __IntentsInput.Server, and is useful for accessing the field via an interface.
+func (v *__IntentsInput) GetServer() *ServerFilter { return v.Server }
 
 // __ServiceIntentsUpToMapperV017Input is used internally by genqlient
 type __ServiceIntentsUpToMapperV017Input struct {
@@ -743,13 +754,13 @@ func Intents(
 	namespaces []string,
 	includedLabels []string,
 	excludeServiceWithLabels []string,
-	serverName string,
+	server *ServerFilter,
 ) (*IntentsResponse, error) {
 	req := &graphql.Request{
 		OpName: "Intents",
 		Query: `
-query Intents ($namespaces: [String!], $includedLabels: [String!], $excludeServiceWithLabels: [String!], $serverName: String) {
-	intents(namespaces: $namespaces, includeLabels: $includedLabels, excludeServiceWithLabels: $excludeServiceWithLabels, serverName: $serverName) {
+query Intents ($namespaces: [String!], $includedLabels: [String!], $excludeServiceWithLabels: [String!], $server: ServerFilter) {
+	intents(namespaces: $namespaces, includeLabels: $includedLabels, excludeServiceWithLabels: $excludeServiceWithLabels, server: $server) {
 		client {
 			... NamespacedNameWithLabelsFragment
 		}
@@ -786,7 +797,7 @@ fragment LabelsFragment on OtterizeServiceIdentity {
 			Namespaces:               namespaces,
 			IncludedLabels:           includedLabels,
 			ExcludeServiceWithLabels: excludeServiceWithLabels,
-			ServerName:               serverName,
+			Server:                   server,
 		},
 	}
 	var err error

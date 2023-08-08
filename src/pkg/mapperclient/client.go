@@ -137,7 +137,7 @@ func serviceIntentsWithLabelsToIntents(serviceIntentsWithLabels []ServiceIntents
 }
 
 // Intents is supported for network-mapper version >= 0.1.14
-func (c *Client) Intents(ctx context.Context, namespaces, labels, excludeServiceWithLabels []string, serverName string) ([]IntentsIntentsIntent, error) {
+func (c *Client) Intents(ctx context.Context, namespaces, labels, excludeServiceWithLabels []string, serverName *ServerFilter) ([]IntentsIntentsIntent, error) {
 	res, err := Intents(ctx, c.client, namespaces, labels, excludeServiceWithLabels, serverName)
 	if err != nil {
 		return nil, err
@@ -145,7 +145,7 @@ func (c *Client) Intents(ctx context.Context, namespaces, labels, excludeService
 	return res.Intents, nil
 }
 
-func (c *Client) ListIntents(ctx context.Context, namespaces []string, withLabelsFilter bool, labels, excludeServiceWithLabels []string, serverName string) ([]IntentsIntentsIntent, error) {
+func (c *Client) ListIntents(ctx context.Context, namespaces []string, withLabelsFilter bool, labels, excludeServiceWithLabels []string, serverName *ServerFilter) ([]IntentsIntentsIntent, error) {
 	if withLabelsFilter {
 		intents, err := c.Intents(ctx, namespaces, labels, excludeServiceWithLabels, serverName)
 		if httpErr := (HTTPError{}); errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusUnprocessableEntity {
