@@ -44,9 +44,12 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 		}
 
 		splitServerFilter := strings.Split(serverName, ".")
-		if len(splitServerFilter) != 2 {
+		if len(splitServerFilter) != 2 ||
+			len(splitServerFilter[0]) == 0 ||
+			len(splitServerFilter[1]) == 0 {
 			return nil, errors.New("invalid server filter. Expected format: <server-name>.<namespace>")
 		}
+
 		serverFilter = &mapperclient.ServerFilter{
 			Name:      splitServerFilter[0],
 			Namespace: splitServerFilter[1],
