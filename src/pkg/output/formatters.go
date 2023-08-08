@@ -283,7 +283,7 @@ func FormatIntents(intents []cloudapi.Intent) {
 		}
 
 		switch lo.FromPtr(input.Type) {
-		case cloudapi.KAFKA:
+		case cloudapi.IntentTypeKAFKA:
 			if input.KafkaTopics == nil {
 				return []map[string]string{columnDataTemplate}
 			}
@@ -298,7 +298,7 @@ func FormatIntents(intents []cloudapi.Intent) {
 				}
 				return columnDataCopy
 			})
-		case cloudapi.HTTP:
+		case cloudapi.IntentTypeHTTP:
 			if input.HttpResources == nil {
 				return []map[string]string{columnDataTemplate}
 			}
