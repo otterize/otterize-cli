@@ -35,10 +35,25 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 	namespacesFilter := viper.GetStringSlice(NamespacesKey)
 	excludeServiceWithLabels := viper.GetStringSlice(mapperclient.MapperExcludeLabels)
 	withLabelsFilter := viper.IsSet(DistinctByLabelKey)
-	serverFilter := viper.GetString(ServerKey)
+	serverName := viper.GetString(ServerKey)
 
-	if serverFilter != "" && len(namespacesFilter) == 0 {
-		return nil, errors.New("when supplying --server, --namespaces must also be provided")
+	var serverFilter *mapperclient.ServerFilter
+	if viper.IsSet(ServerKey) {
+		if viper.IsSet(NamespacesKey) {
+			return nil, errors.New("server filter cannot be used with namespaces filter")
+		}
+
+		splitServerFilter := strings.Split(serverName, ".")
+		if len(splitServerFilter) != 2 ||
+			len(splitServerFilter[0]) == 0 ||
+			len(splitServerFilter[1]) == 0 {
+			return nil, errors.New("invalid server filter. Expected format: <server-name>.<namespace>")
+		}
+
+		serverFilter = &mapperclient.ServerFilter{
+			Name:      splitServerFilter[0],
+			Namespace: splitServerFilter[1],
+		}
 	}
 
 	var labelsFilter []string

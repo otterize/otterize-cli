@@ -38,12 +38,27 @@ const (
 	CredentialsOperatorComponentTypeNETWORKMAPPER       CredentialsOperatorComponentType = "NETWORK_MAPPER"
 )
 
+// Defines values for DatabaseConfigOperations.
+const (
+	DatabaseConfigOperationsALL    DatabaseConfigOperations = "ALL"
+	DatabaseConfigOperationsDELETE DatabaseConfigOperations = "DELETE"
+	DatabaseConfigOperationsINSERT DatabaseConfigOperations = "INSERT"
+	DatabaseConfigOperationsSELECT DatabaseConfigOperations = "SELECT"
+	DatabaseConfigOperationsUPDATE DatabaseConfigOperations = "UPDATE"
+)
+
+// Defines values for DatabaseInfoDatabaseType.
+const (
+	POSTGRESQL DatabaseInfoDatabaseType = "POSTGRESQL"
+)
+
 // Defines values for EdgeAccessStatusReason.
 const (
 	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTS                                    EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS"
 	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSHTTPOVERLYPERMISSIVE                EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE"
 	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSKAFKAOVERLYPERMISSIVE               EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE"
 	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE                    EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonALLOWEDBYEXTERNALTRAFFICNETWORKPOLICY                      EdgeAccessStatusReason = "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY"
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSHTTPRESOURCEMISMATCH                EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_HTTP_RESOURCE_MISMATCH"
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSHTTPUNDERPERMISSIVE                 EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE"
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSKAFKARESOURCEMISMATCH               EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_KAFKA_RESOURCE_MISMATCH"
@@ -61,6 +76,7 @@ const (
 	EdgeAccessStatusReasonMISSINGAPPLIEDINTENT                                       EdgeAccessStatusReason = "MISSING_APPLIED_INTENT"
 	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED                                EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
 	EdgeAccessStatusReasonNOINTENTSFOUNDOFRELEVANTTYPE                               EdgeAccessStatusReason = "NO_INTENTS_FOUND_OF_RELEVANT_TYPE"
+	EdgeAccessStatusReasonNOTINPROTECTEDSERVICES                                     EdgeAccessStatusReason = "NOT_IN_PROTECTED_SERVICES"
 	EdgeAccessStatusReasonSERVERISTIOSIDECARMISSING                                  EdgeAccessStatusReason = "SERVER_ISTIO_SIDECAR_MISSING"
 	EdgeAccessStatusReasonSHAREDSERVICEACCOUNT                                       EdgeAccessStatusReason = "SHARED_SERVICE_ACCOUNT"
 )
@@ -71,6 +87,7 @@ const (
 	EdgeAccessStatusReasonsALLOWEDBYAPPLIEDINTENTSHTTPOVERLYPERMISSIVE                EdgeAccessStatusReasons = "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE"
 	EdgeAccessStatusReasonsALLOWEDBYAPPLIEDINTENTSKAFKAOVERLYPERMISSIVE               EdgeAccessStatusReasons = "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE"
 	EdgeAccessStatusReasonsALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE                    EdgeAccessStatusReasons = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonsALLOWEDBYEXTERNALTRAFFICNETWORKPOLICY                      EdgeAccessStatusReasons = "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY"
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSHTTPRESOURCEMISMATCH                EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_HTTP_RESOURCE_MISMATCH"
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSHTTPUNDERPERMISSIVE                 EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE"
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSKAFKARESOURCEMISMATCH               EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_KAFKA_RESOURCE_MISMATCH"
@@ -88,6 +105,7 @@ const (
 	EdgeAccessStatusReasonsMISSINGAPPLIEDINTENT                                       EdgeAccessStatusReasons = "MISSING_APPLIED_INTENT"
 	EdgeAccessStatusReasonsNETWORKMAPPERNEVERCONNECTED                                EdgeAccessStatusReasons = "NETWORK_MAPPER_NEVER_CONNECTED"
 	EdgeAccessStatusReasonsNOINTENTSFOUNDOFRELEVANTTYPE                               EdgeAccessStatusReasons = "NO_INTENTS_FOUND_OF_RELEVANT_TYPE"
+	EdgeAccessStatusReasonsNOTINPROTECTEDSERVICES                                     EdgeAccessStatusReasons = "NOT_IN_PROTECTED_SERVICES"
 	EdgeAccessStatusReasonsSERVERISTIOSIDECARMISSING                                  EdgeAccessStatusReasons = "SERVER_ISTIO_SIDECAR_MISSING"
 	EdgeAccessStatusReasonsSHAREDSERVICEACCOUNT                                       EdgeAccessStatusReasons = "SHARED_SERVICE_ACCOUNT"
 )
@@ -116,14 +134,16 @@ const (
 
 // Defines values for IntegrationType.
 const (
+	IntegrationTypeDATABASE   IntegrationType = "DATABASE"
 	IntegrationTypeGENERIC    IntegrationType = "GENERIC"
 	IntegrationTypeKUBERNETES IntegrationType = "KUBERNETES"
 )
 
 // Defines values for IntentType.
 const (
-	HTTP  IntentType = "HTTP"
-	KAFKA IntentType = "KAFKA"
+	IntentTypeDATABASE IntentType = "DATABASE"
+	IntentTypeHTTP     IntentType = "HTTP"
+	IntentTypeKAFKA    IntentType = "KAFKA"
 )
 
 // Defines values for IntentsOperatorComponentType.
@@ -141,17 +161,17 @@ const (
 
 // Defines values for KafkaConfigOperations.
 const (
-	KafkaConfigOperationsALL             KafkaConfigOperations = "ALL"
-	KafkaConfigOperationsALTER           KafkaConfigOperations = "ALTER"
-	KafkaConfigOperationsALTERCONFIGS    KafkaConfigOperations = "ALTER_CONFIGS"
-	KafkaConfigOperationsCLUSTERACTION   KafkaConfigOperations = "CLUSTER_ACTION"
-	KafkaConfigOperationsCONSUME         KafkaConfigOperations = "CONSUME"
-	KafkaConfigOperationsCREATE          KafkaConfigOperations = "CREATE"
-	KafkaConfigOperationsDELETE          KafkaConfigOperations = "DELETE"
-	KafkaConfigOperationsDESCRIBE        KafkaConfigOperations = "DESCRIBE"
-	KafkaConfigOperationsDESCRIBECONFIGS KafkaConfigOperations = "DESCRIBE_CONFIGS"
-	KafkaConfigOperationsIDEMPOTENTWRITE KafkaConfigOperations = "IDEMPOTENT_WRITE"
-	KafkaConfigOperationsPRODUCE         KafkaConfigOperations = "PRODUCE"
+	ALL             KafkaConfigOperations = "ALL"
+	ALTER           KafkaConfigOperations = "ALTER"
+	ALTERCONFIGS    KafkaConfigOperations = "ALTER_CONFIGS"
+	CLUSTERACTION   KafkaConfigOperations = "CLUSTER_ACTION"
+	CONSUME         KafkaConfigOperations = "CONSUME"
+	CREATE          KafkaConfigOperations = "CREATE"
+	DELETE          KafkaConfigOperations = "DELETE"
+	DESCRIBE        KafkaConfigOperations = "DESCRIBE"
+	DESCRIBECONFIGS KafkaConfigOperations = "DESCRIBE_CONFIGS"
+	IDEMPOTENTWRITE KafkaConfigOperations = "IDEMPOTENT_WRITE"
+	PRODUCE         KafkaConfigOperations = "PRODUCE"
 )
 
 // Defines values for KafkaTopicPattern.
@@ -211,14 +231,16 @@ const (
 
 // Defines values for OneIntegrationQueryParamsIntegrationType.
 const (
+	OneIntegrationQueryParamsIntegrationTypeDATABASE   OneIntegrationQueryParamsIntegrationType = "DATABASE"
 	OneIntegrationQueryParamsIntegrationTypeGENERIC    OneIntegrationQueryParamsIntegrationType = "GENERIC"
 	OneIntegrationQueryParamsIntegrationTypeKUBERNETES OneIntegrationQueryParamsIntegrationType = "KUBERNETES"
 )
 
 // Defines values for IntegrationsQueryParamsIntegrationType.
 const (
-	GENERIC    IntegrationsQueryParamsIntegrationType = "GENERIC"
-	KUBERNETES IntegrationsQueryParamsIntegrationType = "KUBERNETES"
+	IntegrationsQueryParamsIntegrationTypeDATABASE   IntegrationsQueryParamsIntegrationType = "DATABASE"
+	IntegrationsQueryParamsIntegrationTypeGENERIC    IntegrationsQueryParamsIntegrationType = "GENERIC"
+	IntegrationsQueryParamsIntegrationTypeKUBERNETES IntegrationsQueryParamsIntegrationType = "KUBERNETES"
 )
 
 // Defines values for OneInviteQueryParamsStatus.
@@ -280,6 +302,7 @@ type CertificateInformation struct {
 type Cluster struct {
 	Components         IntegrationComponents `json:"components"`
 	Configuration      *ClusterConfiguration `json:"configuration,omitempty"`
+	CreatedAt          time.Time             `json:"createdAt"`
 	DefaultEnvironment *struct {
 		Id string `json:"id"`
 	} `json:"defaultEnvironment,omitempty"`
@@ -329,6 +352,32 @@ type CredentialsOperatorComponent struct {
 
 // CredentialsOperatorComponentType defines model for CredentialsOperatorComponent.Type.
 type CredentialsOperatorComponentType string
+
+// DatabaseConfig defines model for DatabaseConfig.
+type DatabaseConfig struct {
+	Operations *[]DatabaseConfigOperations `json:"operations,omitempty"`
+	Table      string                      `json:"table"`
+}
+
+// DatabaseConfigOperations defines model for DatabaseConfig.Operations.
+type DatabaseConfigOperations string
+
+// DatabaseCredentials defines model for DatabaseCredentials.
+type DatabaseCredentials struct {
+	Password string `json:"password"`
+	Username string `json:"username"`
+}
+
+// DatabaseInfo defines model for DatabaseInfo.
+type DatabaseInfo struct {
+	Address      string                    `json:"address"`
+	Credentials  DatabaseCredentials       `json:"credentials"`
+	DatabaseType *DatabaseInfoDatabaseType `json:"databaseType,omitempty"`
+	Name         string                    `json:"name"`
+}
+
+// DatabaseInfoDatabaseType defines model for DatabaseInfo.DatabaseType.
+type DatabaseInfoDatabaseType string
 
 // EdgeAccessStatus defines model for EdgeAccessStatus.
 type EdgeAccessStatus struct {
@@ -392,6 +441,7 @@ type Integration struct {
 	} `json:"cluster,omitempty"`
 	Components         *IntegrationComponents `json:"components,omitempty"`
 	Credentials        IntegrationCredentials `json:"credentials"`
+	DatabaseInfo       *DatabaseInfo          `json:"databaseInfo,omitempty"`
 	DefaultEnvironment *struct {
 		Id string `json:"id"`
 	} `json:"defaultEnvironment,omitempty"`
@@ -421,10 +471,11 @@ type Intent struct {
 	Client struct {
 		Id string `json:"id"`
 	} `json:"client"`
-	HttpResources *[]HTTPConfig  `json:"httpResources,omitempty"`
-	Id            string         `json:"id"`
-	KafkaTopics   *[]KafkaConfig `json:"kafkaTopics,omitempty"`
-	Server        struct {
+	DatabaseResources *[]DatabaseConfig `json:"databaseResources,omitempty"`
+	HttpResources     *[]HTTPConfig     `json:"httpResources,omitempty"`
+	Id                string            `json:"id"`
+	KafkaTopics       *[]KafkaConfig    `json:"kafkaTopics,omitempty"`
+	Server            struct {
 		Id string `json:"id"`
 	} `json:"server"`
 	Status *IntentStatus `json:"status,omitempty"`
@@ -458,6 +509,10 @@ type IntentsOperatorConfiguration struct {
 	IstioPolicyEnforcementEnabled   bool `json:"istioPolicyEnforcementEnabled"`
 	KafkaACLEnforcementEnabled      bool `json:"kafkaACLEnforcementEnabled"`
 	NetworkPolicyEnforcementEnabled bool `json:"networkPolicyEnforcementEnabled"`
+	ProtectedServices               []struct {
+		Id string `json:"id"`
+	} `json:"protectedServices"`
+	ProtectedServicesEnabled bool `json:"protectedServicesEnabled"`
 }
 
 // Invite defines model for Invite.

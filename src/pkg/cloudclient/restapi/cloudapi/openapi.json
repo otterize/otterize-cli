@@ -245,6 +245,10 @@
           "configuration": {
             "$ref": "#/components/schemas/ClusterConfiguration"
           },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
           "defaultEnvironment": {
             "properties": {
               "id": {
@@ -297,7 +301,8 @@
           "name",
           "namespaces",
           "serviceCount",
-          "components"
+          "components",
+          "createdAt"
         ],
         "type": "object"
       },
@@ -392,6 +397,70 @@
         ],
         "type": "object"
       },
+      "DatabaseConfig": {
+        "properties": {
+          "operations": {
+            "items": {
+              "enum": [
+                "ALL",
+                "SELECT",
+                "INSERT",
+                "UPDATE",
+                "DELETE"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "table": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "table"
+        ],
+        "type": "object"
+      },
+      "DatabaseCredentials": {
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "DatabaseInfo": {
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "credentials": {
+            "$ref": "#/components/schemas/DatabaseCredentials"
+          },
+          "databaseType": {
+            "enum": [
+              "POSTGRESQL"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "address",
+          "credentials"
+        ],
+        "type": "object"
+      },
       "EdgeAccessStatus": {
         "properties": {
           "reason": {
@@ -400,6 +469,7 @@
               "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE",
               "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE",
               "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
+              "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
               "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
               "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
               "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE",
@@ -415,6 +485,7 @@
               "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT",
               "INTENTS_OPERATOR_NOT_ENFORCING_KAFKA_INTENTS_NOT_REQUIRED_FOR_TOPIC",
               "MISSING_APPLIED_INTENT",
+              "NOT_IN_PROTECTED_SERVICES",
               "INTENTS_OPERATOR_NEVER_CONNECTED",
               "NETWORK_MAPPER_NEVER_CONNECTED",
               "NO_INTENTS_FOUND_OF_RELEVANT_TYPE",
@@ -429,6 +500,7 @@
                 "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE",
                 "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE",
                 "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
+                "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
                 "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
                 "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
                 "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE",
@@ -444,6 +516,7 @@
                 "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT",
                 "INTENTS_OPERATOR_NOT_ENFORCING_KAFKA_INTENTS_NOT_REQUIRED_FOR_TOPIC",
                 "MISSING_APPLIED_INTENT",
+                "NOT_IN_PROTECTED_SERVICES",
                 "INTENTS_OPERATOR_NEVER_CONNECTED",
                 "NETWORK_MAPPER_NEVER_CONNECTED",
                 "NO_INTENTS_FOUND_OF_RELEVANT_TYPE",
@@ -635,6 +708,9 @@
           "credentials": {
             "$ref": "#/components/schemas/IntegrationCredentials"
           },
+          "databaseInfo": {
+            "$ref": "#/components/schemas/DatabaseInfo"
+          },
           "defaultEnvironment": {
             "properties": {
               "id": {
@@ -655,7 +731,8 @@
           "type": {
             "enum": [
               "GENERIC",
-              "KUBERNETES"
+              "KUBERNETES",
+              "DATABASE"
             ],
             "type": "string"
           }
@@ -715,6 +792,12 @@
             ],
             "type": "object"
           },
+          "databaseResources": {
+            "items": {
+              "$ref": "#/components/schemas/DatabaseConfig"
+            },
+            "type": "array"
+          },
           "httpResources": {
             "items": {
               "$ref": "#/components/schemas/HTTPConfig"
@@ -747,7 +830,8 @@
           "type": {
             "enum": [
               "HTTP",
-              "KAFKA"
+              "KAFKA",
+              "DATABASE"
             ],
             "type": "string"
           }
@@ -818,13 +902,32 @@
           },
           "networkPolicyEnforcementEnabled": {
             "type": "boolean"
+          },
+          "protectedServices": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "protectedServicesEnabled": {
+            "type": "boolean"
           }
         },
         "required": [
           "globalEnforcementEnabled",
           "networkPolicyEnforcementEnabled",
           "kafkaACLEnforcementEnabled",
-          "istioPolicyEnforcementEnabled"
+          "istioPolicyEnforcementEnabled",
+          "protectedServicesEnabled",
+          "protectedServices"
         ],
         "type": "object"
       },
@@ -1358,7 +1461,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "731552bf5d105d0858240cbbf05f2fe035744caf"
+    "x-revision": "713e94ff0b7b581228da60ee90a31fd63f204a46"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -2366,7 +2469,8 @@
             "schema": {
               "enum": [
                 "GENERIC",
-                "KUBERNETES"
+                "KUBERNETES",
+                "DATABASE"
               ],
               "type": "string"
             }
@@ -2470,7 +2574,8 @@
             "schema": {
               "enum": [
                 "GENERIC",
-                "KUBERNETES"
+                "KUBERNETES",
+                "DATABASE"
               ],
               "type": "string"
             }
