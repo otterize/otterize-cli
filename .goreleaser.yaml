@@ -141,8 +141,6 @@ brews:
       owner: otterize
       name: homebrew-otterize
 
-    skip_upload: true
-
     url_template: "https://get.otterize.com/{{ .ProjectName }}/{{ .Tag }}/{{ .ArtifactName }}"
 
     # Git author used to commit to the repository.
