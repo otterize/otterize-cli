@@ -146,14 +146,6 @@ jobs:
       - name: Update Homebrew formula
         run: |-
           cd ./homebrew-otterize
-          ARMSHAORIG=`sha256sum ../dist/darwin/otterize_macOS_arm64.zip | cut -f1 -d ' '`
-          ARMSHANOTARIZED=`sha256sum ../dist/darwin/macos-arm_darwin_arm64/otterize_macOS_arm64_notarized.zip | cut -f1 -d ' '`
-          AMDSHAORIG=`sha256sum ../dist/darwin/otterize_macOS_x86_64.zip | cut -f1 -d ' '`
-          AMDSHANOTARIZED=`sha256sum ../dist/darwin/macos-amd_darwin_amd64_v1/otterize_macOS_x86_64_notarized.zip | cut -f1 -d ' '`
-          sed -i.bak 's/macOS_arm64.zip/macOS_arm64_notarized.zip/' ../dist/otterize-cli.rb
-          sed -i.bak 's/macOS_x86_64.zip/macOS_x86_64_notarized.zip/' ../dist/otterize-cli.rb
-          sed -i.bak "s/$ARMSHAORIG/$ARMSHANOTARIZED/" ../dist/otterize-cli.rb
-          sed -i.bak "s/$AMDSHAORIG/$AMDSHANOTARIZED/" ../dist/otterize-cli.rb
           cp -f ../dist/otterize-cli.rb ./Formula/otterize-cli.rb
           git config --global user.name "otterizebot"
           git config --global user.email "otterizebot@users.noreply.github.com"
