@@ -1,0 +1,48 @@
+name: Build
+concurrency:
+  group: "${{ github.repository }}${{ github.ref }}forkbuild"
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    name: Build
+    if: github.event.pull_request.head.repo.full_name != 'otterize/otterize-cli'
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.0'
+
+      - name: Install dependencies
+        if: matrix.os == 'macos-latest'
+        run: |-
+          brew install coreutils
+
+      - name: Install dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |-
+          sudo apt install -y coreutils
+
+      - run: go build -o fork ./src/cmd
+        env:
+          CGO_ENABLED: "1"
