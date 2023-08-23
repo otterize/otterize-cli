@@ -16,7 +16,7 @@ on:
 jobs:
   build:
     name: Build
-    if: github.repository == 'otterize/otterize-cli'
+    if: github.event.pull_request.head.repo.full_name == 'otterize/otterize-cli'
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
