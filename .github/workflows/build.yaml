@@ -16,6 +16,7 @@ on:
 jobs:
   build:
     name: Build
+    if: github.repository == 'otterize/otterize-cli'
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -27,7 +28,6 @@ jobs:
         with:
           fetch-depth: 1
           submodules: recursive
-          token: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }} # remove when the graphql schema repo becomes public
 
       - uses: actions/setup-go@v3
         with:
