@@ -3,8 +3,14 @@ package portforwarder
 import (
 	"context"
 	"fmt"
-	"github.com/spf13/cobra"
 	"io"
+	"net/http"
+	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/spf13/cobra"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/runtime"
@@ -13,11 +19,6 @@ import (
 	"k8s.io/client-go/tools/portforward"
 	"k8s.io/client-go/transport/spdy"
 	"k8s.io/client-go/util/homedir"
-	"net/http"
-	"net/url"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 type PortForwarder struct {
@@ -62,7 +63,7 @@ func (p *PortForwarder) Start(ctx context.Context) (localPort int, err error) {
 	path := fmt.Sprintf("/api/v1/namespaces/%s/pods/%s/portforward",
 		p.namespace, mapperPod.Name)
 	hostIP := strings.TrimPrefix(config.Host, "https://")
-
+	hostIP = strings.TrimSuffix(hostIP, "/")
 	transport, upgrader, err := spdy.RoundTripperFor(config)
 	if err != nil {
 		return 0, err
