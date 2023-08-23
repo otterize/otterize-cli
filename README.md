@@ -81,3 +81,4 @@ To **disable** sending usage information:
 If the `telemetry` flag is omitted or set to `true`, telemetry will be enabled: usage information will be reported.
 
 Read more about it in the [Usage telemetry Documentation](https://docs.otterize.com/otterize-oss/usage-telemetry)
+test
