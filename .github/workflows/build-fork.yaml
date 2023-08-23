@@ -43,6 +43,6 @@ jobs:
         run: |-
           sudo apt install -y coreutils
 
-      - run: go build -o fork ./src/src
+      - run: go build -o fork ./src/cmd
         env:
           CGO_ENABLED: "1"
