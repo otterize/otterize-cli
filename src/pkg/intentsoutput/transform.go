@@ -181,6 +181,8 @@ func mapperKafkaOperationToAPI(operation mapperclient.KafkaOperation) v1alpha2.K
 		return v1alpha2.KafkaOperationIdempotentWrite
 	case mapperclient.KafkaOperationAlterConfigs:
 		return v1alpha2.KafkaOperationAlterConfigs
+	case mapperclient.KafkaOperationDescribeConfigs:
+		return v1alpha2.KafkaOperationDescribeConfigs
 	default:
 		panic("should never happen")
 	}
