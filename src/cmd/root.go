@@ -7,7 +7,6 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/environments"
 	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/otterize/otterize-cli/src/cmd/integrations"
-	"github.com/otterize/otterize-cli/src/cmd/intents"
 	"github.com/otterize/otterize-cli/src/cmd/invites"
 	"github.com/otterize/otterize-cli/src/cmd/login"
 	"github.com/otterize/otterize-cli/src/cmd/namespaces"
@@ -126,7 +125,6 @@ func init() {
 	RootCmd.AddGroup(groups.ResourcesGroup)
 	RootCmd.AddCommand(environments.EnvironmentsCmd)
 	RootCmd.AddCommand(integrations.IntegrationsCmd)
-	RootCmd.AddCommand(intents.IntentsCmd)
 	RootCmd.AddCommand(services.ServicesCmd)
 	RootCmd.AddCommand(clusters.ClustersCmd)
 	RootCmd.AddCommand(namespaces.NamespacesCmd)
