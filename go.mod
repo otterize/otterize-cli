@@ -11,7 +11,6 @@ require (
 	github.com/deepmap/oapi-codegen v1.12.4
 	github.com/getkin/kin-openapi v0.107.0
 	github.com/goccy/go-graphviz v0.1.0
-	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/markkurossi/tabulate v0.0.0-20211112080948-67dabd3f2db2
