@@ -87,17 +87,19 @@ func sortIntents(intents []v1alpha2.ClientIntents) {
 	}
 }
 
-func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent, distinctByLabelKey string) []v1alpha2.ClientIntents {
+func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent, distinctByLabelKey string, exportKubernetesService bool) []v1alpha2.ClientIntents {
 	apiIntentsByClientService := make(map[ServiceKey]v1alpha2.ClientIntents, 0)
 	for _, mapperIntent := range mapperIntents {
 		clientServiceKey := getServiceKey(mapperIntent, distinctByLabelKey)
+		serviceName := mapperIntent.Server.Name
+		if exportKubernetesService && len(mapperIntent.Server.KubernetesService) != 0 {
+			serviceName = fmt.Sprintf("svc:%s", mapperIntent.Server.KubernetesService)
+		}
+		if mapperIntent.Server.Namespace != mapperIntent.Client.Namespace {
+			serviceName = fmt.Sprintf("%s.%s", serviceName, mapperIntent.Server.Namespace)
+		}
 		apiIntent := v1alpha2.Intent{
-			Name: lo.Ternary(
-				// For a simpler output we explicitly mention server namespace only when it's outside of client namespace
-				mapperIntent.Server.Namespace == mapperIntent.Client.Namespace,
-				mapperIntent.Server.Name,
-				fmt.Sprintf("%s.%s", mapperIntent.Server.Name, mapperIntent.Server.Namespace),
-			),
+			Name: serviceName,
 			Type: mapperIntentTypeToAPI(mapperIntent.Type),
 			Topics: lo.Map(mapperIntent.KafkaTopics, func(mapperTopic mapperclient.IntentsIntentsIntentKafkaTopicsKafkaConfig, _ int) v1alpha2.KafkaTopic {
 				return v1alpha2.KafkaTopic{
