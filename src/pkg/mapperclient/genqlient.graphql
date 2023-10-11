@@ -24,6 +24,7 @@ fragment LabelsFragment on OtterizeServiceIdentity {
 fragment NamespacedNameWithLabelsFragment on OtterizeServiceIdentity {
     ...NamespacedNameFragment
     ...LabelsFragment
+    kubernetesService
 }
 
 

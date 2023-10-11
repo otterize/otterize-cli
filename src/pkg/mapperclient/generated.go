@@ -67,6 +67,11 @@ type IntentsIntentsIntentClientOtterizeServiceIdentity struct {
 	NamespacedNameWithLabelsFragment `json:"-"`
 }
 
+// GetKubernetesService returns IntentsIntentsIntentClientOtterizeServiceIdentity.KubernetesService, and is useful for accessing the field via an interface.
+func (v *IntentsIntentsIntentClientOtterizeServiceIdentity) GetKubernetesService() string {
+	return v.NamespacedNameWithLabelsFragment.KubernetesService
+}
+
 // GetName returns IntentsIntentsIntentClientOtterizeServiceIdentity.Name, and is useful for accessing the field via an interface.
 func (v *IntentsIntentsIntentClientOtterizeServiceIdentity) GetName() string {
 	return v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Name
@@ -108,6 +113,8 @@ func (v *IntentsIntentsIntentClientOtterizeServiceIdentity) UnmarshalJSON(b []by
 }
 
 type __premarshalIntentsIntentsIntentClientOtterizeServiceIdentity struct {
+	KubernetesService string `json:"kubernetesService"`
+
 	Name string `json:"name"`
 
 	Namespace string `json:"namespace"`
@@ -126,6 +133,7 @@ func (v *IntentsIntentsIntentClientOtterizeServiceIdentity) MarshalJSON() ([]byt
 func (v *IntentsIntentsIntentClientOtterizeServiceIdentity) __premarshalJSON() (*__premarshalIntentsIntentsIntentClientOtterizeServiceIdentity, error) {
 	var retval __premarshalIntentsIntentsIntentClientOtterizeServiceIdentity
 
+	retval.KubernetesService = v.NamespacedNameWithLabelsFragment.KubernetesService
 	retval.Name = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Name
 	retval.Namespace = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Namespace
 	retval.Labels = v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
@@ -161,6 +169,11 @@ func (v *IntentsIntentsIntentKafkaTopicsKafkaConfig) GetOperations() []KafkaOper
 // IntentsIntentsIntentServerOtterizeServiceIdentity includes the requested fields of the GraphQL type OtterizeServiceIdentity.
 type IntentsIntentsIntentServerOtterizeServiceIdentity struct {
 	NamespacedNameWithLabelsFragment `json:"-"`
+}
+
+// GetKubernetesService returns IntentsIntentsIntentServerOtterizeServiceIdentity.KubernetesService, and is useful for accessing the field via an interface.
+func (v *IntentsIntentsIntentServerOtterizeServiceIdentity) GetKubernetesService() string {
+	return v.NamespacedNameWithLabelsFragment.KubernetesService
 }
 
 // GetName returns IntentsIntentsIntentServerOtterizeServiceIdentity.Name, and is useful for accessing the field via an interface.
@@ -204,6 +217,8 @@ func (v *IntentsIntentsIntentServerOtterizeServiceIdentity) UnmarshalJSON(b []by
 }
 
 type __premarshalIntentsIntentsIntentServerOtterizeServiceIdentity struct {
+	KubernetesService string `json:"kubernetesService"`
+
 	Name string `json:"name"`
 
 	Namespace string `json:"namespace"`
@@ -222,6 +237,7 @@ func (v *IntentsIntentsIntentServerOtterizeServiceIdentity) MarshalJSON() ([]byt
 func (v *IntentsIntentsIntentServerOtterizeServiceIdentity) __premarshalJSON() (*__premarshalIntentsIntentsIntentServerOtterizeServiceIdentity, error) {
 	var retval __premarshalIntentsIntentsIntentServerOtterizeServiceIdentity
 
+	retval.KubernetesService = v.NamespacedNameWithLabelsFragment.KubernetesService
 	retval.Name = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Name
 	retval.Namespace = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Namespace
 	retval.Labels = v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
@@ -293,7 +309,12 @@ func (v *NamespacedNameFragment) GetNamespace() string { return v.Namespace }
 type NamespacedNameWithLabelsFragment struct {
 	NamespacedNameFragment `json:"-"`
 	LabelsFragment         `json:"-"`
+	// If the service identity was resolved from a Kubernetes service, its name.
+	KubernetesService string `json:"kubernetesService"`
 }
+
+// GetKubernetesService returns NamespacedNameWithLabelsFragment.KubernetesService, and is useful for accessing the field via an interface.
+func (v *NamespacedNameWithLabelsFragment) GetKubernetesService() string { return v.KubernetesService }
 
 // GetName returns NamespacedNameWithLabelsFragment.Name, and is useful for accessing the field via an interface.
 func (v *NamespacedNameWithLabelsFragment) GetName() string { return v.NamespacedNameFragment.Name }
@@ -339,6 +360,8 @@ func (v *NamespacedNameWithLabelsFragment) UnmarshalJSON(b []byte) error {
 }
 
 type __premarshalNamespacedNameWithLabelsFragment struct {
+	KubernetesService string `json:"kubernetesService"`
+
 	Name string `json:"name"`
 
 	Namespace string `json:"namespace"`
@@ -357,6 +380,7 @@ func (v *NamespacedNameWithLabelsFragment) MarshalJSON() ([]byte, error) {
 func (v *NamespacedNameWithLabelsFragment) __premarshalJSON() (*__premarshalNamespacedNameWithLabelsFragment, error) {
 	var retval __premarshalNamespacedNameWithLabelsFragment
 
+	retval.KubernetesService = v.KubernetesService
 	retval.Name = v.NamespacedNameFragment.Name
 	retval.Namespace = v.NamespacedNameFragment.Namespace
 	retval.Labels = v.LabelsFragment.Labels
@@ -573,6 +597,11 @@ type ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity struct 
 	NamespacedNameWithLabelsFragment `json:"-"`
 }
 
+// GetKubernetesService returns ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity.KubernetesService, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) GetKubernetesService() string {
+	return v.NamespacedNameWithLabelsFragment.KubernetesService
+}
+
 // GetName returns ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity.Name, and is useful for accessing the field via an interface.
 func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) GetName() string {
 	return v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Name
@@ -614,6 +643,8 @@ func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) Un
 }
 
 type __premarshalServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity struct {
+	KubernetesService string `json:"kubernetesService"`
+
 	Name string `json:"name"`
 
 	Namespace string `json:"namespace"`
@@ -632,6 +663,7 @@ func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) Ma
 func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) __premarshalJSON() (*__premarshalServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity, error) {
 	var retval __premarshalServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity
 
+	retval.KubernetesService = v.NamespacedNameWithLabelsFragment.KubernetesService
 	retval.Name = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Name
 	retval.Namespace = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Namespace
 	retval.Labels = v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
@@ -641,6 +673,11 @@ func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) __
 // ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity includes the requested fields of the GraphQL type OtterizeServiceIdentity.
 type ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity struct {
 	NamespacedNameWithLabelsFragment `json:"-"`
+}
+
+// GetKubernetesService returns ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity.KubernetesService, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) GetKubernetesService() string {
+	return v.NamespacedNameWithLabelsFragment.KubernetesService
 }
 
 // GetName returns ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity.Name, and is useful for accessing the field via an interface.
@@ -684,6 +721,8 @@ func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) U
 }
 
 type __premarshalServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity struct {
+	KubernetesService string `json:"kubernetesService"`
+
 	Name string `json:"name"`
 
 	Namespace string `json:"namespace"`
@@ -702,6 +741,7 @@ func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) M
 func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) __premarshalJSON() (*__premarshalServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity, error) {
 	var retval __premarshalServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity
 
+	retval.KubernetesService = v.NamespacedNameWithLabelsFragment.KubernetesService
 	retval.Name = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Name
 	retval.Namespace = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Namespace
 	retval.Labels = v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
@@ -781,6 +821,7 @@ query Intents ($namespaces: [String!], $includedLabels: [String!], $excludeServi
 fragment NamespacedNameWithLabelsFragment on OtterizeServiceIdentity {
 	... NamespacedNameFragment
 	... LabelsFragment
+	kubernetesService
 }
 fragment NamespacedNameFragment on OtterizeServiceIdentity {
 	name
@@ -903,6 +944,7 @@ query ServiceIntentsWithLabels ($namespaces: [String!], $includedLabels: [String
 fragment NamespacedNameWithLabelsFragment on OtterizeServiceIdentity {
 	... NamespacedNameFragment
 	... LabelsFragment
+	kubernetesService
 }
 fragment NamespacedNameFragment on OtterizeServiceIdentity {
 	name
