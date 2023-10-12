@@ -16,7 +16,7 @@ on:
 jobs:
   build:
     name: Build
-    if: github.event.pull_request.user.login != 'dependabot[bot]' && (github.event_name == 'push' && github.repository == 'otterize/otterize-cli') || github.event.pull_request.head.repo.full_name == 'otterize/otterize-cli'
+    if: github.event.pull_request.user.login != 'dependabot[bot]' && ((github.event_name == 'push' && github.repository == 'otterize/otterize-cli') || github.event.pull_request.head.repo.full_name == 'otterize/otterize-cli')
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
