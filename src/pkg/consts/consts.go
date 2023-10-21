@@ -1,4 +1,4 @@
 package consts
 
 const IntentsKind = "ClientIntents"
-const IntentsAPIVersion = "k8s.otterize.com/v1alpha2"
+const IntentsAPIVersion = "k8s.otterize.com/v1alpha3"
