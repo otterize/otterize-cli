@@ -29,7 +29,7 @@ spec:
       type: {{ $intent.Type }}
 {{- end -}}
 {{- if $intent.Topics }}
-      topics:
+      kafkaTopics:
 {{- range $topic := $intent.Topics }}
         - name: {{ $topic.Name }}
 {{- if $topic.Operations }}
@@ -41,7 +41,7 @@ spec:
 {{- end -}}
 {{- end -}}
 {{- if $intent.HTTPResources }}
-      resources:
+      HTTPResources:
 {{- range $resource := $intent.HTTPResources }}
         - path: {{ $resource.Path }}
 {{- if $resource.Methods }}
