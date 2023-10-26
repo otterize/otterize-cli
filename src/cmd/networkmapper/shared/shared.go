@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/amit7itz/goset"
-	"github.com/otterize/intents-operator/src/operator/api/v1alpha2"
+	"github.com/otterize/intents-operator/src/operator/api/v1alpha3"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/output"
@@ -31,7 +31,7 @@ func InitMapperQueryFlags(cmd *cobra.Command) {
 	cmd.Flags().Bool(ExportKubernetesServiceKey, false, "(EXPERIMENTAL) Export Kubernetes service name instead of Otterize service name, when detected connection is to Kubernetes service instead of pod.")
 }
 
-func QueryIntents() ([]v1alpha2.ClientIntents, error) {
+func QueryIntents() ([]v1alpha3.ClientIntents, error) {
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -82,22 +82,22 @@ func QueryIntents() ([]v1alpha2.ClientIntents, error) {
 
 	if len(mapperIntents) == 0 {
 		output.PrintStderr("No connections found.")
-		return []v1alpha2.ClientIntents{}, nil
+		return []v1alpha3.ClientIntents{}, nil
 	}
 
 	return intentsoutput.MapperIntentsToAPIIntents(mapperIntents, distinctByLabel, exportKubernetesService), nil
 }
 
-func RemoveExcludedServices(intents []v1alpha2.ClientIntents, excludedServices []string) []v1alpha2.ClientIntents {
+func RemoveExcludedServices(intents []v1alpha3.ClientIntents, excludedServices []string) []v1alpha3.ClientIntents {
 	excludedServicesSet := goset.FromSlice(excludedServices)
-	cleanIntents := make([]v1alpha2.ClientIntents, 0)
+	cleanIntents := make([]v1alpha3.ClientIntents, 0)
 
 	for _, intent := range intents {
 		if excludedServicesSet.Contains(intent.GetServiceName()) {
 			continue
 		}
 
-		calls := make([]v1alpha2.Intent, 0)
+		calls := make([]v1alpha3.Intent, 0)
 		for _, target := range intent.GetCallsList() {
 			namespacedName := strings.Split(target.Name, ".")
 			if excludedServicesSet.Contains(target.Name) || (len(namespacedName) == 2 && excludedServicesSet.Contains(namespacedName[0])) {
