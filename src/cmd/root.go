@@ -109,7 +109,6 @@ func init() {
 	RootCmd.PersistentFlags().String(config.OtterizeAPIAddressKey, config.OtterizeAPIAddressDefault, "Otterize API URL")
 	RootCmd.PersistentFlags().BoolP(config.QuietModeKey, config.QuietModeShorthand, config.QuietModeDefault, "Suppress prints")
 	RootCmd.PersistentFlags().Bool(config.DebugKey, config.DebugDefault, "Debug logs")
-	RootCmd.PersistentFlags().Bool(config.InteractiveModeKey, true, "Ask for missing flags interactively")
 	RootCmd.PersistentFlags().String(config.OutputFormatKey, config.OutputFormatDefault, "Output format - json/text/yaml")
 	RootCmd.PersistentFlags().Bool(config.NoHeadersKey, config.NoHeadersDefault, "Do not print headers")
 	RootCmd.PersistentFlags().Bool(config.TelemetryEnabledKey, config.TelemetryEnabledDefault, "Whether to enable anonymous usage telemetry to Otterize or not")
