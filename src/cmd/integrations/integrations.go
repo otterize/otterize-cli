@@ -7,6 +7,7 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/integrations/get"
 	"github.com/otterize/otterize-cli/src/cmd/integrations/list"
 	"github.com/otterize/otterize-cli/src/cmd/integrations/update"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
 	"github.com/spf13/cobra"
 )
 
@@ -18,6 +19,7 @@ var IntegrationsCmd = &cobra.Command{
 }
 
 func init() {
+	cloudclient.RegisterAPIFlags(IntegrationsCmd)
 	IntegrationsCmd.AddCommand(create.CreateIntegrationCmd)
 	IntegrationsCmd.AddCommand(delete.DeleteIntegrationCmd)
 	IntegrationsCmd.AddCommand(get.GetIntegrationCmd)

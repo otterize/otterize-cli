@@ -7,6 +7,7 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/environments/list"
 	"github.com/otterize/otterize-cli/src/cmd/environments/update"
 	"github.com/otterize/otterize-cli/src/cmd/groups"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
 	"github.com/spf13/cobra"
 )
 
@@ -18,6 +19,7 @@ var EnvironmentsCmd = &cobra.Command{
 }
 
 func init() {
+	cloudclient.RegisterAPIFlags(EnvironmentsCmd)
 	EnvironmentsCmd.AddCommand(create.CreateEnvCmd)
 	EnvironmentsCmd.AddCommand(delete.DeleteEnvCmd)
 	EnvironmentsCmd.AddCommand(get.GetEnvCmd)

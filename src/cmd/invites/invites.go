@@ -7,6 +7,7 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/invites/delete"
 	"github.com/otterize/otterize-cli/src/cmd/invites/get"
 	"github.com/otterize/otterize-cli/src/cmd/invites/list"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
 	"github.com/spf13/cobra"
 )
 
@@ -18,6 +19,7 @@ var InvitesCmd = &cobra.Command{
 }
 
 func init() {
+	cloudclient.RegisterAPIFlags(InvitesCmd)
 	InvitesCmd.AddCommand(accept.AcceptInviteCmd)
 	InvitesCmd.AddCommand(create.CreateInviteCmd)
 	InvitesCmd.AddCommand(delete.DeleteInviteCmd)
