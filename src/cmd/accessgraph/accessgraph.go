@@ -3,6 +3,7 @@ package accessgraph
 import (
 	"github.com/otterize/otterize-cli/src/cmd/accessgraph/get"
 	"github.com/otterize/otterize-cli/src/cmd/groups"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
 	"github.com/spf13/cobra"
 )
 
@@ -13,5 +14,6 @@ var AccessGraphCmd = &cobra.Command{
 }
 
 func init() {
+	cloudclient.RegisterAPIFlags(AccessGraphCmd)
 	AccessGraphCmd.AddCommand(get.GetAccessGraph)
 }

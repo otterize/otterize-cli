@@ -34,7 +34,6 @@ const OtterizeAPIAddressDefault = "https://app.otterize.com/api"
 const QuietModeKey = "quiet"
 const QuietModeShorthand = "q"
 const QuietModeDefault = false
-const InteractiveModeKey = "interactive"
 const DebugKey = "debug"
 const DebugDefault = false
 const OutputFormatKey = "format"

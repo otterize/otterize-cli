@@ -7,6 +7,7 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/organizations/list"
 	"github.com/otterize/otterize-cli/src/cmd/organizations/removeuser"
 	"github.com/otterize/otterize-cli/src/cmd/organizations/update"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
 	"github.com/spf13/cobra"
 )
 
@@ -18,6 +19,7 @@ var OrganizationsCmd = &cobra.Command{
 }
 
 func init() {
+	cloudclient.RegisterAPIFlags(OrganizationsCmd)
 	OrganizationsCmd.AddCommand(create.CreateOrganizationCmd)
 	OrganizationsCmd.AddCommand(get.GetOrganizationCmd)
 	OrganizationsCmd.AddCommand(list.ListOrganizationsCmd)

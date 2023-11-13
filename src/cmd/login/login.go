@@ -3,6 +3,7 @@ package login
 import (
 	"context"
 	"github.com/otterize/otterize-cli/src/cmd/groups"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/auth_api"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/server"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/login/userlogin"
@@ -73,6 +74,7 @@ var LoginCmd = &cobra.Command{
 }
 
 func init() {
+	cloudclient.RegisterAPIFlags(LoginCmd)
 	LoginCmd.Flags().Bool(SwitchAccountFlagKey, false, "Switch to a different user account")
 	LoginCmd.Flags().Bool(SwitchOrgFlagKey, false, "Switch to a different organization")
 }

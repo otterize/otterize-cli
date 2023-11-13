@@ -16,7 +16,7 @@ require (
 	github.com/markkurossi/tabulate v0.0.0-20211112080948-67dabd3f2db2
 	github.com/nfnt/resize v0.0.0-20160724205520-891127d8d1b5
 	github.com/oriser/regroup v0.0.0-20210730155327-fca8d7531263
-	github.com/otterize/intents-operator/src v0.0.0-20231021132601-56075c139a13
+	github.com/otterize/intents-operator/src v0.0.0-20231112133805-13e7e138e64e
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/samber/lo v1.33.0
 	github.com/sirupsen/logrus v1.8.1

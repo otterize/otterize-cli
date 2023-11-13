@@ -82,6 +82,85 @@
       }
     },
     "schemas": {
+      "AWSGeneralResource": {
+        "properties": {
+          "isWildcard": {
+            "type": "boolean"
+          },
+          "resource": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "resource",
+          "isWildcard"
+        ],
+        "type": "object"
+      },
+      "AWSInfo": {
+        "properties": {
+          "namespace": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "region",
+          "namespace"
+        ],
+        "type": "object"
+      },
+      "AWSInfoInput": {
+        "properties": {
+          "clusterId": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "clusterId",
+          "region",
+          "namespace"
+        ],
+        "type": "object"
+      },
+      "AWSResource": {
+        "properties": {
+          "info": {
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "GENERAL",
+              "S3"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "info"
+        ],
+        "type": "object"
+      },
+      "AWSS3Resource": {
+        "properties": {
+          "bucketName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bucketName"
+        ],
+        "type": "object"
+      },
       "AccessGraph": {
         "properties": {
           "clusters": {
@@ -106,12 +185,17 @@
               "$ref": "#/components/schemas/ServiceAccessGraph"
             },
             "type": "array"
+          },
+          "serviceCount": {
+            "format": "int32",
+            "type": "integer"
           }
         },
         "required": [
           "filter",
           "clusters",
-          "serviceAccessGraphs"
+          "serviceAccessGraphs",
+          "serviceCount"
         ],
         "type": "object"
       },
@@ -274,6 +358,20 @@
             ],
             "type": "object"
           },
+          "integrations": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
           "name": {
             "type": "string"
           },
@@ -301,6 +399,7 @@
           "name",
           "namespaces",
           "serviceCount",
+          "integrations",
           "components",
           "createdAt"
         ],
@@ -308,6 +407,9 @@
       },
       "ClusterConfiguration": {
         "properties": {
+          "clusterFormSettings": {
+            "$ref": "#/components/schemas/ClusterFormSettings"
+          },
           "globalDefaultDeny": {
             "type": "boolean"
           },
@@ -329,12 +431,16 @@
           "istioGlobalDefaultDeny",
           "useNetworkPoliciesInAccessGraphStates",
           "useIstioPoliciesInAccessGraphStates",
-          "useKafkaACLsInAccessGraphStates"
+          "useKafkaACLsInAccessGraphStates",
+          "clusterFormSettings"
         ],
         "type": "object"
       },
       "ClusterConfigurationInput": {
         "properties": {
+          "clusterFormSettings": {
+            "type": "object"
+          },
           "globalDefaultDeny": {
             "type": "boolean"
           },
@@ -354,6 +460,48 @@
         "required": [
           "globalDefaultDeny",
           "useNetworkPoliciesInAccessGraphStates"
+        ],
+        "type": "object"
+      },
+      "ClusterFormSettings": {
+        "properties": {
+          "certificateProvider": {
+            "enum": [
+              "SPIRE",
+              "CERT_MANAGER",
+              "CLOUD",
+              "NONE"
+            ],
+            "type": "string"
+          },
+          "enforcement": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "certificateProvider",
+          "enforcement"
+        ],
+        "type": "object"
+      },
+      "ClusterFormSettingsInput": {
+        "properties": {
+          "certificateProvider": {
+            "enum": [
+              "SPIRE",
+              "CERT_MANAGER",
+              "CLOUD",
+              "NONE"
+            ],
+            "type": "string"
+          },
+          "enforcement": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "certificateProvider",
+          "enforcement"
         ],
         "type": "object"
       },
@@ -421,28 +569,10 @@
         ],
         "type": "object"
       },
-      "DatabaseCredentials": {
-        "properties": {
-          "password": {
-            "type": "string"
-          },
-          "username": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "username",
-          "password"
-        ],
-        "type": "object"
-      },
       "DatabaseInfo": {
         "properties": {
           "address": {
             "type": "string"
-          },
-          "credentials": {
-            "$ref": "#/components/schemas/DatabaseCredentials"
           },
           "databaseType": {
             "enum": [
@@ -457,7 +587,7 @@
         "required": [
           "name",
           "address",
-          "credentials"
+          "databaseType"
         ],
         "type": "object"
       },
@@ -647,7 +777,7 @@
             "items": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             },
             "type": "array"
@@ -656,7 +786,7 @@
             "items": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             },
             "type": "array"
@@ -672,7 +802,7 @@
             "items": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             },
             "type": "array"
@@ -681,7 +811,7 @@
             "items": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             },
             "type": "array"
@@ -691,6 +821,9 @@
       },
       "Integration": {
         "properties": {
+          "awsInfo": {
+            "$ref": "#/components/schemas/AWSInfo"
+          },
           "cluster": {
             "properties": {
               "id": {
@@ -732,7 +865,8 @@
             "enum": [
               "GENERIC",
               "KUBERNETES",
-              "DATABASE"
+              "DATABASE",
+              "AWS"
             ],
             "type": "string"
           }
@@ -781,6 +915,12 @@
       },
       "Intent": {
         "properties": {
+          "awsActions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "client": {
             "properties": {
               "id": {
@@ -831,7 +971,9 @@
             "enum": [
               "HTTP",
               "KAFKA",
-              "DATABASE"
+              "DATABASE",
+              "AWS",
+              "S3"
             ],
             "type": "string"
           }
@@ -1078,9 +1220,9 @@
       "LabelInput": {
         "properties": {
           "key": {
-            "example": "label-key-1",
-            "format": "label-name",
-            "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+            "example": "label value",
+            "format": "non-empty",
+            "pattern": ".+",
             "type": "string"
           },
           "value": {
@@ -1254,7 +1396,9 @@
               "PROTECTED_BY_KAFKA_INTENTS_REQUIRED",
               "SERVER_HAS_KAFKASERVERCONFIG_NO_ENFORCEMENT",
               "SERVER_HAS_NO_KAFKA_SERVER_CONFIG",
-              "IGNORED_IN_CALCULATION"
+              "IGNORED_IN_CALCULATION",
+              "PROTECTED_BY_DATABASE_INTEGRATION",
+              "PROTECTED_BY_AWS_IAM_INTEGRATION"
             ],
             "type": "string"
           },
@@ -1294,6 +1438,9 @@
       },
       "Service": {
         "properties": {
+          "awsResource": {
+            "$ref": "#/components/schemas/AWSResource"
+          },
           "certificateInformation": {
             "$ref": "#/components/schemas/CertificateInformation"
           },
@@ -1359,10 +1506,23 @@
               "id"
             ],
             "type": "object"
+          },
+          "types": {
+            "items": {
+              "enum": [
+                "KUBERNETES",
+                "KAFKA",
+                "AWS",
+                "DATABASE"
+              ],
+              "type": "string"
+            },
+            "type": "array"
           }
         },
         "required": [
           "service",
+          "types",
           "accessStatus",
           "calls",
           "serves"
@@ -1461,7 +1621,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "713e94ff0b7b581228da60ee90a31fd63f204a46"
+    "x-revision": "d3e45693e17bd5c7f09108e2f5dd3ccb81bf5ca5"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -1726,7 +1886,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -1783,7 +1943,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -1840,7 +2000,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -2127,7 +2287,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -2184,7 +2344,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -2241,7 +2401,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -2323,7 +2483,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -2399,7 +2559,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -2408,9 +2568,9 @@
             "name": "key",
             "required": true,
             "schema": {
-              "example": "label-key-1",
-              "format": "label-name",
-              "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+              "example": "label value",
+              "format": "non-empty",
+              "pattern": ".+",
               "type": "string"
             }
           }
@@ -2470,7 +2630,8 @@
               "enum": [
                 "GENERIC",
                 "KUBERNETES",
-                "DATABASE"
+                "DATABASE",
+                "AWS"
               ],
               "type": "string"
             }
@@ -2482,7 +2643,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -2493,7 +2654,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -2575,7 +2736,8 @@
               "enum": [
                 "GENERIC",
                 "KUBERNETES",
-                "DATABASE"
+                "DATABASE",
+                "AWS"
               ],
               "type": "string"
             }
@@ -2587,7 +2749,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -2598,7 +2760,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -2643,6 +2805,156 @@
           }
         },
         "summary": "List integrations",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/integrations/aws": {
+      "patch": {
+        "description": "Update AWS integration",
+        "operationId": "updateAWSIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "awsIntegration": {
+                    "$ref": "#/components/schemas/AWSInfoInput"
+                  },
+                  "environmentId": {
+                    "example": "obj_12345",
+                    "format": "id",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+                    "type": "string"
+                  },
+                  "id": {
+                    "example": "obj_12345",
+                    "format": "id",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+                    "type": "string"
+                  },
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Update AWS integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Update AWS integration",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "description": "Create a new AWS integration",
+        "operationId": "createAWSIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "awsIntegration": {
+                    "$ref": "#/components/schemas/AWSInfoInput"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "awsIntegration"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Create a new AWS integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Create a new AWS integration",
         "tags": [
           "integrations"
         ]
@@ -2728,7 +3040,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -2806,13 +3118,13 @@
                   "clusterId": {
                     "example": "obj_12345",
                     "format": "id",
-                    "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
                     "type": "string"
                   },
                   "environmentId": {
                     "example": "obj_12345",
                     "format": "id",
-                    "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
                     "type": "string"
                   }
                 },
@@ -2878,7 +3190,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -2891,7 +3203,7 @@
                   "environmentId": {
                     "example": "obj_12345",
                     "format": "id",
-                    "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
                     "type": "string"
                   }
                 },
@@ -2954,7 +3266,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -3011,7 +3323,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -3055,149 +3367,6 @@
         "summary": "Get integration",
         "tags": [
           "integrations"
-        ]
-      }
-    },
-    "/intents": {
-      "get": {
-        "description": "List intents",
-        "operationId": "intents_query",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "environmentId",
-            "required": false,
-            "schema": {
-              "example": "obj_12345",
-              "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "clientId",
-            "required": false,
-            "schema": {
-              "example": "obj_12345",
-              "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "serverId",
-            "required": false,
-            "schema": {
-              "example": "obj_12345",
-              "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/Intent"
-                  },
-                  "type": "array"
-                }
-              }
-            },
-            "description": "List intents"
-          },
-          "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
-          },
-          "401": {
-            "$ref": "#/components/responses/UNAUTHENTICATED"
-          },
-          "403": {
-            "$ref": "#/components/responses/FORBIDDEN"
-          },
-          "404": {
-            "$ref": "#/components/responses/NOT_FOUND"
-          },
-          "409": {
-            "$ref": "#/components/responses/CONFLICT"
-          },
-          "422": {
-            "$ref": "#/components/responses/BAD_USER_INPUT"
-          },
-          "500": {
-            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
-          },
-          "default": {
-            "$ref": "#/components/responses/UNEXPECTED_ERROR"
-          }
-        },
-        "summary": "List intents",
-        "tags": [
-          "intents"
-        ]
-      }
-    },
-    "/intents/{id}": {
-      "get": {
-        "description": "Get intent",
-        "operationId": "intent_query",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "example": "obj_12345",
-              "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Intent"
-                }
-              }
-            },
-            "description": "Get intent"
-          },
-          "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
-          },
-          "401": {
-            "$ref": "#/components/responses/UNAUTHENTICATED"
-          },
-          "403": {
-            "$ref": "#/components/responses/FORBIDDEN"
-          },
-          "404": {
-            "$ref": "#/components/responses/NOT_FOUND"
-          },
-          "409": {
-            "$ref": "#/components/responses/CONFLICT"
-          },
-          "422": {
-            "$ref": "#/components/responses/BAD_USER_INPUT"
-          },
-          "500": {
-            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
-          },
-          "default": {
-            "$ref": "#/components/responses/UNEXPECTED_ERROR"
-          }
-        },
-        "summary": "Get intent",
-        "tags": [
-          "intents"
         ]
       }
     },
@@ -3418,7 +3587,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -3475,7 +3644,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -3532,7 +3701,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -3650,7 +3819,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -3661,7 +3830,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -3731,7 +3900,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -3742,7 +3911,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -3815,7 +3984,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -3874,7 +4043,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -3887,7 +4056,7 @@
                   "environmentId": {
                     "example": "obj_12345",
                     "format": "id",
-                    "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
                     "type": "string"
                   }
                 },
@@ -3998,6 +4167,9 @@
             "application/json": {
               "schema": {
                 "properties": {
+                  "name": {
+                    "type": "string"
+                  }
                 },
                 "type": "object"
               }
@@ -4058,7 +4230,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -4115,7 +4287,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -4195,7 +4367,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -4206,7 +4378,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -4265,7 +4437,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -4276,7 +4448,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -4346,7 +4518,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -4357,7 +4529,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           },
@@ -4430,7 +4602,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
@@ -4540,7 +4712,7 @@
             "schema": {
               "example": "obj_12345",
               "format": "id",
-              "pattern": "^[A-Za-z]+_[a-z0-9]+$",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
               "type": "string"
             }
           }
