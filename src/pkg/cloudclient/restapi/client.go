@@ -25,10 +25,10 @@ type Doer interface {
 }
 
 func NewClient(ctx context.Context) (*Client, error) {
-	return NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), auth.GetAPIToken(ctx))
+	return NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), auth.GetAPIToken(ctx), viper.GetString(config.ApiSelectedOrganizationId))
 }
 
-func NewClientFromToken(apiRoot string, token string) (*Client, error) {
+func NewClientFromToken(apiRoot string, token string, orgId string) (*Client, error) {
 	restApiURL := apiRoot + "/rest/v1beta"
 	bearerTokenProvider, err := securityprovider.NewSecurityProviderBearerToken(token)
 	if err != nil {
@@ -39,8 +39,8 @@ func NewClientFromToken(apiRoot string, token string) (*Client, error) {
 		restApiURL,
 		cloudapi.WithRequestEditorFn(bearerTokenProvider.Intercept),
 		cloudapi.WithRequestEditorFn(func(ctx context.Context, req *http.Request) error {
-			if viper.IsSet(config.ApiSelectedOrganizationId) {
-				req.Header.Set("X-Otterize-Organization", viper.GetString(config.ApiSelectedOrganizationId))
+			if orgId != "" {
+				req.Header.Set("X-Otterize-Organization", orgId)
 			}
 			return nil
 		}),
