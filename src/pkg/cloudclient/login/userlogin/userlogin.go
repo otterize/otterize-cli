@@ -23,7 +23,7 @@ type LoginContext struct {
 }
 
 func NewContext(apiAddress string, accessToken string) (*LoginContext, error) {
-	apiClient, err := restapi.NewClientFromToken(apiAddress, accessToken)
+	apiClient, err := restapi.NewClientFromToken(apiAddress, accessToken, "")
 	if err != nil {
 		return nil, err
 	}
