@@ -3,14 +3,8 @@ package portforwarder
 import (
 	"context"
 	"fmt"
-	"io"
-	"net/http"
-	"net/url"
-	"os"
-	"path/filepath"
-	"strings"
-
 	"github.com/spf13/cobra"
+	"io"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/runtime"
@@ -19,6 +13,10 @@ import (
 	"k8s.io/client-go/tools/portforward"
 	"k8s.io/client-go/transport/spdy"
 	"k8s.io/client-go/util/homedir"
+	"net/http"
+	"net/url"
+	"os"
+	"path/filepath"
 )
 
 type PortForwarder struct {
@@ -62,14 +60,19 @@ func (p *PortForwarder) Start(ctx context.Context) (localPort int, err error) {
 	mapperPod := podList.Items[0]
 	path := fmt.Sprintf("/api/v1/namespaces/%s/pods/%s/portforward",
 		p.namespace, mapperPod.Name)
-	hostIP := strings.TrimPrefix(config.Host, "https://")
-	hostIP = strings.TrimSuffix(hostIP, "/")
 	transport, upgrader, err := spdy.RoundTripperFor(config)
 	if err != nil {
 		return 0, err
 	}
 
-	dialer := spdy.NewDialer(upgrader, &http.Client{Transport: transport}, http.MethodPost, &url.URL{Scheme: "https", Path: path, Host: hostIP})
+	host, err := url.Parse(config.Host)
+	if err != nil {
+		return 0, err
+	}
+
+	requestUrl := host.JoinPath(path)
+
+	dialer := spdy.NewDialer(upgrader, &http.Client{Transport: transport}, http.MethodPost, requestUrl)
 	readyChan := make(chan struct{})
 
 	fw, err := portforward.New(dialer, []string{fmt.Sprintf("%d:%d", 0, p.servicePort)}, ctx.Done(), readyChan, io.Discard, os.Stderr)
