@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	AllIntegrationTypes = []cloudapi.IntegrationType{cloudapi.IntegrationTypeKUBERNETES, cloudapi.IntegrationTypeGENERIC}
+	AllIntegrationTypes = []cloudapi.IntegrationType{cloudapi.IntegrationTypeKUBERNETES, cloudapi.IntegrationTypeGENERIC, cloudapi.IntegrationTypeDATABASE}
 )
 
 func formatTypesSlice[T ~string](types []T) string {

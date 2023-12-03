@@ -20,6 +20,7 @@ import (
 
 const (
 	AccessTokenCookieScopes  = "accessTokenCookie.Scopes"
+	BearerAuthScopes         = "bearerAuth.Scopes"
 	Oauth2Scopes             = "oauth2.Scopes"
 	OrganizationHeaderScopes = "organizationHeader.Scopes"
 )
@@ -54,7 +55,12 @@ const (
 
 // Defines values for DatabaseInfoDatabaseType.
 const (
-	POSTGRESQL DatabaseInfoDatabaseType = "POSTGRESQL"
+	DatabaseInfoDatabaseTypePOSTGRESQL DatabaseInfoDatabaseType = "POSTGRESQL"
+)
+
+// Defines values for DatabaseInfoInputDatabaseType.
+const (
+	DatabaseInfoInputDatabaseTypePOSTGRESQL DatabaseInfoInputDatabaseType = "POSTGRESQL"
 )
 
 // Defines values for EdgeAccessStatusReason.
@@ -240,15 +246,19 @@ const (
 
 // AWSInfo defines model for AWSInfo.
 type AWSInfo struct {
-	Namespace string `json:"namespace"`
-	Region    string `json:"region"`
+	AwsAccountId   string `json:"awsAccountId"`
+	EksClusterName string `json:"eksClusterName"`
+	Namespace      string `json:"namespace"`
+	Region         string `json:"region"`
 }
 
 // AWSInfoInput defines model for AWSInfoInput.
 type AWSInfoInput struct {
-	ClusterId string `json:"clusterId"`
-	Namespace string `json:"namespace"`
-	Region    string `json:"region"`
+	AwsAccountId   string `json:"awsAccountId"`
+	ClusterId      string `json:"clusterId"`
+	EksClusterName string `json:"eksClusterName"`
+	Namespace      string `json:"namespace"`
+	Region         string `json:"region"`
 }
 
 // AWSResource defines model for AWSResource.
@@ -373,15 +383,31 @@ type CredentialsOperatorComponent struct {
 // CredentialsOperatorComponentType defines model for CredentialsOperatorComponent.Type.
 type CredentialsOperatorComponentType string
 
+// DatabaseCredentials defines model for DatabaseCredentials.
+type DatabaseCredentials struct {
+	Password string `json:"password"`
+	Username string `json:"username"`
+}
+
 // DatabaseInfo defines model for DatabaseInfo.
 type DatabaseInfo struct {
 	Address      string                   `json:"address"`
+	Credentials  DatabaseCredentials      `json:"credentials"`
 	DatabaseType DatabaseInfoDatabaseType `json:"databaseType"`
-	Name         string                   `json:"name"`
 }
 
 // DatabaseInfoDatabaseType defines model for DatabaseInfo.DatabaseType.
 type DatabaseInfoDatabaseType string
+
+// DatabaseInfoInput defines model for DatabaseInfoInput.
+type DatabaseInfoInput struct {
+	Address      string                        `json:"address"`
+	Credentials  map[string]interface{}        `json:"credentials"`
+	DatabaseType DatabaseInfoInputDatabaseType `json:"databaseType"`
+}
+
+// DatabaseInfoInputDatabaseType defines model for DatabaseInfoInput.DatabaseType.
+type DatabaseInfoInputDatabaseType string
 
 // EdgeAccessStatus defines model for EdgeAccessStatus.
 type EdgeAccessStatus struct {
@@ -761,6 +787,18 @@ type CreateAWSIntegrationMutationJSONBody struct {
 	Name           string       `json:"name"`
 }
 
+// CreateDatabaseIntegrationMutationJSONBody defines parameters for CreateDatabaseIntegrationMutation.
+type CreateDatabaseIntegrationMutationJSONBody struct {
+	DatabaseInfo DatabaseInfoInput `json:"databaseInfo"`
+	Name         string            `json:"name"`
+}
+
+// UpdateDatabaseIntegrationMutationJSONBody defines parameters for UpdateDatabaseIntegrationMutation.
+type UpdateDatabaseIntegrationMutationJSONBody struct {
+	DatabaseInfo DatabaseInfoInput `json:"databaseInfo"`
+	Name         *string           `json:"name,omitempty"`
+}
+
 // CreateGenericIntegrationMutationJSONBody defines parameters for CreateGenericIntegrationMutation.
 type CreateGenericIntegrationMutationJSONBody struct {
 	Name string `json:"name"`
@@ -875,6 +913,12 @@ type UpdateAWSIntegrationMutationJSONRequestBody UpdateAWSIntegrationMutationJSO
 
 // CreateAWSIntegrationMutationJSONRequestBody defines body for CreateAWSIntegrationMutation for application/json ContentType.
 type CreateAWSIntegrationMutationJSONRequestBody CreateAWSIntegrationMutationJSONBody
+
+// CreateDatabaseIntegrationMutationJSONRequestBody defines body for CreateDatabaseIntegrationMutation for application/json ContentType.
+type CreateDatabaseIntegrationMutationJSONRequestBody CreateDatabaseIntegrationMutationJSONBody
+
+// UpdateDatabaseIntegrationMutationJSONRequestBody defines body for UpdateDatabaseIntegrationMutation for application/json ContentType.
+type UpdateDatabaseIntegrationMutationJSONRequestBody UpdateDatabaseIntegrationMutationJSONBody
 
 // CreateGenericIntegrationMutationJSONRequestBody defines body for CreateGenericIntegrationMutation for application/json ContentType.
 type CreateGenericIntegrationMutationJSONRequestBody CreateGenericIntegrationMutationJSONBody
@@ -1048,6 +1092,16 @@ type ClientInterface interface {
 	CreateAWSIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	CreateAWSIntegrationMutation(ctx context.Context, body CreateAWSIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateDatabaseIntegrationMutation request with any body
+	CreateDatabaseIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateDatabaseIntegrationMutation(ctx context.Context, body CreateDatabaseIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateDatabaseIntegrationMutation request with any body
+	UpdateDatabaseIntegrationMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateDatabaseIntegrationMutation(ctx context.Context, id string, body UpdateDatabaseIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateGenericIntegrationMutation request with any body
 	CreateGenericIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1463,6 +1517,54 @@ func (c *Client) CreateAWSIntegrationMutationWithBody(ctx context.Context, conte
 
 func (c *Client) CreateAWSIntegrationMutation(ctx context.Context, body CreateAWSIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateAWSIntegrationMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateDatabaseIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDatabaseIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateDatabaseIntegrationMutation(ctx context.Context, body CreateDatabaseIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDatabaseIntegrationMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateDatabaseIntegrationMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDatabaseIntegrationMutationRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateDatabaseIntegrationMutation(ctx context.Context, id string, body UpdateDatabaseIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDatabaseIntegrationMutationRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -2794,6 +2896,93 @@ func NewCreateAWSIntegrationMutationRequestWithBody(server string, contentType s
 	}
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewCreateDatabaseIntegrationMutationRequest calls the generic CreateDatabaseIntegrationMutation builder with application/json body
+func NewCreateDatabaseIntegrationMutationRequest(server string, body CreateDatabaseIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateDatabaseIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateDatabaseIntegrationMutationRequestWithBody generates requests for CreateDatabaseIntegrationMutation with any type of body
+func NewCreateDatabaseIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/database")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewUpdateDatabaseIntegrationMutationRequest calls the generic UpdateDatabaseIntegrationMutation builder with application/json body
+func NewUpdateDatabaseIntegrationMutationRequest(server string, id string, body UpdateDatabaseIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateDatabaseIntegrationMutationRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateDatabaseIntegrationMutationRequestWithBody generates requests for UpdateDatabaseIntegrationMutation with any type of body
+func NewUpdateDatabaseIntegrationMutationRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/database/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -4150,6 +4339,16 @@ type ClientWithResponsesInterface interface {
 
 	CreateAWSIntegrationMutationWithResponse(ctx context.Context, body CreateAWSIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAWSIntegrationMutationResponse, error)
 
+	// CreateDatabaseIntegrationMutation request with any body
+	CreateDatabaseIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDatabaseIntegrationMutationResponse, error)
+
+	CreateDatabaseIntegrationMutationWithResponse(ctx context.Context, body CreateDatabaseIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDatabaseIntegrationMutationResponse, error)
+
+	// UpdateDatabaseIntegrationMutation request with any body
+	UpdateDatabaseIntegrationMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDatabaseIntegrationMutationResponse, error)
+
+	UpdateDatabaseIntegrationMutationWithResponse(ctx context.Context, id string, body UpdateDatabaseIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDatabaseIntegrationMutationResponse, error)
+
 	// CreateGenericIntegrationMutation request with any body
 	CreateGenericIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGenericIntegrationMutationResponse, error)
 
@@ -4814,6 +5013,66 @@ func (r CreateAWSIntegrationMutationResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreateAWSIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateDatabaseIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateDatabaseIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateDatabaseIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateDatabaseIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateDatabaseIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateDatabaseIntegrationMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5863,6 +6122,40 @@ func (c *ClientWithResponses) CreateAWSIntegrationMutationWithResponse(ctx conte
 		return nil, err
 	}
 	return ParseCreateAWSIntegrationMutationResponse(rsp)
+}
+
+// CreateDatabaseIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateDatabaseIntegrationMutationResponse
+func (c *ClientWithResponses) CreateDatabaseIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDatabaseIntegrationMutationResponse, error) {
+	rsp, err := c.CreateDatabaseIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateDatabaseIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateDatabaseIntegrationMutationWithResponse(ctx context.Context, body CreateDatabaseIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDatabaseIntegrationMutationResponse, error) {
+	rsp, err := c.CreateDatabaseIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateDatabaseIntegrationMutationResponse(rsp)
+}
+
+// UpdateDatabaseIntegrationMutationWithBodyWithResponse request with arbitrary body returning *UpdateDatabaseIntegrationMutationResponse
+func (c *ClientWithResponses) UpdateDatabaseIntegrationMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDatabaseIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateDatabaseIntegrationMutationWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateDatabaseIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateDatabaseIntegrationMutationWithResponse(ctx context.Context, id string, body UpdateDatabaseIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDatabaseIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateDatabaseIntegrationMutation(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateDatabaseIntegrationMutationResponse(rsp)
 }
 
 // CreateGenericIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateGenericIntegrationMutationResponse
@@ -7665,6 +7958,170 @@ func ParseCreateAWSIntegrationMutationResponse(rsp *http.Response) (*CreateAWSIn
 	}
 
 	response := &CreateAWSIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateDatabaseIntegrationMutationResponse parses an HTTP response from a CreateDatabaseIntegrationMutationWithResponse call
+func ParseCreateDatabaseIntegrationMutationResponse(rsp *http.Response) (*CreateDatabaseIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateDatabaseIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateDatabaseIntegrationMutationResponse parses an HTTP response from a UpdateDatabaseIntegrationMutationWithResponse call
+func ParseUpdateDatabaseIntegrationMutationResponse(rsp *http.Response) (*UpdateDatabaseIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateDatabaseIntegrationMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

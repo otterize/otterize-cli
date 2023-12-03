@@ -54,6 +54,13 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeCreds bool) 
 		columns = append(columns, "CLIENT ID", "CLIENT SECRET")
 	}
 
+	for _, integration := range integrations {
+		if integration.Type == cloudapi.IntegrationTypeDATABASE {
+			columns = append(columns, "DATABASE ADDRESS", "DATABASE CREDENTIALS")
+			break
+		}
+	}
+
 	getColumnData := func(integration cloudapi.Integration) []map[string]string {
 		integrationColumns := map[string]string{
 			"ID":                     integration.Id,
@@ -66,6 +73,11 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeCreds bool) 
 			integrationColumns["INTENTS OPERATOR"] = formatComponentStatus(integration.Components.IntentsOperator.Status)
 			integrationColumns["CREDENTIALS OPERATOR"] = formatComponentStatus(integration.Components.CredentialsOperator.Status)
 			integrationColumns["NETWORK MAPPER"] = formatComponentStatus(integration.Components.NetworkMapper.Status)
+		}
+
+		if integration.Type == cloudapi.IntegrationTypeDATABASE {
+			integrationColumns["DATABASE ADDRESS"] = integration.DatabaseInfo.Address
+			integrationColumns["DATABASE CREDENTIALS"] = fmt.Sprintf("%s:******", integration.DatabaseInfo.Credentials.Username)
 		}
 
 		if includeCreds {
