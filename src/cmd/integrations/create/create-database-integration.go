@@ -41,7 +41,6 @@ var CreateDatabaseIntegrationCmd = &cobra.Command{
 				Name: viper.GetString(NameKey),
 				DatabaseInfo: cloudapi.DatabaseInfoInput{
 					Address: viper.GetString(DatabaseAddress),
-					// TODO: check why this is not being generated?
 					Credentials: map[string]interface{}{
 						"username": viper.GetString(DatabaseUsername),
 						"password": viper.GetString(DatabasePassword),
