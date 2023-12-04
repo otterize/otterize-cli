@@ -99,6 +99,12 @@
       },
       "AWSInfo": {
         "properties": {
+          "awsAccountId": {
+            "type": "string"
+          },
+          "eksClusterName": {
+            "type": "string"
+          },
           "namespace": {
             "type": "string"
           },
@@ -108,13 +114,21 @@
         },
         "required": [
           "region",
-          "namespace"
+          "namespace",
+          "eksClusterName",
+          "awsAccountId"
         ],
         "type": "object"
       },
       "AWSInfoInput": {
         "properties": {
+          "awsAccountId": {
+            "type": "string"
+          },
           "clusterId": {
+            "type": "string"
+          },
+          "eksClusterName": {
             "type": "string"
           },
           "namespace": {
@@ -127,7 +141,9 @@
         "required": [
           "clusterId",
           "region",
-          "namespace"
+          "namespace",
+          "eksClusterName",
+          "awsAccountId"
         ],
         "type": "object"
       },
@@ -547,6 +563,9 @@
       },
       "DatabaseConfig": {
         "properties": {
+          "dbname": {
+            "type": "string"
+          },
           "operations": {
             "items": {
               "enum": [
@@ -565,7 +584,38 @@
           }
         },
         "required": [
+          "dbname",
           "table"
+        ],
+        "type": "object"
+      },
+      "DatabaseCredentials": {
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "type": "object"
+      },
+      "DatabaseCredentialsInput": {
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
         ],
         "type": "object"
       },
@@ -574,20 +624,42 @@
           "address": {
             "type": "string"
           },
+          "credentials": {
+            "$ref": "#/components/schemas/DatabaseCredentials"
+          },
           "databaseType": {
             "enum": [
               "POSTGRESQL"
             ],
             "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "databaseType",
+          "credentials"
+        ],
+        "type": "object"
+      },
+      "DatabaseInfoInput": {
+        "properties": {
+          "address": {
+            "type": "string"
           },
-          "name": {
+          "credentials": {
+            "type": "object"
+          },
+          "databaseType": {
+            "enum": [
+              "POSTGRESQL"
+            ],
             "type": "string"
           }
         },
         "required": [
-          "name",
           "address",
-          "databaseType"
+          "databaseType",
+          "credentials"
         ],
         "type": "object"
       },
@@ -1599,6 +1671,12 @@
         "name": "access_token",
         "type": "apiKey"
       },
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "description": "Otterize user JWT token.",
+        "scheme": "bearer",
+        "type": "http"
+      },
       "oauth2": {
         "description": "Use client ID and client secret from an Otterize integration to authenticate.",
         "flows": {
@@ -1621,7 +1699,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "d3e45693e17bd5c7f09108e2f5dd3ccb81bf5ca5"
+    "x-revision": "aa694dd58f27af248fe0a3aa24753b6525062889"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -2960,6 +3038,160 @@
         ]
       }
     },
+    "/integrations/database": {
+      "post": {
+        "description": "",
+        "operationId": "createDatabaseIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "databaseInfo": {
+                    "$ref": "#/components/schemas/DatabaseInfoInput"
+                  },
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "databaseInfo"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/integrations/database/{id}": {
+      "patch": {
+        "description": "Update Database integration",
+        "operationId": "updateDatabaseIntegration_mutation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "example": "obj_12345",
+              "format": "id",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "databaseInfo": {
+                    "$ref": "#/components/schemas/DatabaseInfoInput"
+                  },
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "databaseInfo"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Update Database integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/BAD_REQUEST"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Update Database integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
     "/integrations/generic": {
       "post": {
         "description": "Create a new generic integration",
@@ -4027,7 +4259,7 @@
         },
         "summary": "Get namespace",
         "tags": [
-          "namespace"
+          "namespaces"
         ]
       }
     },
@@ -4767,6 +4999,12 @@
     },
     {
       "accessTokenCookie": [
+      ],
+      "organizationHeader": [
+      ]
+    },
+    {
+      "bearerAuth": [
       ],
       "organizationHeader": [
       ]

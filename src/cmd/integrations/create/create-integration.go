@@ -12,4 +12,5 @@ var CreateIntegrationCmd = &cobra.Command{
 func init() {
 	CreateIntegrationCmd.AddCommand(CreateKubernetesIntegrationCmd)
 	CreateIntegrationCmd.AddCommand(CreateGenericIntegrationCmd)
+	CreateIntegrationCmd.AddCommand(CreateDatabaseIntegrationCmd)
 }
