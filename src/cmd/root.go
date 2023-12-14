@@ -35,7 +35,7 @@ var RootCmd = &cobra.Command{
 }
 
 func sendAnonymousUsageTelemetry(cmd *cobra.Command) {
-	if !viper.GetBool(config.TelemetryEnabledKey) {
+	if !viper.GetBool(config.TelemetryEnabledKey) || !viper.GetBool(config.TelemetryUsageEnabledKey) {
 		return
 	}
 	// every otterize CLI command can be broken into: otterize <noun> <verb>
@@ -103,8 +103,11 @@ func init() {
 	RootCmd.PersistentFlags().Bool(config.DebugKey, config.DebugDefault, "Debug logs")
 	RootCmd.PersistentFlags().String(config.OutputFormatKey, config.OutputFormatDefault, "Output format - json/text/yaml")
 	RootCmd.PersistentFlags().Bool(config.NoHeadersKey, config.NoHeadersDefault, "Do not print headers")
-	RootCmd.PersistentFlags().Bool(config.TelemetryEnabledKey, config.TelemetryEnabledDefault, "Whether to enable anonymous usage telemetry to Otterize or not")
-
+	RootCmd.PersistentFlags().Bool(config.TelemetryEnabledKey, config.TelemetryEnabledDefault, "Whether to enable anonymous telemetry to Otterize or not")
+	RootCmd.PersistentFlags().Bool(config.TelemetryUsageEnabledKey, config.TelemetryUsageEnabledDefault, "Whether to enable anonymous usage telemetry to Otterize or not")
+	RootCmd.PersistentFlags().Bool(config.TelemetryErrorsEnabledKey, config.TelemetryErrorEnabledDefault, "Whether to enable anonymous error telemetry to Otterize or not")
+	RootCmd.PersistentFlags().String(config.TelemetryErrorsAddressKey, config.TelemetryErrorsAddressDefault, "The address to send anonymous error telemetry to")
+	RootCmd.PersistentFlags().String(config.TelemetryErrorsStageKey, config.TelemetryErrorsStageDefault, "The stage to send anonymous error telemetry to")
 	RootCmd.AddCommand(version.Cmd)
 
 	RootCmd.AddGroup(groups.AccountsGroup)

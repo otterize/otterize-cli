@@ -1,6 +1,16 @@
 {
   "components": {
     "responses": {
+      "APPLIED_INTENTS_ERROR": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Bad Request"
+      },
       "BAD_REQUEST": {
         "content": {
           "application/json": {
@@ -259,6 +269,20 @@
             },
             "type": "array"
           },
+          "externalTrafficDiscoveredIntents": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
           "server": {
             "properties": {
               "id": {
@@ -275,6 +299,7 @@
           "client",
           "server",
           "discoveredIntents",
+          "externalTrafficDiscoveredIntents",
           "appliedIntents",
           "accessStatus"
         ],
@@ -561,6 +586,23 @@
         ],
         "type": "object"
       },
+      "DNSIPPair": {
+        "properties": {
+          "dnsName": {
+            "type": "string"
+          },
+          "ips": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "dnsName"
+        ],
+        "type": "object"
+      },
       "DatabaseConfig": {
         "properties": {
           "dbname": {
@@ -632,6 +674,9 @@
               "POSTGRESQL"
             ],
             "type": "string"
+          },
+          "logConsumerSettings": {
+            "$ref": "#/components/schemas/GCPCloudSQLConsumerSettings"
           }
         },
         "required": [
@@ -654,6 +699,9 @@
               "POSTGRESQL"
             ],
             "type": "string"
+          },
+          "logConsumerSettings": {
+            "type": "object"
           }
         },
         "required": [
@@ -690,6 +738,7 @@
               "NOT_IN_PROTECTED_SERVICES",
               "INTENTS_OPERATOR_NEVER_CONNECTED",
               "NETWORK_MAPPER_NEVER_CONNECTED",
+              "INTERNET_ACCESS_STATUS_UNKNOWN",
               "NO_INTENTS_FOUND_OF_RELEVANT_TYPE",
               "IGNORED_IN_CALCULATION"
             ],
@@ -721,6 +770,7 @@
                 "NOT_IN_PROTECTED_SERVICES",
                 "INTENTS_OPERATOR_NEVER_CONNECTED",
                 "NETWORK_MAPPER_NEVER_CONNECTED",
+                "INTERNET_ACCESS_STATUS_UNKNOWN",
                 "NO_INTENTS_FOUND_OF_RELEVANT_TYPE",
                 "IGNORED_IN_CALCULATION"
               ],
@@ -812,6 +862,75 @@
         },
         "required": [
           "message"
+        ],
+        "type": "object"
+      },
+      "ExternalTrafficIntent": {
+        "properties": {
+          "client": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "server": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "target": {
+            "$ref": "#/components/schemas/DNSIPPair"
+          }
+        },
+        "required": [
+          "id",
+          "server",
+          "client",
+          "target"
+        ],
+        "type": "object"
+      },
+      "GCPCloudSQLConsumerSettings": {
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId",
+          "topic"
+        ],
+        "type": "object"
+      },
+      "GCPCloudSQLConsumerSettingsInput": {
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId",
+          "topic"
         ],
         "type": "object"
       },
@@ -1585,7 +1704,8 @@
                 "KUBERNETES",
                 "KAFKA",
                 "AWS",
-                "DATABASE"
+                "DATABASE",
+                "INTERNET"
               ],
               "type": "string"
             },
@@ -1652,6 +1772,45 @@
           },
           "name": {
             "type": "string"
+          },
+          "onboardingSelection": {
+            "enum": [
+              "DEFAULT",
+              "AWS_IAM",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "onboardingSelectionOther": {
+            "type": "string"
+          },
+          "questLogStep": {
+            "enum": [
+              "CONNECT_CLUSTER",
+              "EXPLORE_NETWORK_MAP_ADD_NS_FILTER",
+              "EXPLORE_NETWORK_MAP_ADD_SVC_FILTER",
+              "EXPLORE_NETWORK_MAP_CLEAR_FILTERS",
+              "DECLARE_INTENTS_CLICK_ON_SERVICE",
+              "DECLARE_INTENTS_DOWNLOAD_YAML",
+              "DECLARE_INTENTS_DO_APPLY",
+              "ENABLE_ENFORCEMENT_CREATE_PROTECTED_SERVICE",
+              "COMPLETED"
+            ],
+            "type": "string"
+          },
+          "questLogStepSeen": {
+            "enum": [
+              "CONNECT_CLUSTER",
+              "EXPLORE_NETWORK_MAP_ADD_NS_FILTER",
+              "EXPLORE_NETWORK_MAP_ADD_SVC_FILTER",
+              "EXPLORE_NETWORK_MAP_CLEAR_FILTERS",
+              "DECLARE_INTENTS_CLICK_ON_SERVICE",
+              "DECLARE_INTENTS_DOWNLOAD_YAML",
+              "DECLARE_INTENTS_DO_APPLY",
+              "ENABLE_ENFORCEMENT_CREATE_PROTECTED_SERVICE",
+              "COMPLETED"
+            ],
+            "type": "string"
           }
         },
         "required": [
@@ -1659,7 +1818,11 @@
           "email",
           "name",
           "imageURL",
-          "authProviderUserId"
+          "authProviderUserId",
+          "questLogStep",
+          "questLogStepSeen",
+          "onboardingSelection",
+          "onboardingSelectionOther"
         ],
         "type": "object"
       }
@@ -1670,12 +1833,6 @@
         "in": "cookie",
         "name": "access_token",
         "type": "apiKey"
-      },
-      "bearerAuth": {
-        "bearerFormat": "JWT",
-        "description": "Otterize user JWT token.",
-        "scheme": "bearer",
-        "type": "http"
       },
       "oauth2": {
         "description": "Use client ID and client secret from an Otterize integration to authenticate.",
@@ -1699,7 +1856,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "aa694dd58f27af248fe0a3aa24753b6525062889"
+    "x-revision": "7c65a7f11dfe7b0d0358fdc2f2e576394de69c91"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -1735,7 +1892,7 @@
             "description": "Get access graph"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -1794,7 +1951,7 @@
             "description": "Get cluster by filters"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -1856,7 +2013,7 @@
             "description": "List clusters"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -1922,7 +2079,7 @@
             "description": "Create cluster"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -1981,7 +2138,7 @@
             "description": "Delete cluster"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2038,7 +2195,7 @@
             "description": "Get cluster"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2115,7 +2272,7 @@
             "description": "Update cluster"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2174,7 +2331,7 @@
             "description": "Get environment by filters"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2251,7 +2408,7 @@
             "description": "List environments"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2323,7 +2480,7 @@
             "description": "Create a new environment"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2382,7 +2539,7 @@
             "description": "Delete environment"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2439,7 +2596,7 @@
             "description": "Get environment"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2519,7 +2676,7 @@
             "description": "Update environment"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2595,7 +2752,7 @@
             "description": "Add label to environment"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2665,7 +2822,7 @@
             "description": "Remove label from environment"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2760,7 +2917,7 @@
             "description": "Get integration by filters"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2858,7 +3015,7 @@
             "description": "List integrations"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -2941,7 +3098,7 @@
             "description": "Update AWS integration"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3008,7 +3165,7 @@
             "description": "Create a new AWS integration"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3080,7 +3237,7 @@
             "description": ""
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3162,7 +3319,7 @@
             "description": "Update Database integration"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3230,7 +3387,7 @@
             "description": "Create a new generic integration"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3306,7 +3463,7 @@
             "description": "Update Generic integration"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3380,7 +3537,7 @@
             "description": "Create a new Kubernetes integration"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3456,7 +3613,7 @@
             "description": "Update Kubernetes integration"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3515,7 +3672,7 @@
             "description": "Delete integration"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3572,7 +3729,7 @@
             "description": "Get integration"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3641,7 +3798,7 @@
             "description": "Get one user invite"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3713,7 +3870,7 @@
             "description": "List user invites"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3777,7 +3934,7 @@
             "description": "Create user invite"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3836,7 +3993,7 @@
             "description": "Delete user invite"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3893,7 +4050,7 @@
             "description": "Get user invite"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -3961,7 +4118,7 @@
             "description": "Accept user invite"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4009,7 +4166,7 @@
             "description": "Get information regarding the current logged-in user"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4090,7 +4247,7 @@
             "description": "Get one namespace"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4174,7 +4331,7 @@
             "description": "List namespaces"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4233,7 +4390,7 @@
             "description": "Get namespace"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4309,7 +4466,7 @@
             "description": "Associate namespace to environment"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4360,7 +4517,7 @@
             "description": "List organizations"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4420,7 +4577,7 @@
             "description": "Create a new organization"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4479,7 +4636,7 @@
             "description": "Get organization"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4557,7 +4714,7 @@
             "description": "Update organization"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4627,7 +4784,7 @@
             "description": "Remove user from organization"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4708,7 +4865,7 @@
             "description": "Get service by filters"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4792,7 +4949,7 @@
             "description": "List services"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4851,7 +5008,7 @@
             "description": "Get service"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4902,7 +5059,7 @@
             "description": "List users"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4961,7 +5118,7 @@
             "description": "Get user"
           },
           "400": {
-            "$ref": "#/components/responses/BAD_REQUEST"
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
           },
           "401": {
             "$ref": "#/components/responses/UNAUTHENTICATED"
@@ -4999,12 +5156,6 @@
     },
     {
       "accessTokenCookie": [
-      ],
-      "organizationHeader": [
-      ]
-    },
-    {
-      "bearerAuth": [
       ],
       "organizationHeader": [
       ]

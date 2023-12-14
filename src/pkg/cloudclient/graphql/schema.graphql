@@ -52,7 +52,7 @@ directive @specifiedBy(
 
 """@validate should be applied on API input fields / arguments, to enforce API input validation.
 See https://github.com/go-playground/validator for possible built-in constraints,
-and github.com/otterize/cloud/src/shared/directives/customvalidations for custom contraints."""
+and github.com/otterize/cloud/src/backend-service/pkg/lib/graphql/directives for custom contraints."""
 directive @validate(
 	constraint: String
 	customConstraint: CustomConstraint
@@ -106,6 +106,7 @@ type AccessGraphEdge {
 	client: Service!
 	server: Service!
 	discoveredIntents: [Intent!]!
+	externalTrafficDiscoveredIntents: [ExternalTrafficIntent!]!
 	appliedIntents: [Intent!]!
 	accessStatus: EdgeAccessStatus!
 }
@@ -277,6 +278,16 @@ enum DBPermissionChange {
 	DELETE
 }
 
+type DNSIPPair {
+	dnsName: String!
+	ips: [String!]
+}
+
+input DNSIPPairInput {
+	dnsName: String!
+	ips: [String!]
+}
+
 type DatabaseConfig {
 	dbname: String!
 	table: String!
@@ -285,8 +296,13 @@ type DatabaseConfig {
 
 input DatabaseConfigInput {
 	dbname: String!
-	table: String!
-	operations: [DatabaseOperation!]!
+	table: String
+	operations: [DatabaseOperation!]
+}
+
+type DatabaseCredentials {
+	username: String!
+	password: String!
 }
 
 input DatabaseCredentialsInput {
@@ -297,12 +313,15 @@ input DatabaseCredentialsInput {
 type DatabaseInfo {
 	address: String!
 	databaseType: DatabaseType!
+	credentials: DatabaseCredentials!
+	logConsumerSettings: GCPCloudSQLConsumerSettings
 }
 
 input DatabaseInfoInput {
 	address: String!
 	databaseType: DatabaseType!
 	credentials: DatabaseCredentialsInput!
+	logConsumerSettings: GCPCloudSQLConsumerSettingsInput
 }
 
 enum DatabaseOperation {
@@ -355,6 +374,7 @@ enum EdgeAccessStatusReason {
 	NOT_IN_PROTECTED_SERVICES
 	INTENTS_OPERATOR_NEVER_CONNECTED
 	NETWORK_MAPPER_NEVER_CONNECTED
+	INTERNET_ACCESS_STATUS_UNKNOWN
 	NO_INTENTS_FOUND_OF_RELEVANT_TYPE
 	IGNORED_IN_CALCULATION
 }
@@ -405,8 +425,36 @@ enum EventType {
 	ACTIVE
 }
 
+input ExternalTrafficDiscoveredIntentInput {
+	discoveredAt: Time!
+	intent: ExternalTrafficIntentInput!
+}
+
+type ExternalTrafficIntent {
+	id: ID!
+	server: Service!
+	client: Service!
+	target: DNSIPPair!
+}
+
+input ExternalTrafficIntentInput {
+	namespace: String!
+	clientName: String!
+	target: DNSIPPairInput!
+}
+
 """The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point)."""
 scalar Float
+
+type GCPCloudSQLConsumerSettings {
+	projectId: String!
+	topic: String!
+}
+
+input GCPCloudSQLConsumerSettingsInput {
+	projectId: String!
+	topic: String!
+}
 
 type HTTPConfig {
 	path: String!
@@ -687,6 +735,10 @@ type Mutation {
 		name: String
 		configuration: ClusterConfigurationInput
 	): Cluster!
+"""Register user-password request for a pod owner, returns the service associated with this pod owner"""
+	registerKubernetesServiceUserAndPasswordRequest(
+		podOwner: NamespacedPodOwner!
+	): Service!
 """Create a new environment"""
 	createEnvironment(
 		name: String!
@@ -751,6 +803,12 @@ type Mutation {
 		id: ID!
 		environmentId: ID
 	): Integration
+"""Update Database integration"""
+	updateDatabaseIntegration(
+		id: ID!
+		name: String
+		databaseInfo: DatabaseInfoInput!
+	): Integration
 """Delete integration"""
 	deleteIntegration(
 		id: ID!
@@ -764,6 +822,9 @@ type Mutation {
 	): Boolean!
 	reportDiscoveredIntents(
 		intents: [DiscoveredIntentInput!]!
+	): Boolean!
+	reportExternalTrafficDiscoveredIntents(
+		intents: [ExternalTrafficDiscoveredIntentInput!]!
 	): Boolean!
 	reportAppliedKubernetesIntents(
 		namespace: String!
@@ -825,6 +886,22 @@ type Mutation {
 	sendCLITelemetries(
 		telemetries: [CLITelemetry!]!
 	): Boolean!
+	notifyQuestLogStepAdvanced(
+		id: ID!
+		step: QuestLogStep!
+	): Boolean!
+	notifyQuestLogStepSeenAdvanced(
+		id: ID!
+		step: QuestLogStep!
+	): Boolean!
+	saveOnboardingSelection(
+		id: ID!
+		selection: OnboardingSelection!
+	): Boolean!
+	saveOnboardingSelectionOther(
+		id: ID!
+		selection: String!
+	): Boolean!
 }
 
 type Namespace {
@@ -851,6 +928,12 @@ input NetworkPolicyInput {
 	name: String!
 	serverName: String!
 	externalNetworkTrafficPolicy: Boolean!
+}
+
+enum OnboardingSelection {
+	DEFAULT
+	AWS_IAM
+	OTHER
 }
 
 type Organization {
@@ -886,10 +969,6 @@ type Query {
 	oneCluster(
 		name: String!
 	): Cluster
-	serviceUserAndPassword(
-		service: String!
-		namespace: String!
-	): UserAndPassword!
 """Get environment"""
 	environment(
 		id: ID!
@@ -923,6 +1002,7 @@ type Query {
 	): Integration!
 	testDatabaseConnection(
 		databaseInfo: DatabaseInfoInput!
+		integrationId: ID
 	): TestDatabaseConnectionResponse!
 """List user invites"""
 	invites(
@@ -984,6 +1064,22 @@ type Query {
 	user(
 		id: ID!
 	): User!
+}
+
+enum QuestLogStep {
+"""Connect cluster"""
+	CONNECT_CLUSTER
+"""Get to know your network map"""
+	EXPLORE_NETWORK_MAP_ADD_NS_FILTER
+	EXPLORE_NETWORK_MAP_ADD_SVC_FILTER
+	EXPLORE_NETWORK_MAP_CLEAR_FILTERS
+"""Declare intents"""
+	DECLARE_INTENTS_CLICK_ON_SERVICE
+	DECLARE_INTENTS_DOWNLOAD_YAML
+	DECLARE_INTENTS_DO_APPLY
+"""Enable intents"""
+	ENABLE_ENFORCEMENT_CREATE_PROTECTED_SERVICE
+	COMPLETED
 }
 
 enum RowDiff {
@@ -1058,6 +1154,7 @@ type Service {
 	serviceAccount: String
 	awsResource: AWSResource
 	tlsKeyPair: KeyPair!
+	userAndPassword: UserAndPassword!
 }
 
 type ServiceAccessGraph {
@@ -1088,6 +1185,7 @@ enum ServiceType {
 	KAFKA
 	AWS
 	DATABASE
+	INTERNET
 }
 
 """The `String`scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text."""
@@ -1123,6 +1221,10 @@ type User {
 	name: String!
 	imageURL: String!
 	authProviderUserId: String!
+	questLogStep: QuestLogStep!
+	questLogStepSeen: QuestLogStep!
+	onboardingSelection: OnboardingSelection!
+	onboardingSelectionOther: String!
 }
 
 type UserAndPassword {
@@ -1138,6 +1240,7 @@ enum UserErrorType {
 	FORBIDDEN
 	CONFLICT
 	BAD_USER_INPUT
+	APPLIED_INTENTS_ERROR
 }
 
 

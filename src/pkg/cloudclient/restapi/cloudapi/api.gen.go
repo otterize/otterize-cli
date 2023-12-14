@@ -20,7 +20,6 @@ import (
 
 const (
 	AccessTokenCookieScopes  = "accessTokenCookie.Scopes"
-	BearerAuthScopes         = "bearerAuth.Scopes"
 	Oauth2Scopes             = "oauth2.Scopes"
 	OrganizationHeaderScopes = "organizationHeader.Scopes"
 )
@@ -84,6 +83,7 @@ const (
 	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCING                                EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
 	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCINGKAFKAINTENTSNOTREQUIREDFORTOPIC EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING_KAFKA_INTENTS_NOT_REQUIRED_FOR_TOPIC"
 	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCINGMISSINGAPPLIEDINTENT            EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT"
+	EdgeAccessStatusReasonINTERNETACCESSSTATUSUNKNOWN                                EdgeAccessStatusReason = "INTERNET_ACCESS_STATUS_UNKNOWN"
 	EdgeAccessStatusReasonMISSINGAPPLIEDINTENT                                       EdgeAccessStatusReason = "MISSING_APPLIED_INTENT"
 	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED                                EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
 	EdgeAccessStatusReasonNOINTENTSFOUNDOFRELEVANTTYPE                               EdgeAccessStatusReason = "NO_INTENTS_FOUND_OF_RELEVANT_TYPE"
@@ -113,6 +113,7 @@ const (
 	EdgeAccessStatusReasonsINTENTSOPERATORNOTENFORCING                                EdgeAccessStatusReasons = "INTENTS_OPERATOR_NOT_ENFORCING"
 	EdgeAccessStatusReasonsINTENTSOPERATORNOTENFORCINGKAFKAINTENTSNOTREQUIREDFORTOPIC EdgeAccessStatusReasons = "INTENTS_OPERATOR_NOT_ENFORCING_KAFKA_INTENTS_NOT_REQUIRED_FOR_TOPIC"
 	EdgeAccessStatusReasonsINTENTSOPERATORNOTENFORCINGMISSINGAPPLIEDINTENT            EdgeAccessStatusReasons = "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT"
+	EdgeAccessStatusReasonsINTERNETACCESSSTATUSUNKNOWN                                EdgeAccessStatusReasons = "INTERNET_ACCESS_STATUS_UNKNOWN"
 	EdgeAccessStatusReasonsMISSINGAPPLIEDINTENT                                       EdgeAccessStatusReasons = "MISSING_APPLIED_INTENT"
 	EdgeAccessStatusReasonsNETWORKMAPPERNEVERCONNECTED                                EdgeAccessStatusReasons = "NETWORK_MAPPER_NEVER_CONNECTED"
 	EdgeAccessStatusReasonsNOINTENTSFOUNDOFRELEVANTTYPE                               EdgeAccessStatusReasons = "NO_INTENTS_FOUND_OF_RELEVANT_TYPE"
@@ -212,8 +213,42 @@ const (
 const (
 	ServiceAccessGraphTypesAWS        ServiceAccessGraphTypes = "AWS"
 	ServiceAccessGraphTypesDATABASE   ServiceAccessGraphTypes = "DATABASE"
+	ServiceAccessGraphTypesINTERNET   ServiceAccessGraphTypes = "INTERNET"
 	ServiceAccessGraphTypesKAFKA      ServiceAccessGraphTypes = "KAFKA"
 	ServiceAccessGraphTypesKUBERNETES ServiceAccessGraphTypes = "KUBERNETES"
+)
+
+// Defines values for UserOnboardingSelection.
+const (
+	AWSIAM  UserOnboardingSelection = "AWS_IAM"
+	DEFAULT UserOnboardingSelection = "DEFAULT"
+	OTHER   UserOnboardingSelection = "OTHER"
+)
+
+// Defines values for UserQuestLogStep.
+const (
+	UserQuestLogStepCOMPLETED                               UserQuestLogStep = "COMPLETED"
+	UserQuestLogStepCONNECTCLUSTER                          UserQuestLogStep = "CONNECT_CLUSTER"
+	UserQuestLogStepDECLAREINTENTSCLICKONSERVICE            UserQuestLogStep = "DECLARE_INTENTS_CLICK_ON_SERVICE"
+	UserQuestLogStepDECLAREINTENTSDOAPPLY                   UserQuestLogStep = "DECLARE_INTENTS_DO_APPLY"
+	UserQuestLogStepDECLAREINTENTSDOWNLOADYAML              UserQuestLogStep = "DECLARE_INTENTS_DOWNLOAD_YAML"
+	UserQuestLogStepENABLEENFORCEMENTCREATEPROTECTEDSERVICE UserQuestLogStep = "ENABLE_ENFORCEMENT_CREATE_PROTECTED_SERVICE"
+	UserQuestLogStepEXPLORENETWORKMAPADDNSFILTER            UserQuestLogStep = "EXPLORE_NETWORK_MAP_ADD_NS_FILTER"
+	UserQuestLogStepEXPLORENETWORKMAPADDSVCFILTER           UserQuestLogStep = "EXPLORE_NETWORK_MAP_ADD_SVC_FILTER"
+	UserQuestLogStepEXPLORENETWORKMAPCLEARFILTERS           UserQuestLogStep = "EXPLORE_NETWORK_MAP_CLEAR_FILTERS"
+)
+
+// Defines values for UserQuestLogStepSeen.
+const (
+	UserQuestLogStepSeenCOMPLETED                               UserQuestLogStepSeen = "COMPLETED"
+	UserQuestLogStepSeenCONNECTCLUSTER                          UserQuestLogStepSeen = "CONNECT_CLUSTER"
+	UserQuestLogStepSeenDECLAREINTENTSCLICKONSERVICE            UserQuestLogStepSeen = "DECLARE_INTENTS_CLICK_ON_SERVICE"
+	UserQuestLogStepSeenDECLAREINTENTSDOAPPLY                   UserQuestLogStepSeen = "DECLARE_INTENTS_DO_APPLY"
+	UserQuestLogStepSeenDECLAREINTENTSDOWNLOADYAML              UserQuestLogStepSeen = "DECLARE_INTENTS_DOWNLOAD_YAML"
+	UserQuestLogStepSeenENABLEENFORCEMENTCREATEPROTECTEDSERVICE UserQuestLogStepSeen = "ENABLE_ENFORCEMENT_CREATE_PROTECTED_SERVICE"
+	UserQuestLogStepSeenEXPLORENETWORKMAPADDNSFILTER            UserQuestLogStepSeen = "EXPLORE_NETWORK_MAP_ADD_NS_FILTER"
+	UserQuestLogStepSeenEXPLORENETWORKMAPADDSVCFILTER           UserQuestLogStepSeen = "EXPLORE_NETWORK_MAP_ADD_SVC_FILTER"
+	UserQuestLogStepSeenEXPLORENETWORKMAPCLEARFILTERS           UserQuestLogStepSeen = "EXPLORE_NETWORK_MAP_CLEAR_FILTERS"
 )
 
 // Defines values for OneIntegrationQueryParamsIntegrationType.
@@ -292,6 +327,9 @@ type AccessGraphEdge struct {
 	DiscoveredIntents []struct {
 		Id string `json:"id"`
 	} `json:"discoveredIntents"`
+	ExternalTrafficDiscoveredIntents []struct {
+		Id string `json:"id"`
+	} `json:"externalTrafficDiscoveredIntents"`
 	Server struct {
 		Id string `json:"id"`
 	} `json:"server"`
@@ -391,9 +429,10 @@ type DatabaseCredentials struct {
 
 // DatabaseInfo defines model for DatabaseInfo.
 type DatabaseInfo struct {
-	Address      string                   `json:"address"`
-	Credentials  DatabaseCredentials      `json:"credentials"`
-	DatabaseType DatabaseInfoDatabaseType `json:"databaseType"`
+	Address             string                       `json:"address"`
+	Credentials         DatabaseCredentials          `json:"credentials"`
+	DatabaseType        DatabaseInfoDatabaseType     `json:"databaseType"`
+	LogConsumerSettings *GCPCloudSQLConsumerSettings `json:"logConsumerSettings,omitempty"`
 }
 
 // DatabaseInfoDatabaseType defines model for DatabaseInfo.DatabaseType.
@@ -401,9 +440,10 @@ type DatabaseInfoDatabaseType string
 
 // DatabaseInfoInput defines model for DatabaseInfoInput.
 type DatabaseInfoInput struct {
-	Address      string                        `json:"address"`
-	Credentials  map[string]interface{}        `json:"credentials"`
-	DatabaseType DatabaseInfoInputDatabaseType `json:"databaseType"`
+	Address             string                        `json:"address"`
+	Credentials         map[string]interface{}        `json:"credentials"`
+	DatabaseType        DatabaseInfoInputDatabaseType `json:"databaseType"`
+	LogConsumerSettings *map[string]interface{}       `json:"logConsumerSettings,omitempty"`
 }
 
 // DatabaseInfoInputDatabaseType defines model for DatabaseInfoInput.DatabaseType.
@@ -443,6 +483,12 @@ type Environment struct {
 // Error defines model for Error.
 type Error struct {
 	Message string `json:"message"`
+}
+
+// GCPCloudSQLConsumerSettings defines model for GCPCloudSQLConsumerSettings.
+type GCPCloudSQLConsumerSettings struct {
+	ProjectId string `json:"projectId"`
+	Topic     string `json:"topic"`
 }
 
 // InputAccessGraphFilter defines model for InputAccessGraphFilter.
@@ -666,15 +712,28 @@ type ServiceAccessStatus struct {
 
 // User defines model for User.
 type User struct {
-	AuthProviderUserId string `json:"authProviderUserId"`
-	Email              string `json:"email"`
-	Id                 string `json:"id"`
-	ImageURL           string `json:"imageURL"`
-	Name               string `json:"name"`
+	AuthProviderUserId       string                  `json:"authProviderUserId"`
+	Email                    string                  `json:"email"`
+	Id                       string                  `json:"id"`
+	ImageURL                 string                  `json:"imageURL"`
+	Name                     string                  `json:"name"`
+	OnboardingSelection      UserOnboardingSelection `json:"onboardingSelection"`
+	OnboardingSelectionOther string                  `json:"onboardingSelectionOther"`
+	QuestLogStep             UserQuestLogStep        `json:"questLogStep"`
+	QuestLogStepSeen         UserQuestLogStepSeen    `json:"questLogStepSeen"`
 }
 
-// BADREQUEST defines model for BAD_REQUEST.
-type BADREQUEST = Error
+// UserOnboardingSelection defines model for User.OnboardingSelection.
+type UserOnboardingSelection string
+
+// UserQuestLogStep defines model for User.QuestLogStep.
+type UserQuestLogStep string
+
+// UserQuestLogStepSeen defines model for User.QuestLogStepSeen.
+type UserQuestLogStepSeen string
+
+// APPLIEDINTENTSERROR defines model for APPLIED_INTENTS_ERROR.
+type APPLIEDINTENTSERROR = Error
 
 // BADUSERINPUT defines model for BAD_USER_INPUT.
 type BADUSERINPUT = Error

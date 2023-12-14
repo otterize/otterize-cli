@@ -46,6 +46,15 @@ const NoHeadersKey = "no-headers"
 const NoHeadersDefault = false
 const TelemetryEnabledKey = "telemetry-enabled"
 const TelemetryEnabledDefault = true
+const TelemetryUsageEnabledKey = "telemetry-usage-enabled"
+const TelemetryUsageEnabledDefault = true
+const TelemetryErrorsEnabledKey = "telemetry-errors-enabled"
+const TelemetryErrorEnabledDefault = true
+const TelemetryErrorsAddressKey = "telemetry-errors-address"
+const TelemetryErrorsAddressDefault = "https://app.otterize.com/api/errors"
+const TelemetryErrorsStageKey = "telemetry-errors-stage"
+const TelemetryErrorsStageDefault = "production"
+
 const ContextIdKey = "context-id"
 
 var CfgFile string // used for flag
