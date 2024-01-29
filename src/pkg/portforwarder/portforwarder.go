@@ -40,7 +40,6 @@ func (p *PortForwarder) Start(ctx context.Context) (localPort int, err error) {
 
 	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
 	config, err := kubeConfig.ClientConfig()
-	//config, err := clientcmd.BuildConfigFromFlags("", filepath.Join(homedir.HomeDir(), ".kube", "config"))
 	if err != nil {
 		return 0, err
 	}
