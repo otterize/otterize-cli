@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	EnvironmentIDKey = "env-id"
-	ClusterIDKey     = "cluster-id"
+	EnvironmentIDKey         = "env-id"
+	IntegrationNameKey       = "name"
+	IntegrationNameShorthand = "n"
 )
 
 var CreateKubernetesIntegrationCmd = &cobra.Command{
@@ -33,7 +34,7 @@ var CreateKubernetesIntegrationCmd = &cobra.Command{
 		r, err := c.CreateKubernetesIntegrationMutationWithResponse(ctxTimeout,
 			cloudapi.CreateKubernetesIntegrationMutationJSONRequestBody{
 				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIDKey), lo.ToPtr(viper.GetString(EnvironmentIDKey)), nil),
-				ClusterId:     viper.GetString(ClusterIDKey),
+				Name:          viper.GetString(IntegrationNameKey),
 			})
 		if err != nil {
 			return err
@@ -46,6 +47,7 @@ var CreateKubernetesIntegrationCmd = &cobra.Command{
 
 func init() {
 	CreateKubernetesIntegrationCmd.Flags().String(EnvironmentIDKey, "", "default environment id")
-	CreateKubernetesIntegrationCmd.Flags().String(ClusterIDKey, "", "cluster id")
-	cobra.CheckErr(CreateKubernetesIntegrationCmd.MarkFlagRequired(ClusterIDKey))
+	CreateKubernetesIntegrationCmd.Flags().StringP(IntegrationNameKey, IntegrationNameShorthand, "", "integration name")
+	cobra.CheckErr(CreateKubernetesIntegrationCmd.MarkFlagRequired(EnvironmentIDKey))
+	cobra.CheckErr(CreateKubernetesIntegrationCmd.MarkFlagRequired(IntegrationNameKey))
 }

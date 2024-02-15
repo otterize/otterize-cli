@@ -26,8 +26,11 @@ const (
 type IntentType string
 
 const (
-	IntentTypeKafka IntentType = "KAFKA"
-	IntentTypeHttp  IntentType = "HTTP"
+	IntentTypeHttp     IntentType = "HTTP"
+	IntentTypeKafka    IntentType = "KAFKA"
+	IntentTypeDatabase IntentType = "DATABASE"
+	IntentTypeAws      IntentType = "AWS"
+	IntentTypeS3       IntentType = "S3"
 )
 
 // IntentsIntentsIntent includes the requested fields of the GraphQL type Intent.
