@@ -13,10 +13,10 @@ func ListFormattedIntents(intents []v1alpha3.ClientIntents) {
 		for _, call := range intent.GetCallsList() {
 			output.PrintStdout("  - %s in namespace %s", call.GetTargetServerName(), call.GetTargetServerNamespace(intent.GetNamespace()))
 			for _, topic := range call.Topics {
-				output.PrintStderr("    - Kafka topic: %s, operations: %s", topic.Name, topic.Operations)
+				output.PrintStdout("    - Kafka topic: %s, operations: %s", topic.Name, topic.Operations)
 			}
 			for _, resource := range call.HTTPResources {
-				output.PrintStderr("    - path %s, methods: %s", resource.Path, strings.ReplaceAll(fmt.Sprintf("%s", resource.Methods), " ", ","))
+				output.PrintStdout("    - path %s, methods: %s", resource.Path, strings.ReplaceAll(fmt.Sprintf("%s", resource.Methods), " ", ","))
 			}
 		}
 	}
