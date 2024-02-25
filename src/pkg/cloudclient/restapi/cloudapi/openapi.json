@@ -230,6 +230,9 @@
           "accessStatus": {
             "$ref": "#/components/schemas/EdgeAccessStatus"
           },
+          "accessStatuses": {
+            "$ref": "#/components/schemas/EdgeAccessStatuses"
+          },
           "appliedIntents": {
             "items": {
               "properties": {
@@ -269,20 +272,6 @@
             },
             "type": "array"
           },
-          "externalTrafficDiscoveredIntents": {
-            "items": {
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "id"
-              ],
-              "type": "object"
-            },
-            "type": "array"
-          },
           "server": {
             "properties": {
               "id": {
@@ -299,9 +288,9 @@
           "client",
           "server",
           "discoveredIntents",
-          "externalTrafficDiscoveredIntents",
           "appliedIntents",
-          "accessStatus"
+          "accessStatus",
+          "accessStatuses"
         ],
         "type": "object"
       },
@@ -457,6 +446,12 @@
           "istioGlobalDefaultDeny": {
             "type": "boolean"
           },
+          "useAWSIAMInAccessGraphStates": {
+            "type": "boolean"
+          },
+          "useDatabaseInAccessGraphStates": {
+            "type": "boolean"
+          },
           "useIstioPoliciesInAccessGraphStates": {
             "type": "boolean"
           },
@@ -473,6 +468,8 @@
           "useNetworkPoliciesInAccessGraphStates",
           "useIstioPoliciesInAccessGraphStates",
           "useKafkaACLsInAccessGraphStates",
+          "useAWSIAMInAccessGraphStates",
+          "useDatabaseInAccessGraphStates",
           "clusterFormSettings"
         ],
         "type": "object"
@@ -488,6 +485,12 @@
           "istioGlobalDefaultDeny": {
             "type": "boolean"
           },
+          "useAWSIAMInAccessGraphStates": {
+            "type": "boolean"
+          },
+          "useDatabaseInAccessGraphStates": {
+            "type": "boolean"
+          },
           "useIstioPoliciesInAccessGraphStates": {
             "type": "boolean"
           },
@@ -500,7 +503,9 @@
         },
         "required": [
           "globalDefaultDeny",
-          "useNetworkPoliciesInAccessGraphStates"
+          "useNetworkPoliciesInAccessGraphStates",
+          "useIstioPoliciesInAccessGraphStates",
+          "useKafkaACLsInAccessGraphStates"
         ],
         "type": "object"
       },
@@ -566,6 +571,29 @@
         ],
         "type": "object"
       },
+      "CreateGithubIntegrationResponse": {
+        "properties": {
+          "integration": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "nextURL": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "integration",
+          "nextURL"
+        ],
+        "type": "object"
+      },
       "CredentialsOperatorComponent": {
         "properties": {
           "status": {
@@ -583,23 +611,6 @@
         "required": [
           "type",
           "status"
-        ],
-        "type": "object"
-      },
-      "DNSIPPair": {
-        "properties": {
-          "dnsName": {
-            "type": "string"
-          },
-          "ips": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "dnsName"
         ],
         "type": "object"
       },
@@ -675,8 +686,8 @@
             ],
             "type": "string"
           },
-          "logConsumerSettings": {
-            "$ref": "#/components/schemas/GCPCloudSQLConsumerSettings"
+          "visibility": {
+            "$ref": "#/components/schemas/DatabaseVisibilitySettings"
           }
         },
         "required": [
@@ -700,7 +711,7 @@
             ],
             "type": "string"
           },
-          "logConsumerSettings": {
+          "visibility": {
             "type": "object"
           }
         },
@@ -711,6 +722,34 @@
         ],
         "type": "object"
       },
+      "DatabaseVisibilitySettings": {
+        "properties": {
+          "gcpPubSub": {
+            "$ref": "#/components/schemas/GCPPubSubLogConsumerSettings"
+          },
+          "source": {
+            "enum": [
+              "GCP_PUBSUB"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DatabaseVisibilitySettingsInput": {
+        "properties": {
+          "gcpPubSub": {
+            "type": "object"
+          },
+          "source": {
+            "enum": [
+              "GCP_PUBSUB"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "EdgeAccessStatus": {
         "properties": {
           "reason": {
@@ -719,6 +758,7 @@
               "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE",
               "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE",
               "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
+              "ALLOWED_BY_APPLIED_INTENTS_DATABASE_OVERLY_PERMISSIVE",
               "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
               "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
               "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
@@ -727,6 +767,9 @@
               "BLOCKED_BY_APPLIED_INTENTS_KAFKA_UNDER_PERMISSIVE",
               "BLOCKED_BY_APPLIED_INTENTS_KAFKA_RESOURCE_MISMATCH",
               "BLOCKED_BY_KAFKA_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS",
+              "BLOCKED_BY_APPLIED_INTENTS_DATABASE_UNDER_PERMISSIVE",
+              "BLOCKED_BY_APPLIED_INTENTS_DATABASE_RESOURCE_MISMATCH",
+              "BLOCKED_BY_DATABASE_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS",
               "BLOCKED_BY_DEFAULT_DENY",
               "SHARED_SERVICE_ACCOUNT",
               "CLIENT_ISTIO_SIDECAR_MISSING",
@@ -740,7 +783,8 @@
               "NETWORK_MAPPER_NEVER_CONNECTED",
               "INTERNET_ACCESS_STATUS_UNKNOWN",
               "NO_INTENTS_FOUND_OF_RELEVANT_TYPE",
-              "IGNORED_IN_CALCULATION"
+              "IGNORED_IN_CALCULATION",
+              "INTERNET_INTENTS_ENFORCEMENT_DISABLED"
             ],
             "type": "string"
           },
@@ -751,6 +795,7 @@
                 "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE",
                 "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE",
                 "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
+                "ALLOWED_BY_APPLIED_INTENTS_DATABASE_OVERLY_PERMISSIVE",
                 "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
                 "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
                 "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
@@ -759,6 +804,9 @@
                 "BLOCKED_BY_APPLIED_INTENTS_KAFKA_UNDER_PERMISSIVE",
                 "BLOCKED_BY_APPLIED_INTENTS_KAFKA_RESOURCE_MISMATCH",
                 "BLOCKED_BY_KAFKA_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS",
+                "BLOCKED_BY_APPLIED_INTENTS_DATABASE_UNDER_PERMISSIVE",
+                "BLOCKED_BY_APPLIED_INTENTS_DATABASE_RESOURCE_MISMATCH",
+                "BLOCKED_BY_DATABASE_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS",
                 "BLOCKED_BY_DEFAULT_DENY",
                 "SHARED_SERVICE_ACCOUNT",
                 "CLIENT_ISTIO_SIDECAR_MISSING",
@@ -772,7 +820,8 @@
                 "NETWORK_MAPPER_NEVER_CONNECTED",
                 "INTERNET_ACCESS_STATUS_UNKNOWN",
                 "NO_INTENTS_FOUND_OF_RELEVANT_TYPE",
-                "IGNORED_IN_CALCULATION"
+                "IGNORED_IN_CALCULATION",
+                "INTERNET_INTENTS_ENFORCEMENT_DISABLED"
               ],
               "type": "string"
             },
@@ -805,6 +854,33 @@
           "verdict",
           "reason",
           "reasons"
+        ],
+        "type": "object"
+      },
+      "EdgeAccessStatuses": {
+        "properties": {
+          "awsIam": {
+            "$ref": "#/components/schemas/EdgeAccessStatus"
+          },
+          "database": {
+            "$ref": "#/components/schemas/EdgeAccessStatus"
+          },
+          "istioPolicies": {
+            "$ref": "#/components/schemas/EdgeAccessStatus"
+          },
+          "kafkaACLs": {
+            "$ref": "#/components/schemas/EdgeAccessStatus"
+          },
+          "networkPolicies": {
+            "$ref": "#/components/schemas/EdgeAccessStatus"
+          }
+        },
+        "required": [
+          "networkPolicies",
+          "kafkaACLs",
+          "istioPolicies",
+          "awsIam",
+          "database"
         ],
         "type": "object"
       },
@@ -865,46 +941,7 @@
         ],
         "type": "object"
       },
-      "ExternalTrafficIntent": {
-        "properties": {
-          "client": {
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id"
-            ],
-            "type": "object"
-          },
-          "id": {
-            "type": "string"
-          },
-          "server": {
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id"
-            ],
-            "type": "object"
-          },
-          "target": {
-            "$ref": "#/components/schemas/DNSIPPair"
-          }
-        },
-        "required": [
-          "id",
-          "server",
-          "client",
-          "target"
-        ],
-        "type": "object"
-      },
-      "GCPCloudSQLConsumerSettings": {
+      "GCPPubSubLogConsumerSettings": {
         "properties": {
           "projectId": {
             "type": "string"
@@ -919,7 +956,7 @@
         ],
         "type": "object"
       },
-      "GCPCloudSQLConsumerSettingsInput": {
+      "GCPPubSubLogConsumerSettingsInput": {
         "properties": {
           "projectId": {
             "type": "string"
@@ -931,6 +968,110 @@
         "required": [
           "projectId",
           "topic"
+        ],
+        "type": "object"
+      },
+      "GitHubRepoFilterPair": {
+        "properties": {
+          "filter": {
+            "$ref": "#/components/schemas/AccessGraphFilter"
+          },
+          "repoInfo": {
+            "$ref": "#/components/schemas/GitHubRepoInfo"
+          }
+        },
+        "required": [
+          "filter",
+          "repoInfo"
+        ],
+        "type": "object"
+      },
+      "GitHubRepoFilterPairInput": {
+        "properties": {
+          "filter": {
+            "type": "object"
+          },
+          "repoInfo": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "filter",
+          "repoInfo"
+        ],
+        "type": "object"
+      },
+      "GitHubRepoInfo": {
+        "properties": {
+          "baseBranch": {
+            "type": "string"
+          },
+          "intentsPath": {
+            "type": "string"
+          },
+          "repository": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "repository",
+          "baseBranch",
+          "intentsPath"
+        ],
+        "type": "object"
+      },
+      "GitHubRepoInfoInput": {
+        "properties": {
+          "baseBranch": {
+            "type": "string"
+          },
+          "intentsPath": {
+            "type": "string"
+          },
+          "repository": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "repository",
+          "baseBranch",
+          "intentsPath"
+        ],
+        "type": "object"
+      },
+      "GitHubSettings": {
+        "properties": {
+          "isActive": {
+            "type": "boolean"
+          },
+          "repoFilterPairs": {
+            "items": {
+              "$ref": "#/components/schemas/GitHubRepoFilterPair"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "isActive",
+          "repoFilterPairs"
+        ],
+        "type": "object"
+      },
+      "GitHubSettingsInput": {
+        "properties": {
+          "isActive": {
+            "type": "boolean"
+          },
+          "repoFilterPairs": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "isActive",
+          "repoFilterPairs"
         ],
         "type": "object"
       },
@@ -1046,10 +1187,16 @@
             ],
             "type": "object"
           },
+          "githubSettings": {
+            "$ref": "#/components/schemas/GitHubSettings"
+          },
           "id": {
             "type": "string"
           },
           "name": {
+            "type": "string"
+          },
+          "organizationId": {
             "type": "string"
           },
           "type": {
@@ -1057,7 +1204,8 @@
               "GENERIC",
               "KUBERNETES",
               "DATABASE",
-              "AWS"
+              "AWS",
+              "GITHUB"
             ],
             "type": "string"
           }
@@ -1066,7 +1214,8 @@
           "id",
           "name",
           "type",
-          "credentials"
+          "credentials",
+          "organizationId"
         ],
         "type": "object"
       },
@@ -1138,6 +1287,9 @@
           "id": {
             "type": "string"
           },
+          "internet": {
+            "$ref": "#/components/schemas/InternetConfig"
+          },
           "kafkaTopics": {
             "items": {
               "$ref": "#/components/schemas/KafkaConfig"
@@ -1164,7 +1316,8 @@
               "KAFKA",
               "DATABASE",
               "AWS",
-              "S3"
+              "S3",
+              "INTERNET"
             ],
             "type": "string"
           }
@@ -1224,6 +1377,15 @@
       },
       "IntentsOperatorConfiguration": {
         "properties": {
+          "awsIAMPolicyEnforcementEnabled": {
+            "type": "boolean"
+          },
+          "databaseEnforcementEnabled": {
+            "type": "boolean"
+          },
+          "egressNetworkPolicyEnforcementEnabled": {
+            "type": "boolean"
+          },
           "globalEnforcementEnabled": {
             "type": "boolean"
           },
@@ -1259,8 +1421,35 @@
           "networkPolicyEnforcementEnabled",
           "kafkaACLEnforcementEnabled",
           "istioPolicyEnforcementEnabled",
+          "awsIAMPolicyEnforcementEnabled",
+          "databaseEnforcementEnabled",
           "protectedServicesEnabled",
-          "protectedServices"
+          "protectedServices",
+          "egressNetworkPolicyEnforcementEnabled"
+        ],
+        "type": "object"
+      },
+      "InternetConfig": {
+        "properties": {
+          "dnsName": {
+            "type": "string"
+          },
+          "ips": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "ports": {
+            "items": {
+              "format": "int32",
+              "type": "integer"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "dnsName"
         ],
         "type": "object"
       },
@@ -1589,7 +1778,8 @@
               "SERVER_HAS_NO_KAFKA_SERVER_CONFIG",
               "IGNORED_IN_CALCULATION",
               "PROTECTED_BY_DATABASE_INTEGRATION",
-              "PROTECTED_BY_AWS_IAM_INTEGRATION"
+              "PROTECTED_BY_AWS_IAM_INTEGRATION",
+              "PROTECTED_BY_INTERNET_INTENTS"
             ],
             "type": "string"
           },
@@ -1634,6 +1824,17 @@
           },
           "certificateInformation": {
             "$ref": "#/components/schemas/CertificateInformation"
+          },
+          "discoveredByIntegration": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
           },
           "environment": {
             "properties": {
@@ -1701,11 +1902,14 @@
           "types": {
             "items": {
               "enum": [
+                "NODE_GROUP",
+                "PREFIX_GROUP",
                 "KUBERNETES",
                 "KAFKA",
                 "AWS",
                 "DATABASE",
-                "INTERNET"
+                "INTERNET",
+                "DATABASE_USER"
               ],
               "type": "string"
             },
@@ -1773,17 +1977,6 @@
           "name": {
             "type": "string"
           },
-          "onboardingSelection": {
-            "enum": [
-              "DEFAULT",
-              "AWS_IAM",
-              "OTHER"
-            ],
-            "type": "string"
-          },
-          "onboardingSelectionOther": {
-            "type": "string"
-          },
           "questLogStep": {
             "enum": [
               "CONNECT_CLUSTER",
@@ -1793,7 +1986,6 @@
               "DECLARE_INTENTS_CLICK_ON_SERVICE",
               "DECLARE_INTENTS_DOWNLOAD_YAML",
               "DECLARE_INTENTS_DO_APPLY",
-              "ENABLE_ENFORCEMENT_CREATE_PROTECTED_SERVICE",
               "COMPLETED"
             ],
             "type": "string"
@@ -1807,10 +1999,23 @@
               "DECLARE_INTENTS_CLICK_ON_SERVICE",
               "DECLARE_INTENTS_DOWNLOAD_YAML",
               "DECLARE_INTENTS_DO_APPLY",
-              "ENABLE_ENFORCEMENT_CREATE_PROTECTED_SERVICE",
               "COMPLETED"
             ],
             "type": "string"
+          },
+          "tutorials": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
           }
         },
         "required": [
@@ -1820,9 +2025,57 @@
           "imageURL",
           "authProviderUserId",
           "questLogStep",
-          "questLogStepSeen",
-          "onboardingSelection",
-          "onboardingSelectionOther"
+          "questLogStepSeen"
+        ],
+        "type": "object"
+      },
+      "UserTutorial": {
+        "properties": {
+          "clusterId": {
+            "type": "string"
+          },
+          "clusterName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isCompleted": {
+            "type": "boolean"
+          },
+          "name": {
+            "enum": [
+              "NETWORK_POLICIES",
+              "AWS_IAM",
+              "POSTGRESQL",
+              "ISTIO_AUTH_POLICY_AUTOMATION",
+              "KAFKA_ACCESS_AUTOMATE_OTTERIZE_CLOUD"
+            ],
+            "type": "string"
+          },
+          "step": {
+            "type": "string"
+          },
+          "stepSeen": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "clusterId",
+          "clusterName",
+          "name",
+          "isActive",
+          "isCompleted",
+          "step",
+          "stepSeen"
         ],
         "type": "object"
       }
@@ -1833,6 +2086,12 @@
         "in": "cookie",
         "name": "access_token",
         "type": "apiKey"
+      },
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "description": "Otterize user JWT token.",
+        "scheme": "bearer",
+        "type": "http"
       },
       "oauth2": {
         "description": "Use client ID and client secret from an Otterize integration to authenticate.",
@@ -1856,7 +2115,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "7c65a7f11dfe7b0d0358fdc2f2e576394de69c91"
+    "x-revision": "04a8dbb4928aa277965a605782f556a479c40232"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -2866,7 +3125,8 @@
                 "GENERIC",
                 "KUBERNETES",
                 "DATABASE",
-                "AWS"
+                "AWS",
+                "GITHUB"
               ],
               "type": "string"
             }
@@ -2972,7 +3232,8 @@
                 "GENERIC",
                 "KUBERNETES",
                 "DATABASE",
-                "AWS"
+                "AWS",
+                "GITHUB"
               ],
               "type": "string"
             }
@@ -3493,6 +3754,152 @@
         ]
       }
     },
+    "/integrations/github": {
+      "patch": {
+        "description": "Update Github integration",
+        "operationId": "updateGithubIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "githubSettings": {
+                    "$ref": "#/components/schemas/GitHubSettingsInput"
+                  },
+                  "id": {
+                    "example": "obj_12345",
+                    "format": "id",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+                    "type": "string"
+                  },
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "githubSettings"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Update Github integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Update Github integration",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "description": "Create a new Github integration",
+        "operationId": "createGithubIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "githubSettings": {
+                    "$ref": "#/components/schemas/GitHubSettingsInput"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "githubSettings"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateGithubIntegrationResponse"
+                }
+              }
+            },
+            "description": "Create a new Github integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Create a new Github integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
     "/integrations/kubernetes": {
       "post": {
         "description": "Create a new Kubernetes integration",
@@ -3504,21 +3911,21 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "clusterId": {
-                    "example": "obj_12345",
-                    "format": "id",
-                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
-                    "type": "string"
-                  },
                   "environmentId": {
                     "example": "obj_12345",
                     "format": "id",
                     "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
                     "type": "string"
+                  },
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "type": "string"
                   }
                 },
                 "required": [
-                  "clusterId"
+                  "name"
                 ],
                 "type": "object"
               }
@@ -3593,6 +4000,12 @@
                     "example": "obj_12345",
                     "format": "id",
                     "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+                    "type": "string"
+                  },
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
                     "type": "string"
                   }
                 },
@@ -4228,9 +4641,9 @@
             "name": "name",
             "required": false,
             "schema": {
-              "example": "objects_name",
+              "example": "objects-name",
               "format": "k8s-name",
-              "pattern": "^[a-z0-9][a-z0-9-.]{0,252}$",
+              "pattern": "^[a-z0-9][a-z0-9-_.]{0,252}$",
               "type": "string"
             }
           }
@@ -4309,9 +4722,9 @@
             "name": "name",
             "required": false,
             "schema": {
-              "example": "objects_name",
+              "example": "objects-name",
               "format": "k8s-name",
-              "pattern": "^[a-z0-9][a-z0-9-.]{0,252}$",
+              "pattern": "^[a-z0-9][a-z0-9-_.]{0,252}$",
               "type": "string"
             }
           }
@@ -4814,6 +5227,54 @@
         ]
       }
     },
+    "/ping": {
+      "get": {
+        "description": "Checks the availability of the API server",
+        "operationId": "ping_query",
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "description": "Checks the availability of the API server"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Checks the availability of the API server",
+        "tags": [
+          "health"
+        ]
+      }
+    },
     "/service": {
       "get": {
         "description": "Get service by filters",
@@ -4846,9 +5307,9 @@
             "name": "name",
             "required": false,
             "schema": {
-              "example": "objects_name",
+              "example": "objects-name",
               "format": "k8s-name",
-              "pattern": "^[a-z0-9][a-z0-9-.]{0,252}$",
+              "pattern": "^[a-z0-9][a-z0-9-_.]{0,252}$",
               "type": "string"
             }
           }
@@ -4927,9 +5388,9 @@
             "name": "name",
             "required": false,
             "schema": {
-              "example": "objects_name",
+              "example": "objects-name",
               "format": "k8s-name",
-              "pattern": "^[a-z0-9][a-z0-9-.]{0,252}$",
+              "pattern": "^[a-z0-9][a-z0-9-_.]{0,252}$",
               "type": "string"
             }
           }
@@ -5156,6 +5617,12 @@
     },
     {
       "accessTokenCookie": [
+      ],
+      "organizationHeader": [
+      ]
+    },
+    {
+      "bearerAuth": [
       ],
       "organizationHeader": [
       ]

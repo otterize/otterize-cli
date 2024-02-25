@@ -129,13 +129,8 @@ func (v *MeFieldsUser) GetEmail() string { return v.Email }
 // GetName returns MeFieldsUser.Name, and is useful for accessing the field via an interface.
 func (v *MeFieldsUser) GetName() string { return v.Name }
 
-func CreateUserFromAuth0User(
-	ctx context.Context,
-	client graphql.Client,
-) (*CreateUserFromAuth0UserResponse, error) {
-	req := &graphql.Request{
-		OpName: "CreateUserFromAuth0User",
-		Query: `
+// The query or mutation executed by CreateUserFromAuth0User.
+const CreateUserFromAuth0User_Operation = `
 mutation CreateUserFromAuth0User {
 	me {
 		registerUser {
@@ -153,7 +148,15 @@ fragment MeFields on Me {
 		id
 	}
 }
-`,
+`
+
+func CreateUserFromAuth0User(
+	ctx context.Context,
+	client graphql.Client,
+) (*CreateUserFromAuth0UserResponse, error) {
+	req := &graphql.Request{
+		OpName: "CreateUserFromAuth0User",
+		Query:  CreateUserFromAuth0User_Operation,
 	}
 	var err error
 

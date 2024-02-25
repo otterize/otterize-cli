@@ -13,7 +13,9 @@ import (
 )
 
 const (
-	EnvironmentIdKey = "env-id"
+	EnvironmentIdKey         = "env-id"
+	IntegrationNameKey       = "name"
+	IntegrationNameShorthand = "n"
 )
 
 var UpdateKubernetesIntegrationCmd = &cobra.Command{
@@ -34,6 +36,7 @@ var UpdateKubernetesIntegrationCmd = &cobra.Command{
 			id,
 			cloudapi.UpdateKubernetesIntegrationMutationJSONRequestBody{
 				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIdKey), lo.ToPtr(viper.GetString(EnvironmentIdKey)), nil),
+				Name:          lo.ToPtr(viper.GetString(IntegrationNameKey)),
 			},
 		)
 		if err != nil {
@@ -48,4 +51,5 @@ var UpdateKubernetesIntegrationCmd = &cobra.Command{
 
 func init() {
 	UpdateKubernetesIntegrationCmd.Flags().String(EnvironmentIdKey, "", "new default environment")
+	UpdateKubernetesIntegrationCmd.Flags().StringP(IntegrationNameKey, IntegrationNameShorthand, "", "integration name")
 }
