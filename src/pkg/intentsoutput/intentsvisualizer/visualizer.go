@@ -8,7 +8,7 @@ import (
 	"github.com/goccy/go-graphviz"
 	"github.com/goccy/go-graphviz/cgraph"
 	"github.com/nfnt/resize"
-	"github.com/otterize/intents-operator/src/operator/api/v1alpha3"
+	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -88,15 +88,15 @@ func (v *Visualizer) addToCache(nodeName string) error {
 	return nil
 }
 
-func (v *Visualizer) populateNodeCache(intents []v1alpha3.ClientIntents) error {
+func (v *Visualizer) populateNodeCache(intents []v2alpha1.ClientIntents) error {
 	for _, intent := range intents {
 		clientNS := intent.Namespace
-		clientName := getServiceNameWithNamespace(clientNS, intent.GetServiceName())
+		clientName := getServiceNameWithNamespace(clientNS, intent.GetWorkloadName())
 		if err := v.addToCache(clientName); err != nil {
 			return err
 		}
 		for _, call := range intent.GetCallsList() {
-			targetServiceName := getServiceNameWithNamespace(clientNS, call.Name)
+			targetServiceName := getServiceNameWithNamespace(clientNS, call.GetTargetServerName())
 			if err := v.addToCache(targetServiceName); err != nil {
 				return err
 			}
@@ -105,12 +105,12 @@ func (v *Visualizer) populateNodeCache(intents []v1alpha3.ClientIntents) error {
 	return nil
 }
 
-func (v *Visualizer) buildEdges(intents []v1alpha3.ClientIntents) error {
+func (v *Visualizer) buildEdges(intents []v2alpha1.ClientIntents) error {
 	for _, intent := range intents {
 		clientNS := intent.Namespace
-		clientName := getServiceNameWithNamespace(clientNS, intent.GetServiceName())
+		clientName := getServiceNameWithNamespace(clientNS, intent.GetWorkloadName())
 		for _, call := range intent.GetCallsList() {
-			targetServiceName := getServiceNameWithNamespace(clientNS, call.Name)
+			targetServiceName := getServiceNameWithNamespace(clientNS, call.GetTargetServerName())
 			_, err := v.graph.CreateEdge(
 				fmt.Sprintf("%s to %s", clientName, targetServiceName),
 				v.nodeCache[clientName],
@@ -259,7 +259,7 @@ func (v *Visualizer) encodeImage(img image.Image) ([]byte, error) {
 	return writer.Bytes(), nil
 }
 
-func (v *Visualizer) Build(intents []v1alpha3.ClientIntents) error {
+func (v *Visualizer) Build(intents []v2alpha1.ClientIntents) error {
 	if err := v.populateNodeCache(intents); err != nil {
 		return err
 	}

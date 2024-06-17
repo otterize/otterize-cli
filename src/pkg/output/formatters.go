@@ -75,10 +75,10 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeCreds bool) 
 			integrationColumns["NETWORK MAPPER"] = formatComponentStatus(integration.Components.NetworkMapper.Status)
 		}
 
-		if integration.Type == cloudapi.IntegrationTypeDATABASE {
-			integrationColumns["DATABASE ADDRESS"] = integration.DatabaseInfo.Address
-			integrationColumns["DATABASE CREDENTIALS"] = fmt.Sprintf("%s:******", integration.DatabaseInfo.Credentials.Username)
-		}
+		//if integration.Type == cloudapi.IntegrationTypeDATABASE {
+		//	integrationColumns["DATABASE ADDRESS"] = integration.DatabaseInfo.Address
+		//	integrationColumns["DATABASE CREDENTIALS"] = fmt.Sprintf("%s:******", integration.DatabaseInfo.Credentials.Username)
+		//}
 
 		if includeCreds {
 			integrationColumns["CLIENT ID"] = integration.Credentials.ClientId

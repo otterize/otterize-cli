@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/otterize/intents-operator/src/operator/api/v1alpha3"
+	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
 	mappershared "github.com/otterize/otterize-cli/src/cmd/networkmapper/shared"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
@@ -53,7 +53,7 @@ var ExportCmd = &cobra.Command{
 	},
 }
 
-func getFormattedIntents(intentList []v1alpha3.ClientIntents) (string, error) {
+func getFormattedIntents(intentList []v2alpha1.ClientIntents) (string, error) {
 	switch outputFormatVal := viper.GetString(config.OutputFormatKey); {
 	case outputFormatVal == config.OutputFormatJSON:
 		formatted, err := json.MarshalIndent(intentList, "", "  ")
@@ -78,7 +78,7 @@ func getFormattedIntents(intentList []v1alpha3.ClientIntents) (string, error) {
 	}
 }
 
-func writeIntentsFile(filePath string, intents []v1alpha3.ClientIntents) error {
+func writeIntentsFile(filePath string, intents []v2alpha1.ClientIntents) error {
 	f, err := os.Create(filePath)
 	if err != nil {
 		return err
@@ -95,7 +95,7 @@ func writeIntentsFile(filePath string, intents []v1alpha3.ClientIntents) error {
 	return nil
 }
 
-func exportIntents(intents []v1alpha3.ClientIntents) error {
+func exportIntents(intents []v2alpha1.ClientIntents) error {
 	if viper.GetString(OutputLocationKey) != "" {
 		switch outputTypeVal := viper.GetString(OutputTypeKey); {
 		case outputTypeVal == OutputTypeSingleFile:
@@ -111,13 +111,13 @@ func exportIntents(intents []v1alpha3.ClientIntents) error {
 			}
 
 			for _, intent := range intents {
-				filePath := fmt.Sprintf("%s.%s.yaml", intent.GetServiceName(), intent.Namespace)
+				filePath := fmt.Sprintf("%s.%s.yaml", intent.GetWorkloadName(), intent.Namespace)
 				if err != nil {
 					return err
 				}
 
 				filePath = filepath.Join(viper.GetString(OutputLocationKey), filePath)
-				err := writeIntentsFile(filePath, []v1alpha3.ClientIntents{intent})
+				err := writeIntentsFile(filePath, []v2alpha1.ClientIntents{intent})
 				if err != nil {
 					return err
 				}

@@ -5,6 +5,8 @@ input Destination {
     destination: String!
     # If destination is a hostname, this _may_ be the IP it resolves to if it is known, but is not required.
     destinationIP: String
+    destinationPort: Int
+    TTL: Int
     lastSeen: Time!
 }
 
@@ -15,6 +17,10 @@ input RecordedDestinationsForSrc {
 }
 
 input CaptureResults {
+    results: [RecordedDestinationsForSrc!]!
+}
+
+input CaptureTCPResults {
     results: [RecordedDestinationsForSrc!]!
 }
 
@@ -174,6 +180,7 @@ type Query {
 type Mutation {
     resetCapture: Boolean!
     reportCaptureResults(results: CaptureResults!): Boolean!
+    reportTCPCaptureResults(results: CaptureTCPResults!): Boolean!
     reportSocketScanResults(results: SocketScanResults!): Boolean!
     reportKafkaMapperResults(results: KafkaMapperResults!): Boolean!
     reportIstioConnectionResults(results: IstioConnectionResults!): Boolean!
