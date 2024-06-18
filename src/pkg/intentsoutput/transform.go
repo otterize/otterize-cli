@@ -102,7 +102,8 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 		if mapperIntent.Server.Namespace != mapperIntent.Client.Namespace {
 			serviceName = fmt.Sprintf("%s.%s", serviceName, mapperIntent.Server.Namespace)
 		}
-		apiIntent := v2alpha1.Target{}
+
+		var apiIntent v2alpha1.Target
 		if len(mapperIntent.KafkaTopics) > 0 {
 			apiIntent = v2alpha1.Target{
 				Kafka: &v2alpha1.KafkaTarget{
