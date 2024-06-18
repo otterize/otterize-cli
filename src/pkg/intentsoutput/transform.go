@@ -55,12 +55,12 @@ func removeUntypedIntentsIfTypedIntentExistsForServer(intents map[ServiceKey]v2a
 		serversWithTypedIntents := goset.NewSet[string]()
 		for _, intent := range clientIntents.Spec.Targets {
 			// TODO: Fix getType in the operator code
-			if t := intent.GetIntentType(); (t != "" && t != v2alpha1.IntentTypeHTTP) || (t == v2alpha1.IntentTypeHTTP && len(intent.GetHTTPResources()) != 0) {
+			if intent.GetIntentType() != "" {
 				serversWithTypedIntents.Add(targetKeyFunc(intent))
 			}
 		}
 		clientIntents.Spec.Targets = lo.Filter(clientIntents.Spec.Targets, func(item v2alpha1.Target, _ int) bool {
-			return !(item.GetIntentType() == "" && serversWithTypedIntents.Contains(targetKeyFunc(item))) && !(item.GetIntentType() == v2alpha1.IntentTypeHTTP && len(item.GetHTTPResources()) == 0 && serversWithTypedIntents.Contains(targetKeyFunc(item)))
+			return item.GetIntentType() != "" || !serversWithTypedIntents.Contains(targetKeyFunc(item))
 		})
 	}
 }

@@ -28,7 +28,7 @@ spec:
   targets:
 {{- range $intent := .Spec.Targets }}
 {{- if $intent.Kubernetes }}
-    - kuberntes:
+    - kubernetes:
         name: {{ $intent.Kubernetes.Name }}
 {{- if $intent.Kubernetes.Kind }}
         kind: {{ $intent.Kubernetes.Kind }}
