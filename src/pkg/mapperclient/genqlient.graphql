@@ -21,9 +21,18 @@ fragment LabelsFragment on OtterizeServiceIdentity {
     }
 }
 
+fragment PodOwnerKind on OtterizeServiceIdentity {
+    podOwnerKind {
+        group
+        version
+        kind
+    }
+}
+
 fragment NamespacedNameWithLabelsFragment on OtterizeServiceIdentity {
     ...NamespacedNameFragment
     ...LabelsFragment
+    ...PodOwnerKind
     kubernetesService
 }
 

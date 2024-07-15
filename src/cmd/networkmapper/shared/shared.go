@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/amit7itz/goset"
-	"github.com/otterize/intents-operator/src/operator/api/v1alpha3"
+	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/output"
@@ -28,10 +28,10 @@ const (
 func InitMapperQueryFlags(cmd *cobra.Command) {
 	cmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
 	cmd.Flags().String(DistinctByLabelKey, "", "(EXPERIMENTAL) If specified, remove duplicates for exported ClientIntents by service and this label. Otherwise, outputs different intents for each namespace. (supported starting network-mapper version 0.1.13)")
-	cmd.Flags().Bool(ExportKubernetesServiceKey, false, "(EXPERIMENTAL) Export Kubernetes service name instead of Otterize service name, when detected connection is to Kubernetes service instead of pod.")
+	cmd.Flags().Bool(ExportKubernetesServiceKey, true, "(EXPERIMENTAL) Export Kubernetes service name instead of Otterize service name, when detected connection is to Kubernetes service instead of pod.")
 }
 
-func QueryIntents() ([]v1alpha3.ClientIntents, error) {
+func QueryIntents() ([]v2alpha1.ClientIntents, error) {
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -82,32 +82,32 @@ func QueryIntents() ([]v1alpha3.ClientIntents, error) {
 
 	if len(mapperIntents) == 0 {
 		output.PrintStderr("No connections found.")
-		return []v1alpha3.ClientIntents{}, nil
+		return []v2alpha1.ClientIntents{}, nil
 	}
 
 	return intentsoutput.MapperIntentsToAPIIntents(mapperIntents, distinctByLabel, exportKubernetesService), nil
 }
 
-func RemoveExcludedServices(intents []v1alpha3.ClientIntents, excludedServices []string) []v1alpha3.ClientIntents {
+func RemoveExcludedServices(intents []v2alpha1.ClientIntents, excludedServices []string) []v2alpha1.ClientIntents {
 	excludedServicesSet := goset.FromSlice(excludedServices)
-	cleanIntents := make([]v1alpha3.ClientIntents, 0)
+	cleanIntents := make([]v2alpha1.ClientIntents, 0)
 
 	for _, intent := range intents {
-		if excludedServicesSet.Contains(intent.GetServiceName()) {
+		if excludedServicesSet.Contains(intent.GetWorkloadName()) {
 			continue
 		}
 
-		calls := make([]v1alpha3.Intent, 0)
+		targets := make([]v2alpha1.Target, 0)
 		for _, target := range intent.GetCallsList() {
-			namespacedName := strings.Split(target.Name, ".")
-			if excludedServicesSet.Contains(target.Name) || (len(namespacedName) == 2 && excludedServicesSet.Contains(namespacedName[0])) {
+			namespacedName := strings.Split(target.GetTargetServerName(), ".")
+			if excludedServicesSet.Contains(target.GetTargetServerName()) || (len(namespacedName) == 2 && excludedServicesSet.Contains(namespacedName[0])) {
 				continue
 			}
-			calls = append(calls, target)
+			targets = append(targets, target)
 		}
-		intent.Spec.Calls = calls
+		intent.Spec.Targets = targets
 
-		if len(calls) != 0 {
+		if len(targets) != 0 {
 			cleanIntents = append(cleanIntents, intent)
 		}
 	}
