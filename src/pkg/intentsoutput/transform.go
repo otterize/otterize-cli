@@ -1,14 +1,15 @@
 package intentsoutput
 
 import (
+	"cmp"
 	"fmt"
 	"github.com/amit7itz/goset"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha3"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/samber/lo"
-	"golang.org/x/exp/slices"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"slices"
 )
 
 type ServiceKey struct {
@@ -62,27 +63,27 @@ func removeUntypedIntentsIfTypedIntentExistsForServer(intents map[ServiceKey]v1a
 }
 
 func sortIntents(intents []v1alpha3.ClientIntents) {
-	slices.SortFunc(intents, func(intenta, intentb v1alpha3.ClientIntents) bool {
+	slices.SortFunc(intents, func(intenta, intentb v1alpha3.ClientIntents) int {
 		namea, nameb := intenta.Name, intentb.Name
 		namespacea, namespaceb := intenta.Namespace, intentb.Namespace
 
 		if namea != nameb {
-			return namea < nameb
+			return cmp.Compare(namea, nameb)
 		}
 
-		return namespacea < namespaceb
+		return cmp.Compare(namespacea, namespaceb)
 	})
 
 	for _, clientIntents := range intents {
-		slices.SortFunc(clientIntents.Spec.Calls, func(intenta, intentb v1alpha3.Intent) bool {
+		slices.SortFunc(clientIntents.Spec.Calls, func(intenta, intentb v1alpha3.Intent) int {
 			namea, nameb := intenta.GetTargetServerName(), intentb.GetTargetServerName()
 			namespacea, namespaceb := intenta.GetTargetServerNamespace(clientIntents.Namespace), intentb.GetTargetServerNamespace(clientIntents.Namespace)
 
 			if namea != nameb {
-				return namea < nameb
+				return cmp.Compare(namea, nameb)
 			}
 
-			return namespacea < namespaceb
+			return cmp.Compare(namespacea, namespaceb)
 		})
 	}
 }
