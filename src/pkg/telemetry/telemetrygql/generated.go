@@ -65,6 +65,13 @@ type __SendCLITelemetryInput struct {
 // GetTelemetry returns __SendCLITelemetryInput.Telemetry, and is useful for accessing the field via an interface.
 func (v *__SendCLITelemetryInput) GetTelemetry() CLITelemetry { return v.Telemetry }
 
+// The query or mutation executed by SendCLITelemetry.
+const SendCLITelemetry_Operation = `
+mutation SendCLITelemetry ($telemetry: CLITelemetry!) {
+	sendCLITelemetries(telemetries: [$telemetry])
+}
+`
+
 func SendCLITelemetry(
 	ctx context.Context,
 	client graphql.Client,
@@ -72,11 +79,7 @@ func SendCLITelemetry(
 ) (*SendCLITelemetryResponse, error) {
 	req := &graphql.Request{
 		OpName: "SendCLITelemetry",
-		Query: `
-mutation SendCLITelemetry ($telemetry: CLITelemetry!) {
-	sendCLITelemetries(telemetries: [$telemetry])
-}
-`,
+		Query:  SendCLITelemetry_Operation,
 		Variables: &__SendCLITelemetryInput{
 			Telemetry: telemetry,
 		},
