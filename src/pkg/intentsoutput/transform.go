@@ -12,6 +12,11 @@ import (
 	"slices"
 )
 
+const (
+	kubernetesAPIServerName      = "kubernetes"
+	kubernetesAPIServerNamespace = "default"
+)
+
 type ServiceKey struct {
 	Name       string
 	Namespace  string
@@ -88,6 +93,10 @@ func sortIntents(intents []v1alpha3.ClientIntents) {
 	}
 }
 
+func isServerKubernetesAPIServer(mapperIntent mapperclient.IntentsIntentsIntent) bool {
+	return mapperIntent.Server.Name == kubernetesAPIServerName && mapperIntent.Server.Namespace == kubernetesAPIServerNamespace
+}
+
 func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent, distinctByLabelKey string, exportKubernetesService bool) []v1alpha3.ClientIntents {
 	apiIntentsByClientService := make(map[ServiceKey]v1alpha3.ClientIntents, 0)
 	for _, mapperIntent := range mapperIntents {
@@ -95,7 +104,10 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 		serviceName := mapperIntent.Server.Name
 		if exportKubernetesService && len(mapperIntent.Server.KubernetesService) != 0 {
 			serviceName = fmt.Sprintf("svc:%s", mapperIntent.Server.KubernetesService)
+		} else if isServerKubernetesAPIServer(mapperIntent) {
+			serviceName = fmt.Sprintf("svc:%s", kubernetesAPIServerName)
 		}
+
 		if mapperIntent.Server.Namespace != mapperIntent.Client.Namespace {
 			serviceName = fmt.Sprintf("%s.%s", serviceName, mapperIntent.Server.Namespace)
 		}
