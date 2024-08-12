@@ -1,14 +1,20 @@
 package intentsoutput
 
 import (
+	"cmp"
 	"fmt"
 	"github.com/amit7itz/goset"
 	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/samber/lo"
-	"golang.org/x/exp/slices"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"slices"
+)
+
+const (
+	kubernetesAPIServerName      = "kubernetes"
+	kubernetesAPIServerNamespace = "default"
 )
 
 type ServiceKey struct {
@@ -66,29 +72,33 @@ func removeUntypedIntentsIfTypedIntentExistsForServer(intents map[ServiceKey]v2a
 }
 
 func sortIntents(intents []v2alpha1.ClientIntents) {
-	slices.SortFunc(intents, func(intenta, intentb v2alpha1.ClientIntents) bool {
+	slices.SortFunc(intents, func(intenta, intentb v2alpha1.ClientIntents) int {
 		namea, nameb := intenta.Name, intentb.Name
 		namespacea, namespaceb := intenta.Namespace, intentb.Namespace
 
 		if namea != nameb {
-			return namea < nameb
+			return cmp.Compare(namea, nameb)
 		}
 
-		return namespacea < namespaceb
+		return cmp.Compare(namespacea, namespaceb)
 	})
 
 	for _, clientIntents := range intents {
-		slices.SortFunc(clientIntents.Spec.Targets, func(intenta, intentb v2alpha1.Target) bool {
+		slices.SortFunc(clientIntents.Spec.Targets, func(intenta, intentb v2alpha1.Target) int {
 			namea, nameb := intenta.GetTargetServerName(), intentb.GetTargetServerName()
 			namespacea, namespaceb := intenta.GetTargetServerNamespace(clientIntents.Namespace), intentb.GetTargetServerNamespace(clientIntents.Namespace)
 
 			if namea != nameb {
-				return namea < nameb
+				return cmp.Compare(namea, nameb)
 			}
 
-			return namespacea < namespaceb
+			return cmp.Compare(namespacea, namespaceb)
 		})
 	}
+}
+
+func isServerKubernetesAPIServer(mapperIntent mapperclient.IntentsIntentsIntent) bool {
+	return mapperIntent.Server.Name == kubernetesAPIServerName && mapperIntent.Server.Namespace == kubernetesAPIServerNamespace
 }
 
 func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent, distinctByLabelKey string, exportKubernetesService bool) []v2alpha1.ClientIntents {
@@ -97,8 +107,11 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 		clientServiceKey := getServiceKey(mapperIntent, distinctByLabelKey)
 		serviceName := mapperIntent.Server.Name
 		if exportKubernetesService && len(mapperIntent.Server.KubernetesService) != 0 {
-			serviceName = mapperIntent.Server.KubernetesService
+			serviceName = fmt.Sprintf("svc:%s", mapperIntent.Server.KubernetesService)
+		} else if isServerKubernetesAPIServer(mapperIntent) {
+			serviceName = fmt.Sprintf("svc:%s", kubernetesAPIServerName)
 		}
+
 		if mapperIntent.Server.Namespace != mapperIntent.Client.Namespace {
 			serviceName = fmt.Sprintf("%s.%s", serviceName, mapperIntent.Server.Namespace)
 		}
