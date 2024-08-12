@@ -17,8 +17,8 @@ require (
 	github.com/markkurossi/tabulate v0.0.0-20211112080948-67dabd3f2db2
 	github.com/nfnt/resize v0.0.0-20160724205520-891127d8d1b5
 	github.com/oriser/regroup v0.0.0-20210730155327-fca8d7531263
-	github.com/otterize/intents-operator/src v0.0.0-20231112133805-13e7e138e64e
-    github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
+	github.com/otterize/intents-operator/src v0.0.0-20240808131010-d1eeabedcfeb
+	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/samber/lo v1.33.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.7.0
@@ -59,12 +59,13 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/gnostic v0.6.9 // indirect
-	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/google/gnostic-models v0.6.8 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/hashicorp/hcl v1.0.1-vault-3 // indirect
 	github.com/imdario/mergo v0.3.15 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -114,14 +115,14 @@ require (
 	golang.org/x/image v0.10.0 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.19.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/term v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.16.1 // indirect
-	gomodules.xyz/jsonpatch/v2 v2.2.0 // indirect
+	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
+	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
