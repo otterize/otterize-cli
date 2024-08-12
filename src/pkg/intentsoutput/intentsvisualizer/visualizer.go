@@ -95,7 +95,7 @@ func (v *Visualizer) populateNodeCache(intents []v2alpha1.ClientIntents) error {
 		if err := v.addToCache(clientName); err != nil {
 			return err
 		}
-		for _, call := range intent.GetCallsList() {
+		for _, call := range intent.GetTargetList() {
 			targetServiceName := getServiceNameWithNamespace(clientNS, call.GetTargetServerName())
 			if err := v.addToCache(targetServiceName); err != nil {
 				return err
@@ -109,7 +109,7 @@ func (v *Visualizer) buildEdges(intents []v2alpha1.ClientIntents) error {
 	for _, intent := range intents {
 		clientNS := intent.Namespace
 		clientName := getServiceNameWithNamespace(clientNS, intent.GetWorkloadName())
-		for _, call := range intent.GetCallsList() {
+		for _, call := range intent.GetTargetList() {
 			targetServiceName := getServiceNameWithNamespace(clientNS, call.GetTargetServerName())
 			_, err := v.graph.CreateEdge(
 				fmt.Sprintf("%s to %s", clientName, targetServiceName),

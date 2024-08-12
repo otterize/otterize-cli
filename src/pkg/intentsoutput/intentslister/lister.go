@@ -10,7 +10,7 @@ import (
 func ListFormattedIntents(intents []v2alpha1.ClientIntents) {
 	for _, intent := range intents {
 		output.PrintStdout("%s in namespace %s calls:", intent.Name, intent.Namespace)
-		for _, call := range intent.GetCallsList() {
+		for _, call := range intent.GetTargetList() {
 			output.PrintStdout("  - %s in namespace %s", call.GetTargetServerName(), call.GetTargetServerNamespace(intent.GetNamespace()))
 			if call.Kafka != nil {
 				for _, topic := range call.Kafka.Topics {

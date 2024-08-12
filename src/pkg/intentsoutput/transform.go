@@ -107,9 +107,9 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 		clientServiceKey := getServiceKey(mapperIntent, distinctByLabelKey)
 		serviceName := mapperIntent.Server.Name
 		if exportKubernetesService && len(mapperIntent.Server.KubernetesService) != 0 {
-			serviceName = fmt.Sprintf("svc:%s", mapperIntent.Server.KubernetesService)
+			serviceName = mapperIntent.Server.KubernetesService
 		} else if isServerKubernetesAPIServer(mapperIntent) {
-			serviceName = fmt.Sprintf("svc:%s", kubernetesAPIServerName)
+			mapperIntent.Server.KubernetesService = kubernetesAPIServerName
 		}
 
 		if mapperIntent.Server.Namespace != mapperIntent.Client.Namespace {

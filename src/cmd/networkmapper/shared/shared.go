@@ -98,7 +98,7 @@ func RemoveExcludedServices(intents []v2alpha1.ClientIntents, excludedServices [
 		}
 
 		targets := make([]v2alpha1.Target, 0)
-		for _, target := range intent.GetCallsList() {
+		for _, target := range intent.GetTargetList() {
 			namespacedName := strings.Split(target.GetTargetServerName(), ".")
 			if excludedServicesSet.Contains(target.GetTargetServerName()) || (len(namespacedName) == 2 && excludedServicesSet.Contains(namespacedName[0])) {
 				continue
