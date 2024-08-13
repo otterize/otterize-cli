@@ -8,6 +8,7 @@ import (
 	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
 	mappershared "github.com/otterize/otterize-cli/src/cmd/networkmapper/shared"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/output"
@@ -83,6 +84,8 @@ func getFormattedIntents(intentList []v2alpha1.ClientIntents) (string, error) {
 				if err != nil {
 					return "", err
 				}
+				intentV1.Kind = consts.IntentsKind
+				intentV1.APIVersion = consts.IntentsAPIVersionV1alpha3
 				err = printerV1.PrintObj(&intentV1, &buf)
 				if err != nil {
 					return "", err
