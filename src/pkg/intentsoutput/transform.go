@@ -131,7 +131,7 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 					}),
 				},
 			}
-		} else if exportKubernetesService && len(mapperIntent.Server.KubernetesService) != 0 {
+		} else if (exportKubernetesService || isServerKubernetesAPIServer(mapperIntent)) && len(mapperIntent.Server.KubernetesService) != 0 {
 			apiIntent = v2alpha1.Target{
 				Service: &v2alpha1.ServiceTarget{
 					Name: serviceName,
