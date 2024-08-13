@@ -166,6 +166,10 @@ func validateOutputFlags() error {
 	if viper.GetString(OutputTypeKey) != "" {
 		return fmt.Errorf("flag --%s requires --%s to specify output path", OutputTypeKey, OutputLocationKey)
 	}
+
+	if viper.GetString(OutputVersionKey) != OutputVersionV1 && viper.GetString(OutputVersionKey) != OutputVersionV2 {
+		return fmt.Errorf("unexpected output version %s, use one of (%s, %s)", viper.GetString(OutputVersionKey), OutputVersionV1, OutputVersionV2)
+	}
 	return nil
 }
 

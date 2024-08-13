@@ -28,7 +28,7 @@ const (
 func InitMapperQueryFlags(cmd *cobra.Command) {
 	cmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
 	cmd.Flags().String(DistinctByLabelKey, "", "(EXPERIMENTAL) If specified, remove duplicates for exported ClientIntents by service and this label. Otherwise, outputs different intents for each namespace. (supported starting network-mapper version 0.1.13)")
-	cmd.Flags().Bool(ExportKubernetesServiceKey, true, "(EXPERIMENTAL) Export Kubernetes service name instead of Otterize service name, when detected connection is to Kubernetes service instead of pod.")
+	cmd.Flags().Bool(ExportKubernetesServiceKey, false, "(EXPERIMENTAL) Export Kubernetes service name instead of Otterize service name, when detected connection is to Kubernetes service instead of pod.")
 }
 
 func QueryIntents() ([]v2alpha1.ClientIntents, error) {
