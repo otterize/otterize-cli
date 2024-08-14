@@ -70,7 +70,7 @@ func getFormattedIntents(intentList []v2alpha1.ClientIntents) (string, error) {
 	case outputFormatVal == config.OutputFormatYAML:
 		buf := bytes.Buffer{}
 
-		printer := intentsoutput.IntentsPrinter{}
+		printer := intentsoutput.IntentsPrinterV2{}
 		printerV1 := intentsoutput.IntentsPrinterV1{}
 		for _, intentYAML := range intentList {
 			if viper.GetString(OutputVersionKey) == OutputVersionV2 {

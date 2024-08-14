@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-type IntentsPrinter struct {
+type IntentsPrinterV2 struct {
 	printCount int64
 }
 
@@ -116,7 +116,7 @@ var _ = v2alpha1.ClientIntents{
 	},
 }
 
-func (p *IntentsPrinter) PrintObj(intents *v2alpha1.ClientIntents, w io.Writer) error {
+func (p *IntentsPrinterV2) PrintObj(intents *v2alpha1.ClientIntents, w io.Writer) error {
 	count := atomic.AddInt64(&p.printCount, 1)
 	if count > 1 {
 		if _, err := w.Write([]byte("\n---\n")); err != nil {
