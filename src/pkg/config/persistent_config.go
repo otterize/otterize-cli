@@ -77,9 +77,7 @@ func LoadApiCredentialsFile() {
 	if !Config.Expiry.IsZero() {
 		viper.Set(ApiUserTokenExpiryKey, Config.Expiry)
 	}
-	if Config.OrganizationId != "" {
-		viper.Set(ApiSelectedOrganizationId, Config.OrganizationId)
-	}
+
 	if Config.ClientId != "" || Config.ClientSecret != "" {
 		viper.Set(ApiClientIdKey, Config.ClientId)
 		viper.Set(ApiClientSecretKey, Config.ClientSecret)
