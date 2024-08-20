@@ -4,7 +4,7 @@ import (
 	"cmp"
 	"fmt"
 	"github.com/amit7itz/goset"
-	"github.com/otterize/intents-operator/src/operator/api/v1alpha3"
+	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/samber/lo"
@@ -53,22 +53,26 @@ func getServiceKey(mapperIntent mapperclient.IntentsIntentsIntent, distinctByLab
 	return clientServiceKey
 }
 
-func removeUntypedIntentsIfTypedIntentExistsForServer(intents map[ServiceKey]v1alpha3.ClientIntents) {
+func removeUntypedIntentsIfTypedIntentExistsForServer(intents map[ServiceKey]v2alpha1.ClientIntents) {
 	for _, clientIntents := range intents {
+		targetKeyFunc := func(intent v2alpha1.Target) string {
+			return fmt.Sprintf("%s.%s.%s", intent.GetTargetServerName(), intent.GetTargetServerNamespace(clientIntents.Namespace), intent.GetTargetServerKind())
+		}
 		serversWithTypedIntents := goset.NewSet[string]()
-		for _, intent := range clientIntents.Spec.Calls {
-			if intent.Type != "" {
-				serversWithTypedIntents.Add(intent.Name)
+		for _, intent := range clientIntents.Spec.Targets {
+			// TODO: Fix getType in the operator code
+			if intent.GetIntentType() != "" {
+				serversWithTypedIntents.Add(targetKeyFunc(intent))
 			}
 		}
-		clientIntents.Spec.Calls = lo.Filter(clientIntents.Spec.Calls, func(item v1alpha3.Intent, _ int) bool {
-			return item.Type != "" || (item.Type == "" && !serversWithTypedIntents.Contains(item.Name))
+		clientIntents.Spec.Targets = lo.Filter(clientIntents.Spec.Targets, func(item v2alpha1.Target, _ int) bool {
+			return item.GetIntentType() != "" || !serversWithTypedIntents.Contains(targetKeyFunc(item))
 		})
 	}
 }
 
-func sortIntents(intents []v1alpha3.ClientIntents) {
-	slices.SortFunc(intents, func(intenta, intentb v1alpha3.ClientIntents) int {
+func sortIntents(intents []v2alpha1.ClientIntents) {
+	slices.SortFunc(intents, func(intenta, intentb v2alpha1.ClientIntents) int {
 		namea, nameb := intenta.Name, intentb.Name
 		namespacea, namespaceb := intenta.Namespace, intentb.Namespace
 
@@ -80,7 +84,7 @@ func sortIntents(intents []v1alpha3.ClientIntents) {
 	})
 
 	for _, clientIntents := range intents {
-		slices.SortFunc(clientIntents.Spec.Calls, func(intenta, intentb v1alpha3.Intent) int {
+		slices.SortFunc(clientIntents.Spec.Targets, func(intenta, intentb v2alpha1.Target) int {
 			namea, nameb := intenta.GetTargetServerName(), intentb.GetTargetServerName()
 			namespacea, namespaceb := intenta.GetTargetServerNamespace(clientIntents.Namespace), intentb.GetTargetServerNamespace(clientIntents.Namespace)
 
@@ -97,38 +101,57 @@ func isServerKubernetesAPIServer(mapperIntent mapperclient.IntentsIntentsIntent)
 	return mapperIntent.Server.Name == kubernetesAPIServerName && mapperIntent.Server.Namespace == kubernetesAPIServerNamespace
 }
 
-func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent, distinctByLabelKey string, exportKubernetesService bool) []v1alpha3.ClientIntents {
-	apiIntentsByClientService := make(map[ServiceKey]v1alpha3.ClientIntents, 0)
+func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent, distinctByLabelKey string, exportKubernetesService bool) []v2alpha1.ClientIntents {
+	apiIntentsByClientService := make(map[ServiceKey]v2alpha1.ClientIntents, 0)
 	for _, mapperIntent := range mapperIntents {
 		clientServiceKey := getServiceKey(mapperIntent, distinctByLabelKey)
 		serviceName := mapperIntent.Server.Name
 		if exportKubernetesService && len(mapperIntent.Server.KubernetesService) != 0 {
-			serviceName = fmt.Sprintf("svc:%s", mapperIntent.Server.KubernetesService)
+			serviceName = mapperIntent.Server.KubernetesService
 		} else if isServerKubernetesAPIServer(mapperIntent) {
-			serviceName = fmt.Sprintf("svc:%s", kubernetesAPIServerName)
+			mapperIntent.Server.KubernetesService = kubernetesAPIServerName
 		}
 
 		if mapperIntent.Server.Namespace != mapperIntent.Client.Namespace {
 			serviceName = fmt.Sprintf("%s.%s", serviceName, mapperIntent.Server.Namespace)
 		}
-		apiIntent := v1alpha3.Intent{
-			Name: serviceName,
-			Type: mapperIntentTypeToAPI(mapperIntent.Type),
-			Topics: lo.Map(mapperIntent.KafkaTopics, func(mapperTopic mapperclient.IntentsIntentsIntentKafkaTopicsKafkaConfig, _ int) v1alpha3.KafkaTopic {
-				return v1alpha3.KafkaTopic{
-					Name: mapperTopic.Name,
-					Operations: lo.Map(mapperTopic.Operations, func(op mapperclient.KafkaOperation, _ int) v1alpha3.KafkaOperation {
-						return mapperKafkaOperationToAPI(op)
+
+		var apiIntent v2alpha1.Target
+		if len(mapperIntent.KafkaTopics) > 0 {
+			apiIntent = v2alpha1.Target{
+				Kafka: &v2alpha1.KafkaTarget{
+					Name: serviceName,
+					Topics: lo.Map(mapperIntent.KafkaTopics, func(mapperTopic mapperclient.IntentsIntentsIntentKafkaTopicsKafkaConfig, _ int) v2alpha1.KafkaTopic {
+						return v2alpha1.KafkaTopic{
+							Name: mapperTopic.Name,
+							Operations: lo.Map(mapperTopic.Operations, func(op mapperclient.KafkaOperation, _ int) v2alpha1.KafkaOperation {
+								return mapperKafkaOperationToAPI(op)
+							}),
+						}
 					}),
-				}
-			}),
-			HTTPResources: mapperHTTPResourcesToAPI(mapperIntent.HttpResources),
+				},
+			}
+		} else if (exportKubernetesService || isServerKubernetesAPIServer(mapperIntent)) && len(mapperIntent.Server.KubernetesService) != 0 {
+			apiIntent = v2alpha1.Target{
+				Service: &v2alpha1.ServiceTarget{
+					Name: serviceName,
+					HTTP: mapperHTTPResourcesToAPI(mapperIntent.HttpResources),
+				},
+			}
+		} else {
+			apiIntent = v2alpha1.Target{
+				Kubernetes: &v2alpha1.KubernetesTarget{
+					Name: serviceName,
+					Kind: mapperIntent.Server.PodOwnerKind.PodOwnerKind.Kind,
+					HTTP: mapperHTTPResourcesToAPI(mapperIntent.HttpResources),
+				},
+			}
 		}
 
 		if currentIntents, ok := apiIntentsByClientService[clientServiceKey]; ok {
-			currentIntents.Spec.Calls = append(currentIntents.Spec.Calls, apiIntent)
+			currentIntents.Spec.Targets = append(currentIntents.Spec.Targets, apiIntent)
 		} else {
-			apiIntentsByClientService[clientServiceKey] = v1alpha3.ClientIntents{
+			apiIntentsByClientService[clientServiceKey] = v2alpha1.ClientIntents{
 				TypeMeta: v1.TypeMeta{
 					Kind:       consts.IntentsKind,
 					APIVersion: consts.IntentsAPIVersion,
@@ -137,9 +160,9 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 					Name:      mapperIntent.Client.Name,
 					Namespace: mapperIntent.Client.Namespace,
 				},
-				Spec: &v1alpha3.IntentsSpec{
-					Service: v1alpha3.Service{Name: mapperIntent.Client.Name},
-					Calls:   []v1alpha3.Intent{apiIntent},
+				Spec: &v2alpha1.IntentsSpec{
+					Workload: v2alpha1.Workload{Name: mapperIntent.Client.Name, Kind: mapperIntent.Client.PodOwnerKind.PodOwnerKind.Kind},
+					Targets:  []v2alpha1.Target{apiIntent},
 				},
 			}
 		}
@@ -151,82 +174,68 @@ func MapperIntentsToAPIIntents(mapperIntents []mapperclient.IntentsIntentsIntent
 	return clientIntents
 }
 
-func mapperHTTPMethodToAPI(method mapperclient.HttpMethod) v1alpha3.HTTPMethod {
+func mapperHTTPMethodToAPI(method mapperclient.HttpMethod) v2alpha1.HTTPMethod {
 	switch method {
 	case mapperclient.HttpMethodGet:
-		return v1alpha3.HTTPMethodGet
+		return v2alpha1.HTTPMethodGet
 	case mapperclient.HttpMethodPut:
-		return v1alpha3.HTTPMethodPut
+		return v2alpha1.HTTPMethodPut
 	case mapperclient.HttpMethodPost:
-		return v1alpha3.HTTPMethodPost
+		return v2alpha1.HTTPMethodPost
 	case mapperclient.HttpMethodDelete:
-		return v1alpha3.HTTPMethodDelete
+		return v2alpha1.HTTPMethodDelete
 	case mapperclient.HttpMethodOptions:
-		return v1alpha3.HTTPMethodOptions
+		return v2alpha1.HTTPMethodOptions
 	case mapperclient.HttpMethodTrace:
-		return v1alpha3.HTTPMethodTrace
+		return v2alpha1.HTTPMethodTrace
 	case mapperclient.HttpMethodPatch:
-		return v1alpha3.HTTPMethodPatch
+		return v2alpha1.HTTPMethodPatch
 	case mapperclient.HttpMethodConnect:
-		return v1alpha3.HTTPMethodConnect
+		return v2alpha1.HTTPMethodConnect
 	default:
 		panic("should never happen")
 	}
 }
 
-func mapperKafkaOperationToAPI(operation mapperclient.KafkaOperation) v1alpha3.KafkaOperation {
+func mapperKafkaOperationToAPI(operation mapperclient.KafkaOperation) v2alpha1.KafkaOperation {
 	switch operation {
 	case mapperclient.KafkaOperationAll:
-		return v1alpha3.KafkaOperationAll
+		return v2alpha1.KafkaOperationAll
 	case mapperclient.KafkaOperationConsume:
-		return v1alpha3.KafkaOperationConsume
+		return v2alpha1.KafkaOperationConsume
 	case mapperclient.KafkaOperationProduce:
-		return v1alpha3.KafkaOperationProduce
+		return v2alpha1.KafkaOperationProduce
 	case mapperclient.KafkaOperationCreate:
-		return v1alpha3.KafkaOperationCreate
+		return v2alpha1.KafkaOperationCreate
 	case mapperclient.KafkaOperationAlter:
-		return v1alpha3.KafkaOperationAlter
+		return v2alpha1.KafkaOperationAlter
 	case mapperclient.KafkaOperationDelete:
-		return v1alpha3.KafkaOperationDelete
+		return v2alpha1.KafkaOperationDelete
 	case mapperclient.KafkaOperationDescribe:
-		return v1alpha3.KafkaOperationDescribe
+		return v2alpha1.KafkaOperationDescribe
 	case mapperclient.KafkaOperationClusterAction:
-		return v1alpha3.KafkaOperationClusterAction
+		return v2alpha1.KafkaOperationClusterAction
 	case mapperclient.KafkaOperationIdempotentWrite:
-		return v1alpha3.KafkaOperationIdempotentWrite
+		return v2alpha1.KafkaOperationIdempotentWrite
 	case mapperclient.KafkaOperationAlterConfigs:
-		return v1alpha3.KafkaOperationAlterConfigs
+		return v2alpha1.KafkaOperationAlterConfigs
 	case mapperclient.KafkaOperationDescribeConfigs:
-		return v1alpha3.KafkaOperationDescribeConfigs
+		return v2alpha1.KafkaOperationDescribeConfigs
 	default:
 		panic("should never happen")
 	}
 
 }
 
-func mapperIntentTypeToAPI(intentType mapperclient.IntentType) v1alpha3.IntentType {
-	switch intentType {
-	case mapperclient.IntentTypeKafka:
-		return v1alpha3.IntentTypeKafka
-	case mapperclient.IntentTypeHttp:
-		return v1alpha3.IntentTypeHTTP
-	case "":
-		return "" // for convenience, allow passing through an empty string
-	default:
-		panic("should never happen")
-	}
-
-}
-
-func mapperHTTPResourcesToAPI(mapperHTTPResources []mapperclient.IntentsIntentsIntentHttpResourcesHttpResource) []v1alpha3.HTTPResource {
-	httpResources := make([]v1alpha3.HTTPResource, 0)
+func mapperHTTPResourcesToAPI(mapperHTTPResources []mapperclient.IntentsIntentsIntentHttpResourcesHttpResource) []v2alpha1.HTTPTarget {
+	httpResources := make([]v2alpha1.HTTPTarget, 0)
 	for _, mapperHTTPResource := range mapperHTTPResources {
 		mapperHTTPResource.Methods = lo.Filter(mapperHTTPResource.Methods, func(item mapperclient.HttpMethod, _ int) bool {
 			return item != mapperclient.HttpMethodAll
 		})
-		httpResources = append(httpResources, v1alpha3.HTTPResource{
+		httpResources = append(httpResources, v2alpha1.HTTPTarget{
 			Path: mapperHTTPResource.Path,
-			Methods: lo.Map(mapperHTTPResource.Methods, func(method mapperclient.HttpMethod, _ int) v1alpha3.HTTPMethod {
+			Methods: lo.Map(mapperHTTPResource.Methods, func(method mapperclient.HttpMethod, _ int) v2alpha1.HTTPMethod {
 				return mapperHTTPMethodToAPI(method)
 			}),
 		})

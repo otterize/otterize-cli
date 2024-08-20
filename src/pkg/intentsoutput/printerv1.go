@@ -3,16 +3,16 @@ package intentsoutput
 import (
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha3"
 	"io"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sync/atomic"
 	"text/template"
 )
 
-type IntentsPrinter struct {
+type IntentsPrinterV1 struct {
 	printCount int64
 }
 
-const crdTemplate = `apiVersion: {{ .APIVersion }}
+const crdTemplateV1 = `apiVersion: {{ .APIVersion }}
 kind: {{ .Kind }}
 metadata:
   name: {{ .Name }}
@@ -54,7 +54,7 @@ spec:
 {{- end -}}
 {{ end }}`
 
-var crdTemplateParsed = template.Must(template.New("intents").Parse(crdTemplate))
+var crdTemplateParsedV1 = template.Must(template.New("intents").Parse(crdTemplateV1))
 
 // Keep this bit here so we have a compile time check that the structure the template assumes is correct.
 var _ = v1alpha3.ClientIntents{
@@ -76,12 +76,12 @@ var _ = v1alpha3.ClientIntents{
 	},
 }
 
-func (p *IntentsPrinter) PrintObj(intents *v1alpha3.ClientIntents, w io.Writer) error {
+func (p *IntentsPrinterV1) PrintObj(intents *v1alpha3.ClientIntents, w io.Writer) error {
 	count := atomic.AddInt64(&p.printCount, 1)
 	if count > 1 {
 		if _, err := w.Write([]byte("\n---\n")); err != nil {
 			return err
 		}
 	}
-	return crdTemplateParsed.Execute(w, intents)
+	return crdTemplateParsedV1.Execute(w, intents)
 }

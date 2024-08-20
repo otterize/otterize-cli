@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha3"
+	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
 	mappershared "github.com/otterize/otterize-cli/src/cmd/networkmapper/shared"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/output"
@@ -23,6 +25,9 @@ const (
 	OutputTypeDefault       = OutputTypeSingleFile
 	OutputTypeSingleFile    = "single-file"
 	OutputTypeDirectory     = "dir"
+	OutputVersionKey        = "output-version"
+	OutputVersionV1         = "v1"
+	OutputVersionV2         = "v2"
 )
 
 var ExportCmd = &cobra.Command{
@@ -53,7 +58,7 @@ var ExportCmd = &cobra.Command{
 	},
 }
 
-func getFormattedIntents(intentList []v1alpha3.ClientIntents) (string, error) {
+func getFormattedIntents(intentList []v2alpha1.ClientIntents) (string, error) {
 	switch outputFormatVal := viper.GetString(config.OutputFormatKey); {
 	case outputFormatVal == config.OutputFormatJSON:
 		formatted, err := json.MarshalIndent(intentList, "", "  ")
@@ -65,11 +70,26 @@ func getFormattedIntents(intentList []v1alpha3.ClientIntents) (string, error) {
 	case outputFormatVal == config.OutputFormatYAML:
 		buf := bytes.Buffer{}
 
-		printer := intentsoutput.IntentsPrinter{}
+		printer := intentsoutput.IntentsPrinterV2{}
+		printerV1 := intentsoutput.IntentsPrinterV1{}
 		for _, intentYAML := range intentList {
-			err := printer.PrintObj(&intentYAML, &buf)
-			if err != nil {
-				return "", err
+			if viper.GetString(OutputVersionKey) == OutputVersionV2 {
+				err := printer.PrintObj(&intentYAML, &buf)
+				if err != nil {
+					return "", err
+				}
+			} else {
+				intentV1 := v1alpha3.ClientIntents{}
+				err := intentV1.ConvertFrom(&intentYAML)
+				if err != nil {
+					return "", err
+				}
+				intentV1.Kind = consts.IntentsKind
+				intentV1.APIVersion = consts.IntentsAPIVersionV1alpha3
+				err = printerV1.PrintObj(&intentV1, &buf)
+				if err != nil {
+					return "", err
+				}
 			}
 		}
 		return buf.String(), nil
@@ -78,7 +98,7 @@ func getFormattedIntents(intentList []v1alpha3.ClientIntents) (string, error) {
 	}
 }
 
-func writeIntentsFile(filePath string, intents []v1alpha3.ClientIntents) error {
+func writeIntentsFile(filePath string, intents []v2alpha1.ClientIntents) error {
 	f, err := os.Create(filePath)
 	if err != nil {
 		return err
@@ -95,7 +115,7 @@ func writeIntentsFile(filePath string, intents []v1alpha3.ClientIntents) error {
 	return nil
 }
 
-func exportIntents(intents []v1alpha3.ClientIntents) error {
+func exportIntents(intents []v2alpha1.ClientIntents) error {
 	if viper.GetString(OutputLocationKey) != "" {
 		switch outputTypeVal := viper.GetString(OutputTypeKey); {
 		case outputTypeVal == OutputTypeSingleFile:
@@ -111,13 +131,13 @@ func exportIntents(intents []v1alpha3.ClientIntents) error {
 			}
 
 			for _, intent := range intents {
-				filePath := fmt.Sprintf("%s.%s.yaml", intent.GetServiceName(), intent.Namespace)
+				filePath := fmt.Sprintf("%s.%s.yaml", intent.GetWorkloadName(), intent.Namespace)
 				if err != nil {
 					return err
 				}
 
 				filePath = filepath.Join(viper.GetString(OutputLocationKey), filePath)
-				err := writeIntentsFile(filePath, []v1alpha3.ClientIntents{intent})
+				err := writeIntentsFile(filePath, []v2alpha1.ClientIntents{intent})
 				if err != nil {
 					return err
 				}
@@ -146,6 +166,10 @@ func validateOutputFlags() error {
 	if viper.GetString(OutputTypeKey) != "" {
 		return fmt.Errorf("flag --%s requires --%s to specify output path", OutputTypeKey, OutputLocationKey)
 	}
+
+	if viper.GetString(OutputVersionKey) != OutputVersionV1 && viper.GetString(OutputVersionKey) != OutputVersionV2 {
+		return fmt.Errorf("unexpected output version %s, use one of (%s, %s)", viper.GetString(OutputVersionKey), OutputVersionV1, OutputVersionV2)
+	}
 	return nil
 }
 
@@ -155,4 +179,5 @@ func init() {
 	ExportCmd.Flags().String(OutputTypeKey, "", fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
 	ExportCmd.Flags().String(config.OutputFormatKey, config.OutputFormatYAML, fmt.Sprintf("Output format - %s/%s", config.OutputFormatYAML, config.OutputFormatJSON))
 	ExportCmd.Flags().String(mappershared.ServerKey, "", "Export only intents that call this server - <server-name>.<namespace>")
+	ExportCmd.Flags().String(OutputVersionKey, OutputVersionV1, fmt.Sprintf("Output ClientIntents api version - %s/%s", OutputVersionV1, OutputVersionV2))
 }

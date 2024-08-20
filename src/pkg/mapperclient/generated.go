@@ -90,6 +90,11 @@ func (v *IntentsIntentsIntentClientOtterizeServiceIdentity) GetLabels() []Labels
 	return v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
 }
 
+// GetPodOwnerKind returns IntentsIntentsIntentClientOtterizeServiceIdentity.PodOwnerKind, and is useful for accessing the field via an interface.
+func (v *IntentsIntentsIntentClientOtterizeServiceIdentity) GetPodOwnerKind() PodOwnerKindPodOwnerKindGroupVersionKind {
+	return v.NamespacedNameWithLabelsFragment.PodOwnerKind.PodOwnerKind
+}
+
 func (v *IntentsIntentsIntentClientOtterizeServiceIdentity) UnmarshalJSON(b []byte) error {
 
 	if string(b) == "null" {
@@ -123,6 +128,8 @@ type __premarshalIntentsIntentsIntentClientOtterizeServiceIdentity struct {
 	Namespace string `json:"namespace"`
 
 	Labels []LabelsFragmentLabelsPodLabel `json:"labels"`
+
+	PodOwnerKind PodOwnerKindPodOwnerKindGroupVersionKind `json:"podOwnerKind"`
 }
 
 func (v *IntentsIntentsIntentClientOtterizeServiceIdentity) MarshalJSON() ([]byte, error) {
@@ -140,6 +147,7 @@ func (v *IntentsIntentsIntentClientOtterizeServiceIdentity) __premarshalJSON() (
 	retval.Name = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Name
 	retval.Namespace = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Namespace
 	retval.Labels = v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
+	retval.PodOwnerKind = v.NamespacedNameWithLabelsFragment.PodOwnerKind.PodOwnerKind
 	return &retval, nil
 }
 
@@ -194,6 +202,11 @@ func (v *IntentsIntentsIntentServerOtterizeServiceIdentity) GetLabels() []Labels
 	return v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
 }
 
+// GetPodOwnerKind returns IntentsIntentsIntentServerOtterizeServiceIdentity.PodOwnerKind, and is useful for accessing the field via an interface.
+func (v *IntentsIntentsIntentServerOtterizeServiceIdentity) GetPodOwnerKind() PodOwnerKindPodOwnerKindGroupVersionKind {
+	return v.NamespacedNameWithLabelsFragment.PodOwnerKind.PodOwnerKind
+}
+
 func (v *IntentsIntentsIntentServerOtterizeServiceIdentity) UnmarshalJSON(b []byte) error {
 
 	if string(b) == "null" {
@@ -227,6 +240,8 @@ type __premarshalIntentsIntentsIntentServerOtterizeServiceIdentity struct {
 	Namespace string `json:"namespace"`
 
 	Labels []LabelsFragmentLabelsPodLabel `json:"labels"`
+
+	PodOwnerKind PodOwnerKindPodOwnerKindGroupVersionKind `json:"podOwnerKind"`
 }
 
 func (v *IntentsIntentsIntentServerOtterizeServiceIdentity) MarshalJSON() ([]byte, error) {
@@ -244,6 +259,7 @@ func (v *IntentsIntentsIntentServerOtterizeServiceIdentity) __premarshalJSON() (
 	retval.Name = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Name
 	retval.Namespace = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Namespace
 	retval.Labels = v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
+	retval.PodOwnerKind = v.NamespacedNameWithLabelsFragment.PodOwnerKind.PodOwnerKind
 	return &retval, nil
 }
 
@@ -312,6 +328,7 @@ func (v *NamespacedNameFragment) GetNamespace() string { return v.Namespace }
 type NamespacedNameWithLabelsFragment struct {
 	NamespacedNameFragment `json:"-"`
 	LabelsFragment         `json:"-"`
+	PodOwnerKind           `json:"-"`
 	// If the service identity was resolved from a Kubernetes service, its name.
 	KubernetesService string `json:"kubernetesService"`
 }
@@ -330,6 +347,11 @@ func (v *NamespacedNameWithLabelsFragment) GetNamespace() string {
 // GetLabels returns NamespacedNameWithLabelsFragment.Labels, and is useful for accessing the field via an interface.
 func (v *NamespacedNameWithLabelsFragment) GetLabels() []LabelsFragmentLabelsPodLabel {
 	return v.LabelsFragment.Labels
+}
+
+// GetPodOwnerKind returns NamespacedNameWithLabelsFragment.PodOwnerKind, and is useful for accessing the field via an interface.
+func (v *NamespacedNameWithLabelsFragment) GetPodOwnerKind() PodOwnerKindPodOwnerKindGroupVersionKind {
+	return v.PodOwnerKind.PodOwnerKind
 }
 
 func (v *NamespacedNameWithLabelsFragment) UnmarshalJSON(b []byte) error {
@@ -359,6 +381,11 @@ func (v *NamespacedNameWithLabelsFragment) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
+	err = json.Unmarshal(
+		b, &v.PodOwnerKind)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -370,6 +397,8 @@ type __premarshalNamespacedNameWithLabelsFragment struct {
 	Namespace string `json:"namespace"`
 
 	Labels []LabelsFragmentLabelsPodLabel `json:"labels"`
+
+	PodOwnerKind PodOwnerKindPodOwnerKindGroupVersionKind `json:"podOwnerKind"`
 }
 
 func (v *NamespacedNameWithLabelsFragment) MarshalJSON() ([]byte, error) {
@@ -387,8 +416,36 @@ func (v *NamespacedNameWithLabelsFragment) __premarshalJSON() (*__premarshalName
 	retval.Name = v.NamespacedNameFragment.Name
 	retval.Namespace = v.NamespacedNameFragment.Namespace
 	retval.Labels = v.LabelsFragment.Labels
+	retval.PodOwnerKind = v.PodOwnerKind.PodOwnerKind
 	return &retval, nil
 }
+
+// PodOwnerKind includes the GraphQL fields of OtterizeServiceIdentity requested by the fragment PodOwnerKind.
+type PodOwnerKind struct {
+	// If the service identity was resolved from a pod owner, the GroupVersionKind of the pod owner.
+	PodOwnerKind PodOwnerKindPodOwnerKindGroupVersionKind `json:"podOwnerKind"`
+}
+
+// GetPodOwnerKind returns PodOwnerKind.PodOwnerKind, and is useful for accessing the field via an interface.
+func (v *PodOwnerKind) GetPodOwnerKind() PodOwnerKindPodOwnerKindGroupVersionKind {
+	return v.PodOwnerKind
+}
+
+// PodOwnerKindPodOwnerKindGroupVersionKind includes the requested fields of the GraphQL type GroupVersionKind.
+type PodOwnerKindPodOwnerKindGroupVersionKind struct {
+	Group   string `json:"group"`
+	Version string `json:"version"`
+	Kind    string `json:"kind"`
+}
+
+// GetGroup returns PodOwnerKindPodOwnerKindGroupVersionKind.Group, and is useful for accessing the field via an interface.
+func (v *PodOwnerKindPodOwnerKindGroupVersionKind) GetGroup() string { return v.Group }
+
+// GetVersion returns PodOwnerKindPodOwnerKindGroupVersionKind.Version, and is useful for accessing the field via an interface.
+func (v *PodOwnerKindPodOwnerKindGroupVersionKind) GetVersion() string { return v.Version }
+
+// GetKind returns PodOwnerKindPodOwnerKindGroupVersionKind.Kind, and is useful for accessing the field via an interface.
+func (v *PodOwnerKindPodOwnerKindGroupVersionKind) GetKind() string { return v.Kind }
 
 // ResetCaptureResponse is returned by ResetCapture on success.
 type ResetCaptureResponse struct {
@@ -620,6 +677,11 @@ func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) Ge
 	return v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
 }
 
+// GetPodOwnerKind returns ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity.PodOwnerKind, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) GetPodOwnerKind() PodOwnerKindPodOwnerKindGroupVersionKind {
+	return v.NamespacedNameWithLabelsFragment.PodOwnerKind.PodOwnerKind
+}
+
 func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) UnmarshalJSON(b []byte) error {
 
 	if string(b) == "null" {
@@ -653,6 +715,8 @@ type __premarshalServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIden
 	Namespace string `json:"namespace"`
 
 	Labels []LabelsFragmentLabelsPodLabel `json:"labels"`
+
+	PodOwnerKind PodOwnerKindPodOwnerKindGroupVersionKind `json:"podOwnerKind"`
 }
 
 func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) MarshalJSON() ([]byte, error) {
@@ -670,6 +734,7 @@ func (v *ServiceIntentsWithLabelsServiceIntentsClientOtterizeServiceIdentity) __
 	retval.Name = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Name
 	retval.Namespace = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Namespace
 	retval.Labels = v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
+	retval.PodOwnerKind = v.NamespacedNameWithLabelsFragment.PodOwnerKind.PodOwnerKind
 	return &retval, nil
 }
 
@@ -696,6 +761,11 @@ func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) G
 // GetLabels returns ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity.Labels, and is useful for accessing the field via an interface.
 func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) GetLabels() []LabelsFragmentLabelsPodLabel {
 	return v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
+}
+
+// GetPodOwnerKind returns ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity.PodOwnerKind, and is useful for accessing the field via an interface.
+func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) GetPodOwnerKind() PodOwnerKindPodOwnerKindGroupVersionKind {
+	return v.NamespacedNameWithLabelsFragment.PodOwnerKind.PodOwnerKind
 }
 
 func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) UnmarshalJSON(b []byte) error {
@@ -731,6 +801,8 @@ type __premarshalServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIde
 	Namespace string `json:"namespace"`
 
 	Labels []LabelsFragmentLabelsPodLabel `json:"labels"`
+
+	PodOwnerKind PodOwnerKindPodOwnerKindGroupVersionKind `json:"podOwnerKind"`
 }
 
 func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) MarshalJSON() ([]byte, error) {
@@ -748,6 +820,7 @@ func (v *ServiceIntentsWithLabelsServiceIntentsIntentsOtterizeServiceIdentity) _
 	retval.Name = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Name
 	retval.Namespace = v.NamespacedNameWithLabelsFragment.NamespacedNameFragment.Namespace
 	retval.Labels = v.NamespacedNameWithLabelsFragment.LabelsFragment.Labels
+	retval.PodOwnerKind = v.NamespacedNameWithLabelsFragment.PodOwnerKind.PodOwnerKind
 	return &retval, nil
 }
 
@@ -824,6 +897,7 @@ query Intents ($namespaces: [String!], $includedLabels: [String!], $excludeServi
 fragment NamespacedNameWithLabelsFragment on OtterizeServiceIdentity {
 	... NamespacedNameFragment
 	... LabelsFragment
+	... PodOwnerKind
 	kubernetesService
 }
 fragment NamespacedNameFragment on OtterizeServiceIdentity {
@@ -834,6 +908,13 @@ fragment LabelsFragment on OtterizeServiceIdentity {
 	labels {
 		key
 		value
+	}
+}
+fragment PodOwnerKind on OtterizeServiceIdentity {
+	podOwnerKind {
+		group
+		version
+		kind
 	}
 }
 `,
@@ -947,6 +1028,7 @@ query ServiceIntentsWithLabels ($namespaces: [String!], $includedLabels: [String
 fragment NamespacedNameWithLabelsFragment on OtterizeServiceIdentity {
 	... NamespacedNameFragment
 	... LabelsFragment
+	... PodOwnerKind
 	kubernetesService
 }
 fragment NamespacedNameFragment on OtterizeServiceIdentity {
@@ -957,6 +1039,13 @@ fragment LabelsFragment on OtterizeServiceIdentity {
 	labels {
 		key
 		value
+	}
+}
+fragment PodOwnerKind on OtterizeServiceIdentity {
+	podOwnerKind {
+		group
+		version
+		kind
 	}
 }
 `,
