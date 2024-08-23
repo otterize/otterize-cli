@@ -58,9 +58,6 @@ func NewClientFromToken(apiRoot string, token string, orgId string) (*Client, er
 	}
 
 	c := &Client{cloudapiClient, restApiURL}
-	if err := c.checkAPIVersion(); err != nil {
-		return nil, err
-	}
 
 	return c, nil
 }
@@ -74,6 +71,7 @@ func (c *Client) GetAPIVersion() (APIVersion, error) {
 	return extractVersionInfo(apiSpecs)
 }
 
+//nolint:unused
 func (c *Client) checkAPIVersion() error {
 	localApiVersion, err := GetLocalAPIVersion()
 	if err != nil {

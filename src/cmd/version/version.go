@@ -19,11 +19,11 @@ var Cmd = &cobra.Command{
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		printCLIVersionInformation()
-		printAPIVersionInformation()
 		return nil
 	},
 }
 
+//nolint:unused
 func printAPIVersionInformation() {
 	localAPIVersion, cloudAPIVersion, err := getLocalAndCloudAPIVersions()
 	if err != nil {
@@ -62,6 +62,7 @@ func printCLIVersionInformation() {
 	}
 }
 
+//nolint:unused
 func getLocalAndCloudAPIVersions() (localAPIVersion cloudclient.APIVersion, cloudAPIVersion cloudclient.APIVersion, err error) {
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 	defer cancel()
