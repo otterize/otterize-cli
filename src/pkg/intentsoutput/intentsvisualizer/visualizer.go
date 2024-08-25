@@ -110,7 +110,7 @@ func (v *Visualizer) buildEdges(intents []v2alpha1.ClientIntents) error {
 		clientNS := intent.Namespace
 		clientName := getServiceNameWithNamespace(clientNS, intent.GetWorkloadName())
 		for _, call := range intent.GetTargetList() {
-			targetServiceName := getServiceNameWithNamespace(clientNS, call.GetTargetServerName())
+			targetServiceName := getServiceNameWithNamespace(clientNS, call.GetTargetServerNameAsWritten())
 			_, err := v.graph.CreateEdge(
 				fmt.Sprintf("%s to %s", clientName, targetServiceName),
 				v.nodeCache[clientName],
