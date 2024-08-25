@@ -96,7 +96,7 @@ func (v *Visualizer) populateNodeCache(intents []v2alpha1.ClientIntents) error {
 			return err
 		}
 		for _, call := range intent.GetTargetList() {
-			targetServiceName := getServiceNameWithNamespace(clientNS, call.GetTargetServerName())
+			targetServiceName := getServiceNameWithNamespace(clientNS, call.GetTargetServerNameAsWritten())
 			if err := v.addToCache(targetServiceName); err != nil {
 				return err
 			}
