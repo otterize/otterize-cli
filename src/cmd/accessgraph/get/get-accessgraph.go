@@ -21,6 +21,30 @@ const (
 	servicesIdsKey   = "services-ids"
 )
 
+func getInputIncludeFilterFromViper(key string) *map[string]any {
+	if viper.IsSet(key) {
+		return &map[string]any{
+			"include": lo.ToPtr(viper.GetStringSlice(key)),
+		}
+	}
+	return nil
+}
+
+func getInputTimeFilterValueFromViper(key string) (*map[string]any, error) {
+	if viper.IsSet(key) {
+		lastSeenAfterStr := viper.GetString(key)
+		lastSeenAfter, err := time.Parse(time.RFC3339, lastSeenAfterStr)
+		if err != nil {
+			return nil, fmt.Errorf("invalid last seen after format: %s", err)
+		}
+		return &map[string]any{
+			"operator": lo.ToPtr(cloudapi.AFTER),
+			"value":    lo.ToPtr(lastSeenAfter),
+		}, nil
+	}
+	return nil, nil
+}
+
 var GetAccessGraph = &cobra.Command{
 	Use:          "get",
 	Short:        "Get access graph",
@@ -35,21 +59,17 @@ var GetAccessGraph = &cobra.Command{
 		}
 
 		filter := cloudapi.InputAccessGraphFilter{
-			IncludeServicesWithNoEdges: lo.ToPtr(true),
-			ClusterIds:                 lo.Ternary(viper.IsSet(clustersIdsKey), lo.ToPtr(viper.GetStringSlice(clustersIdsKey)), nil),
-			EnvironmentIds:             lo.Ternary(viper.IsSet(envIdsKey), lo.ToPtr(viper.GetStringSlice(envIdsKey)), nil),
-			NamespaceIds:               lo.Ternary(viper.IsSet(namespacesIdsKey), lo.ToPtr(viper.GetStringSlice(namespacesIdsKey)), nil),
-			ServiceIds:                 lo.Ternary(viper.IsSet(servicesIdsKey), lo.ToPtr(viper.GetStringSlice(servicesIdsKey)), nil),
+			ClusterIds:     getInputIncludeFilterFromViper(clustersIdsKey),
+			EnvironmentIds: getInputIncludeFilterFromViper(envIdsKey),
+			NamespaceIds:   getInputIncludeFilterFromViper(namespacesIdsKey),
+			ServiceIds:     getInputIncludeFilterFromViper(servicesIdsKey),
 		}
 
-		if viper.IsSet(lastSeenAfterKey) {
-			lastSeenAfterStr := viper.GetString(lastSeenAfterKey)
-			lastSeenAfter, err := time.Parse(time.RFC3339, lastSeenAfterStr)
-			if err != nil {
-				return fmt.Errorf("invalid last seen after format: %s", err)
-			}
-			filter.LastSeenAfter = &lastSeenAfter
+		lastSeenFilter, err := getInputTimeFilterValueFromViper(lastSeenAfterKey)
+		if err != nil {
+			return err
 		}
+		filter.LastSeen = lastSeenFilter
 
 		r, err := c.AccessGraphQueryWithResponse(ctxTimeout, cloudapi.AccessGraphQueryJSONRequestBody{Filter: &filter})
 		if err != nil {

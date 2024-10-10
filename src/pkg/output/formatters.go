@@ -77,7 +77,7 @@ func FormatIntegrations(integrations []cloudapi.Integration, includeCreds bool) 
 
 		if integration.Type == cloudapi.IntegrationTypeDATABASE {
 			integrationColumns["DATABASE ADDRESS"] = integration.DatabaseInfo.Address
-			integrationColumns["DATABASE CREDENTIALS"] = fmt.Sprintf("%s:******", integration.DatabaseInfo.Credentials.Username)
+			integrationColumns["DATABASE CREDENTIALS"] = fmt.Sprintf("%s:******", integration.DatabaseInfo.Username)
 		}
 
 		if includeCreds {
@@ -110,7 +110,7 @@ func FormatOrganizations(organizations []cloudapi.Organization) {
 	getColumnData := func(org cloudapi.Organization) []map[string]string {
 		return []map[string]string{{
 			"ID":        org.Id,
-			"NAME":      lo.FromPtr(org.Name),
+			"NAME":      org.Name,
 			"IMAGE URL": lo.FromPtr(org.ImageURL),
 		}}
 	}
