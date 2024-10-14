@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/otterize/otterize-cli/src/cmd/accessgraph"
+	"github.com/otterize/otterize-cli/src/cmd/clientintents"
 	"github.com/otterize/otterize-cli/src/cmd/clusters"
 	"github.com/otterize/otterize-cli/src/cmd/environments"
 	"github.com/otterize/otterize-cli/src/cmd/groups"
@@ -123,6 +124,7 @@ func init() {
 	RootCmd.AddCommand(clusters.ClustersCmd)
 	RootCmd.AddCommand(namespaces.NamespacesCmd)
 	RootCmd.AddCommand(accessgraph.AccessGraphCmd)
+	RootCmd.AddCommand(clientintents.ClientIntentsCmd)
 
 	RootCmd.AddGroup(groups.OSSGroup)
 	RootCmd.AddCommand(networkmapper.MapperCmd)

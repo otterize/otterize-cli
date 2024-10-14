@@ -713,6 +713,143 @@
         ],
         "type": "object"
       },
+      "ClientIntentEvent": {
+        "properties": {
+          "count": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "firstTimestamp": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastTimestamp": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "reportingComponent": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "count",
+          "type",
+          "reason",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ClientIntentStatus": {
+        "properties": {
+          "clientIntentName": {
+            "type": "string"
+          },
+          "generation": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "observedGeneration": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "upToDate": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "clientIntentName",
+          "generation",
+          "timestamp",
+          "observedGeneration",
+          "upToDate"
+        ],
+        "type": "object"
+      },
+      "ClientIntentsFileRepresentation": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ClientIntentsRow"
+            },
+            "type": "array"
+          },
+          "service": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "fileName",
+          "service",
+          "rows",
+          "content"
+        ],
+        "type": "object"
+      },
+      "ClientIntentsFiles": {
+        "properties": {
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/ClientIntentsFileRepresentation"
+            },
+            "type": "array"
+          },
+          "mergedYAMLFile": {
+            "$ref": "#/components/schemas/MergedYAMLFile"
+          }
+        },
+        "required": [
+          "files"
+        ],
+        "type": "object"
+      },
+      "ClientIntentsRow": {
+        "properties": {
+          "calledServerId": {
+            "type": "string"
+          },
+          "diff": {
+            "enum": [
+              "ADDED",
+              "REMOVED"
+            ],
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      },
       "Cluster": {
         "properties": {
           "components": {
@@ -2583,6 +2720,28 @@
         ],
         "type": "object"
       },
+      "MergedYAMLFile": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ClientIntentsRow"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "fileName",
+          "rows",
+          "content"
+        ],
+        "type": "object"
+      },
       "Namespace": {
         "properties": {
           "cluster": {
@@ -3036,6 +3195,26 @@
         ],
         "type": "object"
       },
+      "ServiceClientIntents": {
+        "properties": {
+          "appliedIntentEvents": {
+            "items": {
+              "$ref": "#/components/schemas/ClientIntentEvent"
+            },
+            "type": "array"
+          },
+          "appliedIntentStatus": {
+            "$ref": "#/components/schemas/ClientIntentStatus"
+          },
+          "asClient": {
+            "$ref": "#/components/schemas/ClientIntentsFiles"
+          },
+          "asServer": {
+            "$ref": "#/components/schemas/ClientIntentsFiles"
+          }
+        },
+        "type": "object"
+      },
       "SlackChannelInfo": {
         "properties": {
           "channelName": {
@@ -3226,6 +3405,12 @@
         "name": "access_token",
         "type": "apiKey"
       },
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "description": "Otterize user JWT token.",
+        "scheme": "bearer",
+        "type": "http"
+      },
       "oauth2": {
         "description": "Use client ID and client secret from an Otterize integration to authenticate.",
         "flows": {
@@ -3248,7 +3433,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "e89486d6969516c396875a5b615a09ab8f18f97f"
+    "x-revision": "370beb668a8c6d984e1b58bfc53e5d5a0dc9fa3b"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -3309,6 +3494,92 @@
           }
         },
         "summary": "Get access graph",
+        "tags": [
+          "access graph"
+        ]
+      }
+    },
+    "/access-graph/service-client-intents/{id}": {
+      "post": {
+        "description": " Get service ClientIntents ",
+        "operationId": "serviceClientIntents_query",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "asServiceId": {
+                    "type": "string"
+                  },
+                  "clusterIds": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "enableInternetIntents": {
+                    "type": "boolean"
+                  },
+                  "featureFlags": {
+                    "$ref": "#/components/schemas/InputFeatureFlags"
+                  },
+                  "lastSeenAfter": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceClientIntents"
+                }
+              }
+            },
+            "description": " Get service ClientIntents "
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": " Get service ClientIntents ",
         "tags": [
           "access graph"
         ]
@@ -7634,6 +7905,12 @@
     },
     {
       "accessTokenCookie": [
+      ],
+      "organizationHeader": [
+      ]
+    },
+    {
+      "bearerAuth": [
       ],
       "organizationHeader": [
       ]

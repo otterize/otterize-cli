@@ -20,6 +20,7 @@ import (
 
 const (
 	AccessTokenCookieScopes  = "accessTokenCookie.Scopes"
+	BearerAuthScopes         = "bearerAuth.Scopes"
 	Oauth2Scopes             = "oauth2.Scopes"
 	OrganizationHeaderScopes = "organizationHeader.Scopes"
 )
@@ -63,6 +64,12 @@ const (
 	CallViolationStandardPCI40     CallViolationStandard = "PCI_4_0"
 	CallViolationStandardPII       CallViolationStandard = "PII"
 	CallViolationStandardZEROTRUST CallViolationStandard = "ZERO_TRUST"
+)
+
+// Defines values for ClientIntentsRowDiff.
+const (
+	ADDED   ClientIntentsRowDiff = "ADDED"
+	REMOVED ClientIntentsRowDiff = "REMOVED"
 )
 
 // Defines values for ClusterFormSettingsCertificateProvider.
@@ -534,6 +541,52 @@ type CertificateInformation struct {
 	Ttl        *int32    `json:"ttl,omitempty"`
 }
 
+// ClientIntentEvent defines model for ClientIntentEvent.
+type ClientIntentEvent struct {
+	Count              int32      `json:"count"`
+	FirstTimestamp     *time.Time `json:"firstTimestamp,omitempty"`
+	LastTimestamp      *time.Time `json:"lastTimestamp,omitempty"`
+	Message            string     `json:"message"`
+	Reason             string     `json:"reason"`
+	ReportingComponent *string    `json:"reportingComponent,omitempty"`
+	Type               string     `json:"type"`
+}
+
+// ClientIntentStatus defines model for ClientIntentStatus.
+type ClientIntentStatus struct {
+	ClientIntentName   string    `json:"clientIntentName"`
+	Generation         int32     `json:"generation"`
+	ObservedGeneration int32     `json:"observedGeneration"`
+	Timestamp          time.Time `json:"timestamp"`
+	UpToDate           bool      `json:"upToDate"`
+}
+
+// ClientIntentsFileRepresentation defines model for ClientIntentsFileRepresentation.
+type ClientIntentsFileRepresentation struct {
+	Content  string             `json:"content"`
+	FileName string             `json:"fileName"`
+	Rows     []ClientIntentsRow `json:"rows"`
+	Service  struct {
+		Id string `json:"id"`
+	} `json:"service"`
+}
+
+// ClientIntentsFiles defines model for ClientIntentsFiles.
+type ClientIntentsFiles struct {
+	Files          []ClientIntentsFileRepresentation `json:"files"`
+	MergedYAMLFile *MergedYAMLFile                   `json:"mergedYAMLFile,omitempty"`
+}
+
+// ClientIntentsRow defines model for ClientIntentsRow.
+type ClientIntentsRow struct {
+	CalledServerId *string               `json:"calledServerId,omitempty"`
+	Diff           *ClientIntentsRowDiff `json:"diff,omitempty"`
+	Text           string                `json:"text"`
+}
+
+// ClientIntentsRowDiff defines model for ClientIntentsRow.Diff.
+type ClientIntentsRowDiff string
+
 // Cluster defines model for Cluster.
 type Cluster struct {
 	Components         IntegrationComponents `json:"components"`
@@ -825,6 +878,12 @@ type InputAccessLogFilter struct {
 	TimeRange           *map[string]interface{} `json:"timeRange,omitempty"`
 }
 
+// InputFeatureFlags defines model for InputFeatureFlags.
+type InputFeatureFlags struct {
+	IsCloudSecurityEnabled          *bool `json:"isCloudSecurityEnabled,omitempty"`
+	IsCloudServicesDetectionEnabled *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
+}
+
 // InputServiceFilter  Service filter
 type InputServiceFilter struct {
 	ClusterIds     *[]string               `json:"clusterIds,omitempty"`
@@ -1006,6 +1065,13 @@ type Me struct {
 	User          User           `json:"user"`
 }
 
+// MergedYAMLFile defines model for MergedYAMLFile.
+type MergedYAMLFile struct {
+	Content  string             `json:"content"`
+	FileName string             `json:"fileName"`
+	Rows     []ClientIntentsRow `json:"rows"`
+}
+
 // Namespace defines model for Namespace.
 type Namespace struct {
 	Cluster     Cluster `json:"cluster"`
@@ -1145,6 +1211,14 @@ type ServiceAccessStatus struct {
 	UseNetworkPoliciesInAccessGraphStates bool                     `json:"useNetworkPoliciesInAccessGraphStates"`
 }
 
+// ServiceClientIntents defines model for ServiceClientIntents.
+type ServiceClientIntents struct {
+	AppliedIntentEvents *[]ClientIntentEvent `json:"appliedIntentEvents,omitempty"`
+	AppliedIntentStatus *ClientIntentStatus  `json:"appliedIntentStatus,omitempty"`
+	AsClient            *ClientIntentsFiles  `json:"asClient,omitempty"`
+	AsServer            *ClientIntentsFiles  `json:"asServer,omitempty"`
+}
+
 // SlackChannelInfo defines model for SlackChannelInfo.
 type SlackChannelInfo struct {
 	ChannelName string `json:"channelName"`
@@ -1226,6 +1300,15 @@ type UNEXPECTEDERROR = Error
 // AccessGraphQueryJSONBody defines parameters for AccessGraphQuery.
 type AccessGraphQueryJSONBody struct {
 	Filter *InputAccessGraphFilter `json:"filter,omitempty"`
+}
+
+// ServiceClientIntentsQueryJSONBody defines parameters for ServiceClientIntentsQuery.
+type ServiceClientIntentsQueryJSONBody struct {
+	AsServiceId           *string            `json:"asServiceId,omitempty"`
+	ClusterIds            *[]string          `json:"clusterIds,omitempty"`
+	EnableInternetIntents *bool              `json:"enableInternetIntents,omitempty"`
+	FeatureFlags          *InputFeatureFlags `json:"featureFlags,omitempty"`
+	LastSeenAfter         *time.Time         `json:"lastSeenAfter,omitempty"`
 }
 
 // AccessLogQueryJSONBody defines parameters for AccessLogQuery.
@@ -1512,6 +1595,9 @@ type UpdateServiceMutationJSONBody struct {
 // AccessGraphQueryJSONRequestBody defines body for AccessGraphQuery for application/json ContentType.
 type AccessGraphQueryJSONRequestBody AccessGraphQueryJSONBody
 
+// ServiceClientIntentsQueryJSONRequestBody defines body for ServiceClientIntentsQuery for application/json ContentType.
+type ServiceClientIntentsQueryJSONRequestBody ServiceClientIntentsQueryJSONBody
+
 // AccessLogQueryJSONRequestBody defines body for AccessLogQuery for application/json ContentType.
 type AccessLogQueryJSONRequestBody AccessLogQueryJSONBody
 
@@ -1685,6 +1771,11 @@ type ClientInterface interface {
 	AccessGraphQueryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	AccessGraphQuery(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ServiceClientIntentsQuery request with any body
+	ServiceClientIntentsQueryWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ServiceClientIntentsQuery(ctx context.Context, id string, body ServiceClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AccessLogQuery request with any body
 	AccessLogQueryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1951,6 +2042,30 @@ func (c *Client) AccessGraphQueryWithBody(ctx context.Context, contentType strin
 
 func (c *Client) AccessGraphQuery(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewAccessGraphQueryRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ServiceClientIntentsQueryWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewServiceClientIntentsQueryRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ServiceClientIntentsQuery(ctx context.Context, id string, body ServiceClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewServiceClientIntentsQueryRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -3110,6 +3225,53 @@ func NewAccessGraphQueryRequestWithBody(server string, contentType string, body 
 	}
 
 	operationPath := fmt.Sprintf("/access-graph")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewServiceClientIntentsQueryRequest calls the generic ServiceClientIntentsQuery builder with application/json body
+func NewServiceClientIntentsQueryRequest(server string, id string, body ServiceClientIntentsQueryJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewServiceClientIntentsQueryRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewServiceClientIntentsQueryRequestWithBody generates requests for ServiceClientIntentsQuery with any type of body
+func NewServiceClientIntentsQueryRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/access-graph/service-client-intents/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -5979,6 +6141,11 @@ type ClientWithResponsesInterface interface {
 
 	AccessGraphQueryWithResponse(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*AccessGraphQueryResponse, error)
 
+	// ServiceClientIntentsQuery request with any body
+	ServiceClientIntentsQueryWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ServiceClientIntentsQueryResponse, error)
+
+	ServiceClientIntentsQueryWithResponse(ctx context.Context, id string, body ServiceClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*ServiceClientIntentsQueryResponse, error)
+
 	// AccessLogQuery request with any body
 	AccessLogQueryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AccessLogQueryResponse, error)
 
@@ -6254,6 +6421,36 @@ func (r AccessGraphQueryResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r AccessGraphQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ServiceClientIntentsQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ServiceClientIntents
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ServiceClientIntentsQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ServiceClientIntentsQueryResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -8137,6 +8334,23 @@ func (c *ClientWithResponses) AccessGraphQueryWithResponse(ctx context.Context, 
 	return ParseAccessGraphQueryResponse(rsp)
 }
 
+// ServiceClientIntentsQueryWithBodyWithResponse request with arbitrary body returning *ServiceClientIntentsQueryResponse
+func (c *ClientWithResponses) ServiceClientIntentsQueryWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ServiceClientIntentsQueryResponse, error) {
+	rsp, err := c.ServiceClientIntentsQueryWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseServiceClientIntentsQueryResponse(rsp)
+}
+
+func (c *ClientWithResponses) ServiceClientIntentsQueryWithResponse(ctx context.Context, id string, body ServiceClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*ServiceClientIntentsQueryResponse, error) {
+	rsp, err := c.ServiceClientIntentsQuery(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseServiceClientIntentsQueryResponse(rsp)
+}
+
 // AccessLogQueryWithBodyWithResponse request with arbitrary body returning *AccessLogQueryResponse
 func (c *ClientWithResponses) AccessLogQueryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AccessLogQueryResponse, error) {
 	rsp, err := c.AccessLogQueryWithBody(ctx, contentType, body, reqEditors...)
@@ -8967,6 +9181,88 @@ func ParseAccessGraphQueryResponse(rsp *http.Response) (*AccessGraphQueryRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest AccessGraph
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseServiceClientIntentsQueryResponse parses an HTTP response from a ServiceClientIntentsQueryWithResponse call
+func ParseServiceClientIntentsQueryResponse(rsp *http.Response) (*ServiceClientIntentsQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ServiceClientIntentsQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ServiceClientIntents
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
