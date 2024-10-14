@@ -9,6 +9,47 @@ import (
 	"github.com/Khan/genqlient/graphql"
 )
 
+type CLICommand struct {
+	Noun      string   `json:"noun"`
+	Verb      string   `json:"verb"`
+	Modifiers []string `json:"modifiers"`
+}
+
+// GetNoun returns CLICommand.Noun, and is useful for accessing the field via an interface.
+func (v *CLICommand) GetNoun() string { return v.Noun }
+
+// GetVerb returns CLICommand.Verb, and is useful for accessing the field via an interface.
+func (v *CLICommand) GetVerb() string { return v.Verb }
+
+// GetModifiers returns CLICommand.Modifiers, and is useful for accessing the field via an interface.
+func (v *CLICommand) GetModifiers() []string { return v.Modifiers }
+
+type CLIIdentifier struct {
+	Version       string `json:"version"`
+	ContextId     string `json:"contextId"`
+	CloudClientId string `json:"cloudClientId"`
+}
+
+// GetVersion returns CLIIdentifier.Version, and is useful for accessing the field via an interface.
+func (v *CLIIdentifier) GetVersion() string { return v.Version }
+
+// GetContextId returns CLIIdentifier.ContextId, and is useful for accessing the field via an interface.
+func (v *CLIIdentifier) GetContextId() string { return v.ContextId }
+
+// GetCloudClientId returns CLIIdentifier.CloudClientId, and is useful for accessing the field via an interface.
+func (v *CLIIdentifier) GetCloudClientId() string { return v.CloudClientId }
+
+type CLITelemetry struct {
+	Identifier CLIIdentifier `json:"identifier"`
+	Command    CLICommand    `json:"command"`
+}
+
+// GetIdentifier returns CLITelemetry.Identifier, and is useful for accessing the field via an interface.
+func (v *CLITelemetry) GetIdentifier() CLIIdentifier { return v.Identifier }
+
+// GetCommand returns CLITelemetry.Command, and is useful for accessing the field via an interface.
+func (v *CLITelemetry) GetCommand() CLICommand { return v.Command }
+
 // CreateUserFromAuth0UserMeMeMutation includes the requested fields of the GraphQL type MeMutation.
 type CreateUserFromAuth0UserMeMeMutation struct {
 	// Register the user defined by the active session token into the otterize users store.
@@ -129,6 +170,22 @@ func (v *MeFieldsUser) GetEmail() string { return v.Email }
 // GetName returns MeFieldsUser.Name, and is useful for accessing the field via an interface.
 func (v *MeFieldsUser) GetName() string { return v.Name }
 
+// SendCLITelemetryResponse is returned by SendCLITelemetry on success.
+type SendCLITelemetryResponse struct {
+	SendCLITelemetries bool `json:"sendCLITelemetries"`
+}
+
+// GetSendCLITelemetries returns SendCLITelemetryResponse.SendCLITelemetries, and is useful for accessing the field via an interface.
+func (v *SendCLITelemetryResponse) GetSendCLITelemetries() bool { return v.SendCLITelemetries }
+
+// __SendCLITelemetryInput is used internally by genqlient
+type __SendCLITelemetryInput struct {
+	Telemetry CLITelemetry `json:"telemetry"`
+}
+
+// GetTelemetry returns __SendCLITelemetryInput.Telemetry, and is useful for accessing the field via an interface.
+func (v *__SendCLITelemetryInput) GetTelemetry() CLITelemetry { return v.Telemetry }
+
 // The query or mutation executed by CreateUserFromAuth0User.
 const CreateUserFromAuth0User_Operation = `
 mutation CreateUserFromAuth0User {
@@ -151,23 +208,56 @@ fragment MeFields on Me {
 `
 
 func CreateUserFromAuth0User(
-	ctx context.Context,
-	client graphql.Client,
+	ctx_ context.Context,
+	client_ graphql.Client,
 ) (*CreateUserFromAuth0UserResponse, error) {
-	req := &graphql.Request{
+	req_ := &graphql.Request{
 		OpName: "CreateUserFromAuth0User",
 		Query:  CreateUserFromAuth0User_Operation,
 	}
-	var err error
+	var err_ error
 
-	var data CreateUserFromAuth0UserResponse
-	resp := &graphql.Response{Data: &data}
+	var data_ CreateUserFromAuth0UserResponse
+	resp_ := &graphql.Response{Data: &data_}
 
-	err = client.MakeRequest(
-		ctx,
-		req,
-		resp,
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
 	)
 
-	return &data, err
+	return &data_, err_
+}
+
+// The query or mutation executed by SendCLITelemetry.
+const SendCLITelemetry_Operation = `
+mutation SendCLITelemetry ($telemetry: CLITelemetry!) {
+	sendCLITelemetries(telemetries: [$telemetry])
+}
+`
+
+func SendCLITelemetry(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	telemetry CLITelemetry,
+) (*SendCLITelemetryResponse, error) {
+	req_ := &graphql.Request{
+		OpName: "SendCLITelemetry",
+		Query:  SendCLITelemetry_Operation,
+		Variables: &__SendCLITelemetryInput{
+			Telemetry: telemetry,
+		},
+	}
+	var err_ error
+
+	var data_ SendCLITelemetryResponse
+	resp_ := &graphql.Response{Data: &data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return &data_, err_
 }

@@ -33,7 +33,7 @@ var CreateKubernetesIntegrationCmd = &cobra.Command{
 
 		r, err := c.CreateKubernetesIntegrationMutationWithResponse(ctxTimeout,
 			cloudapi.CreateKubernetesIntegrationMutationJSONRequestBody{
-				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIDKey), lo.ToPtr(viper.GetString(EnvironmentIDKey)), nil),
+				EnvironmentId: lo.Ternary(viper.IsSet(EnvironmentIDKey), viper.GetString(EnvironmentIDKey), ""),
 				Name:          viper.GetString(IntegrationNameKey),
 			})
 		if err != nil {

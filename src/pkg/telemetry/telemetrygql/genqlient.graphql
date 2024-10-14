@@ -1,4 +1,0 @@
-mutation SendCLITelemetry($telemetry: CLITelemetry!) {
-    sendCLITelemetries(telemetries: [$telemetry])
-}
-

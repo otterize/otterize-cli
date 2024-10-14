@@ -187,6 +187,96 @@
         ],
         "type": "object"
       },
+      "AWSVisibility": {
+        "properties": {
+          "arn": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "eksIngressName": {
+            "type": "string"
+          },
+          "ips": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "lbArn": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "resourceType": {
+            "enum": [
+              "EKS"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "arn",
+          "resourceType",
+          "name",
+          "ips",
+          "region"
+        ],
+        "type": "object"
+      },
+      "AWSVisibilitySettings": {
+        "properties": {
+          "awsAccountId": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "regions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "isActive",
+          "awsAccountId",
+          "externalId",
+          "regions"
+        ],
+        "type": "object"
+      },
+      "AWSVisibilitySettingsInput": {
+        "properties": {
+          "awsAccountId": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "regions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "isActive",
+          "awsAccountId",
+          "regions"
+        ],
+        "type": "object"
+      },
       "AccessGraph": {
         "properties": {
           "clusters": {
@@ -282,6 +372,12 @@
               "id"
             ],
             "type": "object"
+          },
+          "violations": {
+            "items": {
+              "$ref": "#/components/schemas/CallViolation"
+            },
+            "type": "array"
           }
         },
         "required": [
@@ -290,44 +386,299 @@
           "discoveredIntents",
           "appliedIntents",
           "accessStatus",
-          "accessStatuses"
+          "accessStatuses",
+          "violations"
         ],
         "type": "object"
       },
       "AccessGraphFilter": {
+        "description": " Access graph filter ",
         "properties": {
           "clusterIds": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
+            "$ref": "#/components/schemas/IDFilterValue"
           },
           "environmentIds": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
+            "$ref": "#/components/schemas/IDFilterValue"
           },
-          "includeServicesWithNoEdges": {
-            "type": "boolean"
+          "featureFlags": {
+            "$ref": "#/components/schemas/FeatureFlags"
           },
-          "lastSeenAfter": {
-            "format": "date-time",
-            "type": "string"
+          "lastSeen": {
+            "$ref": "#/components/schemas/TimeFilterValue"
           },
           "namespaceIds": {
+            "$ref": "#/components/schemas/IDFilterValue"
+          },
+          "serviceIds": {
+            "$ref": "#/components/schemas/IDFilterValue"
+          }
+        },
+        "type": "object"
+      },
+      "AccessLog": {
+        "properties": {
+          "clusters": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/AccessLogEdge"
+            },
+            "type": "array"
+          },
+          "namespaces": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "timeRange": {
+            "$ref": "#/components/schemas/TimeRange"
+          },
+          "totalCount": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "clusters",
+          "namespaces",
+          "entries",
+          "timeRange",
+          "totalCount"
+        ],
+        "type": "object"
+      },
+      "AccessLogEdge": {
+        "properties": {
+          "accessStatus": {
+            "$ref": "#/components/schemas/EdgeAccessStatus"
+          },
+          "appliedIntents": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "client": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "dns": {
+            "type": "string"
+          },
+          "originIntent": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "server": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "timestamp",
+          "client",
+          "server",
+          "originIntent",
+          "dns",
+          "accessStatus"
+        ],
+        "type": "object"
+      },
+      "AzureInfo": {
+        "properties": {
+          "aksClusterName": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "resourceGroup": {
+            "type": "string"
+          },
+          "subscriptionId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenantId",
+          "subscriptionId",
+          "resourceGroup",
+          "aksClusterName",
+          "namespace"
+        ],
+        "type": "object"
+      },
+      "AzureInfoInput": {
+        "properties": {
+          "aksClusterName": {
+            "type": "string"
+          },
+          "clusterId": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "resourceGroup": {
+            "type": "string"
+          },
+          "subscriptionId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "clusterId",
+          "tenantId",
+          "subscriptionId",
+          "resourceGroup",
+          "aksClusterName",
+          "namespace"
+        ],
+        "type": "object"
+      },
+      "AzureKeyVaultPolicy": {
+        "properties": {
+          "certificatePermissions": {
             "items": {
               "type": "string"
             },
             "type": "array"
           },
-          "serviceIds": {
+          "keyPermissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "secretPermissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "storagePermissions": {
             "items": {
               "type": "string"
             },
             "type": "array"
           }
         },
+        "type": "object"
+      },
+      "AzureResource": {
+        "properties": {
+          "resource": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "resource"
+        ],
+        "type": "object"
+      },
+      "CallViolation": {
+        "properties": {
+          "code": {
+            "enum": [
+              "PCI_4_0",
+              "PCI_4_0_1_1",
+              "PCI_4_0_1_1_2",
+              "PCI_4_0_1_1_4",
+              "PCI_4_0_1_2",
+              "PCI_4_0_1_2_1",
+              "PCI_4_0_1_3",
+              "PCI_4_0_1_3_4",
+              "PCI_4_0_1_3_6",
+              "PCI_4_0_7_1",
+              "PCI_4_0_7_2",
+              "PCI_4_0_8_7",
+              "ZERO_TRUST",
+              "ZERO_TRUST_SENSITIVE",
+              "ZERO_TRUST_DEFAULT_DENY",
+              "ZERO_TRUST_EGRESS_ACCESS_COVERED",
+              "ZERO_TRUST_EXTERNAL_INGRESS_TAGGED",
+              "ZERO_TRUST_ALL_INTRA_CLUSTER_ACCESS_COVERED"
+            ],
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "standard": {
+            "enum": [
+              "PCI_4_0",
+              "PII",
+              "HIPAA",
+              "ZERO_TRUST"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "standard",
+          "code",
+          "reason"
+        ],
         "type": "object"
       },
       "CertificateInformation": {
@@ -348,6 +699,154 @@
         },
         "required": [
           "commonName"
+        ],
+        "type": "object"
+      },
+      "ChannelInfoInput": {
+        "properties": {
+          "channelName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "channelName"
+        ],
+        "type": "object"
+      },
+      "ClientIntentEvent": {
+        "properties": {
+          "count": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "firstTimestamp": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastTimestamp": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "reportingComponent": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "count",
+          "type",
+          "reason",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ClientIntentStatus": {
+        "properties": {
+          "clientIntentName": {
+            "type": "string"
+          },
+          "generation": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "observedGeneration": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "upToDate": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "clientIntentName",
+          "generation",
+          "timestamp",
+          "observedGeneration",
+          "upToDate"
+        ],
+        "type": "object"
+      },
+      "ClientIntentsFileRepresentation": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ClientIntentsRow"
+            },
+            "type": "array"
+          },
+          "service": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "fileName",
+          "service",
+          "rows",
+          "content"
+        ],
+        "type": "object"
+      },
+      "ClientIntentsFiles": {
+        "properties": {
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/ClientIntentsFileRepresentation"
+            },
+            "type": "array"
+          },
+          "mergedYAMLFile": {
+            "$ref": "#/components/schemas/MergedYAMLFile"
+          }
+        },
+        "required": [
+          "files"
+        ],
+        "type": "object"
+      },
+      "ClientIntentsRow": {
+        "properties": {
+          "calledServerId": {
+            "type": "string"
+          },
+          "diff": {
+            "enum": [
+              "ADDED",
+              "REMOVED"
+            ],
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
         ],
         "type": "object"
       },
@@ -449,7 +948,13 @@
           "useAWSIAMInAccessGraphStates": {
             "type": "boolean"
           },
+          "useAzureIAMInAccessGraphStates": {
+            "type": "boolean"
+          },
           "useDatabaseInAccessGraphStates": {
+            "type": "boolean"
+          },
+          "useGCPIAMInAccessGraphStates": {
             "type": "boolean"
           },
           "useIstioPoliciesInAccessGraphStates": {
@@ -469,6 +974,8 @@
           "useIstioPoliciesInAccessGraphStates",
           "useKafkaACLsInAccessGraphStates",
           "useAWSIAMInAccessGraphStates",
+          "useGCPIAMInAccessGraphStates",
+          "useAzureIAMInAccessGraphStates",
           "useDatabaseInAccessGraphStates",
           "clusterFormSettings"
         ],
@@ -488,7 +995,13 @@
           "useAWSIAMInAccessGraphStates": {
             "type": "boolean"
           },
+          "useAzureIAMInAccessGraphStates": {
+            "type": "boolean"
+          },
           "useDatabaseInAccessGraphStates": {
+            "type": "boolean"
+          },
+          "useGCPIAMInAccessGraphStates": {
             "type": "boolean"
           },
           "useIstioPoliciesInAccessGraphStates": {
@@ -571,7 +1084,53 @@
         ],
         "type": "object"
       },
-      "CreateGithubIntegrationResponse": {
+      "CreateGitHubIntegrationResponse": {
+        "properties": {
+          "integration": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "nextURL": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "integration",
+          "nextURL"
+        ],
+        "type": "object"
+      },
+      "CreateGitLabIntegrationResponse": {
+        "properties": {
+          "integration": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "nextURL": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "integration",
+          "nextURL"
+        ],
+        "type": "object"
+      },
+      "CreateSlackIntegrationResponse": {
         "properties": {
           "integration": {
             "properties": {
@@ -642,48 +1201,19 @@
         ],
         "type": "object"
       },
-      "DatabaseCredentials": {
-        "properties": {
-          "password": {
-            "type": "string"
-          },
-          "username": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "username",
-          "password"
-        ],
-        "type": "object"
-      },
-      "DatabaseCredentialsInput": {
-        "properties": {
-          "password": {
-            "type": "string"
-          },
-          "username": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "username",
-          "password"
-        ],
-        "type": "object"
-      },
       "DatabaseInfo": {
         "properties": {
           "address": {
             "type": "string"
           },
-          "credentials": {
-            "$ref": "#/components/schemas/DatabaseCredentials"
-          },
           "databaseType": {
             "enum": [
-              "POSTGRESQL"
+              "POSTGRESQL",
+              "MYSQL"
             ],
+            "type": "string"
+          },
+          "username": {
             "type": "string"
           },
           "visibility": {
@@ -691,9 +1221,9 @@
           }
         },
         "required": [
-          "address",
           "databaseType",
-          "credentials"
+          "address",
+          "username"
         ],
         "type": "object"
       },
@@ -702,12 +1232,10 @@
           "address": {
             "type": "string"
           },
-          "credentials": {
-            "type": "object"
-          },
           "databaseType": {
             "enum": [
-              "POSTGRESQL"
+              "POSTGRESQL",
+              "MYSQL"
             ],
             "type": "string"
           },
@@ -716,9 +1244,8 @@
           }
         },
         "required": [
-          "address",
           "databaseType",
-          "credentials"
+          "address"
         ],
         "type": "object"
       },
@@ -862,7 +1389,13 @@
           "awsIam": {
             "$ref": "#/components/schemas/EdgeAccessStatus"
           },
+          "azureIAM": {
+            "$ref": "#/components/schemas/EdgeAccessStatus"
+          },
           "database": {
+            "$ref": "#/components/schemas/EdgeAccessStatus"
+          },
+          "gcpIam": {
             "$ref": "#/components/schemas/EdgeAccessStatus"
           },
           "istioPolicies": {
@@ -880,6 +1413,8 @@
           "kafkaACLs",
           "istioPolicies",
           "awsIam",
+          "gcpIam",
+          "azureIAM",
           "database"
         ],
         "type": "object"
@@ -941,6 +1476,67 @@
         ],
         "type": "object"
       },
+      "FeatureFlags": {
+        "properties": {
+          "isCloudSecurityEnabled": {
+            "type": "boolean"
+          },
+          "isCloudServicesDetectionEnabled": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "GCPInfo": {
+        "properties": {
+          "gcpProjectName": {
+            "type": "string"
+          },
+          "gkeClusterName": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "region",
+          "namespace",
+          "gcpProjectName",
+          "gkeClusterName"
+        ],
+        "type": "object"
+      },
+      "GCPInfoInput": {
+        "properties": {
+          "clusterId": {
+            "type": "string"
+          },
+          "gcpProjectName": {
+            "type": "string"
+          },
+          "gkeClusterName": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "region",
+          "namespace",
+          "clusterId",
+          "gcpProjectName",
+          "gkeClusterName"
+        ],
+        "type": "object"
+      },
       "GCPPubSubLogConsumerSettings": {
         "properties": {
           "projectId": {
@@ -971,10 +1567,21 @@
         ],
         "type": "object"
       },
+      "GCPResource": {
+        "properties": {
+          "resource": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "resource"
+        ],
+        "type": "object"
+      },
       "GitHubRepoFilterPair": {
         "properties": {
           "filter": {
-            "$ref": "#/components/schemas/AccessGraphFilter"
+            "$ref": "#/components/schemas/IntegrationAccessGraphFilter"
           },
           "repoInfo": {
             "$ref": "#/components/schemas/GitHubRepoInfo"
@@ -1075,6 +1682,110 @@
         ],
         "type": "object"
       },
+      "GitLabRepoFilterPair": {
+        "properties": {
+          "filter": {
+            "$ref": "#/components/schemas/IntegrationAccessGraphFilter"
+          },
+          "repoInfo": {
+            "$ref": "#/components/schemas/GitLabRepoInfo"
+          }
+        },
+        "required": [
+          "filter",
+          "repoInfo"
+        ],
+        "type": "object"
+      },
+      "GitLabRepoFilterPairInput": {
+        "properties": {
+          "filter": {
+            "type": "object"
+          },
+          "repoInfo": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "filter",
+          "repoInfo"
+        ],
+        "type": "object"
+      },
+      "GitLabRepoInfo": {
+        "properties": {
+          "baseBranch": {
+            "type": "string"
+          },
+          "intentsPath": {
+            "type": "string"
+          },
+          "projectPath": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectPath",
+          "baseBranch",
+          "intentsPath"
+        ],
+        "type": "object"
+      },
+      "GitLabRepoInfoInput": {
+        "properties": {
+          "baseBranch": {
+            "type": "string"
+          },
+          "intentsPath": {
+            "type": "string"
+          },
+          "projectPath": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectPath",
+          "baseBranch",
+          "intentsPath"
+        ],
+        "type": "object"
+      },
+      "GitLabSettings": {
+        "properties": {
+          "isActive": {
+            "type": "boolean"
+          },
+          "repoFilterPairs": {
+            "items": {
+              "$ref": "#/components/schemas/GitLabRepoFilterPair"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "isActive",
+          "repoFilterPairs"
+        ],
+        "type": "object"
+      },
+      "GitLabSettingsInput": {
+        "properties": {
+          "isActive": {
+            "type": "boolean"
+          },
+          "repoFilterPairs": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "isActive",
+          "repoFilterPairs"
+        ],
+        "type": "object"
+      },
       "HTTPConfig": {
         "properties": {
           "methods": {
@@ -1103,8 +1814,116 @@
         ],
         "type": "object"
       },
+      "IDFilterValue": {
+        "properties": {
+          "exclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "include": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "InputAccessGraphFilter": {
         "properties": {
+          "clusterIds": {
+            "type": "object"
+          },
+          "environmentIds": {
+            "type": "object"
+          },
+          "featureFlags": {
+            "type": "object"
+          },
+          "lastSeen": {
+            "type": "object"
+          },
+          "namespaceIds": {
+            "type": "object"
+          },
+          "serviceIds": {
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "InputAccessLogFilter": {
+        "description": " Access log filter ",
+        "properties": {
+          "accessStatusReasons": {
+            "type": "object"
+          },
+          "accessVerdicts": {
+            "type": "object"
+          },
+          "clusterIds": {
+            "type": "object"
+          },
+          "environmentIds": {
+            "type": "object"
+          },
+          "featureFlags": {
+            "type": "object"
+          },
+          "namespaceIds": {
+            "type": "object"
+          },
+          "pagination": {
+            "type": "object"
+          },
+          "serviceIds": {
+            "type": "object"
+          },
+          "timeRange": {
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "InputFeatureFlags": {
+        "properties": {
+          "isCloudSecurityEnabled": {
+            "type": "boolean"
+          },
+          "isCloudServicesDetectionEnabled": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "InputIDFilterValue": {
+        "properties": {
+          "exclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "include": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "InputIntegrationAccessGraphFilter": {
+        "properties": {
+          "clusterFilterType": {
+            "enum": [
+              "INCLUDE",
+              "EXCLUDE"
+            ],
+            "type": "string"
+          },
           "clusterIds": {
             "items": {
               "example": "obj_12345",
@@ -1113,6 +1932,13 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "environmentFilterType": {
+            "enum": [
+              "INCLUDE",
+              "EXCLUDE"
+            ],
+            "type": "string"
           },
           "environmentIds": {
             "items": {
@@ -1123,11 +1949,11 @@
             },
             "type": "array"
           },
-          "includeServicesWithNoEdges": {
-            "type": "boolean"
-          },
-          "lastSeenAfter": {
-            "format": "date-time",
+          "namespaceFilterType": {
+            "enum": [
+              "INCLUDE",
+              "EXCLUDE"
+            ],
             "type": "string"
           },
           "namespaceIds": {
@@ -1138,6 +1964,13 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "serviceFilterType": {
+            "enum": [
+              "INCLUDE",
+              "EXCLUDE"
+            ],
+            "type": "string"
           },
           "serviceIds": {
             "items": {
@@ -1151,10 +1984,74 @@
         },
         "type": "object"
       },
+      "InputServiceFilter": {
+        "description": " Service filter ",
+        "properties": {
+          "clusterIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "environmentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "integrationIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "namespaceIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "serviceIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "serviceType": {
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "InputTimeFilterValue": {
+        "properties": {
+          "operator": {
+            "enum": [
+              "AFTER"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "operator"
+        ],
+        "type": "object"
+      },
       "Integration": {
         "properties": {
           "awsInfo": {
             "$ref": "#/components/schemas/AWSInfo"
+          },
+          "awsVisibilitySettings": {
+            "$ref": "#/components/schemas/AWSVisibilitySettings"
+          },
+          "azureInfo": {
+            "$ref": "#/components/schemas/AzureInfo"
           },
           "cluster": {
             "properties": {
@@ -1187,8 +2084,14 @@
             ],
             "type": "object"
           },
-          "githubSettings": {
+          "gcpInfo": {
+            "$ref": "#/components/schemas/GCPInfo"
+          },
+          "gitHubSettings": {
             "$ref": "#/components/schemas/GitHubSettings"
+          },
+          "gitLabSettings": {
+            "$ref": "#/components/schemas/GitLabSettings"
           },
           "id": {
             "type": "string"
@@ -1199,13 +2102,24 @@
           "organizationId": {
             "type": "string"
           },
+          "slackSettings": {
+            "$ref": "#/components/schemas/SlackSettings"
+          },
+          "status": {
+            "$ref": "#/components/schemas/IntegrationStatus"
+          },
           "type": {
             "enum": [
               "GENERIC",
               "KUBERNETES",
               "DATABASE",
               "AWS",
-              "GITHUB"
+              "GCP",
+              "GITHUB",
+              "GITLAB",
+              "AZURE",
+              "SLACK",
+              "AWS_VISIBILITY"
             ],
             "type": "string"
           }
@@ -1217,6 +2131,67 @@
           "credentials",
           "organizationId"
         ],
+        "type": "object"
+      },
+      "IntegrationAccessGraphFilter": {
+        "properties": {
+          "clusterFilterType": {
+            "enum": [
+              "INCLUDE",
+              "EXCLUDE"
+            ],
+            "type": "string"
+          },
+          "clusterIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "environmentFilterType": {
+            "enum": [
+              "INCLUDE",
+              "EXCLUDE"
+            ],
+            "type": "string"
+          },
+          "environmentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "lastSeenAfter": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "namespaceFilterType": {
+            "enum": [
+              "INCLUDE",
+              "EXCLUDE"
+            ],
+            "type": "string"
+          },
+          "namespaceIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "serviceFilterType": {
+            "enum": [
+              "INCLUDE",
+              "EXCLUDE"
+            ],
+            "type": "string"
+          },
+          "serviceIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
         "type": "object"
       },
       "IntegrationComponents": {
@@ -1253,9 +2228,65 @@
         ],
         "type": "object"
       },
+      "IntegrationStatus": {
+        "properties": {
+          "lastSeen": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "metadata": {
+            "items": {
+              "$ref": "#/components/schemas/IntegrationStatusMetadataItem"
+            },
+            "type": "array"
+          },
+          "state": {
+            "enum": [
+              "SUCCESS",
+              "FAILURE",
+              "PENDING",
+              "WARNING"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "type": "object"
+      },
+      "IntegrationStatusMetadataItem": {
+        "properties": {
+          "extra": {
+            "items": {
+              "$ref": "#/components/schemas/LabelValueTuple"
+            },
+            "type": "array"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
       "Intent": {
         "properties": {
           "awsActions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "azureKeyVaultPolicy": {
+            "$ref": "#/components/schemas/AzureKeyVaultPolicy"
+          },
+          "azureRoles": {
             "items": {
               "type": "string"
             },
@@ -1275,6 +2306,12 @@
           "databaseResources": {
             "items": {
               "$ref": "#/components/schemas/DatabaseConfig"
+            },
+            "type": "array"
+          },
+          "gcpPermissions": {
+            "items": {
+              "type": "string"
             },
             "type": "array"
           },
@@ -1307,6 +2344,9 @@
             ],
             "type": "object"
           },
+          "serverAlias": {
+            "$ref": "#/components/schemas/ServerAlias"
+          },
           "status": {
             "$ref": "#/components/schemas/IntentStatus"
           },
@@ -1316,6 +2356,8 @@
               "KAFKA",
               "DATABASE",
               "AWS",
+              "GCP",
+              "AZURE",
               "S3",
               "INTERNET"
             ],
@@ -1380,10 +2422,22 @@
           "awsIAMPolicyEnforcementEnabled": {
             "type": "boolean"
           },
+          "azureIAMPolicyEnforcementEnabled": {
+            "type": "boolean"
+          },
           "databaseEnforcementEnabled": {
             "type": "boolean"
           },
           "egressNetworkPolicyEnforcementEnabled": {
+            "type": "boolean"
+          },
+          "enforcedNamespaces": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "gcpIAMPolicyEnforcementEnabled": {
             "type": "boolean"
           },
           "globalEnforcementEnabled": {
@@ -1422,6 +2476,8 @@
           "kafkaACLEnforcementEnabled",
           "istioPolicyEnforcementEnabled",
           "awsIAMPolicyEnforcementEnabled",
+          "gcpIAMPolicyEnforcementEnabled",
+          "azureIAMPolicyEnforcementEnabled",
           "databaseEnforcementEnabled",
           "protectedServicesEnabled",
           "protectedServices",
@@ -1431,6 +2487,12 @@
       },
       "InternetConfig": {
         "properties": {
+          "appliedDomains": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "dnsName": {
             "type": "string"
           },
@@ -1617,6 +2679,21 @@
         ],
         "type": "object"
       },
+      "LabelValueTuple": {
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "value"
+        ],
+        "type": "object"
+      },
       "Me": {
         "properties": {
           "invites": {
@@ -1640,6 +2717,28 @@
           "user",
           "organizations",
           "invites"
+        ],
+        "type": "object"
+      },
+      "MergedYAMLFile": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ClientIntentsRow"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "fileName",
+          "rows",
+          "content"
         ],
         "type": "object"
       },
@@ -1694,6 +2793,32 @@
         ],
         "type": "object"
       },
+      "NamespaceFilterInput": {
+        "properties": {
+          "clusterIds": {
+            "items": {
+              "example": "obj_12345",
+              "format": "id",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "environmentIds": {
+            "items": {
+              "example": "obj_12345",
+              "format": "id",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "NetworkMapperComponent": {
         "properties": {
           "status": {
@@ -1716,6 +2841,10 @@
       },
       "Organization": {
         "properties": {
+          "created": {
+            "format": "date-time",
+            "type": "string"
+          },
           "id": {
             "type": "string"
           },
@@ -1724,10 +2853,77 @@
           },
           "name": {
             "type": "string"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/OrganizationSettings"
           }
         },
         "required": [
-          "id"
+          "id",
+          "name",
+          "settings",
+          "created"
+        ],
+        "type": "object"
+      },
+      "OrganizationSettings": {
+        "properties": {
+          "domains": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enforcedRegulations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "OrganizationSettingsInput": {
+        "properties": {
+          "domains": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "enforcedRegulations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "PaginationInput": {
+        "properties": {
+          "limit": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "offset": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ServerAlias": {
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
         ],
         "type": "object"
       },
@@ -1819,11 +3015,34 @@
       },
       "Service": {
         "properties": {
+          "aliases": {
+            "items": {
+              "$ref": "#/components/schemas/ServerAlias"
+            },
+            "type": "array"
+          },
           "awsResource": {
             "$ref": "#/components/schemas/AWSResource"
           },
+          "awsVisibility": {
+            "$ref": "#/components/schemas/AWSVisibility"
+          },
+          "azureResource": {
+            "$ref": "#/components/schemas/AzureResource"
+          },
           "certificateInformation": {
             "$ref": "#/components/schemas/CertificateInformation"
+          },
+          "databaseIntegration": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
           },
           "discoveredByIntegration": {
             "properties": {
@@ -1847,6 +3066,9 @@
             ],
             "type": "object"
           },
+          "gcpResource": {
+            "$ref": "#/components/schemas/GCPResource"
+          },
           "id": {
             "type": "string"
           },
@@ -1861,6 +3083,15 @@
             "$ref": "#/components/schemas/Namespace"
           },
           "serviceAccount": {
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "workloadKind": {
             "type": "string"
           }
         },
@@ -1907,9 +3138,13 @@
                 "KUBERNETES",
                 "KAFKA",
                 "AWS",
+                "GCP",
+                "AZURE",
                 "DATABASE",
                 "INTERNET",
-                "DATABASE_USER"
+                "DATABASE_USER",
+                "KUBERNETES_LOAD_BALANCER",
+                "AWS_VISIBILITY_EKS"
               ],
               "type": "string"
             },
@@ -1960,6 +3195,181 @@
         ],
         "type": "object"
       },
+      "ServiceClientIntents": {
+        "properties": {
+          "appliedIntentEvents": {
+            "items": {
+              "$ref": "#/components/schemas/ClientIntentEvent"
+            },
+            "type": "array"
+          },
+          "appliedIntentStatus": {
+            "$ref": "#/components/schemas/ClientIntentStatus"
+          },
+          "asClient": {
+            "$ref": "#/components/schemas/ClientIntentsFiles"
+          },
+          "asServer": {
+            "$ref": "#/components/schemas/ClientIntentsFiles"
+          }
+        },
+        "type": "object"
+      },
+      "SlackChannelInfo": {
+        "properties": {
+          "channelName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "channelName"
+        ],
+        "type": "object"
+      },
+      "SlackChannelIntegrationAlerts": {
+        "properties": {
+          "channelInfo": {
+            "$ref": "#/components/schemas/SlackChannelInfo"
+          }
+        },
+        "required": [
+          "channelInfo"
+        ],
+        "type": "object"
+      },
+      "SlackChannelIntegrationAlertsInput": {
+        "properties": {
+          "channelInfo": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "channelInfo"
+        ],
+        "type": "object"
+      },
+      "SlackFilterPair": {
+        "properties": {
+          "channelInfo": {
+            "$ref": "#/components/schemas/SlackChannelInfo"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/IntegrationAccessGraphFilter"
+          }
+        },
+        "required": [
+          "filter",
+          "channelInfo"
+        ],
+        "type": "object"
+      },
+      "SlackFilterPairInput": {
+        "properties": {
+          "channelInfo": {
+            "type": "object"
+          },
+          "filter": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "channelInfo"
+        ],
+        "type": "object"
+      },
+      "SlackSettings": {
+        "properties": {
+          "channelFilterPairs": {
+            "items": {
+              "$ref": "#/components/schemas/SlackFilterPair"
+            },
+            "type": "array"
+          },
+          "channelIntegrationAlerts": {
+            "items": {
+              "$ref": "#/components/schemas/SlackChannelIntegrationAlerts"
+            },
+            "type": "array"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isActive",
+          "channelFilterPairs"
+        ],
+        "type": "object"
+      },
+      "SlackSettingsInput": {
+        "properties": {
+          "channelFilterPairs": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "channelIntegrationAlerts": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isActive",
+          "channelFilterPairs"
+        ],
+        "type": "object"
+      },
+      "TimeFilterValue": {
+        "properties": {
+          "operator": {
+            "enum": [
+              "AFTER"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "operator"
+        ],
+        "type": "object"
+      },
+      "TimeRange": {
+        "properties": {
+          "from": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "to": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TimeRangeInput": {
+        "properties": {
+          "from": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "to": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "User": {
         "properties": {
           "authProviderUserId": {
@@ -1976,46 +3386,6 @@
           },
           "name": {
             "type": "string"
-          },
-          "questLogStep": {
-            "enum": [
-              "CONNECT_CLUSTER",
-              "EXPLORE_NETWORK_MAP_ADD_NS_FILTER",
-              "EXPLORE_NETWORK_MAP_ADD_SVC_FILTER",
-              "EXPLORE_NETWORK_MAP_CLEAR_FILTERS",
-              "DECLARE_INTENTS_CLICK_ON_SERVICE",
-              "DECLARE_INTENTS_DOWNLOAD_YAML",
-              "DECLARE_INTENTS_DO_APPLY",
-              "COMPLETED"
-            ],
-            "type": "string"
-          },
-          "questLogStepSeen": {
-            "enum": [
-              "CONNECT_CLUSTER",
-              "EXPLORE_NETWORK_MAP_ADD_NS_FILTER",
-              "EXPLORE_NETWORK_MAP_ADD_SVC_FILTER",
-              "EXPLORE_NETWORK_MAP_CLEAR_FILTERS",
-              "DECLARE_INTENTS_CLICK_ON_SERVICE",
-              "DECLARE_INTENTS_DOWNLOAD_YAML",
-              "DECLARE_INTENTS_DO_APPLY",
-              "COMPLETED"
-            ],
-            "type": "string"
-          },
-          "tutorials": {
-            "items": {
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "id"
-              ],
-              "type": "object"
-            },
-            "type": "array"
           }
         },
         "required": [
@@ -2023,59 +3393,7 @@
           "email",
           "name",
           "imageURL",
-          "authProviderUserId",
-          "questLogStep",
-          "questLogStepSeen"
-        ],
-        "type": "object"
-      },
-      "UserTutorial": {
-        "properties": {
-          "clusterId": {
-            "type": "string"
-          },
-          "clusterName": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
-          "isActive": {
-            "type": "boolean"
-          },
-          "isCompleted": {
-            "type": "boolean"
-          },
-          "name": {
-            "enum": [
-              "NETWORK_POLICIES",
-              "AWS_IAM",
-              "POSTGRESQL",
-              "ISTIO_AUTH_POLICY_AUTOMATION",
-              "KAFKA_ACCESS_AUTOMATE_OTTERIZE_CLOUD"
-            ],
-            "type": "string"
-          },
-          "step": {
-            "type": "string"
-          },
-          "stepSeen": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "userId",
-          "clusterId",
-          "clusterName",
-          "name",
-          "isActive",
-          "isCompleted",
-          "step",
-          "stepSeen"
+          "authProviderUserId"
         ],
         "type": "object"
       }
@@ -2115,7 +3433,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "04a8dbb4928aa277965a605782f556a479c40232"
+    "x-revision": "370beb668a8c6d984e1b58bfc53e5d5a0dc9fa3b"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -2178,6 +3496,154 @@
         "summary": "Get access graph",
         "tags": [
           "access graph"
+        ]
+      }
+    },
+    "/access-graph/service-client-intents/{id}": {
+      "post": {
+        "description": " Get service ClientIntents ",
+        "operationId": "serviceClientIntents_query",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "asServiceId": {
+                    "type": "string"
+                  },
+                  "clusterIds": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "enableInternetIntents": {
+                    "type": "boolean"
+                  },
+                  "featureFlags": {
+                    "$ref": "#/components/schemas/InputFeatureFlags"
+                  },
+                  "lastSeenAfter": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceClientIntents"
+                }
+              }
+            },
+            "description": " Get service ClientIntents "
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": " Get service ClientIntents ",
+        "tags": [
+          "access graph"
+        ]
+      }
+    },
+    "/access-log": {
+      "post": {
+        "description": "Get access log",
+        "operationId": "accessLog_query",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "filter": {
+                    "$ref": "#/components/schemas/InputAccessLogFilter"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessLog"
+                }
+              }
+            },
+            "description": "Get access log"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Get access log",
+        "tags": [
+          "access log"
         ]
       }
     },
@@ -3126,7 +4592,12 @@
                 "KUBERNETES",
                 "DATABASE",
                 "AWS",
-                "GITHUB"
+                "GCP",
+                "GITHUB",
+                "GITLAB",
+                "AZURE",
+                "SLACK",
+                "AWS_VISIBILITY"
               ],
               "type": "string"
             }
@@ -3233,7 +4704,12 @@
                 "KUBERNETES",
                 "DATABASE",
                 "AWS",
-                "GITHUB"
+                "GCP",
+                "GITHUB",
+                "GITLAB",
+                "AZURE",
+                "SLACK",
+                "AWS_VISIBILITY"
               ],
               "type": "string"
             }
@@ -3456,6 +4932,294 @@
         ]
       }
     },
+    "/integrations/aws-metadata": {
+      "patch": {
+        "description": "Update an AWS Visibility integration",
+        "operationId": "updateAwsVisibilityIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "awsVisibilitySettings": {
+                    "$ref": "#/components/schemas/AWSVisibilitySettingsInput"
+                  },
+                  "id": {
+                    "example": "obj_12345",
+                    "format": "id",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+                    "type": "string"
+                  },
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Update an AWS Visibility integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Update an AWS Visibility integration",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "description": "Create a new AWS Visibility integration",
+        "operationId": "createAwsVisibilityIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "awsVisibilitySettings": {
+                    "$ref": "#/components/schemas/AWSVisibilitySettingsInput"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "awsVisibilitySettings"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Create a new AWS Visibility integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Create a new AWS Visibility integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/integrations/azure": {
+      "patch": {
+        "description": "Update Azure integration",
+        "operationId": "updateAzureIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "azureIntegration": {
+                    "$ref": "#/components/schemas/AzureInfoInput"
+                  },
+                  "id": {
+                    "example": "obj_12345",
+                    "format": "id",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+                    "type": "string"
+                  },
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Update Azure integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Update Azure integration",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "description": "Create a new Azure integration",
+        "operationId": "createAzureIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "azureIntegration": {
+                    "$ref": "#/components/schemas/AzureInfoInput"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "azureIntegration"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Create a new Azure integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Create a new Azure integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
     "/integrations/database": {
       "post": {
         "description": "",
@@ -3560,9 +5324,6 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "databaseInfo"
-                ],
                 "type": "object"
               }
             }
@@ -3605,6 +5366,150 @@
           }
         },
         "summary": "Update Database integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/integrations/gcp": {
+      "patch": {
+        "description": "Update GCP integration",
+        "operationId": "updateGCPIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "gcpIntegration": {
+                    "$ref": "#/components/schemas/GCPInfoInput"
+                  },
+                  "id": {
+                    "example": "obj_12345",
+                    "format": "id",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+                    "type": "string"
+                  },
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Update GCP integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Update GCP integration",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "description": "Create a new GCP integration",
+        "operationId": "createGCPIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "gcpIntegration": {
+                    "$ref": "#/components/schemas/GCPInfoInput"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "gcpIntegration"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Create a new GCP integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Create a new GCP integration",
         "tags": [
           "integrations"
         ]
@@ -3756,8 +5661,8 @@
     },
     "/integrations/github": {
       "patch": {
-        "description": "Update Github integration",
-        "operationId": "updateGithubIntegration_mutation",
+        "description": "Update GitHub integration",
+        "operationId": "updateGitHubIntegration_mutation",
         "parameters": [
         ],
         "requestBody": {
@@ -3765,7 +5670,7 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "githubSettings": {
+                  "gitHubSettings": {
                     "$ref": "#/components/schemas/GitHubSettingsInput"
                   },
                   "id": {
@@ -3784,7 +5689,7 @@
                 "required": [
                   "id",
                   "name",
-                  "githubSettings"
+                  "gitHubSettings"
                 ],
                 "type": "object"
               }
@@ -3800,7 +5705,7 @@
                 }
               }
             },
-            "description": "Update Github integration"
+            "description": "Update GitHub integration"
           },
           "400": {
             "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
@@ -3827,14 +5732,14 @@
             "$ref": "#/components/responses/UNEXPECTED_ERROR"
           }
         },
-        "summary": "Update Github integration",
+        "summary": "Update GitHub integration",
         "tags": [
           "integrations"
         ]
       },
       "post": {
-        "description": "Create a new Github integration",
-        "operationId": "createGithubIntegration_mutation",
+        "description": "Create a new GitHub integration",
+        "operationId": "createGitHubIntegration_mutation",
         "parameters": [
         ],
         "requestBody": {
@@ -3842,7 +5747,7 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "githubSettings": {
+                  "gitHubSettings": {
                     "$ref": "#/components/schemas/GitHubSettingsInput"
                   },
                   "name": {
@@ -3851,7 +5756,7 @@
                 },
                 "required": [
                   "name",
-                  "githubSettings"
+                  "gitHubSettings"
                 ],
                 "type": "object"
               }
@@ -3863,11 +5768,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateGithubIntegrationResponse"
+                  "$ref": "#/components/schemas/CreateGitHubIntegrationResponse"
                 }
               }
             },
-            "description": "Create a new Github integration"
+            "description": "Create a new GitHub integration"
           },
           "400": {
             "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
@@ -3894,7 +5799,153 @@
             "$ref": "#/components/responses/UNEXPECTED_ERROR"
           }
         },
-        "summary": "Create a new Github integration",
+        "summary": "Create a new GitHub integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/integrations/gitlab": {
+      "patch": {
+        "description": "Update GitLab integration",
+        "operationId": "updateGitLabIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "gitLabSettings": {
+                    "$ref": "#/components/schemas/GitLabSettingsInput"
+                  },
+                  "id": {
+                    "example": "obj_12345",
+                    "format": "id",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+                    "type": "string"
+                  },
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "gitLabSettings"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Update GitLab integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Update GitLab integration",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "description": "Create a new GitLab integration",
+        "operationId": "createGitLabIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "gitLabSettings": {
+                    "$ref": "#/components/schemas/GitLabSettingsInput"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "gitLabSettings"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateGitLabIntegrationResponse"
+                }
+              }
+            },
+            "description": "Create a new GitLab integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Create a new GitLab integration",
         "tags": [
           "integrations"
         ]
@@ -3925,6 +5976,7 @@
                   }
                 },
                 "required": [
+                  "environmentId",
                   "name"
                 ],
                 "type": "object"
@@ -4051,6 +6103,149 @@
           }
         },
         "summary": "Update Kubernetes integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/integrations/slack": {
+      "patch": {
+        "description": "Update a Slack integration",
+        "operationId": "updateSlackIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "id": {
+                    "example": "obj_12345",
+                    "format": "id",
+                    "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "slackSettings": {
+                    "$ref": "#/components/schemas/SlackSettingsInput"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "slackSettings"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Update a Slack integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Update a Slack integration",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "description": "Create a new Slack integration",
+        "operationId": "createSlackIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "slackSettings": {
+                    "$ref": "#/components/schemas/SlackSettingsInput"
+                  }
+                },
+                "required": [
+                  "name",
+                  "slackSettings"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSlackIntegrationResponse"
+                }
+              }
+            },
+            "description": "Create a new Slack integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Create a new Slack integration",
         "tags": [
           "integrations"
         ]
@@ -4727,6 +6922,14 @@
               "pattern": "^[a-z0-9][a-z0-9-_.]{0,252}$",
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "filter",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/NamespaceFilterInput"
+            }
           }
         ],
         "responses": {
@@ -5108,6 +7311,9 @@
                     "format": "custom-name",
                     "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
                     "type": "string"
+                  },
+                  "settings": {
+                    "$ref": "#/components/schemas/OrganizationSettingsInput"
                   }
                 },
                 "type": "object"
@@ -5393,6 +7599,14 @@
               "pattern": "^[a-z0-9][a-z0-9-_.]{0,252}$",
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "filter",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/InputServiceFilter"
+            }
           }
         ],
         "responses": {
@@ -5494,6 +7708,80 @@
           }
         },
         "summary": "Get service",
+        "tags": [
+          "services"
+        ]
+      },
+      "patch": {
+        "description": "Update service",
+        "operationId": "updateService_mutation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "example": "obj_12345",
+              "format": "id",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "tags": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            },
+            "description": "Update service"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Update service",
         "tags": [
           "services"
         ]

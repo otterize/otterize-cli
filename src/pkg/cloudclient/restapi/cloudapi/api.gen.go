@@ -31,6 +31,47 @@ const (
 	S3      AWSResourceType = "S3"
 )
 
+// Defines values for AWSVisibilityResourceType.
+const (
+	EKS AWSVisibilityResourceType = "EKS"
+)
+
+// Defines values for CallViolationCode.
+const (
+	CallViolationCodePCI40                                 CallViolationCode = "PCI_4_0"
+	CallViolationCodePCI4011                               CallViolationCode = "PCI_4_0_1_1"
+	CallViolationCodePCI40112                              CallViolationCode = "PCI_4_0_1_1_2"
+	CallViolationCodePCI40114                              CallViolationCode = "PCI_4_0_1_1_4"
+	CallViolationCodePCI4012                               CallViolationCode = "PCI_4_0_1_2"
+	CallViolationCodePCI40121                              CallViolationCode = "PCI_4_0_1_2_1"
+	CallViolationCodePCI4013                               CallViolationCode = "PCI_4_0_1_3"
+	CallViolationCodePCI40134                              CallViolationCode = "PCI_4_0_1_3_4"
+	CallViolationCodePCI40136                              CallViolationCode = "PCI_4_0_1_3_6"
+	CallViolationCodePCI4071                               CallViolationCode = "PCI_4_0_7_1"
+	CallViolationCodePCI4072                               CallViolationCode = "PCI_4_0_7_2"
+	CallViolationCodePCI4087                               CallViolationCode = "PCI_4_0_8_7"
+	CallViolationCodeZEROTRUST                             CallViolationCode = "ZERO_TRUST"
+	CallViolationCodeZEROTRUSTALLINTRACLUSTERACCESSCOVERED CallViolationCode = "ZERO_TRUST_ALL_INTRA_CLUSTER_ACCESS_COVERED"
+	CallViolationCodeZEROTRUSTDEFAULTDENY                  CallViolationCode = "ZERO_TRUST_DEFAULT_DENY"
+	CallViolationCodeZEROTRUSTEGRESSACCESSCOVERED          CallViolationCode = "ZERO_TRUST_EGRESS_ACCESS_COVERED"
+	CallViolationCodeZEROTRUSTEXTERNALINGRESSTAGGED        CallViolationCode = "ZERO_TRUST_EXTERNAL_INGRESS_TAGGED"
+	CallViolationCodeZEROTRUSTSENSITIVE                    CallViolationCode = "ZERO_TRUST_SENSITIVE"
+)
+
+// Defines values for CallViolationStandard.
+const (
+	CallViolationStandardHIPAA     CallViolationStandard = "HIPAA"
+	CallViolationStandardPCI40     CallViolationStandard = "PCI_4_0"
+	CallViolationStandardPII       CallViolationStandard = "PII"
+	CallViolationStandardZEROTRUST CallViolationStandard = "ZERO_TRUST"
+)
+
+// Defines values for ClientIntentsRowDiff.
+const (
+	ADDED   ClientIntentsRowDiff = "ADDED"
+	REMOVED ClientIntentsRowDiff = "REMOVED"
+)
+
 // Defines values for ClusterFormSettingsCertificateProvider.
 const (
 	CERTMANAGER ClusterFormSettingsCertificateProvider = "CERT_MANAGER"
@@ -55,11 +96,13 @@ const (
 
 // Defines values for DatabaseInfoDatabaseType.
 const (
+	DatabaseInfoDatabaseTypeMYSQL      DatabaseInfoDatabaseType = "MYSQL"
 	DatabaseInfoDatabaseTypePOSTGRESQL DatabaseInfoDatabaseType = "POSTGRESQL"
 )
 
 // Defines values for DatabaseInfoInputDatabaseType.
 const (
+	DatabaseInfoInputDatabaseTypeMYSQL      DatabaseInfoInputDatabaseType = "MYSQL"
 	DatabaseInfoInputDatabaseTypePOSTGRESQL DatabaseInfoInputDatabaseType = "POSTGRESQL"
 )
 
@@ -149,11 +192,48 @@ const (
 
 // Defines values for IntegrationType.
 const (
-	IntegrationTypeAWS        IntegrationType = "AWS"
-	IntegrationTypeDATABASE   IntegrationType = "DATABASE"
-	IntegrationTypeGENERIC    IntegrationType = "GENERIC"
-	IntegrationTypeGITHUB     IntegrationType = "GITHUB"
-	IntegrationTypeKUBERNETES IntegrationType = "KUBERNETES"
+	IntegrationTypeAWS           IntegrationType = "AWS"
+	IntegrationTypeAWSVISIBILITY IntegrationType = "AWS_VISIBILITY"
+	IntegrationTypeAZURE         IntegrationType = "AZURE"
+	IntegrationTypeDATABASE      IntegrationType = "DATABASE"
+	IntegrationTypeGCP           IntegrationType = "GCP"
+	IntegrationTypeGENERIC       IntegrationType = "GENERIC"
+	IntegrationTypeGITHUB        IntegrationType = "GITHUB"
+	IntegrationTypeGITLAB        IntegrationType = "GITLAB"
+	IntegrationTypeKUBERNETES    IntegrationType = "KUBERNETES"
+	IntegrationTypeSLACK         IntegrationType = "SLACK"
+)
+
+// Defines values for IntegrationAccessGraphFilterClusterFilterType.
+const (
+	IntegrationAccessGraphFilterClusterFilterTypeEXCLUDE IntegrationAccessGraphFilterClusterFilterType = "EXCLUDE"
+	IntegrationAccessGraphFilterClusterFilterTypeINCLUDE IntegrationAccessGraphFilterClusterFilterType = "INCLUDE"
+)
+
+// Defines values for IntegrationAccessGraphFilterEnvironmentFilterType.
+const (
+	IntegrationAccessGraphFilterEnvironmentFilterTypeEXCLUDE IntegrationAccessGraphFilterEnvironmentFilterType = "EXCLUDE"
+	IntegrationAccessGraphFilterEnvironmentFilterTypeINCLUDE IntegrationAccessGraphFilterEnvironmentFilterType = "INCLUDE"
+)
+
+// Defines values for IntegrationAccessGraphFilterNamespaceFilterType.
+const (
+	IntegrationAccessGraphFilterNamespaceFilterTypeEXCLUDE IntegrationAccessGraphFilterNamespaceFilterType = "EXCLUDE"
+	IntegrationAccessGraphFilterNamespaceFilterTypeINCLUDE IntegrationAccessGraphFilterNamespaceFilterType = "INCLUDE"
+)
+
+// Defines values for IntegrationAccessGraphFilterServiceFilterType.
+const (
+	IntegrationAccessGraphFilterServiceFilterTypeEXCLUDE IntegrationAccessGraphFilterServiceFilterType = "EXCLUDE"
+	IntegrationAccessGraphFilterServiceFilterTypeINCLUDE IntegrationAccessGraphFilterServiceFilterType = "INCLUDE"
+)
+
+// Defines values for IntegrationStatusState.
+const (
+	IntegrationStatusStateFAILURE IntegrationStatusState = "FAILURE"
+	IntegrationStatusStatePENDING IntegrationStatusState = "PENDING"
+	IntegrationStatusStateSUCCESS IntegrationStatusState = "SUCCESS"
+	IntegrationStatusStateWARNING IntegrationStatusState = "WARNING"
 )
 
 // Defines values for IntentsOperatorComponentType.
@@ -229,56 +309,51 @@ const (
 
 // Defines values for ServiceAccessGraphTypes.
 const (
-	ServiceAccessGraphTypesAWS          ServiceAccessGraphTypes = "AWS"
-	ServiceAccessGraphTypesDATABASE     ServiceAccessGraphTypes = "DATABASE"
-	ServiceAccessGraphTypesDATABASEUSER ServiceAccessGraphTypes = "DATABASE_USER"
-	ServiceAccessGraphTypesINTERNET     ServiceAccessGraphTypes = "INTERNET"
-	ServiceAccessGraphTypesKAFKA        ServiceAccessGraphTypes = "KAFKA"
-	ServiceAccessGraphTypesKUBERNETES   ServiceAccessGraphTypes = "KUBERNETES"
-	ServiceAccessGraphTypesNODEGROUP    ServiceAccessGraphTypes = "NODE_GROUP"
-	ServiceAccessGraphTypesPREFIXGROUP  ServiceAccessGraphTypes = "PREFIX_GROUP"
+	ServiceAccessGraphTypesAWS                    ServiceAccessGraphTypes = "AWS"
+	ServiceAccessGraphTypesAWSVISIBILITYEKS       ServiceAccessGraphTypes = "AWS_VISIBILITY_EKS"
+	ServiceAccessGraphTypesAZURE                  ServiceAccessGraphTypes = "AZURE"
+	ServiceAccessGraphTypesDATABASE               ServiceAccessGraphTypes = "DATABASE"
+	ServiceAccessGraphTypesDATABASEUSER           ServiceAccessGraphTypes = "DATABASE_USER"
+	ServiceAccessGraphTypesGCP                    ServiceAccessGraphTypes = "GCP"
+	ServiceAccessGraphTypesINTERNET               ServiceAccessGraphTypes = "INTERNET"
+	ServiceAccessGraphTypesKAFKA                  ServiceAccessGraphTypes = "KAFKA"
+	ServiceAccessGraphTypesKUBERNETES             ServiceAccessGraphTypes = "KUBERNETES"
+	ServiceAccessGraphTypesKUBERNETESLOADBALANCER ServiceAccessGraphTypes = "KUBERNETES_LOAD_BALANCER"
+	ServiceAccessGraphTypesNODEGROUP              ServiceAccessGraphTypes = "NODE_GROUP"
+	ServiceAccessGraphTypesPREFIXGROUP            ServiceAccessGraphTypes = "PREFIX_GROUP"
 )
 
-// Defines values for UserQuestLogStep.
+// Defines values for TimeFilterValueOperator.
 const (
-	UserQuestLogStepCOMPLETED                     UserQuestLogStep = "COMPLETED"
-	UserQuestLogStepCONNECTCLUSTER                UserQuestLogStep = "CONNECT_CLUSTER"
-	UserQuestLogStepDECLAREINTENTSCLICKONSERVICE  UserQuestLogStep = "DECLARE_INTENTS_CLICK_ON_SERVICE"
-	UserQuestLogStepDECLAREINTENTSDOAPPLY         UserQuestLogStep = "DECLARE_INTENTS_DO_APPLY"
-	UserQuestLogStepDECLAREINTENTSDOWNLOADYAML    UserQuestLogStep = "DECLARE_INTENTS_DOWNLOAD_YAML"
-	UserQuestLogStepEXPLORENETWORKMAPADDNSFILTER  UserQuestLogStep = "EXPLORE_NETWORK_MAP_ADD_NS_FILTER"
-	UserQuestLogStepEXPLORENETWORKMAPADDSVCFILTER UserQuestLogStep = "EXPLORE_NETWORK_MAP_ADD_SVC_FILTER"
-	UserQuestLogStepEXPLORENETWORKMAPCLEARFILTERS UserQuestLogStep = "EXPLORE_NETWORK_MAP_CLEAR_FILTERS"
-)
-
-// Defines values for UserQuestLogStepSeen.
-const (
-	UserQuestLogStepSeenCOMPLETED                     UserQuestLogStepSeen = "COMPLETED"
-	UserQuestLogStepSeenCONNECTCLUSTER                UserQuestLogStepSeen = "CONNECT_CLUSTER"
-	UserQuestLogStepSeenDECLAREINTENTSCLICKONSERVICE  UserQuestLogStepSeen = "DECLARE_INTENTS_CLICK_ON_SERVICE"
-	UserQuestLogStepSeenDECLAREINTENTSDOAPPLY         UserQuestLogStepSeen = "DECLARE_INTENTS_DO_APPLY"
-	UserQuestLogStepSeenDECLAREINTENTSDOWNLOADYAML    UserQuestLogStepSeen = "DECLARE_INTENTS_DOWNLOAD_YAML"
-	UserQuestLogStepSeenEXPLORENETWORKMAPADDNSFILTER  UserQuestLogStepSeen = "EXPLORE_NETWORK_MAP_ADD_NS_FILTER"
-	UserQuestLogStepSeenEXPLORENETWORKMAPADDSVCFILTER UserQuestLogStepSeen = "EXPLORE_NETWORK_MAP_ADD_SVC_FILTER"
-	UserQuestLogStepSeenEXPLORENETWORKMAPCLEARFILTERS UserQuestLogStepSeen = "EXPLORE_NETWORK_MAP_CLEAR_FILTERS"
+	AFTER TimeFilterValueOperator = "AFTER"
 )
 
 // Defines values for OneIntegrationQueryParamsIntegrationType.
 const (
-	OneIntegrationQueryParamsIntegrationTypeAWS        OneIntegrationQueryParamsIntegrationType = "AWS"
-	OneIntegrationQueryParamsIntegrationTypeDATABASE   OneIntegrationQueryParamsIntegrationType = "DATABASE"
-	OneIntegrationQueryParamsIntegrationTypeGENERIC    OneIntegrationQueryParamsIntegrationType = "GENERIC"
-	OneIntegrationQueryParamsIntegrationTypeGITHUB     OneIntegrationQueryParamsIntegrationType = "GITHUB"
-	OneIntegrationQueryParamsIntegrationTypeKUBERNETES OneIntegrationQueryParamsIntegrationType = "KUBERNETES"
+	OneIntegrationQueryParamsIntegrationTypeAWS           OneIntegrationQueryParamsIntegrationType = "AWS"
+	OneIntegrationQueryParamsIntegrationTypeAWSVISIBILITY OneIntegrationQueryParamsIntegrationType = "AWS_VISIBILITY"
+	OneIntegrationQueryParamsIntegrationTypeAZURE         OneIntegrationQueryParamsIntegrationType = "AZURE"
+	OneIntegrationQueryParamsIntegrationTypeDATABASE      OneIntegrationQueryParamsIntegrationType = "DATABASE"
+	OneIntegrationQueryParamsIntegrationTypeGCP           OneIntegrationQueryParamsIntegrationType = "GCP"
+	OneIntegrationQueryParamsIntegrationTypeGENERIC       OneIntegrationQueryParamsIntegrationType = "GENERIC"
+	OneIntegrationQueryParamsIntegrationTypeGITHUB        OneIntegrationQueryParamsIntegrationType = "GITHUB"
+	OneIntegrationQueryParamsIntegrationTypeGITLAB        OneIntegrationQueryParamsIntegrationType = "GITLAB"
+	OneIntegrationQueryParamsIntegrationTypeKUBERNETES    OneIntegrationQueryParamsIntegrationType = "KUBERNETES"
+	OneIntegrationQueryParamsIntegrationTypeSLACK         OneIntegrationQueryParamsIntegrationType = "SLACK"
 )
 
 // Defines values for IntegrationsQueryParamsIntegrationType.
 const (
-	IntegrationsQueryParamsIntegrationTypeAWS        IntegrationsQueryParamsIntegrationType = "AWS"
-	IntegrationsQueryParamsIntegrationTypeDATABASE   IntegrationsQueryParamsIntegrationType = "DATABASE"
-	IntegrationsQueryParamsIntegrationTypeGENERIC    IntegrationsQueryParamsIntegrationType = "GENERIC"
-	IntegrationsQueryParamsIntegrationTypeGITHUB     IntegrationsQueryParamsIntegrationType = "GITHUB"
-	IntegrationsQueryParamsIntegrationTypeKUBERNETES IntegrationsQueryParamsIntegrationType = "KUBERNETES"
+	IntegrationsQueryParamsIntegrationTypeAWS           IntegrationsQueryParamsIntegrationType = "AWS"
+	IntegrationsQueryParamsIntegrationTypeAWSVISIBILITY IntegrationsQueryParamsIntegrationType = "AWS_VISIBILITY"
+	IntegrationsQueryParamsIntegrationTypeAZURE         IntegrationsQueryParamsIntegrationType = "AZURE"
+	IntegrationsQueryParamsIntegrationTypeDATABASE      IntegrationsQueryParamsIntegrationType = "DATABASE"
+	IntegrationsQueryParamsIntegrationTypeGCP           IntegrationsQueryParamsIntegrationType = "GCP"
+	IntegrationsQueryParamsIntegrationTypeGENERIC       IntegrationsQueryParamsIntegrationType = "GENERIC"
+	IntegrationsQueryParamsIntegrationTypeGITHUB        IntegrationsQueryParamsIntegrationType = "GITHUB"
+	IntegrationsQueryParamsIntegrationTypeGITLAB        IntegrationsQueryParamsIntegrationType = "GITLAB"
+	IntegrationsQueryParamsIntegrationTypeKUBERNETES    IntegrationsQueryParamsIntegrationType = "KUBERNETES"
+	IntegrationsQueryParamsIntegrationTypeSLACK         IntegrationsQueryParamsIntegrationType = "SLACK"
 )
 
 // Defines values for OneInviteQueryParamsStatus.
@@ -289,8 +364,8 @@ const (
 
 // Defines values for InvitesQueryParamsStatus.
 const (
-	ACCEPTED InvitesQueryParamsStatus = "ACCEPTED"
-	PENDING  InvitesQueryParamsStatus = "PENDING"
+	InvitesQueryParamsStatusACCEPTED InvitesQueryParamsStatus = "ACCEPTED"
+	InvitesQueryParamsStatusPENDING  InvitesQueryParamsStatus = "PENDING"
 )
 
 // AWSInfo defines model for AWSInfo.
@@ -319,11 +394,43 @@ type AWSResource struct {
 // AWSResourceType defines model for AWSResource.Type.
 type AWSResourceType string
 
+// AWSVisibility defines model for AWSVisibility.
+type AWSVisibility struct {
+	Arn            string                    `json:"arn"`
+	Domain         *string                   `json:"domain,omitempty"`
+	EksIngressName *string                   `json:"eksIngressName,omitempty"`
+	Ips            []string                  `json:"ips"`
+	LbArn          *string                   `json:"lbArn,omitempty"`
+	Name           string                    `json:"name"`
+	Region         string                    `json:"region"`
+	ResourceType   AWSVisibilityResourceType `json:"resourceType"`
+}
+
+// AWSVisibilityResourceType defines model for AWSVisibility.ResourceType.
+type AWSVisibilityResourceType string
+
+// AWSVisibilitySettings defines model for AWSVisibilitySettings.
+type AWSVisibilitySettings struct {
+	AwsAccountId string   `json:"awsAccountId"`
+	ExternalId   string   `json:"externalId"`
+	IsActive     bool     `json:"isActive"`
+	Regions      []string `json:"regions"`
+}
+
+// AWSVisibilitySettingsInput defines model for AWSVisibilitySettingsInput.
+type AWSVisibilitySettingsInput struct {
+	AwsAccountId string   `json:"awsAccountId"`
+	IsActive     bool     `json:"isActive"`
+	Regions      []string `json:"regions"`
+}
+
 // AccessGraph defines model for AccessGraph.
 type AccessGraph struct {
 	Clusters []struct {
 		Id string `json:"id"`
 	} `json:"clusters"`
+
+	// Filter  Access graph filter
 	Filter              AccessGraphFilter    `json:"filter"`
 	ServiceAccessGraphs []ServiceAccessGraph `json:"serviceAccessGraphs"`
 	ServiceCount        int32                `json:"serviceCount"`
@@ -345,17 +452,87 @@ type AccessGraphEdge struct {
 	Server struct {
 		Id string `json:"id"`
 	} `json:"server"`
+	Violations []CallViolation `json:"violations"`
 }
 
-// AccessGraphFilter defines model for AccessGraphFilter.
+// AccessGraphFilter  Access graph filter
 type AccessGraphFilter struct {
-	ClusterIds                 *[]string  `json:"clusterIds,omitempty"`
-	EnvironmentIds             *[]string  `json:"environmentIds,omitempty"`
-	IncludeServicesWithNoEdges *bool      `json:"includeServicesWithNoEdges,omitempty"`
-	LastSeenAfter              *time.Time `json:"lastSeenAfter,omitempty"`
-	NamespaceIds               *[]string  `json:"namespaceIds,omitempty"`
-	ServiceIds                 *[]string  `json:"serviceIds,omitempty"`
+	ClusterIds     *IDFilterValue   `json:"clusterIds,omitempty"`
+	EnvironmentIds *IDFilterValue   `json:"environmentIds,omitempty"`
+	FeatureFlags   *FeatureFlags    `json:"featureFlags,omitempty"`
+	LastSeen       *TimeFilterValue `json:"lastSeen,omitempty"`
+	NamespaceIds   *IDFilterValue   `json:"namespaceIds,omitempty"`
+	ServiceIds     *IDFilterValue   `json:"serviceIds,omitempty"`
 }
+
+// AccessLog defines model for AccessLog.
+type AccessLog struct {
+	Clusters []struct {
+		Id string `json:"id"`
+	} `json:"clusters"`
+	Entries    []AccessLogEdge `json:"entries"`
+	Namespaces []struct {
+		Id string `json:"id"`
+	} `json:"namespaces"`
+	TimeRange  TimeRange `json:"timeRange"`
+	TotalCount int32     `json:"totalCount"`
+}
+
+// AccessLogEdge defines model for AccessLogEdge.
+type AccessLogEdge struct {
+	AccessStatus   EdgeAccessStatus `json:"accessStatus"`
+	AppliedIntents *[]struct {
+		Id string `json:"id"`
+	} `json:"appliedIntents,omitempty"`
+	Client struct {
+		Id string `json:"id"`
+	} `json:"client"`
+	Dns          string `json:"dns"`
+	OriginIntent struct {
+		Id string `json:"id"`
+	} `json:"originIntent"`
+	Server struct {
+		Id string `json:"id"`
+	} `json:"server"`
+	Timestamp time.Time `json:"timestamp"`
+}
+
+// AzureInfo defines model for AzureInfo.
+type AzureInfo struct {
+	AksClusterName string `json:"aksClusterName"`
+	Namespace      string `json:"namespace"`
+	ResourceGroup  string `json:"resourceGroup"`
+	SubscriptionId string `json:"subscriptionId"`
+	TenantId       string `json:"tenantId"`
+}
+
+// AzureInfoInput defines model for AzureInfoInput.
+type AzureInfoInput struct {
+	AksClusterName string `json:"aksClusterName"`
+	ClusterId      string `json:"clusterId"`
+	Namespace      string `json:"namespace"`
+	ResourceGroup  string `json:"resourceGroup"`
+	SubscriptionId string `json:"subscriptionId"`
+	TenantId       string `json:"tenantId"`
+}
+
+// AzureResource defines model for AzureResource.
+type AzureResource struct {
+	Resource string `json:"resource"`
+}
+
+// CallViolation defines model for CallViolation.
+type CallViolation struct {
+	Code     CallViolationCode     `json:"code"`
+	Reason   string                `json:"reason"`
+	Standard CallViolationStandard `json:"standard"`
+}
+
+// CallViolationCode defines model for CallViolation.Code.
+type CallViolationCode string
+
+// CallViolationStandard defines model for CallViolation.Standard.
+type CallViolationStandard string
 
 // CertificateInformation defines model for CertificateInformation.
 type CertificateInformation struct {
@@ -363,6 +540,52 @@ type CertificateInformation struct {
 	DnsNames   *[]string `json:"dnsNames,omitempty"`
 	Ttl        *int32    `json:"ttl,omitempty"`
 }
+
+// ClientIntentEvent defines model for ClientIntentEvent.
+type ClientIntentEvent struct {
+	Count              int32      `json:"count"`
+	FirstTimestamp     *time.Time `json:"firstTimestamp,omitempty"`
+	LastTimestamp      *time.Time `json:"lastTimestamp,omitempty"`
+	Message            string     `json:"message"`
+	Reason             string     `json:"reason"`
+	ReportingComponent *string    `json:"reportingComponent,omitempty"`
+	Type               string     `json:"type"`
+}
+
+// ClientIntentStatus defines model for ClientIntentStatus.
+type ClientIntentStatus struct {
+	ClientIntentName   string    `json:"clientIntentName"`
+	Generation         int32     `json:"generation"`
+	ObservedGeneration int32     `json:"observedGeneration"`
+	Timestamp          time.Time `json:"timestamp"`
+	UpToDate           bool      `json:"upToDate"`
+}
+
+// ClientIntentsFileRepresentation defines model for ClientIntentsFileRepresentation.
+type ClientIntentsFileRepresentation struct {
+	Content  string             `json:"content"`
+	FileName string             `json:"fileName"`
+	Rows     []ClientIntentsRow `json:"rows"`
+	Service  struct {
+		Id string `json:"id"`
+	} `json:"service"`
+}
+
+// ClientIntentsFiles defines model for ClientIntentsFiles.
+type ClientIntentsFiles struct {
+	Files          []ClientIntentsFileRepresentation `json:"files"`
+	MergedYAMLFile *MergedYAMLFile                   `json:"mergedYAMLFile,omitempty"`
+}
+
+// ClientIntentsRow defines model for ClientIntentsRow.
+type ClientIntentsRow struct {
+	CalledServerId *string               `json:"calledServerId,omitempty"`
+	Diff           *ClientIntentsRowDiff `json:"diff,omitempty"`
+	Text           string                `json:"text"`
+}
+
+// ClientIntentsRowDiff defines model for ClientIntentsRow.Diff.
+type ClientIntentsRowDiff string
 
 // Cluster defines model for Cluster.
 type Cluster struct {
@@ -392,7 +615,9 @@ type ClusterConfiguration struct {
 	GlobalDefaultDeny                     bool                `json:"globalDefaultDeny"`
 	IstioGlobalDefaultDeny                bool                `json:"istioGlobalDefaultDeny"`
 	UseAWSIAMInAccessGraphStates          bool                `json:"useAWSIAMInAccessGraphStates"`
+	UseAzureIAMInAccessGraphStates        bool                `json:"useAzureIAMInAccessGraphStates"`
 	UseDatabaseInAccessGraphStates        bool                `json:"useDatabaseInAccessGraphStates"`
+	UseGCPIAMInAccessGraphStates          bool                `json:"useGCPIAMInAccessGraphStates"`
 	UseIstioPoliciesInAccessGraphStates   bool                `json:"useIstioPoliciesInAccessGraphStates"`
 	UseKafkaACLsInAccessGraphStates       bool                `json:"useKafkaACLsInAccessGraphStates"`
 	UseNetworkPoliciesInAccessGraphStates bool                `json:"useNetworkPoliciesInAccessGraphStates"`
@@ -404,7 +629,9 @@ type ClusterConfigurationInput struct {
 	GlobalDefaultDeny                     bool                    `json:"globalDefaultDeny"`
 	IstioGlobalDefaultDeny                *bool                   `json:"istioGlobalDefaultDeny,omitempty"`
 	UseAWSIAMInAccessGraphStates          *bool                   `json:"useAWSIAMInAccessGraphStates,omitempty"`
+	UseAzureIAMInAccessGraphStates        *bool                   `json:"useAzureIAMInAccessGraphStates,omitempty"`
 	UseDatabaseInAccessGraphStates        *bool                   `json:"useDatabaseInAccessGraphStates,omitempty"`
+	UseGCPIAMInAccessGraphStates          *bool                   `json:"useGCPIAMInAccessGraphStates,omitempty"`
 	UseIstioPoliciesInAccessGraphStates   bool                    `json:"useIstioPoliciesInAccessGraphStates"`
 	UseKafkaACLsInAccessGraphStates       bool                    `json:"useKafkaACLsInAccessGraphStates"`
 	UseNetworkPoliciesInAccessGraphStates bool                    `json:"useNetworkPoliciesInAccessGraphStates"`
@@ -428,8 +655,24 @@ type ComponentStatus struct {
 // ComponentStatusType defines model for ComponentStatus.Type.
 type ComponentStatusType string
 
-// CreateGithubIntegrationResponse defines model for CreateGithubIntegrationResponse.
-type CreateGithubIntegrationResponse struct {
+// CreateGitHubIntegrationResponse defines model for CreateGitHubIntegrationResponse.
+type CreateGitHubIntegrationResponse struct {
+	Integration struct {
+		Id string `json:"id"`
+	} `json:"integration"`
+	NextURL string `json:"nextURL"`
+}
+
+// CreateGitLabIntegrationResponse defines model for CreateGitLabIntegrationResponse.
+type CreateGitLabIntegrationResponse struct {
+	Integration struct {
+		Id string `json:"id"`
+	} `json:"integration"`
+	NextURL string `json:"nextURL"`
+}
+
+// CreateSlackIntegrationResponse defines model for CreateSlackIntegrationResponse.
+type CreateSlackIntegrationResponse struct {
 	Integration struct {
 		Id string `json:"id"`
 	} `json:"integration"`
@@ -445,17 +688,11 @@ type CredentialsOperatorComponent struct {
 // CredentialsOperatorComponentType defines model for CredentialsOperatorComponent.Type.
 type CredentialsOperatorComponentType string
 
-// DatabaseCredentials defines model for DatabaseCredentials.
-type DatabaseCredentials struct {
-	Password string `json:"password"`
-	Username string `json:"username"`
-}
-
 // DatabaseInfo defines model for DatabaseInfo.
 type DatabaseInfo struct {
 	Address      string                      `json:"address"`
-	Credentials  DatabaseCredentials         `json:"credentials"`
 	DatabaseType DatabaseInfoDatabaseType    `json:"databaseType"`
+	Username     string                      `json:"username"`
 	Visibility   *DatabaseVisibilitySettings `json:"visibility,omitempty"`
 }
 
@@ -465,7 +702,6 @@ type DatabaseInfoDatabaseType string
 // DatabaseInfoInput defines model for DatabaseInfoInput.
 type DatabaseInfoInput struct {
 	Address      string                        `json:"address"`
-	Credentials  map[string]interface{}        `json:"credentials"`
 	DatabaseType DatabaseInfoInputDatabaseType `json:"databaseType"`
 	Visibility   *map[string]interface{}       `json:"visibility,omitempty"`
 }
@@ -504,7 +740,9 @@ type EdgeAccessStatusVerdict string
 // EdgeAccessStatuses defines model for EdgeAccessStatuses.
 type EdgeAccessStatuses struct {
 	AwsIam          EdgeAccessStatus `json:"awsIam"`
+	AzureIAM        EdgeAccessStatus `json:"azureIAM"`
 	Database        EdgeAccessStatus `json:"database"`
+	GcpIam          EdgeAccessStatus `json:"gcpIam"`
 	IstioPolicies   EdgeAccessStatus `json:"istioPolicies"`
 	KafkaACLs       EdgeAccessStatus `json:"kafkaACLs"`
 	NetworkPolicies EdgeAccessStatus `json:"networkPolicies"`
@@ -527,16 +765,44 @@ type Error struct {
 	Message string `json:"message"`
 }
 
+// FeatureFlags defines model for FeatureFlags.
+type FeatureFlags struct {
+	IsCloudSecurityEnabled          *bool `json:"isCloudSecurityEnabled,omitempty"`
+	IsCloudServicesDetectionEnabled *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
+}
+
+// GCPInfo defines model for GCPInfo.
+type GCPInfo struct {
+	GcpProjectName string `json:"gcpProjectName"`
+	GkeClusterName string `json:"gkeClusterName"`
+	Namespace      string `json:"namespace"`
+	Region         string `json:"region"`
+}
+
+// GCPInfoInput defines model for GCPInfoInput.
+type GCPInfoInput struct {
+	ClusterId      string `json:"clusterId"`
+	GcpProjectName string `json:"gcpProjectName"`
+	GkeClusterName string `json:"gkeClusterName"`
+	Namespace      string `json:"namespace"`
+	Region         string `json:"region"`
+}
+
 // GCPPubSubLogConsumerSettings defines model for GCPPubSubLogConsumerSettings.
 type GCPPubSubLogConsumerSettings struct {
 	ProjectId string `json:"projectId"`
 	Topic     string `json:"topic"`
 }
 
+// GCPResource defines model for GCPResource.
+type GCPResource struct {
+	Resource string `json:"resource"`
+}
+
 // GitHubRepoFilterPair defines model for GitHubRepoFilterPair.
 type GitHubRepoFilterPair struct {
-	Filter   AccessGraphFilter `json:"filter"`
-	RepoInfo GitHubRepoInfo    `json:"repoInfo"`
+	Filter   IntegrationAccessGraphFilter `json:"filter"`
+	RepoInfo GitHubRepoInfo               `json:"repoInfo"`
 }
 
 // GitHubRepoInfo defines model for GitHubRepoInfo.
@@ -558,20 +824,82 @@ type GitHubSettingsInput struct {
 	RepoFilterPairs []map[string]interface{} `json:"repoFilterPairs"`
 }
 
+// GitLabRepoFilterPair defines model for GitLabRepoFilterPair.
+type GitLabRepoFilterPair struct {
+	Filter   IntegrationAccessGraphFilter `json:"filter"`
+	RepoInfo GitLabRepoInfo               `json:"repoInfo"`
+}
+
+// GitLabRepoInfo defines model for GitLabRepoInfo.
+type GitLabRepoInfo struct {
+	BaseBranch  string `json:"baseBranch"`
+	IntentsPath string `json:"intentsPath"`
+	ProjectPath string `json:"projectPath"`
+}
+
+// GitLabSettings defines model for GitLabSettings.
+type GitLabSettings struct {
+	IsActive        bool                   `json:"isActive"`
+	RepoFilterPairs []GitLabRepoFilterPair `json:"repoFilterPairs"`
+}
+
+// GitLabSettingsInput defines model for GitLabSettingsInput.
+type GitLabSettingsInput struct {
+	IsActive        bool                     `json:"isActive"`
+	RepoFilterPairs []map[string]interface{} `json:"repoFilterPairs"`
+}
+
+// IDFilterValue defines model for IDFilterValue.
+type IDFilterValue struct {
+	Exclude *[]string `json:"exclude,omitempty"`
+	Include *[]string `json:"include,omitempty"`
+}
+
 // InputAccessGraphFilter defines model for InputAccessGraphFilter.
 type InputAccessGraphFilter struct {
-	ClusterIds                 *[]string  `json:"clusterIds,omitempty"`
-	EnvironmentIds             *[]string  `json:"environmentIds,omitempty"`
-	IncludeServicesWithNoEdges *bool      `json:"includeServicesWithNoEdges,omitempty"`
-	LastSeenAfter              *time.Time `json:"lastSeenAfter,omitempty"`
-	NamespaceIds               *[]string  `json:"namespaceIds,omitempty"`
-	ServiceIds                 *[]string  `json:"serviceIds,omitempty"`
+	ClusterIds     *map[string]interface{} `json:"clusterIds,omitempty"`
+	EnvironmentIds *map[string]interface{} `json:"environmentIds,omitempty"`
+	FeatureFlags   *map[string]interface{} `json:"featureFlags,omitempty"`
+	LastSeen       *map[string]interface{} `json:"lastSeen,omitempty"`
+	NamespaceIds   *map[string]interface{} `json:"namespaceIds,omitempty"`
+	ServiceIds     *map[string]interface{} `json:"serviceIds,omitempty"`
+}
+
+// InputAccessLogFilter  Access log filter
+type InputAccessLogFilter struct {
+	AccessStatusReasons *map[string]interface{} `json:"accessStatusReasons,omitempty"`
+	AccessVerdicts      *map[string]interface{} `json:"accessVerdicts,omitempty"`
+	ClusterIds          *map[string]interface{} `json:"clusterIds,omitempty"`
+	EnvironmentIds      *map[string]interface{} `json:"environmentIds,omitempty"`
+	FeatureFlags        *map[string]interface{} `json:"featureFlags,omitempty"`
+	NamespaceIds        *map[string]interface{} `json:"namespaceIds,omitempty"`
+	Pagination          *map[string]interface{} `json:"pagination,omitempty"`
+	ServiceIds          *map[string]interface{} `json:"serviceIds,omitempty"`
+	TimeRange           *map[string]interface{} `json:"timeRange,omitempty"`
+}
+
+// InputFeatureFlags defines model for InputFeatureFlags.
+type InputFeatureFlags struct {
+	IsCloudSecurityEnabled          *bool `json:"isCloudSecurityEnabled,omitempty"`
+	IsCloudServicesDetectionEnabled *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
+}
+
+// InputServiceFilter  Service filter
+type InputServiceFilter struct {
+	ClusterIds     *[]string               `json:"clusterIds,omitempty"`
+	EnvironmentIds *[]string               `json:"environmentIds,omitempty"`
+	IntegrationIds *[]string               `json:"integrationIds,omitempty"`
+	NamespaceIds   *[]string               `json:"namespaceIds,omitempty"`
+	ServiceIds     *[]string               `json:"serviceIds,omitempty"`
+	ServiceType    *map[string]interface{} `json:"serviceType,omitempty"`
 }
 
 // Integration defines model for Integration.
 type Integration struct {
-	AwsInfo *AWSInfo `json:"awsInfo,omitempty"`
-	Cluster *struct {
+	AwsInfo               *AWSInfo               `json:"awsInfo,omitempty"`
+	AwsVisibilitySettings *AWSVisibilitySettings `json:"awsVisibilitySettings,omitempty"`
+	AzureInfo             *AzureInfo             `json:"azureInfo,omitempty"`
+	Cluster               *struct {
 		Id string `json:"id"`
 	} `json:"cluster,omitempty"`
 	Components         *IntegrationComponents `json:"components,omitempty"`
@@ -580,15 +908,44 @@ type Integration struct {
 	DefaultEnvironment *struct {
 		Id string `json:"id"`
 	} `json:"defaultEnvironment,omitempty"`
-	GithubSettings *GitHubSettings `json:"githubSettings,omitempty"`
-	Id             string          `json:"id"`
-	Name           string          `json:"name"`
-	OrganizationId string          `json:"organizationId"`
-	Type           IntegrationType `json:"type"`
+	GcpInfo        *GCPInfo           `json:"gcpInfo,omitempty"`
+	GitHubSettings *GitHubSettings    `json:"gitHubSettings,omitempty"`
+	GitLabSettings *GitLabSettings    `json:"gitLabSettings,omitempty"`
+	Id             string             `json:"id"`
+	Name           string             `json:"name"`
+	OrganizationId string             `json:"organizationId"`
+	SlackSettings  *SlackSettings     `json:"slackSettings,omitempty"`
+	Status         *IntegrationStatus `json:"status,omitempty"`
+	Type           IntegrationType    `json:"type"`
 }
 
 // IntegrationType defines model for Integration.Type.
 type IntegrationType string
+
+// IntegrationAccessGraphFilter defines model for IntegrationAccessGraphFilter.
+type IntegrationAccessGraphFilter struct {
+	ClusterFilterType     *IntegrationAccessGraphFilterClusterFilterType     `json:"clusterFilterType,omitempty"`
+	ClusterIds            *[]string                                          `json:"clusterIds,omitempty"`
+	EnvironmentFilterType *IntegrationAccessGraphFilterEnvironmentFilterType `json:"environmentFilterType,omitempty"`
+	EnvironmentIds        *[]string                                          `json:"environmentIds,omitempty"`
+	LastSeenAfter         *time.Time                                         `json:"lastSeenAfter,omitempty"`
+	NamespaceFilterType   *IntegrationAccessGraphFilterNamespaceFilterType   `json:"namespaceFilterType,omitempty"`
+	NamespaceIds          *[]string                                          `json:"namespaceIds,omitempty"`
+	ServiceFilterType     *IntegrationAccessGraphFilterServiceFilterType     `json:"serviceFilterType,omitempty"`
+	ServiceIds            *[]string                                          `json:"serviceIds,omitempty"`
+}
+
+// IntegrationAccessGraphFilterClusterFilterType defines model for IntegrationAccessGraphFilter.ClusterFilterType.
+type IntegrationAccessGraphFilterClusterFilterType string
+
+// IntegrationAccessGraphFilterEnvironmentFilterType defines model for IntegrationAccessGraphFilter.EnvironmentFilterType.
+type IntegrationAccessGraphFilterEnvironmentFilterType string
+
+// IntegrationAccessGraphFilterNamespaceFilterType defines model for IntegrationAccessGraphFilter.NamespaceFilterType.
+type IntegrationAccessGraphFilterNamespaceFilterType string
+
+// IntegrationAccessGraphFilterServiceFilterType defines model for IntegrationAccessGraphFilter.ServiceFilterType.
+type IntegrationAccessGraphFilterServiceFilterType string
 
 // IntegrationComponents defines model for IntegrationComponents.
 type IntegrationComponents struct {
@@ -603,6 +960,23 @@ type IntegrationCredentials struct {
 	ClientSecret string `json:"clientSecret"`
 }
 
+// IntegrationStatus defines model for IntegrationStatus.
+type IntegrationStatus struct {
+	LastSeen *time.Time                       `json:"lastSeen,omitempty"`
+	Message  *string                          `json:"message,omitempty"`
+	Metadata *[]IntegrationStatusMetadataItem `json:"metadata,omitempty"`
+	State    IntegrationStatusState           `json:"state"`
+}
+
+// IntegrationStatusState defines model for IntegrationStatus.State.
+type IntegrationStatusState string
+
+// IntegrationStatusMetadataItem defines model for IntegrationStatusMetadataItem.
+type IntegrationStatusMetadataItem struct {
+	Extra   *[]LabelValueTuple `json:"extra,omitempty"`
+	Message string             `json:"message"`
+}
+
 // IntentsOperatorComponent defines model for IntentsOperatorComponent.
 type IntentsOperatorComponent struct {
 	Configuration *IntentsOperatorConfiguration `json:"configuration,omitempty"`
@@ -615,13 +989,16 @@ type IntentsOperatorComponentType string
 
 // IntentsOperatorConfiguration defines model for IntentsOperatorConfiguration.
 type IntentsOperatorConfiguration struct {
-	AwsIAMPolicyEnforcementEnabled        bool `json:"awsIAMPolicyEnforcementEnabled"`
-	DatabaseEnforcementEnabled            bool `json:"databaseEnforcementEnabled"`
-	EgressNetworkPolicyEnforcementEnabled bool `json:"egressNetworkPolicyEnforcementEnabled"`
-	GlobalEnforcementEnabled              bool `json:"globalEnforcementEnabled"`
-	IstioPolicyEnforcementEnabled         bool `json:"istioPolicyEnforcementEnabled"`
-	KafkaACLEnforcementEnabled            bool `json:"kafkaACLEnforcementEnabled"`
-	NetworkPolicyEnforcementEnabled       bool `json:"networkPolicyEnforcementEnabled"`
+	AwsIAMPolicyEnforcementEnabled        bool      `json:"awsIAMPolicyEnforcementEnabled"`
+	AzureIAMPolicyEnforcementEnabled      bool      `json:"azureIAMPolicyEnforcementEnabled"`
+	DatabaseEnforcementEnabled            bool      `json:"databaseEnforcementEnabled"`
+	EgressNetworkPolicyEnforcementEnabled bool      `json:"egressNetworkPolicyEnforcementEnabled"`
+	EnforcedNamespaces                    *[]string `json:"enforcedNamespaces,omitempty"`
+	GcpIAMPolicyEnforcementEnabled        bool      `json:"gcpIAMPolicyEnforcementEnabled"`
+	GlobalEnforcementEnabled              bool      `json:"globalEnforcementEnabled"`
+	IstioPolicyEnforcementEnabled         bool      `json:"istioPolicyEnforcementEnabled"`
+	KafkaACLEnforcementEnabled            bool      `json:"kafkaACLEnforcementEnabled"`
+	NetworkPolicyEnforcementEnabled       bool      `json:"networkPolicyEnforcementEnabled"`
 	ProtectedServices                     []struct {
 		Id string `json:"id"`
 	} `json:"protectedServices"`
@@ -675,11 +1052,24 @@ type LabelInput struct {
 	Value *string `json:"value,omitempty"`
 }
 
+// LabelValueTuple defines model for LabelValueTuple.
+type LabelValueTuple struct {
+	Label string `json:"label"`
+	Value string `json:"value"`
+}
+
 // Me defines model for Me.
 type Me struct {
 	Invites       []Invite       `json:"invites"`
 	Organizations []Organization `json:"organizations"`
 	User          User           `json:"user"`
+}
+
+// MergedYAMLFile defines model for MergedYAMLFile.
+type MergedYAMLFile struct {
+	Content  string             `json:"content"`
+	FileName string             `json:"fileName"`
+	Rows     []ClientIntentsRow `json:"rows"`
 }
 
 // Namespace defines model for Namespace.
@@ -696,6 +1086,13 @@ type Namespace struct {
 	} `json:"services"`
 }
 
+// NamespaceFilterInput defines model for NamespaceFilterInput.
+type NamespaceFilterInput struct {
+	ClusterIds     *[]string `json:"clusterIds,omitempty"`
+	EnvironmentIds *[]string `json:"environmentIds,omitempty"`
+	Name           *string   `json:"name,omitempty"`
+}
+
 // NetworkMapperComponent defines model for NetworkMapperComponent.
 type NetworkMapperComponent struct {
 	Status ComponentStatus            `json:"status"`
@@ -707,9 +1104,29 @@ type NetworkMapperComponentType string
 
 // Organization defines model for Organization.
 type Organization struct {
-	Id       string  `json:"id"`
-	ImageURL *string `json:"imageURL,omitempty"`
-	Name     *string `json:"name,omitempty"`
+	Created  time.Time            `json:"created"`
+	Id       string               `json:"id"`
+	ImageURL *string              `json:"imageURL,omitempty"`
+	Name     string               `json:"name"`
+	Settings OrganizationSettings `json:"settings"`
+}
+
+// OrganizationSettings defines model for OrganizationSettings.
+type OrganizationSettings struct {
+	Domains             *[]string `json:"domains,omitempty"`
+	EnforcedRegulations *[]string `json:"enforcedRegulations,omitempty"`
+}
+
+// OrganizationSettingsInput defines model for OrganizationSettingsInput.
+type OrganizationSettingsInput struct {
+	Domains             *[]string `json:"domains,omitempty"`
+	EnforcedRegulations *[]string `json:"enforcedRegulations,omitempty"`
+}
+
+// ServerAlias defines model for ServerAlias.
+type ServerAlias struct {
+	Kind *string `json:"kind,omitempty"`
+	Name string  `json:"name"`
 }
 
 // ServerBlockingStatus defines model for ServerBlockingStatus.
@@ -745,19 +1162,28 @@ type ServerProtectionStatuses struct {
 
 // Service defines model for Service.
 type Service struct {
-	AwsResource             *AWSResource            `json:"awsResource,omitempty"`
-	CertificateInformation  *CertificateInformation `json:"certificateInformation,omitempty"`
+	Aliases                *[]ServerAlias          `json:"aliases,omitempty"`
+	AwsResource            *AWSResource            `json:"awsResource,omitempty"`
+	AwsVisibility          *AWSVisibility          `json:"awsVisibility,omitempty"`
+	AzureResource          *AzureResource          `json:"azureResource,omitempty"`
+	CertificateInformation *CertificateInformation `json:"certificateInformation,omitempty"`
+	DatabaseIntegration    *struct {
+		Id string `json:"id"`
+	} `json:"databaseIntegration,omitempty"`
 	DiscoveredByIntegration *struct {
 		Id string `json:"id"`
 	} `json:"discoveredByIntegration,omitempty"`
 	Environment struct {
 		Id string `json:"id"`
 	} `json:"environment"`
+	GcpResource       *GCPResource       `json:"gcpResource,omitempty"`
 	Id                string             `json:"id"`
 	KafkaServerConfig *KafkaServerConfig `json:"kafkaServerConfig,omitempty"`
 	Name              string             `json:"name"`
 	Namespace         *Namespace         `json:"namespace,omitempty"`
 	ServiceAccount    *string            `json:"serviceAccount,omitempty"`
+	Tags              *[]string          `json:"tags,omitempty"`
+	WorkloadKind      *string            `json:"workloadKind,omitempty"`
 }
 
 // ServiceAccessGraph defines model for ServiceAccessGraph.
@@ -785,25 +1211,67 @@ type ServiceAccessStatus struct {
 	UseNetworkPoliciesInAccessGraphStates bool                     `json:"useNetworkPoliciesInAccessGraphStates"`
 }
 
-// User defines model for User.
-type User struct {
-	AuthProviderUserId string               `json:"authProviderUserId"`
-	Email              string               `json:"email"`
-	Id                 string               `json:"id"`
-	ImageURL           string               `json:"imageURL"`
-	Name               string               `json:"name"`
-	QuestLogStep       UserQuestLogStep     `json:"questLogStep"`
-	QuestLogStepSeen   UserQuestLogStepSeen `json:"questLogStepSeen"`
-	Tutorials          *[]struct {
-		Id string `json:"id"`
-	} `json:"tutorials,omitempty"`
+// ServiceClientIntents defines model for ServiceClientIntents.
+type ServiceClientIntents struct {
+	AppliedIntentEvents *[]ClientIntentEvent `json:"appliedIntentEvents,omitempty"`
+	AppliedIntentStatus *ClientIntentStatus  `json:"appliedIntentStatus,omitempty"`
+	AsClient            *ClientIntentsFiles  `json:"asClient,omitempty"`
+	AsServer            *ClientIntentsFiles  `json:"asServer,omitempty"`
 }
 
-// UserQuestLogStep defines model for User.QuestLogStep.
-type UserQuestLogStep string
+// SlackChannelInfo defines model for SlackChannelInfo.
+type SlackChannelInfo struct {
+	ChannelName string `json:"channelName"`
+}
 
-// UserQuestLogStepSeen defines model for User.QuestLogStepSeen.
-type UserQuestLogStepSeen string
+// SlackChannelIntegrationAlerts defines model for SlackChannelIntegrationAlerts.
+type SlackChannelIntegrationAlerts struct {
+	ChannelInfo SlackChannelInfo `json:"channelInfo"`
+}
+
+// SlackFilterPair defines model for SlackFilterPair.
+type SlackFilterPair struct {
+	ChannelInfo SlackChannelInfo             `json:"channelInfo"`
+	Filter      IntegrationAccessGraphFilter `json:"filter"`
+}
+
+// SlackSettings defines model for SlackSettings.
+type SlackSettings struct {
+	ChannelFilterPairs       []SlackFilterPair                `json:"channelFilterPairs"`
+	ChannelIntegrationAlerts *[]SlackChannelIntegrationAlerts `json:"channelIntegrationAlerts,omitempty"`
+	IsActive                 bool                             `json:"isActive"`
+}
+
+// SlackSettingsInput defines model for SlackSettingsInput.
+type SlackSettingsInput struct {
+	ChannelFilterPairs       []map[string]interface{}  `json:"channelFilterPairs"`
+	ChannelIntegrationAlerts *[]map[string]interface{} `json:"channelIntegrationAlerts,omitempty"`
+	IsActive                 bool                      `json:"isActive"`
+}
+
+// TimeFilterValue defines model for TimeFilterValue.
+type TimeFilterValue struct {
+	Operator TimeFilterValueOperator `json:"operator"`
+	Value    time.Time               `json:"value"`
+}
+
+// TimeFilterValueOperator defines model for TimeFilterValue.Operator.
+type TimeFilterValueOperator string
+
+// TimeRange defines model for TimeRange.
+type TimeRange struct {
+	From *time.Time `json:"from,omitempty"`
+	To   *time.Time `json:"to,omitempty"`
+}
+
+// User defines model for User.
+type User struct {
+	AuthProviderUserId string `json:"authProviderUserId"`
+	Email              string `json:"email"`
+	Id                 string `json:"id"`
+	ImageURL           string `json:"imageURL"`
+	Name               string `json:"name"`
+}
 
 // APPLIEDINTENTSERROR defines model for APPLIED_INTENTS_ERROR.
 type APPLIEDINTENTSERROR = Error
@@ -832,6 +1300,21 @@ type UNEXPECTEDERROR = Error
 // AccessGraphQueryJSONBody defines parameters for AccessGraphQuery.
 type AccessGraphQueryJSONBody struct {
 	Filter *InputAccessGraphFilter `json:"filter,omitempty"`
+}
+
+// ServiceClientIntentsQueryJSONBody defines parameters for ServiceClientIntentsQuery.
+type ServiceClientIntentsQueryJSONBody struct {
+	AsServiceId           *string            `json:"asServiceId,omitempty"`
+	ClusterIds            *[]string          `json:"clusterIds,omitempty"`
+	EnableInternetIntents *bool              `json:"enableInternetIntents,omitempty"`
+	FeatureFlags          *InputFeatureFlags `json:"featureFlags,omitempty"`
+	LastSeenAfter         *time.Time         `json:"lastSeenAfter,omitempty"`
+}
+
+// AccessLogQueryJSONBody defines parameters for AccessLogQuery.
+type AccessLogQueryJSONBody struct {
+	// Filter  Access log filter
+	Filter *InputAccessLogFilter `json:"filter,omitempty"`
 }
 
 // OneClusterQueryParams defines parameters for OneClusterQuery.
@@ -919,6 +1402,32 @@ type CreateAWSIntegrationMutationJSONBody struct {
 	Name           string       `json:"name"`
 }
 
+// UpdateAwsVisibilityIntegrationMutationJSONBody defines parameters for UpdateAwsVisibilityIntegrationMutation.
+type UpdateAwsVisibilityIntegrationMutationJSONBody struct {
+	AwsVisibilitySettings *AWSVisibilitySettingsInput `json:"awsVisibilitySettings,omitempty"`
+	Id                    string                      `json:"id"`
+	Name                  *string                     `json:"name,omitempty"`
+}
+
+// CreateAwsVisibilityIntegrationMutationJSONBody defines parameters for CreateAwsVisibilityIntegrationMutation.
+type CreateAwsVisibilityIntegrationMutationJSONBody struct {
+	AwsVisibilitySettings AWSVisibilitySettingsInput `json:"awsVisibilitySettings"`
+	Name                  string                     `json:"name"`
+}
+
+// UpdateAzureIntegrationMutationJSONBody defines parameters for UpdateAzureIntegrationMutation.
+type UpdateAzureIntegrationMutationJSONBody struct {
+	AzureIntegration *AzureInfoInput `json:"azureIntegration,omitempty"`
+	Id               string          `json:"id"`
+	Name             *string         `json:"name,omitempty"`
+}
+
+// CreateAzureIntegrationMutationJSONBody defines parameters for CreateAzureIntegrationMutation.
+type CreateAzureIntegrationMutationJSONBody struct {
+	AzureIntegration AzureInfoInput `json:"azureIntegration"`
+	Name             string         `json:"name"`
+}
+
 // CreateDatabaseIntegrationMutationJSONBody defines parameters for CreateDatabaseIntegrationMutation.
 type CreateDatabaseIntegrationMutationJSONBody struct {
 	DatabaseInfo DatabaseInfoInput `json:"databaseInfo"`
@@ -927,8 +1436,21 @@ type CreateDatabaseIntegrationMutationJSONBody struct {
 
 // UpdateDatabaseIntegrationMutationJSONBody defines parameters for UpdateDatabaseIntegrationMutation.
 type UpdateDatabaseIntegrationMutationJSONBody struct {
-	DatabaseInfo DatabaseInfoInput `json:"databaseInfo"`
-	Name         *string           `json:"name,omitempty"`
+	DatabaseInfo *DatabaseInfoInput `json:"databaseInfo,omitempty"`
+	Name         *string            `json:"name,omitempty"`
+}
+
+// UpdateGCPIntegrationMutationJSONBody defines parameters for UpdateGCPIntegrationMutation.
+type UpdateGCPIntegrationMutationJSONBody struct {
+	GcpIntegration *GCPInfoInput `json:"gcpIntegration,omitempty"`
+	Id             string        `json:"id"`
+	Name           *string       `json:"name,omitempty"`
+}
+
+// CreateGCPIntegrationMutationJSONBody defines parameters for CreateGCPIntegrationMutation.
+type CreateGCPIntegrationMutationJSONBody struct {
+	GcpIntegration GCPInfoInput `json:"gcpIntegration"`
+	Name           string       `json:"name"`
 }
 
 // CreateGenericIntegrationMutationJSONBody defines parameters for CreateGenericIntegrationMutation.
@@ -941,29 +1463,55 @@ type UpdateGenericIntegrationMutationJSONBody struct {
 	Name *string `json:"name,omitempty"`
 }
 
-// UpdateGithubIntegrationMutationJSONBody defines parameters for UpdateGithubIntegrationMutation.
-type UpdateGithubIntegrationMutationJSONBody struct {
-	GithubSettings GitHubSettingsInput `json:"githubSettings"`
+// UpdateGitHubIntegrationMutationJSONBody defines parameters for UpdateGitHubIntegrationMutation.
+type UpdateGitHubIntegrationMutationJSONBody struct {
+	GitHubSettings GitHubSettingsInput `json:"gitHubSettings"`
 	Id             string              `json:"id"`
 	Name           string              `json:"name"`
 }
 
-// CreateGithubIntegrationMutationJSONBody defines parameters for CreateGithubIntegrationMutation.
-type CreateGithubIntegrationMutationJSONBody struct {
-	GithubSettings GitHubSettingsInput `json:"githubSettings"`
+// CreateGitHubIntegrationMutationJSONBody defines parameters for CreateGitHubIntegrationMutation.
+type CreateGitHubIntegrationMutationJSONBody struct {
+	GitHubSettings GitHubSettingsInput `json:"gitHubSettings"`
+	Name           string              `json:"name"`
+}
+
+// UpdateGitLabIntegrationMutationJSONBody defines parameters for UpdateGitLabIntegrationMutation.
+type UpdateGitLabIntegrationMutationJSONBody struct {
+	GitLabSettings GitLabSettingsInput `json:"gitLabSettings"`
+	Id             string              `json:"id"`
+	Name           string              `json:"name"`
+}
+
+// CreateGitLabIntegrationMutationJSONBody defines parameters for CreateGitLabIntegrationMutation.
+type CreateGitLabIntegrationMutationJSONBody struct {
+	GitLabSettings GitLabSettingsInput `json:"gitLabSettings"`
 	Name           string              `json:"name"`
 }
 
 // CreateKubernetesIntegrationMutationJSONBody defines parameters for CreateKubernetesIntegrationMutation.
 type CreateKubernetesIntegrationMutationJSONBody struct {
-	EnvironmentId *string `json:"environmentId,omitempty"`
-	Name          string  `json:"name"`
+	EnvironmentId string `json:"environmentId"`
+	Name          string `json:"name"`
 }
 
 // UpdateKubernetesIntegrationMutationJSONBody defines parameters for UpdateKubernetesIntegrationMutation.
 type UpdateKubernetesIntegrationMutationJSONBody struct {
 	EnvironmentId *string `json:"environmentId,omitempty"`
 	Name          *string `json:"name,omitempty"`
+}
+
+// UpdateSlackIntegrationMutationJSONBody defines parameters for UpdateSlackIntegrationMutation.
+type UpdateSlackIntegrationMutationJSONBody struct {
+	Id            string             `json:"id"`
+	Name          string             `json:"name"`
+	SlackSettings SlackSettingsInput `json:"slackSettings"`
+}
+
+// CreateSlackIntegrationMutationJSONBody defines parameters for CreateSlackIntegrationMutation.
+type CreateSlackIntegrationMutationJSONBody struct {
+	Name          string             `json:"name"`
+	SlackSettings SlackSettingsInput `json:"slackSettings"`
 }
 
 // OneInviteQueryParams defines parameters for OneInviteQuery.
@@ -1001,9 +1549,10 @@ type OneNamespaceQueryParams struct {
 
 // NamespacesQueryParams defines parameters for NamespacesQuery.
 type NamespacesQueryParams struct {
-	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
-	ClusterId     *string `form:"clusterId,omitempty" json:"clusterId,omitempty"`
-	Name          *string `form:"name,omitempty" json:"name,omitempty"`
+	EnvironmentId *string               `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	ClusterId     *string               `form:"clusterId,omitempty" json:"clusterId,omitempty"`
+	Name          *string               `form:"name,omitempty" json:"name,omitempty"`
+	Filter        *NamespaceFilterInput `form:"filter,omitempty" json:"filter,omitempty"`
 }
 
 // AssociateNamespaceToEnvMutationJSONBody defines parameters for AssociateNamespaceToEnvMutation.
@@ -1018,8 +1567,9 @@ type CreateOrganizationMutationJSONBody struct {
 
 // UpdateOrganizationMutationJSONBody defines parameters for UpdateOrganizationMutation.
 type UpdateOrganizationMutationJSONBody struct {
-	ImageURL *string `json:"imageURL,omitempty"`
-	Name     *string `json:"name,omitempty"`
+	ImageURL *string                    `json:"imageURL,omitempty"`
+	Name     *string                    `json:"name,omitempty"`
+	Settings *OrganizationSettingsInput `json:"settings,omitempty"`
 }
 
 // OneServiceQueryParams defines parameters for OneServiceQuery.
@@ -1031,13 +1581,25 @@ type OneServiceQueryParams struct {
 
 // ServicesQueryParams defines parameters for ServicesQuery.
 type ServicesQueryParams struct {
-	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
-	NamespaceId   *string `form:"namespaceId,omitempty" json:"namespaceId,omitempty"`
-	Name          *string `form:"name,omitempty" json:"name,omitempty"`
+	EnvironmentId *string             `form:"environmentId,omitempty" json:"environmentId,omitempty"`
+	NamespaceId   *string             `form:"namespaceId,omitempty" json:"namespaceId,omitempty"`
+	Name          *string             `form:"name,omitempty" json:"name,omitempty"`
+	Filter        *InputServiceFilter `form:"filter,omitempty" json:"filter,omitempty"`
+}
+
+// UpdateServiceMutationJSONBody defines parameters for UpdateServiceMutation.
+type UpdateServiceMutationJSONBody struct {
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // AccessGraphQueryJSONRequestBody defines body for AccessGraphQuery for application/json ContentType.
 type AccessGraphQueryJSONRequestBody AccessGraphQueryJSONBody
+
+// ServiceClientIntentsQueryJSONRequestBody defines body for ServiceClientIntentsQuery for application/json ContentType.
+type ServiceClientIntentsQueryJSONRequestBody ServiceClientIntentsQueryJSONBody
+
+// AccessLogQueryJSONRequestBody defines body for AccessLogQuery for application/json ContentType.
+type AccessLogQueryJSONRequestBody AccessLogQueryJSONBody
 
 // CreateClusterMutationJSONRequestBody defines body for CreateClusterMutation for application/json ContentType.
 type CreateClusterMutationJSONRequestBody CreateClusterMutationJSONBody
@@ -1060,11 +1622,29 @@ type UpdateAWSIntegrationMutationJSONRequestBody UpdateAWSIntegrationMutationJSO
 // CreateAWSIntegrationMutationJSONRequestBody defines body for CreateAWSIntegrationMutation for application/json ContentType.
 type CreateAWSIntegrationMutationJSONRequestBody CreateAWSIntegrationMutationJSONBody
 
+// UpdateAwsVisibilityIntegrationMutationJSONRequestBody defines body for UpdateAwsVisibilityIntegrationMutation for application/json ContentType.
+type UpdateAwsVisibilityIntegrationMutationJSONRequestBody UpdateAwsVisibilityIntegrationMutationJSONBody
+
+// CreateAwsVisibilityIntegrationMutationJSONRequestBody defines body for CreateAwsVisibilityIntegrationMutation for application/json ContentType.
+type CreateAwsVisibilityIntegrationMutationJSONRequestBody CreateAwsVisibilityIntegrationMutationJSONBody
+
+// UpdateAzureIntegrationMutationJSONRequestBody defines body for UpdateAzureIntegrationMutation for application/json ContentType.
+type UpdateAzureIntegrationMutationJSONRequestBody UpdateAzureIntegrationMutationJSONBody
+
+// CreateAzureIntegrationMutationJSONRequestBody defines body for CreateAzureIntegrationMutation for application/json ContentType.
+type CreateAzureIntegrationMutationJSONRequestBody CreateAzureIntegrationMutationJSONBody
+
 // CreateDatabaseIntegrationMutationJSONRequestBody defines body for CreateDatabaseIntegrationMutation for application/json ContentType.
 type CreateDatabaseIntegrationMutationJSONRequestBody CreateDatabaseIntegrationMutationJSONBody
 
 // UpdateDatabaseIntegrationMutationJSONRequestBody defines body for UpdateDatabaseIntegrationMutation for application/json ContentType.
 type UpdateDatabaseIntegrationMutationJSONRequestBody UpdateDatabaseIntegrationMutationJSONBody
+
+// UpdateGCPIntegrationMutationJSONRequestBody defines body for UpdateGCPIntegrationMutation for application/json ContentType.
+type UpdateGCPIntegrationMutationJSONRequestBody UpdateGCPIntegrationMutationJSONBody
+
+// CreateGCPIntegrationMutationJSONRequestBody defines body for CreateGCPIntegrationMutation for application/json ContentType.
+type CreateGCPIntegrationMutationJSONRequestBody CreateGCPIntegrationMutationJSONBody
 
 // CreateGenericIntegrationMutationJSONRequestBody defines body for CreateGenericIntegrationMutation for application/json ContentType.
 type CreateGenericIntegrationMutationJSONRequestBody CreateGenericIntegrationMutationJSONBody
@@ -1072,17 +1652,29 @@ type CreateGenericIntegrationMutationJSONRequestBody CreateGenericIntegrationMut
 // UpdateGenericIntegrationMutationJSONRequestBody defines body for UpdateGenericIntegrationMutation for application/json ContentType.
 type UpdateGenericIntegrationMutationJSONRequestBody UpdateGenericIntegrationMutationJSONBody
 
-// UpdateGithubIntegrationMutationJSONRequestBody defines body for UpdateGithubIntegrationMutation for application/json ContentType.
-type UpdateGithubIntegrationMutationJSONRequestBody UpdateGithubIntegrationMutationJSONBody
+// UpdateGitHubIntegrationMutationJSONRequestBody defines body for UpdateGitHubIntegrationMutation for application/json ContentType.
+type UpdateGitHubIntegrationMutationJSONRequestBody UpdateGitHubIntegrationMutationJSONBody
 
-// CreateGithubIntegrationMutationJSONRequestBody defines body for CreateGithubIntegrationMutation for application/json ContentType.
-type CreateGithubIntegrationMutationJSONRequestBody CreateGithubIntegrationMutationJSONBody
+// CreateGitHubIntegrationMutationJSONRequestBody defines body for CreateGitHubIntegrationMutation for application/json ContentType.
+type CreateGitHubIntegrationMutationJSONRequestBody CreateGitHubIntegrationMutationJSONBody
+
+// UpdateGitLabIntegrationMutationJSONRequestBody defines body for UpdateGitLabIntegrationMutation for application/json ContentType.
+type UpdateGitLabIntegrationMutationJSONRequestBody UpdateGitLabIntegrationMutationJSONBody
+
+// CreateGitLabIntegrationMutationJSONRequestBody defines body for CreateGitLabIntegrationMutation for application/json ContentType.
+type CreateGitLabIntegrationMutationJSONRequestBody CreateGitLabIntegrationMutationJSONBody
 
 // CreateKubernetesIntegrationMutationJSONRequestBody defines body for CreateKubernetesIntegrationMutation for application/json ContentType.
 type CreateKubernetesIntegrationMutationJSONRequestBody CreateKubernetesIntegrationMutationJSONBody
 
 // UpdateKubernetesIntegrationMutationJSONRequestBody defines body for UpdateKubernetesIntegrationMutation for application/json ContentType.
 type UpdateKubernetesIntegrationMutationJSONRequestBody UpdateKubernetesIntegrationMutationJSONBody
+
+// UpdateSlackIntegrationMutationJSONRequestBody defines body for UpdateSlackIntegrationMutation for application/json ContentType.
+type UpdateSlackIntegrationMutationJSONRequestBody UpdateSlackIntegrationMutationJSONBody
+
+// CreateSlackIntegrationMutationJSONRequestBody defines body for CreateSlackIntegrationMutation for application/json ContentType.
+type CreateSlackIntegrationMutationJSONRequestBody CreateSlackIntegrationMutationJSONBody
 
 // CreateInviteMutationJSONRequestBody defines body for CreateInviteMutation for application/json ContentType.
 type CreateInviteMutationJSONRequestBody CreateInviteMutationJSONBody
@@ -1098,6 +1690,9 @@ type CreateOrganizationMutationJSONRequestBody CreateOrganizationMutationJSONBod
 
 // UpdateOrganizationMutationJSONRequestBody defines body for UpdateOrganizationMutation for application/json ContentType.
 type UpdateOrganizationMutationJSONRequestBody UpdateOrganizationMutationJSONBody
+
+// UpdateServiceMutationJSONRequestBody defines body for UpdateServiceMutation for application/json ContentType.
+type UpdateServiceMutationJSONRequestBody UpdateServiceMutationJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -1177,6 +1772,16 @@ type ClientInterface interface {
 
 	AccessGraphQuery(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ServiceClientIntentsQuery request with any body
+	ServiceClientIntentsQueryWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ServiceClientIntentsQuery(ctx context.Context, id string, body ServiceClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// AccessLogQuery request with any body
+	AccessLogQueryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	AccessLogQuery(ctx context.Context, body AccessLogQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// OneClusterQuery request
 	OneClusterQuery(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1245,6 +1850,26 @@ type ClientInterface interface {
 
 	CreateAWSIntegrationMutation(ctx context.Context, body CreateAWSIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// UpdateAwsVisibilityIntegrationMutation request with any body
+	UpdateAwsVisibilityIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateAwsVisibilityIntegrationMutation(ctx context.Context, body UpdateAwsVisibilityIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateAwsVisibilityIntegrationMutation request with any body
+	CreateAwsVisibilityIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateAwsVisibilityIntegrationMutation(ctx context.Context, body CreateAwsVisibilityIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateAzureIntegrationMutation request with any body
+	UpdateAzureIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateAzureIntegrationMutation(ctx context.Context, body UpdateAzureIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateAzureIntegrationMutation request with any body
+	CreateAzureIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateAzureIntegrationMutation(ctx context.Context, body CreateAzureIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// CreateDatabaseIntegrationMutation request with any body
 	CreateDatabaseIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1254,6 +1879,16 @@ type ClientInterface interface {
 	UpdateDatabaseIntegrationMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateDatabaseIntegrationMutation(ctx context.Context, id string, body UpdateDatabaseIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateGCPIntegrationMutation request with any body
+	UpdateGCPIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateGCPIntegrationMutation(ctx context.Context, body UpdateGCPIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateGCPIntegrationMutation request with any body
+	CreateGCPIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateGCPIntegrationMutation(ctx context.Context, body CreateGCPIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateGenericIntegrationMutation request with any body
 	CreateGenericIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1265,15 +1900,25 @@ type ClientInterface interface {
 
 	UpdateGenericIntegrationMutation(ctx context.Context, id string, body UpdateGenericIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpdateGithubIntegrationMutation request with any body
-	UpdateGithubIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateGitHubIntegrationMutation request with any body
+	UpdateGitHubIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	UpdateGithubIntegrationMutation(ctx context.Context, body UpdateGithubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateGitHubIntegrationMutation(ctx context.Context, body UpdateGitHubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateGithubIntegrationMutation request with any body
-	CreateGithubIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateGitHubIntegrationMutation request with any body
+	CreateGitHubIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	CreateGithubIntegrationMutation(ctx context.Context, body CreateGithubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateGitHubIntegrationMutation(ctx context.Context, body CreateGitHubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateGitLabIntegrationMutation request with any body
+	UpdateGitLabIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateGitLabIntegrationMutation(ctx context.Context, body UpdateGitLabIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateGitLabIntegrationMutation request with any body
+	CreateGitLabIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateGitLabIntegrationMutation(ctx context.Context, body CreateGitLabIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateKubernetesIntegrationMutation request with any body
 	CreateKubernetesIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1284,6 +1929,16 @@ type ClientInterface interface {
 	UpdateKubernetesIntegrationMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateKubernetesIntegrationMutation(ctx context.Context, id string, body UpdateKubernetesIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateSlackIntegrationMutation request with any body
+	UpdateSlackIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateSlackIntegrationMutation(ctx context.Context, body UpdateSlackIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateSlackIntegrationMutation request with any body
+	CreateSlackIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateSlackIntegrationMutation(ctx context.Context, body CreateSlackIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteIntegrationMutation request
 	DeleteIntegrationMutation(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1361,6 +2016,11 @@ type ClientInterface interface {
 	// ServiceQuery request
 	ServiceQuery(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// UpdateServiceMutation request with any body
+	UpdateServiceMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateServiceMutation(ctx context.Context, id string, body UpdateServiceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// UsersQuery request
 	UsersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1382,6 +2042,54 @@ func (c *Client) AccessGraphQueryWithBody(ctx context.Context, contentType strin
 
 func (c *Client) AccessGraphQuery(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewAccessGraphQueryRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ServiceClientIntentsQueryWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewServiceClientIntentsQueryRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ServiceClientIntentsQuery(ctx context.Context, id string, body ServiceClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewServiceClientIntentsQueryRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) AccessLogQueryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAccessLogQueryRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) AccessLogQuery(ctx context.Context, body AccessLogQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAccessLogQueryRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1692,6 +2400,102 @@ func (c *Client) CreateAWSIntegrationMutation(ctx context.Context, body CreateAW
 	return c.Client.Do(req)
 }
 
+func (c *Client) UpdateAwsVisibilityIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAwsVisibilityIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateAwsVisibilityIntegrationMutation(ctx context.Context, body UpdateAwsVisibilityIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAwsVisibilityIntegrationMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAwsVisibilityIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAwsVisibilityIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAwsVisibilityIntegrationMutation(ctx context.Context, body CreateAwsVisibilityIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAwsVisibilityIntegrationMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateAzureIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAzureIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateAzureIntegrationMutation(ctx context.Context, body UpdateAzureIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAzureIntegrationMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAzureIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAzureIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAzureIntegrationMutation(ctx context.Context, body CreateAzureIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAzureIntegrationMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) CreateDatabaseIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateDatabaseIntegrationMutationRequestWithBody(c.Server, contentType, body)
 	if err != nil {
@@ -1730,6 +2534,54 @@ func (c *Client) UpdateDatabaseIntegrationMutationWithBody(ctx context.Context, 
 
 func (c *Client) UpdateDatabaseIntegrationMutation(ctx context.Context, id string, body UpdateDatabaseIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateDatabaseIntegrationMutationRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateGCPIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateGCPIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateGCPIntegrationMutation(ctx context.Context, body UpdateGCPIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateGCPIntegrationMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateGCPIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateGCPIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateGCPIntegrationMutation(ctx context.Context, body CreateGCPIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateGCPIntegrationMutationRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1788,8 +2640,8 @@ func (c *Client) UpdateGenericIntegrationMutation(ctx context.Context, id string
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateGithubIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateGithubIntegrationMutationRequestWithBody(c.Server, contentType, body)
+func (c *Client) UpdateGitHubIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateGitHubIntegrationMutationRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1800,8 +2652,8 @@ func (c *Client) UpdateGithubIntegrationMutationWithBody(ctx context.Context, co
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateGithubIntegrationMutation(ctx context.Context, body UpdateGithubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateGithubIntegrationMutationRequest(c.Server, body)
+func (c *Client) UpdateGitHubIntegrationMutation(ctx context.Context, body UpdateGitHubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateGitHubIntegrationMutationRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1812,8 +2664,8 @@ func (c *Client) UpdateGithubIntegrationMutation(ctx context.Context, body Updat
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateGithubIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateGithubIntegrationMutationRequestWithBody(c.Server, contentType, body)
+func (c *Client) CreateGitHubIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateGitHubIntegrationMutationRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1824,8 +2676,56 @@ func (c *Client) CreateGithubIntegrationMutationWithBody(ctx context.Context, co
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateGithubIntegrationMutation(ctx context.Context, body CreateGithubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateGithubIntegrationMutationRequest(c.Server, body)
+func (c *Client) CreateGitHubIntegrationMutation(ctx context.Context, body CreateGitHubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateGitHubIntegrationMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateGitLabIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateGitLabIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateGitLabIntegrationMutation(ctx context.Context, body UpdateGitLabIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateGitLabIntegrationMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateGitLabIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateGitLabIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateGitLabIntegrationMutation(ctx context.Context, body CreateGitLabIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateGitLabIntegrationMutationRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1874,6 +2774,54 @@ func (c *Client) UpdateKubernetesIntegrationMutationWithBody(ctx context.Context
 
 func (c *Client) UpdateKubernetesIntegrationMutation(ctx context.Context, id string, body UpdateKubernetesIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateKubernetesIntegrationMutationRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateSlackIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateSlackIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateSlackIntegrationMutation(ctx context.Context, body UpdateSlackIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateSlackIntegrationMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSlackIntegrationMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSlackIntegrationMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSlackIntegrationMutation(ctx context.Context, body CreateSlackIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSlackIntegrationMutationRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -2208,6 +3156,30 @@ func (c *Client) ServiceQuery(ctx context.Context, id string, reqEditors ...Requ
 	return c.Client.Do(req)
 }
 
+func (c *Client) UpdateServiceMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateServiceMutationRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateServiceMutation(ctx context.Context, id string, body UpdateServiceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateServiceMutationRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) UsersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUsersQueryRequest(c.Server)
 	if err != nil {
@@ -2253,6 +3225,93 @@ func NewAccessGraphQueryRequestWithBody(server string, contentType string, body 
 	}
 
 	operationPath := fmt.Sprintf("/access-graph")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewServiceClientIntentsQueryRequest calls the generic ServiceClientIntentsQuery builder with application/json body
+func NewServiceClientIntentsQueryRequest(server string, id string, body ServiceClientIntentsQueryJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewServiceClientIntentsQueryRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewServiceClientIntentsQueryRequestWithBody generates requests for ServiceClientIntentsQuery with any type of body
+func NewServiceClientIntentsQueryRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/access-graph/service-client-intents/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewAccessLogQueryRequest calls the generic AccessLogQuery builder with application/json body
+func NewAccessLogQueryRequest(server string, body AccessLogQueryJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewAccessLogQueryRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewAccessLogQueryRequestWithBody generates requests for AccessLogQuery with any type of body
+func NewAccessLogQueryRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/access-log")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3130,6 +4189,166 @@ func NewCreateAWSIntegrationMutationRequestWithBody(server string, contentType s
 	return req, nil
 }
 
+// NewUpdateAwsVisibilityIntegrationMutationRequest calls the generic UpdateAwsVisibilityIntegrationMutation builder with application/json body
+func NewUpdateAwsVisibilityIntegrationMutationRequest(server string, body UpdateAwsVisibilityIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateAwsVisibilityIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewUpdateAwsVisibilityIntegrationMutationRequestWithBody generates requests for UpdateAwsVisibilityIntegrationMutation with any type of body
+func NewUpdateAwsVisibilityIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/aws-metadata")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewCreateAwsVisibilityIntegrationMutationRequest calls the generic CreateAwsVisibilityIntegrationMutation builder with application/json body
+func NewCreateAwsVisibilityIntegrationMutationRequest(server string, body CreateAwsVisibilityIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateAwsVisibilityIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateAwsVisibilityIntegrationMutationRequestWithBody generates requests for CreateAwsVisibilityIntegrationMutation with any type of body
+func NewCreateAwsVisibilityIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/aws-metadata")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewUpdateAzureIntegrationMutationRequest calls the generic UpdateAzureIntegrationMutation builder with application/json body
+func NewUpdateAzureIntegrationMutationRequest(server string, body UpdateAzureIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateAzureIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewUpdateAzureIntegrationMutationRequestWithBody generates requests for UpdateAzureIntegrationMutation with any type of body
+func NewUpdateAzureIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/azure")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewCreateAzureIntegrationMutationRequest calls the generic CreateAzureIntegrationMutation builder with application/json body
+func NewCreateAzureIntegrationMutationRequest(server string, body CreateAzureIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateAzureIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateAzureIntegrationMutationRequestWithBody generates requests for CreateAzureIntegrationMutation with any type of body
+func NewCreateAzureIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/azure")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewCreateDatabaseIntegrationMutationRequest calls the generic CreateDatabaseIntegrationMutation builder with application/json body
 func NewCreateDatabaseIntegrationMutationRequest(server string, body CreateDatabaseIntegrationMutationJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -3208,6 +4427,86 @@ func NewUpdateDatabaseIntegrationMutationRequestWithBody(server string, id strin
 	}
 
 	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewUpdateGCPIntegrationMutationRequest calls the generic UpdateGCPIntegrationMutation builder with application/json body
+func NewUpdateGCPIntegrationMutationRequest(server string, body UpdateGCPIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateGCPIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewUpdateGCPIntegrationMutationRequestWithBody generates requests for UpdateGCPIntegrationMutation with any type of body
+func NewUpdateGCPIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/gcp")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewCreateGCPIntegrationMutationRequest calls the generic CreateGCPIntegrationMutation builder with application/json body
+func NewCreateGCPIntegrationMutationRequest(server string, body CreateGCPIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateGCPIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateGCPIntegrationMutationRequestWithBody generates requests for CreateGCPIntegrationMutation with any type of body
+func NewCreateGCPIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/gcp")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -3304,19 +4603,19 @@ func NewUpdateGenericIntegrationMutationRequestWithBody(server string, id string
 	return req, nil
 }
 
-// NewUpdateGithubIntegrationMutationRequest calls the generic UpdateGithubIntegrationMutation builder with application/json body
-func NewUpdateGithubIntegrationMutationRequest(server string, body UpdateGithubIntegrationMutationJSONRequestBody) (*http.Request, error) {
+// NewUpdateGitHubIntegrationMutationRequest calls the generic UpdateGitHubIntegrationMutation builder with application/json body
+func NewUpdateGitHubIntegrationMutationRequest(server string, body UpdateGitHubIntegrationMutationJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUpdateGithubIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+	return NewUpdateGitHubIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewUpdateGithubIntegrationMutationRequestWithBody generates requests for UpdateGithubIntegrationMutation with any type of body
-func NewUpdateGithubIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpdateGitHubIntegrationMutationRequestWithBody generates requests for UpdateGitHubIntegrationMutation with any type of body
+func NewUpdateGitHubIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -3344,19 +4643,19 @@ func NewUpdateGithubIntegrationMutationRequestWithBody(server string, contentTyp
 	return req, nil
 }
 
-// NewCreateGithubIntegrationMutationRequest calls the generic CreateGithubIntegrationMutation builder with application/json body
-func NewCreateGithubIntegrationMutationRequest(server string, body CreateGithubIntegrationMutationJSONRequestBody) (*http.Request, error) {
+// NewCreateGitHubIntegrationMutationRequest calls the generic CreateGitHubIntegrationMutation builder with application/json body
+func NewCreateGitHubIntegrationMutationRequest(server string, body CreateGitHubIntegrationMutationJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewCreateGithubIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+	return NewCreateGitHubIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewCreateGithubIntegrationMutationRequestWithBody generates requests for CreateGithubIntegrationMutation with any type of body
-func NewCreateGithubIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewCreateGitHubIntegrationMutationRequestWithBody generates requests for CreateGitHubIntegrationMutation with any type of body
+func NewCreateGitHubIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -3365,6 +4664,86 @@ func NewCreateGithubIntegrationMutationRequestWithBody(server string, contentTyp
 	}
 
 	operationPath := fmt.Sprintf("/integrations/github")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewUpdateGitLabIntegrationMutationRequest calls the generic UpdateGitLabIntegrationMutation builder with application/json body
+func NewUpdateGitLabIntegrationMutationRequest(server string, body UpdateGitLabIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateGitLabIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewUpdateGitLabIntegrationMutationRequestWithBody generates requests for UpdateGitLabIntegrationMutation with any type of body
+func NewUpdateGitLabIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/gitlab")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewCreateGitLabIntegrationMutationRequest calls the generic CreateGitLabIntegrationMutation builder with application/json body
+func NewCreateGitLabIntegrationMutationRequest(server string, body CreateGitLabIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateGitLabIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateGitLabIntegrationMutationRequestWithBody generates requests for CreateGitLabIntegrationMutation with any type of body
+func NewCreateGitLabIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/gitlab")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3462,6 +4841,86 @@ func NewUpdateKubernetesIntegrationMutationRequestWithBody(server string, id str
 	}
 
 	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewUpdateSlackIntegrationMutationRequest calls the generic UpdateSlackIntegrationMutation builder with application/json body
+func NewUpdateSlackIntegrationMutationRequest(server string, body UpdateSlackIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateSlackIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewUpdateSlackIntegrationMutationRequestWithBody generates requests for UpdateSlackIntegrationMutation with any type of body
+func NewUpdateSlackIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/slack")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewCreateSlackIntegrationMutationRequest calls the generic CreateSlackIntegrationMutation builder with application/json body
+func NewCreateSlackIntegrationMutationRequest(server string, body CreateSlackIntegrationMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateSlackIntegrationMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateSlackIntegrationMutationRequestWithBody generates requests for CreateSlackIntegrationMutation with any type of body
+func NewCreateSlackIntegrationMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integrations/slack")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -3995,6 +5454,22 @@ func NewNamespacesQueryRequest(server string, params *NamespacesQueryParams) (*h
 
 	}
 
+	if params.Filter != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
 	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -4450,6 +5925,22 @@ func NewServicesQueryRequest(server string, params *ServicesQueryParams) (*http.
 
 	}
 
+	if params.Filter != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
 	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -4490,6 +5981,53 @@ func NewServiceQueryRequest(server string, id string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewUpdateServiceMutationRequest calls the generic UpdateServiceMutation builder with application/json body
+func NewUpdateServiceMutationRequest(server string, id string, body UpdateServiceMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateServiceMutationRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateServiceMutationRequestWithBody generates requests for UpdateServiceMutation with any type of body
+func NewUpdateServiceMutationRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/services/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -4603,6 +6141,16 @@ type ClientWithResponsesInterface interface {
 
 	AccessGraphQueryWithResponse(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*AccessGraphQueryResponse, error)
 
+	// ServiceClientIntentsQuery request with any body
+	ServiceClientIntentsQueryWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ServiceClientIntentsQueryResponse, error)
+
+	ServiceClientIntentsQueryWithResponse(ctx context.Context, id string, body ServiceClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*ServiceClientIntentsQueryResponse, error)
+
+	// AccessLogQuery request with any body
+	AccessLogQueryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AccessLogQueryResponse, error)
+
+	AccessLogQueryWithResponse(ctx context.Context, body AccessLogQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*AccessLogQueryResponse, error)
+
 	// OneClusterQuery request
 	OneClusterQueryWithResponse(ctx context.Context, params *OneClusterQueryParams, reqEditors ...RequestEditorFn) (*OneClusterQueryResponse, error)
 
@@ -4671,6 +6219,26 @@ type ClientWithResponsesInterface interface {
 
 	CreateAWSIntegrationMutationWithResponse(ctx context.Context, body CreateAWSIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAWSIntegrationMutationResponse, error)
 
+	// UpdateAwsVisibilityIntegrationMutation request with any body
+	UpdateAwsVisibilityIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateAwsVisibilityIntegrationMutationResponse, error)
+
+	UpdateAwsVisibilityIntegrationMutationWithResponse(ctx context.Context, body UpdateAwsVisibilityIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateAwsVisibilityIntegrationMutationResponse, error)
+
+	// CreateAwsVisibilityIntegrationMutation request with any body
+	CreateAwsVisibilityIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAwsVisibilityIntegrationMutationResponse, error)
+
+	CreateAwsVisibilityIntegrationMutationWithResponse(ctx context.Context, body CreateAwsVisibilityIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAwsVisibilityIntegrationMutationResponse, error)
+
+	// UpdateAzureIntegrationMutation request with any body
+	UpdateAzureIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateAzureIntegrationMutationResponse, error)
+
+	UpdateAzureIntegrationMutationWithResponse(ctx context.Context, body UpdateAzureIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateAzureIntegrationMutationResponse, error)
+
+	// CreateAzureIntegrationMutation request with any body
+	CreateAzureIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAzureIntegrationMutationResponse, error)
+
+	CreateAzureIntegrationMutationWithResponse(ctx context.Context, body CreateAzureIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAzureIntegrationMutationResponse, error)
+
 	// CreateDatabaseIntegrationMutation request with any body
 	CreateDatabaseIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDatabaseIntegrationMutationResponse, error)
 
@@ -4680,6 +6248,16 @@ type ClientWithResponsesInterface interface {
 	UpdateDatabaseIntegrationMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDatabaseIntegrationMutationResponse, error)
 
 	UpdateDatabaseIntegrationMutationWithResponse(ctx context.Context, id string, body UpdateDatabaseIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDatabaseIntegrationMutationResponse, error)
+
+	// UpdateGCPIntegrationMutation request with any body
+	UpdateGCPIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGCPIntegrationMutationResponse, error)
+
+	UpdateGCPIntegrationMutationWithResponse(ctx context.Context, body UpdateGCPIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGCPIntegrationMutationResponse, error)
+
+	// CreateGCPIntegrationMutation request with any body
+	CreateGCPIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGCPIntegrationMutationResponse, error)
+
+	CreateGCPIntegrationMutationWithResponse(ctx context.Context, body CreateGCPIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGCPIntegrationMutationResponse, error)
 
 	// CreateGenericIntegrationMutation request with any body
 	CreateGenericIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGenericIntegrationMutationResponse, error)
@@ -4691,15 +6269,25 @@ type ClientWithResponsesInterface interface {
 
 	UpdateGenericIntegrationMutationWithResponse(ctx context.Context, id string, body UpdateGenericIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGenericIntegrationMutationResponse, error)
 
-	// UpdateGithubIntegrationMutation request with any body
-	UpdateGithubIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGithubIntegrationMutationResponse, error)
+	// UpdateGitHubIntegrationMutation request with any body
+	UpdateGitHubIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGitHubIntegrationMutationResponse, error)
 
-	UpdateGithubIntegrationMutationWithResponse(ctx context.Context, body UpdateGithubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGithubIntegrationMutationResponse, error)
+	UpdateGitHubIntegrationMutationWithResponse(ctx context.Context, body UpdateGitHubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGitHubIntegrationMutationResponse, error)
 
-	// CreateGithubIntegrationMutation request with any body
-	CreateGithubIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGithubIntegrationMutationResponse, error)
+	// CreateGitHubIntegrationMutation request with any body
+	CreateGitHubIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGitHubIntegrationMutationResponse, error)
 
-	CreateGithubIntegrationMutationWithResponse(ctx context.Context, body CreateGithubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGithubIntegrationMutationResponse, error)
+	CreateGitHubIntegrationMutationWithResponse(ctx context.Context, body CreateGitHubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGitHubIntegrationMutationResponse, error)
+
+	// UpdateGitLabIntegrationMutation request with any body
+	UpdateGitLabIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGitLabIntegrationMutationResponse, error)
+
+	UpdateGitLabIntegrationMutationWithResponse(ctx context.Context, body UpdateGitLabIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGitLabIntegrationMutationResponse, error)
+
+	// CreateGitLabIntegrationMutation request with any body
+	CreateGitLabIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGitLabIntegrationMutationResponse, error)
+
+	CreateGitLabIntegrationMutationWithResponse(ctx context.Context, body CreateGitLabIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGitLabIntegrationMutationResponse, error)
 
 	// CreateKubernetesIntegrationMutation request with any body
 	CreateKubernetesIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateKubernetesIntegrationMutationResponse, error)
@@ -4710,6 +6298,16 @@ type ClientWithResponsesInterface interface {
 	UpdateKubernetesIntegrationMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateKubernetesIntegrationMutationResponse, error)
 
 	UpdateKubernetesIntegrationMutationWithResponse(ctx context.Context, id string, body UpdateKubernetesIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateKubernetesIntegrationMutationResponse, error)
+
+	// UpdateSlackIntegrationMutation request with any body
+	UpdateSlackIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSlackIntegrationMutationResponse, error)
+
+	UpdateSlackIntegrationMutationWithResponse(ctx context.Context, body UpdateSlackIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSlackIntegrationMutationResponse, error)
+
+	// CreateSlackIntegrationMutation request with any body
+	CreateSlackIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSlackIntegrationMutationResponse, error)
+
+	CreateSlackIntegrationMutationWithResponse(ctx context.Context, body CreateSlackIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSlackIntegrationMutationResponse, error)
 
 	// DeleteIntegrationMutation request
 	DeleteIntegrationMutationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteIntegrationMutationResponse, error)
@@ -4787,6 +6385,11 @@ type ClientWithResponsesInterface interface {
 	// ServiceQuery request
 	ServiceQueryWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ServiceQueryResponse, error)
 
+	// UpdateServiceMutation request with any body
+	UpdateServiceMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateServiceMutationResponse, error)
+
+	UpdateServiceMutationWithResponse(ctx context.Context, id string, body UpdateServiceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateServiceMutationResponse, error)
+
 	// UsersQuery request
 	UsersQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*UsersQueryResponse, error)
 
@@ -4818,6 +6421,66 @@ func (r AccessGraphQueryResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r AccessGraphQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ServiceClientIntentsQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ServiceClientIntents
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ServiceClientIntentsQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ServiceClientIntentsQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type AccessLogQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AccessLog
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r AccessLogQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r AccessLogQueryResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5364,6 +7027,126 @@ func (r CreateAWSIntegrationMutationResponse) StatusCode() int {
 	return 0
 }
 
+type UpdateAwsVisibilityIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateAwsVisibilityIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateAwsVisibilityIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateAwsVisibilityIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateAwsVisibilityIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateAwsVisibilityIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateAzureIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateAzureIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateAzureIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateAzureIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateAzureIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateAzureIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type CreateDatabaseIntegrationMutationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -5418,6 +7201,66 @@ func (r UpdateDatabaseIntegrationMutationResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UpdateDatabaseIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateGCPIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateGCPIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateGCPIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateGCPIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateGCPIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateGCPIntegrationMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5484,7 +7327,7 @@ func (r UpdateGenericIntegrationMutationResponse) StatusCode() int {
 	return 0
 }
 
-type UpdateGithubIntegrationMutationResponse struct {
+type UpdateGitHubIntegrationMutationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Integration
@@ -5499,7 +7342,7 @@ type UpdateGithubIntegrationMutationResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r UpdateGithubIntegrationMutationResponse) Status() string {
+func (r UpdateGitHubIntegrationMutationResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -5507,17 +7350,17 @@ func (r UpdateGithubIntegrationMutationResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r UpdateGithubIntegrationMutationResponse) StatusCode() int {
+func (r UpdateGitHubIntegrationMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type CreateGithubIntegrationMutationResponse struct {
+type CreateGitHubIntegrationMutationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *CreateGithubIntegrationResponse
+	JSON200      *CreateGitHubIntegrationResponse
 	JSON400      *Error
 	JSON401      *Error
 	JSON403      *Error
@@ -5529,7 +7372,7 @@ type CreateGithubIntegrationMutationResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r CreateGithubIntegrationMutationResponse) Status() string {
+func (r CreateGitHubIntegrationMutationResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -5537,7 +7380,67 @@ func (r CreateGithubIntegrationMutationResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r CreateGithubIntegrationMutationResponse) StatusCode() int {
+func (r CreateGitHubIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateGitLabIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateGitLabIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateGitLabIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateGitLabIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CreateGitLabIntegrationResponse
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateGitLabIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateGitLabIntegrationMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5598,6 +7501,66 @@ func (r UpdateKubernetesIntegrationMutationResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UpdateKubernetesIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateSlackIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Integration
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateSlackIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateSlackIntegrationMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateSlackIntegrationMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CreateSlackIntegrationResponse
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateSlackIntegrationMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateSlackIntegrationMutationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -6264,6 +8227,36 @@ func (r ServiceQueryResponse) StatusCode() int {
 	return 0
 }
 
+type UpdateServiceMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Service
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateServiceMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateServiceMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type UsersQueryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -6339,6 +8332,40 @@ func (c *ClientWithResponses) AccessGraphQueryWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseAccessGraphQueryResponse(rsp)
+}
+
+// ServiceClientIntentsQueryWithBodyWithResponse request with arbitrary body returning *ServiceClientIntentsQueryResponse
+func (c *ClientWithResponses) ServiceClientIntentsQueryWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ServiceClientIntentsQueryResponse, error) {
+	rsp, err := c.ServiceClientIntentsQueryWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseServiceClientIntentsQueryResponse(rsp)
+}
+
+func (c *ClientWithResponses) ServiceClientIntentsQueryWithResponse(ctx context.Context, id string, body ServiceClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*ServiceClientIntentsQueryResponse, error) {
+	rsp, err := c.ServiceClientIntentsQuery(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseServiceClientIntentsQueryResponse(rsp)
+}
+
+// AccessLogQueryWithBodyWithResponse request with arbitrary body returning *AccessLogQueryResponse
+func (c *ClientWithResponses) AccessLogQueryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AccessLogQueryResponse, error) {
+	rsp, err := c.AccessLogQueryWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseAccessLogQueryResponse(rsp)
+}
+
+func (c *ClientWithResponses) AccessLogQueryWithResponse(ctx context.Context, body AccessLogQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*AccessLogQueryResponse, error) {
+	rsp, err := c.AccessLogQuery(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseAccessLogQueryResponse(rsp)
 }
 
 // OneClusterQueryWithResponse request returning *OneClusterQueryResponse
@@ -6559,6 +8586,74 @@ func (c *ClientWithResponses) CreateAWSIntegrationMutationWithResponse(ctx conte
 	return ParseCreateAWSIntegrationMutationResponse(rsp)
 }
 
+// UpdateAwsVisibilityIntegrationMutationWithBodyWithResponse request with arbitrary body returning *UpdateAwsVisibilityIntegrationMutationResponse
+func (c *ClientWithResponses) UpdateAwsVisibilityIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateAwsVisibilityIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateAwsVisibilityIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateAwsVisibilityIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateAwsVisibilityIntegrationMutationWithResponse(ctx context.Context, body UpdateAwsVisibilityIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateAwsVisibilityIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateAwsVisibilityIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateAwsVisibilityIntegrationMutationResponse(rsp)
+}
+
+// CreateAwsVisibilityIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateAwsVisibilityIntegrationMutationResponse
+func (c *ClientWithResponses) CreateAwsVisibilityIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAwsVisibilityIntegrationMutationResponse, error) {
+	rsp, err := c.CreateAwsVisibilityIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAwsVisibilityIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateAwsVisibilityIntegrationMutationWithResponse(ctx context.Context, body CreateAwsVisibilityIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAwsVisibilityIntegrationMutationResponse, error) {
+	rsp, err := c.CreateAwsVisibilityIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAwsVisibilityIntegrationMutationResponse(rsp)
+}
+
+// UpdateAzureIntegrationMutationWithBodyWithResponse request with arbitrary body returning *UpdateAzureIntegrationMutationResponse
+func (c *ClientWithResponses) UpdateAzureIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateAzureIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateAzureIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateAzureIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateAzureIntegrationMutationWithResponse(ctx context.Context, body UpdateAzureIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateAzureIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateAzureIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateAzureIntegrationMutationResponse(rsp)
+}
+
+// CreateAzureIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateAzureIntegrationMutationResponse
+func (c *ClientWithResponses) CreateAzureIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAzureIntegrationMutationResponse, error) {
+	rsp, err := c.CreateAzureIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAzureIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateAzureIntegrationMutationWithResponse(ctx context.Context, body CreateAzureIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAzureIntegrationMutationResponse, error) {
+	rsp, err := c.CreateAzureIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAzureIntegrationMutationResponse(rsp)
+}
+
 // CreateDatabaseIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateDatabaseIntegrationMutationResponse
 func (c *ClientWithResponses) CreateDatabaseIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDatabaseIntegrationMutationResponse, error) {
 	rsp, err := c.CreateDatabaseIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
@@ -6591,6 +8686,40 @@ func (c *ClientWithResponses) UpdateDatabaseIntegrationMutationWithResponse(ctx 
 		return nil, err
 	}
 	return ParseUpdateDatabaseIntegrationMutationResponse(rsp)
+}
+
+// UpdateGCPIntegrationMutationWithBodyWithResponse request with arbitrary body returning *UpdateGCPIntegrationMutationResponse
+func (c *ClientWithResponses) UpdateGCPIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGCPIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateGCPIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateGCPIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateGCPIntegrationMutationWithResponse(ctx context.Context, body UpdateGCPIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGCPIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateGCPIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateGCPIntegrationMutationResponse(rsp)
+}
+
+// CreateGCPIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateGCPIntegrationMutationResponse
+func (c *ClientWithResponses) CreateGCPIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGCPIntegrationMutationResponse, error) {
+	rsp, err := c.CreateGCPIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateGCPIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateGCPIntegrationMutationWithResponse(ctx context.Context, body CreateGCPIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGCPIntegrationMutationResponse, error) {
+	rsp, err := c.CreateGCPIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateGCPIntegrationMutationResponse(rsp)
 }
 
 // CreateGenericIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateGenericIntegrationMutationResponse
@@ -6627,38 +8756,72 @@ func (c *ClientWithResponses) UpdateGenericIntegrationMutationWithResponse(ctx c
 	return ParseUpdateGenericIntegrationMutationResponse(rsp)
 }
 
-// UpdateGithubIntegrationMutationWithBodyWithResponse request with arbitrary body returning *UpdateGithubIntegrationMutationResponse
-func (c *ClientWithResponses) UpdateGithubIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGithubIntegrationMutationResponse, error) {
-	rsp, err := c.UpdateGithubIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+// UpdateGitHubIntegrationMutationWithBodyWithResponse request with arbitrary body returning *UpdateGitHubIntegrationMutationResponse
+func (c *ClientWithResponses) UpdateGitHubIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGitHubIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateGitHubIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseUpdateGithubIntegrationMutationResponse(rsp)
+	return ParseUpdateGitHubIntegrationMutationResponse(rsp)
 }
 
-func (c *ClientWithResponses) UpdateGithubIntegrationMutationWithResponse(ctx context.Context, body UpdateGithubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGithubIntegrationMutationResponse, error) {
-	rsp, err := c.UpdateGithubIntegrationMutation(ctx, body, reqEditors...)
+func (c *ClientWithResponses) UpdateGitHubIntegrationMutationWithResponse(ctx context.Context, body UpdateGitHubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGitHubIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateGitHubIntegrationMutation(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseUpdateGithubIntegrationMutationResponse(rsp)
+	return ParseUpdateGitHubIntegrationMutationResponse(rsp)
 }
 
-// CreateGithubIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateGithubIntegrationMutationResponse
-func (c *ClientWithResponses) CreateGithubIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGithubIntegrationMutationResponse, error) {
-	rsp, err := c.CreateGithubIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+// CreateGitHubIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateGitHubIntegrationMutationResponse
+func (c *ClientWithResponses) CreateGitHubIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGitHubIntegrationMutationResponse, error) {
+	rsp, err := c.CreateGitHubIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreateGithubIntegrationMutationResponse(rsp)
+	return ParseCreateGitHubIntegrationMutationResponse(rsp)
 }
 
-func (c *ClientWithResponses) CreateGithubIntegrationMutationWithResponse(ctx context.Context, body CreateGithubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGithubIntegrationMutationResponse, error) {
-	rsp, err := c.CreateGithubIntegrationMutation(ctx, body, reqEditors...)
+func (c *ClientWithResponses) CreateGitHubIntegrationMutationWithResponse(ctx context.Context, body CreateGitHubIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGitHubIntegrationMutationResponse, error) {
+	rsp, err := c.CreateGitHubIntegrationMutation(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreateGithubIntegrationMutationResponse(rsp)
+	return ParseCreateGitHubIntegrationMutationResponse(rsp)
+}
+
+// UpdateGitLabIntegrationMutationWithBodyWithResponse request with arbitrary body returning *UpdateGitLabIntegrationMutationResponse
+func (c *ClientWithResponses) UpdateGitLabIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGitLabIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateGitLabIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateGitLabIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateGitLabIntegrationMutationWithResponse(ctx context.Context, body UpdateGitLabIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGitLabIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateGitLabIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateGitLabIntegrationMutationResponse(rsp)
+}
+
+// CreateGitLabIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateGitLabIntegrationMutationResponse
+func (c *ClientWithResponses) CreateGitLabIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGitLabIntegrationMutationResponse, error) {
+	rsp, err := c.CreateGitLabIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateGitLabIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateGitLabIntegrationMutationWithResponse(ctx context.Context, body CreateGitLabIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGitLabIntegrationMutationResponse, error) {
+	rsp, err := c.CreateGitLabIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateGitLabIntegrationMutationResponse(rsp)
 }
 
 // CreateKubernetesIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateKubernetesIntegrationMutationResponse
@@ -6693,6 +8856,40 @@ func (c *ClientWithResponses) UpdateKubernetesIntegrationMutationWithResponse(ct
 		return nil, err
 	}
 	return ParseUpdateKubernetesIntegrationMutationResponse(rsp)
+}
+
+// UpdateSlackIntegrationMutationWithBodyWithResponse request with arbitrary body returning *UpdateSlackIntegrationMutationResponse
+func (c *ClientWithResponses) UpdateSlackIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSlackIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateSlackIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateSlackIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateSlackIntegrationMutationWithResponse(ctx context.Context, body UpdateSlackIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSlackIntegrationMutationResponse, error) {
+	rsp, err := c.UpdateSlackIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateSlackIntegrationMutationResponse(rsp)
+}
+
+// CreateSlackIntegrationMutationWithBodyWithResponse request with arbitrary body returning *CreateSlackIntegrationMutationResponse
+func (c *ClientWithResponses) CreateSlackIntegrationMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSlackIntegrationMutationResponse, error) {
+	rsp, err := c.CreateSlackIntegrationMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateSlackIntegrationMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateSlackIntegrationMutationWithResponse(ctx context.Context, body CreateSlackIntegrationMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSlackIntegrationMutationResponse, error) {
+	rsp, err := c.CreateSlackIntegrationMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateSlackIntegrationMutationResponse(rsp)
 }
 
 // DeleteIntegrationMutationWithResponse request returning *DeleteIntegrationMutationResponse
@@ -6933,6 +9130,23 @@ func (c *ClientWithResponses) ServiceQueryWithResponse(ctx context.Context, id s
 	return ParseServiceQueryResponse(rsp)
 }
 
+// UpdateServiceMutationWithBodyWithResponse request with arbitrary body returning *UpdateServiceMutationResponse
+func (c *ClientWithResponses) UpdateServiceMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateServiceMutationResponse, error) {
+	rsp, err := c.UpdateServiceMutationWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateServiceMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateServiceMutationWithResponse(ctx context.Context, id string, body UpdateServiceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateServiceMutationResponse, error) {
+	rsp, err := c.UpdateServiceMutation(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateServiceMutationResponse(rsp)
+}
+
 // UsersQueryWithResponse request returning *UsersQueryResponse
 func (c *ClientWithResponses) UsersQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*UsersQueryResponse, error) {
 	rsp, err := c.UsersQuery(ctx, reqEditors...)
@@ -6967,6 +9181,170 @@ func ParseAccessGraphQueryResponse(rsp *http.Response) (*AccessGraphQueryRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest AccessGraph
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseServiceClientIntentsQueryResponse parses an HTTP response from a ServiceClientIntentsQueryWithResponse call
+func ParseServiceClientIntentsQueryResponse(rsp *http.Response) (*ServiceClientIntentsQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ServiceClientIntentsQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ServiceClientIntents
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseAccessLogQueryResponse parses an HTTP response from a AccessLogQueryWithResponse call
+func ParseAccessLogQueryResponse(rsp *http.Response) (*AccessLogQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &AccessLogQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AccessLog
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -8509,6 +10887,334 @@ func ParseCreateAWSIntegrationMutationResponse(rsp *http.Response) (*CreateAWSIn
 	return response, nil
 }
 
+// ParseUpdateAwsVisibilityIntegrationMutationResponse parses an HTTP response from a UpdateAwsVisibilityIntegrationMutationWithResponse call
+func ParseUpdateAwsVisibilityIntegrationMutationResponse(rsp *http.Response) (*UpdateAwsVisibilityIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateAwsVisibilityIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateAwsVisibilityIntegrationMutationResponse parses an HTTP response from a CreateAwsVisibilityIntegrationMutationWithResponse call
+func ParseCreateAwsVisibilityIntegrationMutationResponse(rsp *http.Response) (*CreateAwsVisibilityIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateAwsVisibilityIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateAzureIntegrationMutationResponse parses an HTTP response from a UpdateAzureIntegrationMutationWithResponse call
+func ParseUpdateAzureIntegrationMutationResponse(rsp *http.Response) (*UpdateAzureIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateAzureIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateAzureIntegrationMutationResponse parses an HTTP response from a CreateAzureIntegrationMutationWithResponse call
+func ParseCreateAzureIntegrationMutationResponse(rsp *http.Response) (*CreateAzureIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateAzureIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseCreateDatabaseIntegrationMutationResponse parses an HTTP response from a CreateDatabaseIntegrationMutationWithResponse call
 func ParseCreateDatabaseIntegrationMutationResponse(rsp *http.Response) (*CreateDatabaseIntegrationMutationResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -8600,6 +11306,170 @@ func ParseUpdateDatabaseIntegrationMutationResponse(rsp *http.Response) (*Update
 	}
 
 	response := &UpdateDatabaseIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateGCPIntegrationMutationResponse parses an HTTP response from a UpdateGCPIntegrationMutationWithResponse call
+func ParseUpdateGCPIntegrationMutationResponse(rsp *http.Response) (*UpdateGCPIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateGCPIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateGCPIntegrationMutationResponse parses an HTTP response from a CreateGCPIntegrationMutationWithResponse call
+func ParseCreateGCPIntegrationMutationResponse(rsp *http.Response) (*CreateGCPIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateGCPIntegrationMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -8837,15 +11707,15 @@ func ParseUpdateGenericIntegrationMutationResponse(rsp *http.Response) (*UpdateG
 	return response, nil
 }
 
-// ParseUpdateGithubIntegrationMutationResponse parses an HTTP response from a UpdateGithubIntegrationMutationWithResponse call
-func ParseUpdateGithubIntegrationMutationResponse(rsp *http.Response) (*UpdateGithubIntegrationMutationResponse, error) {
+// ParseUpdateGitHubIntegrationMutationResponse parses an HTTP response from a UpdateGitHubIntegrationMutationWithResponse call
+func ParseUpdateGitHubIntegrationMutationResponse(rsp *http.Response) (*UpdateGitHubIntegrationMutationResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &UpdateGithubIntegrationMutationResponse{
+	response := &UpdateGitHubIntegrationMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -8919,22 +11789,186 @@ func ParseUpdateGithubIntegrationMutationResponse(rsp *http.Response) (*UpdateGi
 	return response, nil
 }
 
-// ParseCreateGithubIntegrationMutationResponse parses an HTTP response from a CreateGithubIntegrationMutationWithResponse call
-func ParseCreateGithubIntegrationMutationResponse(rsp *http.Response) (*CreateGithubIntegrationMutationResponse, error) {
+// ParseCreateGitHubIntegrationMutationResponse parses an HTTP response from a CreateGitHubIntegrationMutationWithResponse call
+func ParseCreateGitHubIntegrationMutationResponse(rsp *http.Response) (*CreateGitHubIntegrationMutationResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreateGithubIntegrationMutationResponse{
+	response := &CreateGitHubIntegrationMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CreateGithubIntegrationResponse
+		var dest CreateGitHubIntegrationResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateGitLabIntegrationMutationResponse parses an HTTP response from a UpdateGitLabIntegrationMutationWithResponse call
+func ParseUpdateGitLabIntegrationMutationResponse(rsp *http.Response) (*UpdateGitLabIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateGitLabIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateGitLabIntegrationMutationResponse parses an HTTP response from a CreateGitLabIntegrationMutationWithResponse call
+func ParseCreateGitLabIntegrationMutationResponse(rsp *http.Response) (*CreateGitLabIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateGitLabIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CreateGitLabIntegrationResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -9099,6 +12133,170 @@ func ParseUpdateKubernetesIntegrationMutationResponse(rsp *http.Response) (*Upda
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateSlackIntegrationMutationResponse parses an HTTP response from a UpdateSlackIntegrationMutationWithResponse call
+func ParseUpdateSlackIntegrationMutationResponse(rsp *http.Response) (*UpdateSlackIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateSlackIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Integration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateSlackIntegrationMutationResponse parses an HTTP response from a CreateSlackIntegrationMutationWithResponse call
+func ParseCreateSlackIntegrationMutationResponse(rsp *http.Response) (*CreateSlackIntegrationMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateSlackIntegrationMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CreateSlackIntegrationResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -10896,6 +14094,88 @@ func ParseServiceQueryResponse(rsp *http.Response) (*ServiceQueryResponse, error
 	}
 
 	response := &ServiceQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Service
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateServiceMutationResponse parses an HTTP response from a UpdateServiceMutationWithResponse call
+func ParseUpdateServiceMutationResponse(rsp *http.Response) (*UpdateServiceMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateServiceMutationResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
