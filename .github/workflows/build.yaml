@@ -66,17 +66,17 @@ jobs:
       - shell: bash
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: matrix.os == 'ubuntu-latest'
         with:
           path: dist/linux
           name: linux-${{ env.sha_short }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: matrix.os == 'macos-latest'
         with:
           path: dist/darwin
           name: darwin-${{ env.sha_short }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: matrix.os == 'windows-latest'
         with:
           path: dist/windows
