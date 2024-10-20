@@ -217,47 +217,6 @@ func enumToString(enumStr string) string {
 	return strcase.ToDelimited(lowerCaseStr, ' ')
 }
 
-func getCertificateInformation(cert cloudapi.CertificateInformation) string {
-	certInfoParts := []string{
-		fmt.Sprintf("common-name=%s", cert.CommonName),
-	}
-
-	if cert.DnsNames != nil && len(*cert.DnsNames) > 0 {
-		dns := strings.Join(lo.FromPtr(cert.DnsNames), ",")
-		certInfoParts = append(certInfoParts,
-			fmt.Sprintf("dns-names=%s", dns),
-		)
-	}
-	if cert.Ttl != nil {
-		ttl := fmt.Sprintf("%d", lo.FromPtr(cert.Ttl))
-		certInfoParts = append(certInfoParts,
-			fmt.Sprintf("ttl=%s,", ttl),
-		)
-	}
-	return strings.Join(certInfoParts, ",")
-}
-
-func getKafkaInfo(ksc cloudapi.KafkaServerConfig) string {
-	var kafkaInfoParts []string
-	if ksc.Address != nil {
-		kafkaInfoParts = append(kafkaInfoParts, *ksc.Address)
-	}
-	if len(ksc.Topics) > 0 {
-		topics := strings.Join(
-			lo.Map(ksc.Topics, func(topic cloudapi.KafkaTopic, _ int) string {
-				return fmt.Sprintf("%s,pattern=%s,client-identity-required=%t,intents-required=%t,",
-					topic.Topic, string(topic.Pattern), topic.ClientIdentityRequired, topic.IntentsRequired)
-			}),
-			",",
-		)
-
-		kafkaInfoParts = append(kafkaInfoParts,
-			fmt.Sprintf("topics=%s", topics),
-		)
-	}
-	return strings.Join(kafkaInfoParts, ",")
-}
-
 func FormatServices(services []cloudapi.Service) {
 	columns := []string{"ID", "NAME", "NAMESPACE", "NAMESPACE ID", "ENVIRONMENT ID"}
 	getColumnData := func(s cloudapi.Service) []map[string]string {

@@ -2009,6 +2009,10 @@ type Query {
 		namespaceId: ID
 		name: String
 	): Service
+"""Get service by kubernetes identity"""
+	serviceByIdentity(
+		identity: ServiceIdentityInput!
+	): Service!
 """List users"""
 	users: [User!]!
 """Get user"""
