@@ -259,7 +259,7 @@ func getKafkaInfo(ksc cloudapi.KafkaServerConfig) string {
 }
 
 func FormatServices(services []cloudapi.Service) {
-	columns := []string{"ID", "NAME", "NAMESPACE", "NAMESPACE ID", "ENVIRONMENT ID", "KAFKA INFO", "CERTIFICATE INFO"}
+	columns := []string{"ID", "NAME", "NAMESPACE", "NAMESPACE ID", "ENVIRONMENT ID"}
 	getColumnData := func(s cloudapi.Service) []map[string]string {
 		serviceColumns := map[string]string{
 			"ID":             s.Id,
@@ -270,14 +270,6 @@ func FormatServices(services []cloudapi.Service) {
 		if s.Namespace != nil {
 			serviceColumns["NAMESPACE"] = s.Namespace.Name
 			serviceColumns["NAMESPACE ID"] = s.Namespace.Id
-		}
-
-		if s.KafkaServerConfig != nil {
-			serviceColumns["KAFKA INFO"] = getKafkaInfo(*s.KafkaServerConfig)
-		}
-
-		if s.CertificateInformation != nil {
-			serviceColumns["CERTIFICATE INFO"] = getCertificateInformation(*s.CertificateInformation)
 		}
 
 		return []map[string]string{serviceColumns}
