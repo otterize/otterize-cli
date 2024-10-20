@@ -5,8 +5,16 @@ import (
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"os"
+)
+
+const (
+	outputLocationKey       = "output"
+	outputLocationShorthand = "o"
 )
 
 var GetClientIntentsCmd = &cobra.Command{
@@ -36,8 +44,37 @@ var GetClientIntentsCmd = &cobra.Command{
 		}
 
 		serviceClientIntents := r.JSON200.AsClient
-		_ = serviceClientIntents
-		print("serviceClientIntents: ", serviceClientIntents)
+		s := output.FormatClientIntents(serviceClientIntents)
+
+		outputLocation := viper.GetString(outputLocationKey)
+		if outputLocation == "" {
+			output.PrintStdout(s)
+		} else {
+			err := writeIntentsFile(outputLocation, s)
+			if err != nil {
+				return err
+			}
+			output.PrintStderr("Successfully wrote intents into %s", outputLocation)
+		}
 		return nil
 	},
+}
+
+func writeIntentsFile(filePath string, content string) error {
+	f, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.WriteString(content)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func init() {
+	GetClientIntentsCmd.Flags().StringP(outputLocationKey, outputLocationShorthand, "", "file path to write the output into")
+
 }

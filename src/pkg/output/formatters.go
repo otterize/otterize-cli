@@ -282,3 +282,11 @@ func FormatServices(services []cloudapi.Service) {
 
 	PrintFormatList(services, "services", columns, getColumnData)
 }
+
+func FormatClientIntents(clientIntents *cloudapi.ClientIntentsFiles) string {
+	contents := lo.Map(clientIntents.Files, func(file cloudapi.ClientIntentsFileRepresentation, _ int) string {
+		return file.Content
+	})
+	output := strings.Join(contents, "\n---\n")
+	return output
+}
