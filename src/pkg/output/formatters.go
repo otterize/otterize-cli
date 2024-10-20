@@ -264,9 +264,12 @@ func FormatServices(services []cloudapi.Service) {
 		serviceColumns := map[string]string{
 			"ID":             s.Id,
 			"NAME":           s.Name,
-			"NAMESPACE":      s.Namespace.Name,
-			"NAMESPACE ID":   s.Namespace.Id,
 			"ENVIRONMENT ID": s.Environment.Id,
+		}
+
+		if s.Namespace != nil {
+			serviceColumns["NAMESPACE"] = s.Namespace.Name
+			serviceColumns["NAMESPACE ID"] = s.Namespace.Id
 		}
 
 		if s.KafkaServerConfig != nil {
