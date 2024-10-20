@@ -1,4 +1,4 @@
-package get
+package export
 
 import (
 	"context"
@@ -17,9 +17,9 @@ const (
 	outputLocationShorthand = "o"
 )
 
-var GetClientIntentsCmd = &cobra.Command{
-	Use:          "get <service-id>",
-	Short:        "Get client intents for a service",
+var ExportClientIntentsCmd = &cobra.Command{
+	Use:          "export <service-id>",
+	Short:        "Export client intents for a service",
 	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
@@ -75,6 +75,6 @@ func writeIntentsFile(filePath string, content string) error {
 }
 
 func init() {
-	GetClientIntentsCmd.Flags().StringP(outputLocationKey, outputLocationShorthand, "", "file path to write the output into")
+	ExportClientIntentsCmd.Flags().StringP(outputLocationKey, outputLocationShorthand, "", "file path to write the output into")
 
 }

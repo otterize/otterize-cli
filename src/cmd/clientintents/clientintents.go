@@ -1,7 +1,7 @@
 package clientintents
 
 import (
-	"github.com/otterize/otterize-cli/src/cmd/clientintents/get"
+	"github.com/otterize/otterize-cli/src/cmd/clientintents/export"
 	"github.com/otterize/otterize-cli/src/cmd/groups"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
 	"github.com/spf13/cobra"
@@ -15,5 +15,5 @@ var ClientIntentsCmd = &cobra.Command{
 
 func init() {
 	cloudclient.RegisterAPIFlags(ClientIntentsCmd)
-	ClientIntentsCmd.AddCommand(get.GetClientIntentsCmd)
+	ClientIntentsCmd.AddCommand(export.ExportClientIntentsCmd)
 }
