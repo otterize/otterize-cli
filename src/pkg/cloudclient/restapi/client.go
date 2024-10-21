@@ -10,13 +10,12 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/auth"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
 	"net/http"
 )
 
-var NoOrganizationError = errors.New("no organization exists in config or as parameter")
+var ErrNoOrganization = errors.New("no organization exists in config or as parameter")
 
 type Client struct {
 	*cloudapi.ClientWithResponses
@@ -30,7 +29,7 @@ type Doer interface {
 func NewClient(ctx context.Context) (*Client, error) {
 	orgID, found := ResolveOrgID()
 	if !found { // Shouldn't happen after login
-		return nil, NoOrganizationError
+		return nil, ErrNoOrganization
 	}
 	return NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), auth.GetAPIToken(ctx), orgID)
 }
@@ -69,29 +68,6 @@ func (c *Client) GetAPIVersion() (APIVersion, error) {
 	}
 
 	return extractVersionInfo(apiSpecs)
-}
-
-//nolint:unused
-func (c *Client) checkAPIVersion() error {
-	localApiVersion, err := GetLocalAPIVersion()
-	if err != nil {
-		return err
-	}
-
-	cloudApiVersion, err := c.GetAPIVersion()
-	if err != nil {
-		return err
-	}
-
-	if localApiVersion != cloudApiVersion {
-		prints.PrintCliStderr(`
-Caution: this CLI was built with a different version/revision of the Otterize Cloud API.
-Please run otterize version for more info.
-`,
-		)
-	}
-
-	return nil
 }
 
 func isErrorStatus(statusCode int) bool {

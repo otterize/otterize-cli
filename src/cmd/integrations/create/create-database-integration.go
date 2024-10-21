@@ -12,14 +12,10 @@ import (
 )
 
 const (
-	DatabaseAddress           = "address"
-	DatabaseAddressShorthand  = "a"
-	DatabaseUsername          = "username"
-	DatabaseUsernameShorthand = "u"
-	DatabasePassword          = "password"
-	DatabasePasswordShorthand = "p"
-	DatabaseType              = "type"
-	DatabaseTypeShorthand     = "t"
+	DatabaseAddress          = "address"
+	DatabaseAddressShorthand = "a"
+	DatabaseType             = "type"
+	DatabaseTypeShorthand    = "t"
 )
 
 var CreateDatabaseIntegrationCmd = &cobra.Command{
@@ -40,11 +36,7 @@ var CreateDatabaseIntegrationCmd = &cobra.Command{
 			cloudapi.CreateDatabaseIntegrationMutationJSONRequestBody{
 				Name: viper.GetString(NameKey),
 				DatabaseInfo: cloudapi.DatabaseInfoInput{
-					Address: viper.GetString(DatabaseAddress),
-					Credentials: map[string]interface{}{
-						"username": viper.GetString(DatabaseUsername),
-						"password": viper.GetString(DatabasePassword),
-					},
+					Address:      viper.GetString(DatabaseAddress),
 					DatabaseType: cloudapi.DatabaseInfoInputDatabaseType(viper.GetString(DatabaseType)),
 				},
 			})
@@ -60,12 +52,8 @@ var CreateDatabaseIntegrationCmd = &cobra.Command{
 func init() {
 	CreateDatabaseIntegrationCmd.Flags().StringP(NameKey, NameShorthand, "", "integration name")
 	CreateDatabaseIntegrationCmd.Flags().StringP(DatabaseAddress, DatabaseAddressShorthand, "", "database address")
-	CreateDatabaseIntegrationCmd.Flags().StringP(DatabaseUsername, DatabaseUsernameShorthand, "", "database username")
-	CreateDatabaseIntegrationCmd.Flags().StringP(DatabasePassword, DatabasePasswordShorthand, "", "database password")
 	CreateDatabaseIntegrationCmd.Flags().StringP(DatabaseType, DatabaseTypeShorthand, "", "database type")
 	cobra.CheckErr(CreateDatabaseIntegrationCmd.MarkFlagRequired(NameKey))
 	cobra.CheckErr(CreateDatabaseIntegrationCmd.MarkFlagRequired(DatabaseAddress))
-	cobra.CheckErr(CreateDatabaseIntegrationCmd.MarkFlagRequired(DatabaseUsername))
-	cobra.CheckErr(CreateDatabaseIntegrationCmd.MarkFlagRequired(DatabasePassword))
-	cobra.CheckErr(CreateDatabaseIntegrationCmd.MarkFlagRequired(DatabasePassword))
+	cobra.CheckErr(CreateDatabaseIntegrationCmd.MarkFlagRequired(DatabaseType))
 }

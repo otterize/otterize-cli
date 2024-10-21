@@ -132,10 +132,6 @@ func exportIntents(intents []v2alpha1.ClientIntents) error {
 
 			for _, intent := range intents {
 				filePath := fmt.Sprintf("%s.%s.yaml", intent.GetWorkloadName(), intent.Namespace)
-				if err != nil {
-					return err
-				}
-
 				filePath = filepath.Join(viper.GetString(OutputLocationKey), filePath)
 				err := writeIntentsFile(filePath, []v2alpha1.ClientIntents{intent})
 				if err != nil {

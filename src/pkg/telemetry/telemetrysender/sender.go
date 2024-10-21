@@ -2,9 +2,9 @@ package telemetrysender
 
 import (
 	"context"
-	"github.com/Khan/genqlient/graphql"
+	genqlientgraphql "github.com/Khan/genqlient/graphql"
+	cloudgraphql "github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/telemetry/telemetrygql"
 	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
 	"net/http"
@@ -34,13 +34,13 @@ func sendCLITelemetry(noun string, verb string, modifiers []string) {
 	clientTimeout := 20 * time.Second
 	transport := &http.Transport{}
 	clientWithTimeout := &http.Client{Timeout: clientTimeout, Transport: transport}
-	client := graphql.NewClient(apiAddress, clientWithTimeout)
-	_, _ = telemetrygql.SendCLITelemetry(
+	client := genqlientgraphql.NewClient(apiAddress, clientWithTimeout)
+	_, _ = cloudgraphql.SendCLITelemetry(
 		context.Background(),
 		client,
-		telemetrygql.CLITelemetry{
-			Identifier: telemetrygql.CLIIdentifier{Version: versionGlobal, ContextId: viper.GetString(config.ContextIdKey), CloudClientId: viper.GetString(config.ApiClientIdKey)},
-			Command:    telemetrygql.CLICommand{Noun: noun, Verb: verb, Modifiers: modifiers},
+		cloudgraphql.CLITelemetry{
+			Identifier: cloudgraphql.CLIIdentifier{Version: versionGlobal, ContextId: viper.GetString(config.ContextIdKey), CloudClientId: viper.GetString(config.ApiClientIdKey)},
+			Command:    cloudgraphql.CLICommand{Noun: noun, Verb: verb, Modifiers: modifiers},
 		})
 }
 

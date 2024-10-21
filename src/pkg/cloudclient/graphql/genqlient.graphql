@@ -17,3 +17,7 @@ mutation CreateUserFromAuth0User {
         }
     }
 }
+
+mutation SendCLITelemetry($telemetry: CLITelemetry!) {
+    sendCLITelemetries(telemetries: [$telemetry])
+}

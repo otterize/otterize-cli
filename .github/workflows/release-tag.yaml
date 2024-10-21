@@ -18,11 +18,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
-          go-version: 1.22
+          go-version: 1.23.1
           cache: true
 
 
@@ -60,17 +60,17 @@ jobs:
       - shell: bash
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: matrix.os == 'ubuntu-latest'
         with:
           path: dist/linux
           name: linux-${{ env.sha_short }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: matrix.os == 'macos-latest'
         with:
           path: dist/darwin
           name: darwin-${{ env.sha_short }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: matrix.os == 'windows-latest'
         with:
           path: dist/windows
@@ -80,12 +80,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
-          go-version: 1.22
+          go-version: 1.23.1
           cache: true
 
       - name: GCP auth
@@ -96,15 +96,15 @@ jobs:
       # copy the caches from prepare
       - shell: bash
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: dist/linux
           name: linux-${{ env.sha_short }}
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: dist/darwin
           name: darwin-${{ env.sha_short }}
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: dist/windows
           name: windows-${{ env.sha_short }}
@@ -137,7 +137,7 @@ jobs:
       # For macOS, we need to modify the hashes for the zips ot match
       # those of the notarized ZIPs, rather than the build output zips.
       - name: Checkout homebrew-otterize
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
           repository: otterize/homebrew-otterize
@@ -149,7 +149,7 @@ jobs:
     steps:
 
       - name: Checkout docs
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
           repository: otterize/docs
@@ -172,7 +172,7 @@ jobs:
     needs: release
     steps:
       - name: Checkout docs
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
           repository: otterize/network-mapper
@@ -195,7 +195,7 @@ jobs:
     needs: release
     steps:
       - name: Checkout CLI
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.OTTERIZEBOT_GITHUB_TOKEN }}
           path: ./cli
