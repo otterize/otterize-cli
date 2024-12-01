@@ -362,6 +362,12 @@
             },
             "type": "array"
           },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/CallFinding"
+            },
+            "type": "array"
+          },
           "server": {
             "properties": {
               "id": {
@@ -372,12 +378,6 @@
               "id"
             ],
             "type": "object"
-          },
-          "violations": {
-            "items": {
-              "$ref": "#/components/schemas/CallViolation"
-            },
-            "type": "array"
           }
         },
         "required": [
@@ -387,7 +387,7 @@
           "appliedIntents",
           "accessStatus",
           "accessStatuses",
-          "violations"
+          "findings"
         ],
         "type": "object"
       },
@@ -402,6 +402,9 @@
           },
           "featureFlags": {
             "$ref": "#/components/schemas/FeatureFlags"
+          },
+          "includeOnlyClientsMatchingFilter": {
+            "type": "boolean"
           },
           "lastSeen": {
             "$ref": "#/components/schemas/TimeFilterValue"
@@ -636,7 +639,7 @@
         ],
         "type": "object"
       },
-      "CallViolation": {
+      "CallFinding": {
         "properties": {
           "code": {
             "enum": [
@@ -644,6 +647,7 @@
               "PCI_4_0_1_1",
               "PCI_4_0_1_1_2",
               "PCI_4_0_1_1_4",
+              "PCI_4_0_1_1_6",
               "PCI_4_0_1_2",
               "PCI_4_0_1_2_1",
               "PCI_4_0_1_3",
@@ -1277,6 +1281,25 @@
         },
         "type": "object"
       },
+      "DetectedCloudServer": {
+        "properties": {
+          "cloudProvider": {
+            "type": "string"
+          },
+          "cloudService": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cloudProvider",
+          "cloudService",
+          "region"
+        ],
+        "type": "object"
+      },
       "EdgeAccessStatus": {
         "properties": {
           "reason": {
@@ -1287,6 +1310,7 @@
               "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
               "ALLOWED_BY_APPLIED_INTENTS_DATABASE_OVERLY_PERMISSIVE",
               "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
+              "WOULD_BE_ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
               "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
               "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
               "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE",
@@ -1311,7 +1335,10 @@
               "INTERNET_ACCESS_STATUS_UNKNOWN",
               "NO_INTENTS_FOUND_OF_RELEVANT_TYPE",
               "IGNORED_IN_CALCULATION",
-              "INTERNET_INTENTS_ENFORCEMENT_DISABLED"
+              "INTERNET_INTENTS_ENFORCEMENT_DISABLED",
+              "BLOCKED_BY_DEFAULT_DENY_MISSING_EXTERNAL_TRAFFIC_POLICY",
+              "BLOCKED_BY_APPLIED_INTENTS_MISSING_EXTERNAL_TRAFFIC_POLICY",
+              "ALLOWED_BY_EXTERNALLY_MANAGED_NETWORK_POLICY"
             ],
             "type": "string"
           },
@@ -1324,6 +1351,7 @@
                 "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
                 "ALLOWED_BY_APPLIED_INTENTS_DATABASE_OVERLY_PERMISSIVE",
                 "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
+                "WOULD_BE_ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
                 "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
                 "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
                 "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE",
@@ -1348,7 +1376,10 @@
                 "INTERNET_ACCESS_STATUS_UNKNOWN",
                 "NO_INTENTS_FOUND_OF_RELEVANT_TYPE",
                 "IGNORED_IN_CALCULATION",
-                "INTERNET_INTENTS_ENFORCEMENT_DISABLED"
+                "INTERNET_INTENTS_ENFORCEMENT_DISABLED",
+                "BLOCKED_BY_DEFAULT_DENY_MISSING_EXTERNAL_TRAFFIC_POLICY",
+                "BLOCKED_BY_APPLIED_INTENTS_MISSING_EXTERNAL_TRAFFIC_POLICY",
+                "ALLOWED_BY_EXTERNALLY_MANAGED_NETWORK_POLICY"
               ],
               "type": "string"
             },
@@ -1842,6 +1873,9 @@
           "featureFlags": {
             "type": "object"
           },
+          "includeOnlyClientsMatchingFilter": {
+            "type": "boolean"
+          },
           "lastSeen": {
             "type": "object"
           },
@@ -2010,6 +2044,9 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "search": {
+            "type": "string"
           },
           "serviceIds": {
             "items": {
@@ -2278,6 +2315,18 @@
       "Intent": {
         "properties": {
           "awsActions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "azureActions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "azureDataActions": {
             "items": {
               "type": "string"
             },
@@ -2879,6 +2928,12 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "ignoredCloudDomains": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
           }
         },
         "type": "object"
@@ -2896,6 +2951,12 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "ignoredCloudDomains": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
           }
         },
         "type": "object"
@@ -2907,6 +2968,16 @@
             "type": "integer"
           },
           "offset": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PaginationMeta": {
+        "description": " Pagination types ",
+        "properties": {
+          "total": {
             "format": "int32",
             "type": "integer"
           }
@@ -2975,7 +3046,9 @@
               "IGNORED_IN_CALCULATION",
               "PROTECTED_BY_DATABASE_INTEGRATION",
               "PROTECTED_BY_AWS_IAM_INTEGRATION",
-              "PROTECTED_BY_INTERNET_INTENTS"
+              "PROTECTED_BY_INTERNET_INTENTS",
+              "SERVER_EXTERNAL_ACCESS_POLICY_CREATED",
+              "EXTERNALLY_MANAGED_POLICY_WORKLOAD"
             ],
             "type": "string"
           },
@@ -3043,6 +3116,9 @@
               "id"
             ],
             "type": "object"
+          },
+          "detectedCloudServer": {
+            "$ref": "#/components/schemas/DetectedCloudServer"
           },
           "discoveredByIntegration": {
             "properties": {
@@ -3144,7 +3220,8 @@
                 "INTERNET",
                 "DATABASE_USER",
                 "KUBERNETES_LOAD_BALANCER",
-                "AWS_VISIBILITY_EKS"
+                "AWS_VISIBILITY_EKS",
+                "DETECTED_CLOUD_SERVER"
               ],
               "type": "string"
             },
@@ -3213,6 +3290,31 @@
             "$ref": "#/components/schemas/ClientIntentsFiles"
           }
         },
+        "type": "object"
+      },
+      "ServicesResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "required": [
+          "data"
+        ],
         "type": "object"
       },
       "SlackChannelInfo": {
@@ -3433,7 +3535,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "370beb668a8c6d984e1b58bfc53e5d5a0dc9fa3b"
+    "x-revision": "69bf2bc7064889412b27dacd1fccb71ed6911b72"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -3494,6 +3596,87 @@
           }
         },
         "summary": "Get access graph",
+        "tags": [
+          "access graph"
+        ]
+      }
+    },
+    "/access-graph/client-intents": {
+      "post": {
+        "description": " Get service ClientIntents by filter ",
+        "operationId": "clientIntents_query",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "clusterIds": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "featureFlags": {
+                    "$ref": "#/components/schemas/InputFeatureFlags"
+                  },
+                  "filter": {
+                    "$ref": "#/components/schemas/InputServiceFilter"
+                  },
+                  "lastSeenAfter": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filter"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ClientIntentsFileRepresentation"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": " Get service ClientIntents by filter "
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": " Get service ClientIntents by filter ",
         "tags": [
           "access graph"
         ]
@@ -7433,6 +7616,78 @@
         ]
       }
     },
+    "/paginate-services": {
+      "get": {
+        "description": "Paginate services",
+        "operationId": "paginateServices_query",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "filter",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/InputServiceFilter"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pagination",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PaginationInput"
+            }
+          },
+          {
+            "in": "query",
+            "name": "featureFlags",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/InputFeatureFlags"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServicesResponse"
+                }
+              }
+            },
+            "description": "Paginate services"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Paginate services",
+        "tags": [
+          "services"
+        ]
+      }
+    },
     "/ping": {
       "get": {
         "description": "Checks the availability of the API server",
@@ -7606,6 +7861,14 @@
             "required": false,
             "schema": {
               "$ref": "#/components/schemas/InputServiceFilter"
+            }
+          },
+          {
+            "in": "query",
+            "name": "featureFlags",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/InputFeatureFlags"
             }
           }
         ],

@@ -36,34 +36,35 @@ const (
 	EKS AWSVisibilityResourceType = "EKS"
 )
 
-// Defines values for CallViolationCode.
+// Defines values for CallFindingCode.
 const (
-	CallViolationCodePCI40                                 CallViolationCode = "PCI_4_0"
-	CallViolationCodePCI4011                               CallViolationCode = "PCI_4_0_1_1"
-	CallViolationCodePCI40112                              CallViolationCode = "PCI_4_0_1_1_2"
-	CallViolationCodePCI40114                              CallViolationCode = "PCI_4_0_1_1_4"
-	CallViolationCodePCI4012                               CallViolationCode = "PCI_4_0_1_2"
-	CallViolationCodePCI40121                              CallViolationCode = "PCI_4_0_1_2_1"
-	CallViolationCodePCI4013                               CallViolationCode = "PCI_4_0_1_3"
-	CallViolationCodePCI40134                              CallViolationCode = "PCI_4_0_1_3_4"
-	CallViolationCodePCI40136                              CallViolationCode = "PCI_4_0_1_3_6"
-	CallViolationCodePCI4071                               CallViolationCode = "PCI_4_0_7_1"
-	CallViolationCodePCI4072                               CallViolationCode = "PCI_4_0_7_2"
-	CallViolationCodePCI4087                               CallViolationCode = "PCI_4_0_8_7"
-	CallViolationCodeZEROTRUST                             CallViolationCode = "ZERO_TRUST"
-	CallViolationCodeZEROTRUSTALLINTRACLUSTERACCESSCOVERED CallViolationCode = "ZERO_TRUST_ALL_INTRA_CLUSTER_ACCESS_COVERED"
-	CallViolationCodeZEROTRUSTDEFAULTDENY                  CallViolationCode = "ZERO_TRUST_DEFAULT_DENY"
-	CallViolationCodeZEROTRUSTEGRESSACCESSCOVERED          CallViolationCode = "ZERO_TRUST_EGRESS_ACCESS_COVERED"
-	CallViolationCodeZEROTRUSTEXTERNALINGRESSTAGGED        CallViolationCode = "ZERO_TRUST_EXTERNAL_INGRESS_TAGGED"
-	CallViolationCodeZEROTRUSTSENSITIVE                    CallViolationCode = "ZERO_TRUST_SENSITIVE"
+	CallFindingCodePCI40                                 CallFindingCode = "PCI_4_0"
+	CallFindingCodePCI4011                               CallFindingCode = "PCI_4_0_1_1"
+	CallFindingCodePCI40112                              CallFindingCode = "PCI_4_0_1_1_2"
+	CallFindingCodePCI40114                              CallFindingCode = "PCI_4_0_1_1_4"
+	CallFindingCodePCI40116                              CallFindingCode = "PCI_4_0_1_1_6"
+	CallFindingCodePCI4012                               CallFindingCode = "PCI_4_0_1_2"
+	CallFindingCodePCI40121                              CallFindingCode = "PCI_4_0_1_2_1"
+	CallFindingCodePCI4013                               CallFindingCode = "PCI_4_0_1_3"
+	CallFindingCodePCI40134                              CallFindingCode = "PCI_4_0_1_3_4"
+	CallFindingCodePCI40136                              CallFindingCode = "PCI_4_0_1_3_6"
+	CallFindingCodePCI4071                               CallFindingCode = "PCI_4_0_7_1"
+	CallFindingCodePCI4072                               CallFindingCode = "PCI_4_0_7_2"
+	CallFindingCodePCI4087                               CallFindingCode = "PCI_4_0_8_7"
+	CallFindingCodeZEROTRUST                             CallFindingCode = "ZERO_TRUST"
+	CallFindingCodeZEROTRUSTALLINTRACLUSTERACCESSCOVERED CallFindingCode = "ZERO_TRUST_ALL_INTRA_CLUSTER_ACCESS_COVERED"
+	CallFindingCodeZEROTRUSTDEFAULTDENY                  CallFindingCode = "ZERO_TRUST_DEFAULT_DENY"
+	CallFindingCodeZEROTRUSTEGRESSACCESSCOVERED          CallFindingCode = "ZERO_TRUST_EGRESS_ACCESS_COVERED"
+	CallFindingCodeZEROTRUSTEXTERNALINGRESSTAGGED        CallFindingCode = "ZERO_TRUST_EXTERNAL_INGRESS_TAGGED"
+	CallFindingCodeZEROTRUSTSENSITIVE                    CallFindingCode = "ZERO_TRUST_SENSITIVE"
 )
 
-// Defines values for CallViolationStandard.
+// Defines values for CallFindingStandard.
 const (
-	CallViolationStandardHIPAA     CallViolationStandard = "HIPAA"
-	CallViolationStandardPCI40     CallViolationStandard = "PCI_4_0"
-	CallViolationStandardPII       CallViolationStandard = "PII"
-	CallViolationStandardZEROTRUST CallViolationStandard = "ZERO_TRUST"
+	CallFindingStandardHIPAA     CallFindingStandard = "HIPAA"
+	CallFindingStandardPCI40     CallFindingStandard = "PCI_4_0"
+	CallFindingStandardPII       CallFindingStandard = "PII"
+	CallFindingStandardZEROTRUST CallFindingStandard = "ZERO_TRUST"
 )
 
 // Defines values for ClientIntentsRowDiff.
@@ -118,6 +119,7 @@ const (
 	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSHTTPOVERLYPERMISSIVE                EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE"
 	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSKAFKAOVERLYPERMISSIVE               EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE"
 	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE                    EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonALLOWEDBYEXTERNALLYMANAGEDNETWORKPOLICY                    EdgeAccessStatusReason = "ALLOWED_BY_EXTERNALLY_MANAGED_NETWORK_POLICY"
 	EdgeAccessStatusReasonALLOWEDBYEXTERNALTRAFFICNETWORKPOLICY                      EdgeAccessStatusReason = "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY"
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSDATABASERESOURCEMISMATCH            EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_DATABASE_RESOURCE_MISMATCH"
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSDATABASEUNDERPERMISSIVE             EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_DATABASE_UNDER_PERMISSIVE"
@@ -125,10 +127,12 @@ const (
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSHTTPUNDERPERMISSIVE                 EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE"
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSKAFKARESOURCEMISMATCH               EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_KAFKA_RESOURCE_MISMATCH"
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSKAFKAUNDERPERMISSIVE                EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_KAFKA_UNDER_PERMISSIVE"
+	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSMISSINGEXTERNALTRAFFICPOLICY        EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_MISSING_EXTERNAL_TRAFFIC_POLICY"
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSRESOURCEMISMATCH                    EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH"
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSUNDERPERMISSIVE                     EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE"
 	EdgeAccessStatusReasonBLOCKEDBYDATABASEENFORCEMENTCONFIGMISSINGAPPLIEDINTENTS    EdgeAccessStatusReason = "BLOCKED_BY_DATABASE_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS"
 	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENY                                       EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY"
+	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENYMISSINGEXTERNALTRAFFICPOLICY           EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY_MISSING_EXTERNAL_TRAFFIC_POLICY"
 	EdgeAccessStatusReasonBLOCKEDBYKAFKAENFORCEMENTCONFIGMISSINGAPPLIEDINTENTS       EdgeAccessStatusReason = "BLOCKED_BY_KAFKA_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS"
 	EdgeAccessStatusReasonCLIENTISTIOSIDECARMISSING                                  EdgeAccessStatusReason = "CLIENT_ISTIO_SIDECAR_MISSING"
 	EdgeAccessStatusReasonIGNOREDINCALCULATION                                       EdgeAccessStatusReason = "IGNORED_IN_CALCULATION"
@@ -144,6 +148,7 @@ const (
 	EdgeAccessStatusReasonNOTINPROTECTEDSERVICES                                     EdgeAccessStatusReason = "NOT_IN_PROTECTED_SERVICES"
 	EdgeAccessStatusReasonSERVERISTIOSIDECARMISSING                                  EdgeAccessStatusReason = "SERVER_ISTIO_SIDECAR_MISSING"
 	EdgeAccessStatusReasonSHAREDSERVICEACCOUNT                                       EdgeAccessStatusReason = "SHARED_SERVICE_ACCOUNT"
+	EdgeAccessStatusReasonWOULDBEALLOWEDBYEXTERNALTRAFFICNETWORKPOLICY               EdgeAccessStatusReason = "WOULD_BE_ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY"
 )
 
 // Defines values for EdgeAccessStatusReasons.
@@ -153,6 +158,7 @@ const (
 	EdgeAccessStatusReasonsALLOWEDBYAPPLIEDINTENTSHTTPOVERLYPERMISSIVE                EdgeAccessStatusReasons = "ALLOWED_BY_APPLIED_INTENTS_HTTP_OVERLY_PERMISSIVE"
 	EdgeAccessStatusReasonsALLOWEDBYAPPLIEDINTENTSKAFKAOVERLYPERMISSIVE               EdgeAccessStatusReasons = "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE"
 	EdgeAccessStatusReasonsALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE                    EdgeAccessStatusReasons = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
+	EdgeAccessStatusReasonsALLOWEDBYEXTERNALLYMANAGEDNETWORKPOLICY                    EdgeAccessStatusReasons = "ALLOWED_BY_EXTERNALLY_MANAGED_NETWORK_POLICY"
 	EdgeAccessStatusReasonsALLOWEDBYEXTERNALTRAFFICNETWORKPOLICY                      EdgeAccessStatusReasons = "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY"
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSDATABASERESOURCEMISMATCH            EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_DATABASE_RESOURCE_MISMATCH"
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSDATABASEUNDERPERMISSIVE             EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_DATABASE_UNDER_PERMISSIVE"
@@ -160,10 +166,12 @@ const (
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSHTTPUNDERPERMISSIVE                 EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_HTTP_UNDER_PERMISSIVE"
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSKAFKARESOURCEMISMATCH               EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_KAFKA_RESOURCE_MISMATCH"
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSKAFKAUNDERPERMISSIVE                EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_KAFKA_UNDER_PERMISSIVE"
+	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSMISSINGEXTERNALTRAFFICPOLICY        EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_MISSING_EXTERNAL_TRAFFIC_POLICY"
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSRESOURCEMISMATCH                    EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH"
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSUNDERPERMISSIVE                     EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE"
 	EdgeAccessStatusReasonsBLOCKEDBYDATABASEENFORCEMENTCONFIGMISSINGAPPLIEDINTENTS    EdgeAccessStatusReasons = "BLOCKED_BY_DATABASE_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS"
 	EdgeAccessStatusReasonsBLOCKEDBYDEFAULTDENY                                       EdgeAccessStatusReasons = "BLOCKED_BY_DEFAULT_DENY"
+	EdgeAccessStatusReasonsBLOCKEDBYDEFAULTDENYMISSINGEXTERNALTRAFFICPOLICY           EdgeAccessStatusReasons = "BLOCKED_BY_DEFAULT_DENY_MISSING_EXTERNAL_TRAFFIC_POLICY"
 	EdgeAccessStatusReasonsBLOCKEDBYKAFKAENFORCEMENTCONFIGMISSINGAPPLIEDINTENTS       EdgeAccessStatusReasons = "BLOCKED_BY_KAFKA_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS"
 	EdgeAccessStatusReasonsCLIENTISTIOSIDECARMISSING                                  EdgeAccessStatusReasons = "CLIENT_ISTIO_SIDECAR_MISSING"
 	EdgeAccessStatusReasonsIGNOREDINCALCULATION                                       EdgeAccessStatusReasons = "IGNORED_IN_CALCULATION"
@@ -179,6 +187,7 @@ const (
 	EdgeAccessStatusReasonsNOTINPROTECTEDSERVICES                                     EdgeAccessStatusReasons = "NOT_IN_PROTECTED_SERVICES"
 	EdgeAccessStatusReasonsSERVERISTIOSIDECARMISSING                                  EdgeAccessStatusReasons = "SERVER_ISTIO_SIDECAR_MISSING"
 	EdgeAccessStatusReasonsSHAREDSERVICEACCOUNT                                       EdgeAccessStatusReasons = "SHARED_SERVICE_ACCOUNT"
+	EdgeAccessStatusReasonsWOULDBEALLOWEDBYEXTERNALTRAFFICNETWORKPOLICY               EdgeAccessStatusReasons = "WOULD_BE_ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY"
 )
 
 // Defines values for EdgeAccessStatusVerdict.
@@ -282,6 +291,7 @@ const (
 
 // Defines values for ServerProtectionStatusReason.
 const (
+	ServerProtectionStatusReasonEXTERNALLYMANAGEDPOLICYWORKLOAD                   ServerProtectionStatusReason = "EXTERNALLY_MANAGED_POLICY_WORKLOAD"
 	ServerProtectionStatusReasonIGNOREDINCALCULATION                              ServerProtectionStatusReason = "IGNORED_IN_CALCULATION"
 	ServerProtectionStatusReasonINTENTSOPERATORNEVERCONNECTED                     ServerProtectionStatusReason = "INTENTS_OPERATOR_NEVER_CONNECTED"
 	ServerProtectionStatusReasonINTENTSOPERATORNOTENFORCING                       ServerProtectionStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING"
@@ -293,6 +303,7 @@ const (
 	ServerProtectionStatusReasonPROTECTEDBYKAFKAINTENTSREQUIRED                   ServerProtectionStatusReason = "PROTECTED_BY_KAFKA_INTENTS_REQUIRED"
 	ServerProtectionStatusReasonPROTECTEDBYSERVERISTIOPOLICY                      ServerProtectionStatusReason = "PROTECTED_BY_SERVER_ISTIO_POLICY"
 	ServerProtectionStatusReasonPROTECTEDBYSERVERNETWORKPOLICY                    ServerProtectionStatusReason = "PROTECTED_BY_SERVER_NETWORK_POLICY"
+	ServerProtectionStatusReasonSERVEREXTERNALACCESSPOLICYCREATED                 ServerProtectionStatusReason = "SERVER_EXTERNAL_ACCESS_POLICY_CREATED"
 	ServerProtectionStatusReasonSERVERHASKAFKASERVERCONFIGNOENFORCEMENT           ServerProtectionStatusReason = "SERVER_HAS_KAFKASERVERCONFIG_NO_ENFORCEMENT"
 	ServerProtectionStatusReasonSERVERHASNOISTIOPOLICY                            ServerProtectionStatusReason = "SERVER_HAS_NO_ISTIO_POLICY"
 	ServerProtectionStatusReasonSERVERHASNOISTIOSIDECAR                           ServerProtectionStatusReason = "SERVER_HAS_NO_ISTIO_SIDECAR"
@@ -314,6 +325,7 @@ const (
 	ServiceAccessGraphTypesAZURE                  ServiceAccessGraphTypes = "AZURE"
 	ServiceAccessGraphTypesDATABASE               ServiceAccessGraphTypes = "DATABASE"
 	ServiceAccessGraphTypesDATABASEUSER           ServiceAccessGraphTypes = "DATABASE_USER"
+	ServiceAccessGraphTypesDETECTEDCLOUDSERVER    ServiceAccessGraphTypes = "DETECTED_CLOUD_SERVER"
 	ServiceAccessGraphTypesGCP                    ServiceAccessGraphTypes = "GCP"
 	ServiceAccessGraphTypesINTERNET               ServiceAccessGraphTypes = "INTERNET"
 	ServiceAccessGraphTypesKAFKA                  ServiceAccessGraphTypes = "KAFKA"
@@ -449,20 +461,21 @@ type AccessGraphEdge struct {
 	DiscoveredIntents []struct {
 		Id string `json:"id"`
 	} `json:"discoveredIntents"`
-	Server struct {
+	Findings []CallFinding `json:"findings"`
+	Server   struct {
 		Id string `json:"id"`
 	} `json:"server"`
-	Violations []CallViolation `json:"violations"`
 }
 
 // AccessGraphFilter  Access graph filter
 type AccessGraphFilter struct {
-	ClusterIds     *IDFilterValue   `json:"clusterIds,omitempty"`
-	EnvironmentIds *IDFilterValue   `json:"environmentIds,omitempty"`
-	FeatureFlags   *FeatureFlags    `json:"featureFlags,omitempty"`
-	LastSeen       *TimeFilterValue `json:"lastSeen,omitempty"`
-	NamespaceIds   *IDFilterValue   `json:"namespaceIds,omitempty"`
-	ServiceIds     *IDFilterValue   `json:"serviceIds,omitempty"`
+	ClusterIds                       *IDFilterValue   `json:"clusterIds,omitempty"`
+	EnvironmentIds                   *IDFilterValue   `json:"environmentIds,omitempty"`
+	FeatureFlags                     *FeatureFlags    `json:"featureFlags,omitempty"`
+	IncludeOnlyClientsMatchingFilter *bool            `json:"includeOnlyClientsMatchingFilter,omitempty"`
+	LastSeen                         *TimeFilterValue `json:"lastSeen,omitempty"`
+	NamespaceIds                     *IDFilterValue   `json:"namespaceIds,omitempty"`
+	ServiceIds                       *IDFilterValue   `json:"serviceIds,omitempty"`
 }
 
 // AccessLog defines model for AccessLog.
@@ -521,18 +534,18 @@ type AzureResource struct {
 	Resource string `json:"resource"`
 }
 
-// CallViolation defines model for CallViolation.
-type CallViolation struct {
-	Code     CallViolationCode     `json:"code"`
-	Reason   string                `json:"reason"`
-	Standard CallViolationStandard `json:"standard"`
+// CallFinding defines model for CallFinding.
+type CallFinding struct {
+	Code     CallFindingCode     `json:"code"`
+	Reason   string              `json:"reason"`
+	Standard CallFindingStandard `json:"standard"`
 }
 
-// CallViolationCode defines model for CallViolation.Code.
-type CallViolationCode string
+// CallFindingCode defines model for CallFinding.Code.
+type CallFindingCode string
 
-// CallViolationStandard defines model for CallViolation.Standard.
-type CallViolationStandard string
+// CallFindingStandard defines model for CallFinding.Standard.
+type CallFindingStandard string
 
 // CertificateInformation defines model for CertificateInformation.
 type CertificateInformation struct {
@@ -718,6 +731,13 @@ type DatabaseVisibilitySettings struct {
 // DatabaseVisibilitySettingsSource defines model for DatabaseVisibilitySettings.Source.
 type DatabaseVisibilitySettingsSource string
 
+// DetectedCloudServer defines model for DetectedCloudServer.
+type DetectedCloudServer struct {
+	CloudProvider string `json:"cloudProvider"`
+	CloudService  string `json:"cloudService"`
+	Region        string `json:"region"`
+}
+
 // EdgeAccessStatus defines model for EdgeAccessStatus.
 type EdgeAccessStatus struct {
 	Reason                                EdgeAccessStatusReason    `json:"reason"`
@@ -857,12 +877,13 @@ type IDFilterValue struct {
 
 // InputAccessGraphFilter defines model for InputAccessGraphFilter.
 type InputAccessGraphFilter struct {
-	ClusterIds     *map[string]interface{} `json:"clusterIds,omitempty"`
-	EnvironmentIds *map[string]interface{} `json:"environmentIds,omitempty"`
-	FeatureFlags   *map[string]interface{} `json:"featureFlags,omitempty"`
-	LastSeen       *map[string]interface{} `json:"lastSeen,omitempty"`
-	NamespaceIds   *map[string]interface{} `json:"namespaceIds,omitempty"`
-	ServiceIds     *map[string]interface{} `json:"serviceIds,omitempty"`
+	ClusterIds                       *map[string]interface{} `json:"clusterIds,omitempty"`
+	EnvironmentIds                   *map[string]interface{} `json:"environmentIds,omitempty"`
+	FeatureFlags                     *map[string]interface{} `json:"featureFlags,omitempty"`
+	IncludeOnlyClientsMatchingFilter *bool                   `json:"includeOnlyClientsMatchingFilter,omitempty"`
+	LastSeen                         *map[string]interface{} `json:"lastSeen,omitempty"`
+	NamespaceIds                     *map[string]interface{} `json:"namespaceIds,omitempty"`
+	ServiceIds                       *map[string]interface{} `json:"serviceIds,omitempty"`
 }
 
 // InputAccessLogFilter  Access log filter
@@ -890,6 +911,7 @@ type InputServiceFilter struct {
 	EnvironmentIds *[]string               `json:"environmentIds,omitempty"`
 	IntegrationIds *[]string               `json:"integrationIds,omitempty"`
 	NamespaceIds   *[]string               `json:"namespaceIds,omitempty"`
+	Search         *string                 `json:"search,omitempty"`
 	ServiceIds     *[]string               `json:"serviceIds,omitempty"`
 	ServiceType    *map[string]interface{} `json:"serviceType,omitempty"`
 }
@@ -1115,12 +1137,25 @@ type Organization struct {
 type OrganizationSettings struct {
 	Domains             *[]string `json:"domains,omitempty"`
 	EnforcedRegulations *[]string `json:"enforcedRegulations,omitempty"`
+	IgnoredCloudDomains *[]string `json:"ignoredCloudDomains,omitempty"`
 }
 
 // OrganizationSettingsInput defines model for OrganizationSettingsInput.
 type OrganizationSettingsInput struct {
 	Domains             *[]string `json:"domains,omitempty"`
 	EnforcedRegulations *[]string `json:"enforcedRegulations,omitempty"`
+	IgnoredCloudDomains *[]string `json:"ignoredCloudDomains,omitempty"`
+}
+
+// PaginationInput defines model for PaginationInput.
+type PaginationInput struct {
+	Limit  *int32 `json:"limit,omitempty"`
+	Offset *int32 `json:"offset,omitempty"`
+}
+
+// PaginationMeta  Pagination types
+type PaginationMeta struct {
+	Total *int32 `json:"total,omitempty"`
 }
 
 // ServerAlias defines model for ServerAlias.
@@ -1170,6 +1205,7 @@ type Service struct {
 	DatabaseIntegration    *struct {
 		Id string `json:"id"`
 	} `json:"databaseIntegration,omitempty"`
+	DetectedCloudServer     *DetectedCloudServer `json:"detectedCloudServer,omitempty"`
 	DiscoveredByIntegration *struct {
 		Id string `json:"id"`
 	} `json:"discoveredByIntegration,omitempty"`
@@ -1217,6 +1253,16 @@ type ServiceClientIntents struct {
 	AppliedIntentStatus *ClientIntentStatus  `json:"appliedIntentStatus,omitempty"`
 	AsClient            *ClientIntentsFiles  `json:"asClient,omitempty"`
 	AsServer            *ClientIntentsFiles  `json:"asServer,omitempty"`
+}
+
+// ServicesResponse defines model for ServicesResponse.
+type ServicesResponse struct {
+	Data []struct {
+		Id string `json:"id"`
+	} `json:"data"`
+
+	// Meta  Pagination types
+	Meta *PaginationMeta `json:"meta,omitempty"`
 }
 
 // SlackChannelInfo defines model for SlackChannelInfo.
@@ -1300,6 +1346,16 @@ type UNEXPECTEDERROR = Error
 // AccessGraphQueryJSONBody defines parameters for AccessGraphQuery.
 type AccessGraphQueryJSONBody struct {
 	Filter *InputAccessGraphFilter `json:"filter,omitempty"`
+}
+
+// ClientIntentsQueryJSONBody defines parameters for ClientIntentsQuery.
+type ClientIntentsQueryJSONBody struct {
+	ClusterIds   *[]string          `json:"clusterIds,omitempty"`
+	FeatureFlags *InputFeatureFlags `json:"featureFlags,omitempty"`
+
+	// Filter  Service filter
+	Filter        InputServiceFilter `json:"filter"`
+	LastSeenAfter *time.Time         `json:"lastSeenAfter,omitempty"`
 }
 
 // ServiceClientIntentsQueryJSONBody defines parameters for ServiceClientIntentsQuery.
@@ -1572,6 +1628,13 @@ type UpdateOrganizationMutationJSONBody struct {
 	Settings *OrganizationSettingsInput `json:"settings,omitempty"`
 }
 
+// PaginateServicesQueryParams defines parameters for PaginateServicesQuery.
+type PaginateServicesQueryParams struct {
+	Filter       *InputServiceFilter `form:"filter,omitempty" json:"filter,omitempty"`
+	Pagination   *PaginationInput    `form:"pagination,omitempty" json:"pagination,omitempty"`
+	FeatureFlags *InputFeatureFlags  `form:"featureFlags,omitempty" json:"featureFlags,omitempty"`
+}
+
 // OneServiceQueryParams defines parameters for OneServiceQuery.
 type OneServiceQueryParams struct {
 	EnvironmentId *string `form:"environmentId,omitempty" json:"environmentId,omitempty"`
@@ -1585,6 +1648,7 @@ type ServicesQueryParams struct {
 	NamespaceId   *string             `form:"namespaceId,omitempty" json:"namespaceId,omitempty"`
 	Name          *string             `form:"name,omitempty" json:"name,omitempty"`
 	Filter        *InputServiceFilter `form:"filter,omitempty" json:"filter,omitempty"`
+	FeatureFlags  *InputFeatureFlags  `form:"featureFlags,omitempty" json:"featureFlags,omitempty"`
 }
 
 // UpdateServiceMutationJSONBody defines parameters for UpdateServiceMutation.
@@ -1594,6 +1658,9 @@ type UpdateServiceMutationJSONBody struct {
 
 // AccessGraphQueryJSONRequestBody defines body for AccessGraphQuery for application/json ContentType.
 type AccessGraphQueryJSONRequestBody AccessGraphQueryJSONBody
+
+// ClientIntentsQueryJSONRequestBody defines body for ClientIntentsQuery for application/json ContentType.
+type ClientIntentsQueryJSONRequestBody ClientIntentsQueryJSONBody
 
 // ServiceClientIntentsQueryJSONRequestBody defines body for ServiceClientIntentsQuery for application/json ContentType.
 type ServiceClientIntentsQueryJSONRequestBody ServiceClientIntentsQueryJSONBody
@@ -1771,6 +1838,11 @@ type ClientInterface interface {
 	AccessGraphQueryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	AccessGraphQuery(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ClientIntentsQuery request with any body
+	ClientIntentsQueryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ClientIntentsQuery(ctx context.Context, body ClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ServiceClientIntentsQuery request with any body
 	ServiceClientIntentsQueryWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -2004,6 +2076,9 @@ type ClientInterface interface {
 	// RemoveUserFromOrganizationMutation request
 	RemoveUserFromOrganizationMutation(ctx context.Context, id string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// PaginateServicesQuery request
+	PaginateServicesQuery(ctx context.Context, params *PaginateServicesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// PingQuery request
 	PingQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -2042,6 +2117,30 @@ func (c *Client) AccessGraphQueryWithBody(ctx context.Context, contentType strin
 
 func (c *Client) AccessGraphQuery(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewAccessGraphQueryRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ClientIntentsQueryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewClientIntentsQueryRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ClientIntentsQuery(ctx context.Context, body ClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewClientIntentsQueryRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -3108,6 +3207,18 @@ func (c *Client) RemoveUserFromOrganizationMutation(ctx context.Context, id stri
 	return c.Client.Do(req)
 }
 
+func (c *Client) PaginateServicesQuery(ctx context.Context, params *PaginateServicesQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPaginateServicesQueryRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) PingQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPingQueryRequest(c.Server)
 	if err != nil {
@@ -3225,6 +3336,46 @@ func NewAccessGraphQueryRequestWithBody(server string, contentType string, body 
 	}
 
 	operationPath := fmt.Sprintf("/access-graph")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewClientIntentsQueryRequest calls the generic ClientIntentsQuery builder with application/json body
+func NewClientIntentsQueryRequest(server string, body ClientIntentsQueryJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewClientIntentsQueryRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewClientIntentsQueryRequestWithBody generates requests for ClientIntentsQuery with any type of body
+func NewClientIntentsQueryRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/access-graph/client-intents")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -5750,6 +5901,85 @@ func NewRemoveUserFromOrganizationMutationRequest(server string, id string, user
 	return req, nil
 }
 
+// NewPaginateServicesQueryRequest generates requests for PaginateServicesQuery
+func NewPaginateServicesQueryRequest(server string, params *PaginateServicesQueryParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/paginate-services")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Filter != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Pagination != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "pagination", runtime.ParamLocationQuery, *params.Pagination); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.FeatureFlags != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "featureFlags", runtime.ParamLocationQuery, *params.FeatureFlags); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewPingQueryRequest generates requests for PingQuery
 func NewPingQueryRequest(server string) (*http.Request, error) {
 	var err error
@@ -5928,6 +6158,22 @@ func NewServicesQueryRequest(server string, params *ServicesQueryParams) (*http.
 	if params.Filter != nil {
 
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.FeatureFlags != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "featureFlags", runtime.ParamLocationQuery, *params.FeatureFlags); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -6140,6 +6386,11 @@ type ClientWithResponsesInterface interface {
 	AccessGraphQueryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AccessGraphQueryResponse, error)
 
 	AccessGraphQueryWithResponse(ctx context.Context, body AccessGraphQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*AccessGraphQueryResponse, error)
+
+	// ClientIntentsQuery request with any body
+	ClientIntentsQueryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientIntentsQueryResponse, error)
+
+	ClientIntentsQueryWithResponse(ctx context.Context, body ClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*ClientIntentsQueryResponse, error)
 
 	// ServiceClientIntentsQuery request with any body
 	ServiceClientIntentsQueryWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ServiceClientIntentsQueryResponse, error)
@@ -6373,6 +6624,9 @@ type ClientWithResponsesInterface interface {
 	// RemoveUserFromOrganizationMutation request
 	RemoveUserFromOrganizationMutationWithResponse(ctx context.Context, id string, userId string, reqEditors ...RequestEditorFn) (*RemoveUserFromOrganizationMutationResponse, error)
 
+	// PaginateServicesQuery request
+	PaginateServicesQueryWithResponse(ctx context.Context, params *PaginateServicesQueryParams, reqEditors ...RequestEditorFn) (*PaginateServicesQueryResponse, error)
+
 	// PingQuery request
 	PingQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PingQueryResponse, error)
 
@@ -6421,6 +6675,36 @@ func (r AccessGraphQueryResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r AccessGraphQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ClientIntentsQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]ClientIntentsFileRepresentation
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ClientIntentsQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ClientIntentsQueryResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -8107,6 +8391,36 @@ func (r RemoveUserFromOrganizationMutationResponse) StatusCode() int {
 	return 0
 }
 
+type PaginateServicesQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ServicesResponse
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r PaginateServicesQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PaginateServicesQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type PingQueryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -8332,6 +8646,23 @@ func (c *ClientWithResponses) AccessGraphQueryWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseAccessGraphQueryResponse(rsp)
+}
+
+// ClientIntentsQueryWithBodyWithResponse request with arbitrary body returning *ClientIntentsQueryResponse
+func (c *ClientWithResponses) ClientIntentsQueryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientIntentsQueryResponse, error) {
+	rsp, err := c.ClientIntentsQueryWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseClientIntentsQueryResponse(rsp)
+}
+
+func (c *ClientWithResponses) ClientIntentsQueryWithResponse(ctx context.Context, body ClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*ClientIntentsQueryResponse, error) {
+	rsp, err := c.ClientIntentsQuery(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseClientIntentsQueryResponse(rsp)
 }
 
 // ServiceClientIntentsQueryWithBodyWithResponse request with arbitrary body returning *ServiceClientIntentsQueryResponse
@@ -9094,6 +9425,15 @@ func (c *ClientWithResponses) RemoveUserFromOrganizationMutationWithResponse(ctx
 	return ParseRemoveUserFromOrganizationMutationResponse(rsp)
 }
 
+// PaginateServicesQueryWithResponse request returning *PaginateServicesQueryResponse
+func (c *ClientWithResponses) PaginateServicesQueryWithResponse(ctx context.Context, params *PaginateServicesQueryParams, reqEditors ...RequestEditorFn) (*PaginateServicesQueryResponse, error) {
+	rsp, err := c.PaginateServicesQuery(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePaginateServicesQueryResponse(rsp)
+}
+
 // PingQueryWithResponse request returning *PingQueryResponse
 func (c *ClientWithResponses) PingQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PingQueryResponse, error) {
 	rsp, err := c.PingQuery(ctx, reqEditors...)
@@ -9181,6 +9521,88 @@ func ParseAccessGraphQueryResponse(rsp *http.Response) (*AccessGraphQueryRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest AccessGraph
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseClientIntentsQueryResponse parses an HTTP response from a ClientIntentsQueryWithResponse call
+func ParseClientIntentsQueryResponse(rsp *http.Response) (*ClientIntentsQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ClientIntentsQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []ClientIntentsFileRepresentation
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -13773,6 +14195,88 @@ func ParseRemoveUserFromOrganizationMutationResponse(rsp *http.Response) (*Remov
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest string
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePaginateServicesQueryResponse parses an HTTP response from a PaginateServicesQueryWithResponse call
+func ParsePaginateServicesQueryResponse(rsp *http.Response) (*PaginateServicesQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PaginateServicesQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ServicesResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

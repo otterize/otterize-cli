@@ -2,25 +2,32 @@ package export
 
 import (
 	"context"
+	"fmt"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
-	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
 )
 
 const (
-	outputLocationKey       = "output"
-	outputLocationShorthand = "o"
+	OutputLocationKey       = "output"
+	OutputLocationShorthand = "o"
+	OutputTypeKey           = "output-type"
+
+	ClustersKey         = "clusters"
+	ClustersShortHand   = "c"
+	NamespacesKey       = "namespaces"
+	NamespacesShorthand = "n"
+	ServicesKey         = "services"
+	ServicesShorthand   = "s"
 )
 
 var ExportClientIntentsCmd = &cobra.Command{
-	Use:          "export <service-id>",
+	Use:          "export [<service-id>]",
 	Short:        "Export client intents for a service",
-	Args:         cobra.ExactArgs(1),
+	Args:         cobra.MaximumNArgs(1),
 	SilenceUsage: true,
 	RunE: func(_ *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
@@ -31,50 +38,55 @@ var ExportClientIntentsCmd = &cobra.Command{
 			return err
 		}
 
-		id := args[0]
-		r, err := c.ServiceClientIntentsQueryWithResponse(ctxTimeout, id, cloudapi.ServiceClientIntentsQueryJSONRequestBody{
-			AsServiceId:           nil,
-			ClusterIds:            nil,
-			EnableInternetIntents: lo.ToPtr(true),
-			FeatureFlags:          nil,
-			LastSeenAfter:         nil,
+		filter := servicesFilterFromFlags()
+		if len(args) == 1 {
+			// Backwards compatibility for passing service ID as a positional argument
+			serviceID := args[0]
+			filter.ServiceIds = lo.ToPtr(append(lo.FromPtr(filter.ServiceIds), serviceID))
+		}
+
+		r, err := c.ClientIntentsQueryWithResponse(ctxTimeout, cloudapi.ClientIntentsQueryJSONRequestBody{
+			ClusterIds:    filter.ClusterIds,
+			Filter:        filter,
+			LastSeenAfter: nil,
+			FeatureFlags:  nil,
 		})
 		if err != nil {
 			return err
 		}
 
-		serviceClientIntents := r.JSON200.AsClient
-		s := output.FormatClientIntents(serviceClientIntents)
+		outputLocation := viper.GetString(OutputLocationKey)
+		outputType := viper.GetString(OutputTypeKey)
 
-		outputLocation := viper.GetString(outputLocationKey)
-		if outputLocation == "" {
-			output.PrintStdout(s)
-		} else {
-			err := writeIntentsFile(outputLocation, s)
-			if err != nil {
-				return err
-			}
-			output.PrintStderr("Successfully wrote intents into %s", outputLocation)
-		}
-		return nil
+		return writeExportedIntents(lo.FromPtr(r.JSON200), outputLocation, outputType)
 	},
 }
 
-func writeIntentsFile(filePath string, content string) error {
-	f, err := os.Create(filePath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
+func servicesFilterFromFlags() cloudapi.InputServiceFilter {
+	filter := cloudapi.InputServiceFilter{}
 
-	_, err = f.WriteString(content)
-	if err != nil {
-		return err
+	clusters := viper.GetStringSlice(ClustersKey)
+	namespaces := viper.GetStringSlice(NamespacesKey)
+	services := viper.GetStringSlice(ServicesKey)
+
+	if len(clusters) > 0 {
+		filter.ClusterIds = lo.ToPtr(clusters)
 	}
-	return nil
+	if len(namespaces) > 0 {
+		filter.NamespaceIds = lo.ToPtr(namespaces)
+	}
+	if len(services) > 0 {
+		filter.ServiceIds = lo.ToPtr(services)
+	}
+
+	return filter
 }
 
 func init() {
-	ExportClientIntentsCmd.Flags().StringP(outputLocationKey, outputLocationShorthand, "", "file path to write the output into")
+	ExportClientIntentsCmd.Flags().StringP(OutputLocationKey, OutputLocationShorthand, "", "file or dir path to write the output into")
+	ExportClientIntentsCmd.Flags().String(OutputTypeKey, OutputTypeSingleFile, fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
 
+	ExportClientIntentsCmd.Flags().StringSliceP(ClustersKey, ClustersShortHand, nil, "filter for specific clusters")
+	ExportClientIntentsCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
+	ExportClientIntentsCmd.Flags().StringSliceP(ServicesKey, ServicesShorthand, nil, "filter for specific services")
 }

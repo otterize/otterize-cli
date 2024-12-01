@@ -237,9 +237,32 @@ func FormatServices(services []cloudapi.Service) {
 	PrintFormatList(services, "services", columns, getColumnData)
 }
 
-func FormatClientIntents(clientIntents *cloudapi.ClientIntentsFiles) string {
-	contents := lo.Map(clientIntents.Files, func(file cloudapi.ClientIntentsFileRepresentation, _ int) string {
-		return file.Content
+func formatRow(row cloudapi.ClientIntentsRow) string {
+	if row.Diff == nil {
+		return row.Text
+	}
+
+	switch lo.FromPtr(row.Diff) {
+	case cloudapi.ADDED:
+		return fmt.Sprintf("%s # Seen in discovered traffic, but not declared in ClientIntents.", row.Text)
+	case cloudapi.REMOVED:
+		return fmt.Sprintf("%s # Declared in ClientIntents, but not seen in discovered traffic.", row.Text)
+	default:
+		return row.Text
+	}
+}
+
+func FormatClientIntentsFiles(clientIntentsFiles []cloudapi.ClientIntentsFileRepresentation) string {
+	contents := lo.Map(clientIntentsFiles, func(file cloudapi.ClientIntentsFileRepresentation, _ int) string {
+		header := fmt.Sprintf("# ClientIntents for Otterize service ID %s; filename: %s", file.Service.Id, file.FileName)
+
+		rows := lo.Map(file.Rows, func(row cloudapi.ClientIntentsRow, _ int) string {
+			return formatRow(row)
+		})
+
+		all := append([]string{header}, rows...)
+
+		return strings.Join(all, "\n")
 	})
 	output := strings.Join(contents, "\n---\n")
 	return output
