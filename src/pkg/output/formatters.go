@@ -237,8 +237,8 @@ func FormatServices(services []cloudapi.Service) {
 	PrintFormatList(services, "services", columns, getColumnData)
 }
 
-func formatRow(row cloudapi.ClientIntentsRow) string {
-	if row.Diff == nil {
+func formatRow(row cloudapi.ClientIntentsRow, withDiffComments bool) string {
+	if !withDiffComments || row.Diff == nil {
 		return row.Text
 	}
 
@@ -252,12 +252,12 @@ func formatRow(row cloudapi.ClientIntentsRow) string {
 	}
 }
 
-func FormatClientIntentsFiles(clientIntentsFiles []cloudapi.ClientIntentsFileRepresentation) string {
+func FormatClientIntentsFiles(clientIntentsFiles []cloudapi.ClientIntentsFileRepresentation, withDiffComments bool) string {
 	contents := lo.Map(clientIntentsFiles, func(file cloudapi.ClientIntentsFileRepresentation, _ int) string {
 		header := fmt.Sprintf("# ClientIntents for Otterize service ID %s; filename: %s", file.Service.Id, file.FileName)
 
 		rows := lo.Map(file.Rows, func(row cloudapi.ClientIntentsRow, _ int) string {
-			return formatRow(row)
+			return formatRow(row, withDiffComments)
 		})
 
 		all := append([]string{header}, rows...)
