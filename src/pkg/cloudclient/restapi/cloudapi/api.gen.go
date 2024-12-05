@@ -20,7 +20,6 @@ import (
 
 const (
 	AccessTokenCookieScopes  = "accessTokenCookie.Scopes"
-	BearerAuthScopes         = "bearerAuth.Scopes"
 	Oauth2Scopes             = "oauth2.Scopes"
 	OrganizationHeaderScopes = "organizationHeader.Scopes"
 )
@@ -142,6 +141,7 @@ const (
 	EdgeAccessStatusReasonINTENTSOPERATORNOTENFORCINGMISSINGAPPLIEDINTENT            EdgeAccessStatusReason = "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT"
 	EdgeAccessStatusReasonINTERNETACCESSSTATUSUNKNOWN                                EdgeAccessStatusReason = "INTERNET_ACCESS_STATUS_UNKNOWN"
 	EdgeAccessStatusReasonINTERNETINTENTSENFORCEMENTDISABLED                         EdgeAccessStatusReason = "INTERNET_INTENTS_ENFORCEMENT_DISABLED"
+	EdgeAccessStatusReasonMISSINGAPPLIEDCLOUDRESOURCEINTENT                          EdgeAccessStatusReason = "MISSING_APPLIED_CLOUD_RESOURCE_INTENT"
 	EdgeAccessStatusReasonMISSINGAPPLIEDINTENT                                       EdgeAccessStatusReason = "MISSING_APPLIED_INTENT"
 	EdgeAccessStatusReasonNETWORKMAPPERNEVERCONNECTED                                EdgeAccessStatusReason = "NETWORK_MAPPER_NEVER_CONNECTED"
 	EdgeAccessStatusReasonNOINTENTSFOUNDOFRELEVANTTYPE                               EdgeAccessStatusReason = "NO_INTENTS_FOUND_OF_RELEVANT_TYPE"
@@ -181,6 +181,7 @@ const (
 	EdgeAccessStatusReasonsINTENTSOPERATORNOTENFORCINGMISSINGAPPLIEDINTENT            EdgeAccessStatusReasons = "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT"
 	EdgeAccessStatusReasonsINTERNETACCESSSTATUSUNKNOWN                                EdgeAccessStatusReasons = "INTERNET_ACCESS_STATUS_UNKNOWN"
 	EdgeAccessStatusReasonsINTERNETINTENTSENFORCEMENTDISABLED                         EdgeAccessStatusReasons = "INTERNET_INTENTS_ENFORCEMENT_DISABLED"
+	EdgeAccessStatusReasonsMISSINGAPPLIEDCLOUDRESOURCEINTENT                          EdgeAccessStatusReasons = "MISSING_APPLIED_CLOUD_RESOURCE_INTENT"
 	EdgeAccessStatusReasonsMISSINGAPPLIEDINTENT                                       EdgeAccessStatusReasons = "MISSING_APPLIED_INTENT"
 	EdgeAccessStatusReasonsNETWORKMAPPERNEVERCONNECTED                                EdgeAccessStatusReasons = "NETWORK_MAPPER_NEVER_CONNECTED"
 	EdgeAccessStatusReasonsNOINTENTSFOUNDOFRELEVANTTYPE                               EdgeAccessStatusReasons = "NO_INTENTS_FOUND_OF_RELEVANT_TYPE"
@@ -789,6 +790,7 @@ type Error struct {
 type FeatureFlags struct {
 	IsCloudSecurityEnabled          *bool `json:"isCloudSecurityEnabled,omitempty"`
 	IsCloudServicesDetectionEnabled *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
+	UseClientIntentsV2              *bool `json:"useClientIntentsV2,omitempty"`
 }
 
 // GCPInfo defines model for GCPInfo.
@@ -903,6 +905,7 @@ type InputAccessLogFilter struct {
 type InputFeatureFlags struct {
 	IsCloudSecurityEnabled          *bool `json:"isCloudSecurityEnabled,omitempty"`
 	IsCloudServicesDetectionEnabled *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
+	UseClientIntentsV2              *bool `json:"useClientIntentsV2,omitempty"`
 }
 
 // InputServiceFilter  Service filter

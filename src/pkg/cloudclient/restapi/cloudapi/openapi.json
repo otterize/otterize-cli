@@ -1329,6 +1329,7 @@
               "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT",
               "INTENTS_OPERATOR_NOT_ENFORCING_KAFKA_INTENTS_NOT_REQUIRED_FOR_TOPIC",
               "MISSING_APPLIED_INTENT",
+              "MISSING_APPLIED_CLOUD_RESOURCE_INTENT",
               "NOT_IN_PROTECTED_SERVICES",
               "INTENTS_OPERATOR_NEVER_CONNECTED",
               "NETWORK_MAPPER_NEVER_CONNECTED",
@@ -1370,6 +1371,7 @@
                 "INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT",
                 "INTENTS_OPERATOR_NOT_ENFORCING_KAFKA_INTENTS_NOT_REQUIRED_FOR_TOPIC",
                 "MISSING_APPLIED_INTENT",
+                "MISSING_APPLIED_CLOUD_RESOURCE_INTENT",
                 "NOT_IN_PROTECTED_SERVICES",
                 "INTENTS_OPERATOR_NEVER_CONNECTED",
                 "NETWORK_MAPPER_NEVER_CONNECTED",
@@ -1513,6 +1515,9 @@
             "type": "boolean"
           },
           "isCloudServicesDetectionEnabled": {
+            "type": "boolean"
+          },
+          "useClientIntentsV2": {
             "type": "boolean"
           }
         },
@@ -1927,6 +1932,9 @@
             "type": "boolean"
           },
           "isCloudServicesDetectionEnabled": {
+            "type": "boolean"
+          },
+          "useClientIntentsV2": {
             "type": "boolean"
           }
         },
@@ -3507,12 +3515,6 @@
         "name": "access_token",
         "type": "apiKey"
       },
-      "bearerAuth": {
-        "bearerFormat": "JWT",
-        "description": "Otterize user JWT token.",
-        "scheme": "bearer",
-        "type": "http"
-      },
       "oauth2": {
         "description": "Use client ID and client secret from an Otterize integration to authenticate.",
         "flows": {
@@ -3535,7 +3537,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "69bf2bc7064889412b27dacd1fccb71ed6911b72"
+    "x-revision": "282405d818bdec5386a77301294342aa9f697470"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -8168,12 +8170,6 @@
     },
     {
       "accessTokenCookie": [
-      ],
-      "organizationHeader": [
-      ]
-    },
-    {
-      "bearerAuth": [
       ],
       "organizationHeader": [
       ]
