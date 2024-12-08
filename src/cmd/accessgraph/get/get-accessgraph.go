@@ -3,13 +3,17 @@ package get
 import (
 	"context"
 	"fmt"
+	"github.com/otterize/otterize-cli/src/pkg/cli"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/resources"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
+	"github.com/otterize/otterize-cli/src/pkg/utils/must"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"slices"
 	"time"
 )
 
@@ -20,15 +24,6 @@ const (
 	namespacesIdsKey = "namespaces-ids"
 	servicesIdsKey   = "services-ids"
 )
-
-func getInputIncludeFilterFromViper(key string) *map[string]any {
-	if viper.IsSet(key) {
-		return &map[string]any{
-			"include": lo.ToPtr(viper.GetStringSlice(key)),
-		}
-	}
-	return nil
-}
 
 func getInputTimeFilterValueFromViper(key string) (*map[string]any, error) {
 	if viper.IsSet(key) {
@@ -58,18 +53,10 @@ var GetAccessGraph = &cobra.Command{
 			return err
 		}
 
-		filter := cloudapi.InputAccessGraphFilter{
-			ClusterIds:     getInputIncludeFilterFromViper(clustersIdsKey),
-			EnvironmentIds: getInputIncludeFilterFromViper(envIdsKey),
-			NamespaceIds:   getInputIncludeFilterFromViper(namespacesIdsKey),
-			ServiceIds:     getInputIncludeFilterFromViper(servicesIdsKey),
-		}
-
-		lastSeenFilter, err := getInputTimeFilterValueFromViper(lastSeenAfterKey)
+		filter, err := accessGraphFilterFromFlags(ctxTimeout, c)
 		if err != nil {
 			return err
 		}
-		filter.LastSeen = lastSeenFilter
 
 		r, err := c.AccessGraphQueryWithResponse(ctxTimeout, cloudapi.AccessGraphQueryJSONRequestBody{Filter: &filter})
 		if err != nil {
@@ -81,10 +68,59 @@ var GetAccessGraph = &cobra.Command{
 	},
 }
 
+func accessGraphFilterFromFlags(ctx context.Context, c *cloudclient.Client) (cloudapi.InputAccessGraphFilter, error) {
+	resolver := resources.NewResolver(c).WithContext(ctx)
+	if viper.IsSet(cli.ClustersKey) || viper.IsSet(clustersIdsKey) {
+		clusters := slices.Concat(viper.GetStringSlice(cli.ClustersKey), viper.GetStringSlice(clustersIdsKey))
+		if err := resolver.LoadClusters(clusters); err != nil {
+			return cloudapi.InputAccessGraphFilter{}, err
+		}
+	}
+
+	if viper.IsSet(cli.EnvironmentsKey) || viper.IsSet(envIdsKey) {
+		envs := slices.Concat(viper.GetStringSlice(cli.EnvironmentsKey), viper.GetStringSlice(envIdsKey))
+		if err := resolver.LoadEnvironments(envs); err != nil {
+			return cloudapi.InputAccessGraphFilter{}, err
+		}
+	}
+
+	if viper.IsSet(cli.NamespacesKey) || viper.IsSet(namespacesIdsKey) {
+		namespaces := slices.Concat(viper.GetStringSlice(cli.NamespacesKey), viper.GetStringSlice(namespacesIdsKey))
+		if err := resolver.LoadNamespaces(namespaces); err != nil {
+			return cloudapi.InputAccessGraphFilter{}, err
+		}
+	}
+
+	if viper.IsSet(cli.ServicesKey) || viper.IsSet(servicesIdsKey) {
+		services := slices.Concat(viper.GetStringSlice(cli.ServicesKey), viper.GetStringSlice(servicesIdsKey))
+		if err := resolver.LoadServices(services); err != nil {
+			return cloudapi.InputAccessGraphFilter{}, err
+		}
+	}
+
+	filter := resolver.BuildAccessGraphFilter()
+
+	lastSeenFilter, err := getInputTimeFilterValueFromViper(lastSeenAfterKey)
+	if err != nil {
+		return cloudapi.InputAccessGraphFilter{}, err
+	}
+	filter.LastSeen = lastSeenFilter
+
+	return filter, nil
+}
+
 func init() {
-	GetAccessGraph.Flags().StringSlice(clustersIdsKey, nil, "Cluster IDs")
-	GetAccessGraph.Flags().StringSlice(envIdsKey, nil, "Environment IDs")
 	GetAccessGraph.Flags().String(lastSeenAfterKey, "", "Last seen after in RFC3339 format (e.g. 2006-01-02T15:04:05Z)")
+
+	// Deprecated flags
+	GetAccessGraph.Flags().StringSlice(clustersIdsKey, nil, "Cluster IDs")
+	must.Must(GetAccessGraph.Flags().MarkDeprecated(clustersIdsKey, fmt.Sprintf("use %s instead", cli.ClustersKey)))
+	GetAccessGraph.Flags().StringSlice(envIdsKey, nil, "Environment IDs")
+	must.Must(GetAccessGraph.Flags().MarkDeprecated(envIdsKey, fmt.Sprintf("use %s instead", cli.EnvironmentsKey)))
 	GetAccessGraph.Flags().StringSlice(namespacesIdsKey, nil, "Namespace IDs")
+	must.Must(GetAccessGraph.Flags().MarkDeprecated(namespacesIdsKey, fmt.Sprintf("use %s instead", cli.NamespacesKey)))
 	GetAccessGraph.Flags().StringSlice(servicesIdsKey, nil, "Service IDs")
+	must.Must(GetAccessGraph.Flags().MarkDeprecated(servicesIdsKey, fmt.Sprintf("use %s instead", cli.ServicesKey)))
+
+	cli.RegisterStandardFilterFlags(GetAccessGraph)
 }

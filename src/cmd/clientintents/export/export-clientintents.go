@@ -3,6 +3,7 @@ package export
 import (
 	"context"
 	"fmt"
+	"github.com/otterize/otterize-cli/src/pkg/cli"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/resources"
@@ -21,15 +22,6 @@ const (
 	OutputVersionShortHand    = "v"
 	OutputVersionV1           = "v1"
 	OutputVersionV2           = "v2"
-
-	ClustersKey           = "clusters"
-	ClustersShortHand     = "c"
-	EnvironmentsKey       = "envs"
-	EnvironmentsShorthand = "e"
-	NamespacesKey         = "namespaces"
-	NamespacesShorthand   = "n"
-	ServicesKey           = "services"
-	ServicesShorthand     = "s"
 )
 
 var ExportClientIntentsCmd = &cobra.Command{
@@ -46,20 +38,10 @@ var ExportClientIntentsCmd = &cobra.Command{
 			return err
 		}
 
-		resolver := resources.NewResolver(c).WithContext(ctxTimeout)
-		if err := resolver.LoadClusters(viper.GetStringSlice(ClustersKey)); err != nil {
+		filter, err := servicesFilterFromFlags(ctxTimeout, c)
+		if err != nil {
 			return err
 		}
-		if err := resolver.LoadEnvironments(viper.GetStringSlice(EnvironmentsKey)); err != nil {
-			return err
-		}
-		if err := resolver.LoadNamespaces(viper.GetStringSlice(NamespacesKey)); err != nil {
-			return err
-		}
-		if err := resolver.LoadServices(viper.GetStringSlice(ServicesKey)); err != nil {
-			return err
-		}
-		filter := resolver.BuildServicesFilter()
 
 		if len(args) == 1 {
 			// Backwards compatibility for passing service ID as a positional argument
@@ -92,14 +74,36 @@ var ExportClientIntentsCmd = &cobra.Command{
 	},
 }
 
+func servicesFilterFromFlags(ctx context.Context, c *cloudclient.Client) (cloudapi.InputServiceFilter, error) {
+	resolver := resources.NewResolver(c).WithContext(ctx)
+	if viper.IsSet(cli.ClustersKey) {
+		if err := resolver.LoadClusters(viper.GetStringSlice(cli.ClustersKey)); err != nil {
+			return cloudapi.InputServiceFilter{}, err
+		}
+	}
+	if viper.IsSet(cli.EnvironmentsKey) {
+		if err := resolver.LoadEnvironments(viper.GetStringSlice(cli.EnvironmentsKey)); err != nil {
+			return cloudapi.InputServiceFilter{}, err
+		}
+	}
+	if viper.IsSet(cli.NamespacesKey) {
+		if err := resolver.LoadNamespaces(viper.GetStringSlice(cli.NamespacesKey)); err != nil {
+			return cloudapi.InputServiceFilter{}, err
+		}
+	}
+	if viper.IsSet(cli.ServicesKey) {
+		if err := resolver.LoadServices(viper.GetStringSlice(cli.ServicesKey)); err != nil {
+			return cloudapi.InputServiceFilter{}, err
+		}
+	}
+	return resolver.BuildServicesFilter(), nil
+}
+
 func init() {
 	ExportClientIntentsCmd.Flags().StringP(OutputLocationKey, OutputLocationShorthand, "", "file or dir path to write the output into")
 	ExportClientIntentsCmd.Flags().String(OutputTypeKey, OutputTypeSingleFile, fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
 	ExportClientIntentsCmd.Flags().Bool(OutputWithDiffCommentsKey, false, "include applied vs discovered comments in output intents")
 	ExportClientIntentsCmd.Flags().StringP(OutputVersionKey, OutputVersionShortHand, OutputVersionV1, fmt.Sprintf("Output ClientIntents api version - %s/%s", OutputVersionV1, OutputVersionV2))
 
-	ExportClientIntentsCmd.Flags().StringSliceP(ClustersKey, ClustersShortHand, nil, "filter for specific clusters")
-	ExportClientIntentsCmd.Flags().StringSliceP(EnvironmentsKey, EnvironmentsShorthand, nil, "filter for specific environments")
-	ExportClientIntentsCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
-	ExportClientIntentsCmd.Flags().StringSliceP(ServicesKey, ServicesShorthand, nil, "filter for specific services")
+	cli.RegisterStandardFilterFlags(ExportClientIntentsCmd)
 }

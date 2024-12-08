@@ -118,9 +118,27 @@ func (r *Resolver) LoadServices(services []string) error {
 
 func (r *Resolver) BuildServicesFilter() cloudapi.InputServiceFilter {
 	return cloudapi.InputServiceFilter{
-		ClusterIds:     lo.ToPtr(r.context.clusterIDs),
-		EnvironmentIds: lo.ToPtr(r.context.environmentIDs),
-		NamespaceIds:   lo.ToPtr(r.context.namespaceIDs),
-		ServiceIds:     lo.ToPtr(r.context.serviceIDs),
+		ClusterIds:     lo.EmptyableToPtr(r.context.clusterIDs),
+		EnvironmentIds: lo.EmptyableToPtr(r.context.environmentIDs),
+		NamespaceIds:   lo.EmptyableToPtr(r.context.namespaceIDs),
+		ServiceIds:     lo.EmptyableToPtr(r.context.serviceIDs),
+	}
+}
+
+func toIncludeFilterIfNonEmpty(items []string) *map[string]any {
+	if len(items) == 0 {
+		return nil
+	}
+	return &map[string]any{
+		"include": lo.ToPtr(items),
+	}
+}
+
+func (r *Resolver) BuildAccessGraphFilter() cloudapi.InputAccessGraphFilter {
+	return cloudapi.InputAccessGraphFilter{
+		ClusterIds:     toIncludeFilterIfNonEmpty(r.context.clusterIDs),
+		EnvironmentIds: toIncludeFilterIfNonEmpty(r.context.environmentIDs),
+		NamespaceIds:   toIncludeFilterIfNonEmpty(r.context.namespaceIDs),
+		ServiceIds:     toIncludeFilterIfNonEmpty(r.context.serviceIDs),
 	}
 }
