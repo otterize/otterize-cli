@@ -86,7 +86,7 @@ type ResponseBody struct {
 }
 
 func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
-	logrus.WithField("method", req.Method).WithField("url", req.URL).Info("HTTP request")
+	logrus.WithField("method", req.Method).WithField("url", req.URL).Debug("HTTP request")
 	resp, err := d.doer.Do(req)
 	if err != nil {
 		return resp, err
