@@ -12,9 +12,10 @@ import (
 )
 
 const (
-	OutputLocationKey       = "output"
-	OutputLocationShorthand = "o"
-	OutputTypeKey           = "output-type"
+	OutputLocationKey         = "output"
+	OutputLocationShorthand   = "o"
+	OutputTypeKey             = "output-type"
+	OutputWithDiffCommentsKey = "diff"
 	OutputVersionKey          = "output-version"
 	OutputVersionShortHand    = "v"
 	OutputVersionV1           = "v1"
@@ -66,8 +67,11 @@ var ExportClientIntentsCmd = &cobra.Command{
 
 		outputLocation := viper.GetString(OutputLocationKey)
 		outputType := viper.GetString(OutputTypeKey)
+		withDiffComments := viper.GetBool(OutputWithDiffCommentsKey)
 
-		return writeExportedIntents(lo.FromPtr(r.JSON200), outputLocation, outputType)
+		writer := NewIntentsWriter(outputLocation, outputType, withDiffComments)
+
+		return writer.WriteExportedIntents(lo.FromPtr(r.JSON200))
 	},
 }
 
@@ -94,6 +98,7 @@ func servicesFilterFromFlags() cloudapi.InputServiceFilter {
 func init() {
 	ExportClientIntentsCmd.Flags().StringP(OutputLocationKey, OutputLocationShorthand, "", "file or dir path to write the output into")
 	ExportClientIntentsCmd.Flags().String(OutputTypeKey, OutputTypeSingleFile, fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
+	ExportClientIntentsCmd.Flags().Bool(OutputWithDiffCommentsKey, false, "include applied vs discovered comments in output intents")
 	ExportClientIntentsCmd.Flags().StringP(OutputVersionKey, OutputVersionShortHand, OutputVersionV1, fmt.Sprintf("Output ClientIntents api version - %s/%s", OutputVersionV1, OutputVersionV2))
 
 	ExportClientIntentsCmd.Flags().StringSliceP(ClustersKey, ClustersShortHand, nil, "filter for specific clusters")

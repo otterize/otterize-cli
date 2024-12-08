@@ -14,48 +14,54 @@ const (
 	OutputTypeDirectory  = "dir"
 )
 
-func writeExportedIntents(files []cloudapi.ClientIntentsFileRepresentation, outputLocation string, outputType string) error {
-	if outputLocation == "" {
-		printIntentFilesToStdout(files)
+type IntentsWriter struct {
+	OutputLocation   string
+	OutputType       string
+	WithDiffComments bool
+}
+
+func NewIntentsWriter(outputLocation string, outputType string, withDiffComments bool) *IntentsWriter {
+	return &IntentsWriter{
+		OutputLocation:   outputLocation,
+		OutputType:       outputType,
+		WithDiffComments: withDiffComments,
+	}
+}
+
+func (w *IntentsWriter) WriteExportedIntents(files []cloudapi.ClientIntentsFileRepresentation) error {
+	files = w.filterDuplicateFilenames(files)
+	if len(files) == 0 {
+		output.PrintStderr("No intent files to write.")
 		return nil
 	}
 
-	switch outputType {
+	if w.OutputLocation == "" {
+		w.printIntentFilesToStdout(files)
+		return nil
+	}
+
+	switch w.OutputType {
 	case OutputTypeSingleFile:
-		err := writeIntentsFiles(outputLocation, files)
+		err := w.writeIntentsToFile(w.OutputLocation, files)
 		if err != nil {
 			return err
 		}
-		output.PrintStderr("Successfully wrote intents into %s", outputLocation)
+		output.PrintStderr("Successfully wrote intents into %s", w.OutputLocation)
 	case OutputTypeDirectory:
-		files = filterDuplicateFilenames(files)
-
-		if len(files) == 0 {
-			output.PrintStderr("No intent files to write.")
-			return nil
-		}
-
-		err := os.MkdirAll(outputLocation, 0700)
+		err := w.writeIntentsToDir(w.OutputLocation, files)
 		if err != nil {
-			return fmt.Errorf("could not create dir %s: %w", outputLocation, err)
+			return err
 		}
 
-		for _, file := range files {
-			filePath := filepath.Join(outputLocation, file.FileName)
-			err := writeIntentsFiles(filePath, []cloudapi.ClientIntentsFileRepresentation{file})
-			if err != nil {
-				return err
-			}
-		}
-		output.PrintStderr("Successfully wrote intents into %s", outputLocation)
+		output.PrintStderr("Successfully wrote intents into %s", w.OutputLocation)
 	default:
-		return fmt.Errorf("unexpected output type %s, use one of (%s, %s)", outputType, OutputTypeSingleFile, OutputTypeDirectory)
+		return fmt.Errorf("unexpected output type %s, use one of (%s, %s)", w.OutputType, OutputTypeSingleFile, OutputTypeDirectory)
 	}
 
 	return nil
 }
 
-func filterDuplicateFilenames(files []cloudapi.ClientIntentsFileRepresentation) []cloudapi.ClientIntentsFileRepresentation {
+func (w *IntentsWriter) filterDuplicateFilenames(files []cloudapi.ClientIntentsFileRepresentation) []cloudapi.ClientIntentsFileRepresentation {
 	filesByFilename := lo.GroupBy(files, func(file cloudapi.ClientIntentsFileRepresentation) string {
 		return file.FileName
 	})
@@ -81,19 +87,36 @@ func filterDuplicateFilenames(files []cloudapi.ClientIntentsFileRepresentation) 
 	return filesWithUniqueFilename
 }
 
-func printIntentFilesToStdout(files []cloudapi.ClientIntentsFileRepresentation) {
-	formatted := output.FormatClientIntentsFiles(files)
+func (w *IntentsWriter) printIntentFilesToStdout(files []cloudapi.ClientIntentsFileRepresentation) {
+	formatted := output.FormatClientIntentsFiles(files, w.WithDiffComments)
 	output.PrintStdout(formatted)
 }
 
-func writeIntentsFiles(filePath string, files []cloudapi.ClientIntentsFileRepresentation) error {
+func (w *IntentsWriter) writeIntentsToDir(dirPath string, files []cloudapi.ClientIntentsFileRepresentation) error {
+	err := os.MkdirAll(dirPath, 0700)
+	if err != nil {
+		return fmt.Errorf("could not create dir %s: %w", dirPath, err)
+	}
+
+	for _, file := range files {
+		filePath := filepath.Join(dirPath, file.FileName)
+		err := w.writeIntentsToFile(filePath, []cloudapi.ClientIntentsFileRepresentation{file})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (w *IntentsWriter) writeIntentsToFile(filePath string, files []cloudapi.ClientIntentsFileRepresentation) error {
 	f, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	formatted := output.FormatClientIntentsFiles(files)
+	formatted := output.FormatClientIntentsFiles(files, w.WithDiffComments)
 	_, err = f.WriteString(formatted)
 	if err != nil {
 		return err
