@@ -2,10 +2,12 @@ package resources
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/samber/lo"
+	"github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -20,6 +22,7 @@ type ServicesResolver struct {
 func NewServicesResolver(client *cloudclient.Client) *ServicesResolver {
 	return &ServicesResolver{
 		client:                            client,
+		servicesByID:                      make(map[string]cloudapi.Service),
 		servicesByName:                    make(map[string][]cloudapi.Service),
 		servicesByNamespaceName:           make(map[string]map[string][]cloudapi.Service),
 		servicesByClusterAndNamespaceName: make(map[string]map[string]map[string]cloudapi.Service),
@@ -38,21 +41,31 @@ func (r *ServicesResolver) LoadServices(ctx context.Context) error {
 		r.servicesByID[svc.Id] = svc
 		r.servicesByName[svc.Name] = append(r.servicesByName[svc.Name], svc)
 
-		if _, ok := r.servicesByNamespaceName[svc.Namespace.Name]; !ok {
-			r.servicesByNamespaceName[svc.Namespace.Name] = make(map[string][]cloudapi.Service)
-		}
-		r.servicesByNamespaceName[svc.Namespace.Name][svc.Name] = append(r.servicesByNamespaceName[svc.Namespace.Name][svc.Name], svc)
+		namespace := lo.FromPtr(svc.Namespace).Name
+		cluster := lo.FromPtr(svc.Namespace).Cluster.Name
 
-		if _, ok := r.servicesByClusterAndNamespaceName[svc.Namespace.Cluster.Name]; !ok {
-			r.servicesByClusterAndNamespaceName[svc.Namespace.Cluster.Name] = make(map[string]map[string]cloudapi.Service)
+		if _, ok := r.servicesByNamespaceName[namespace]; !ok {
+			r.servicesByNamespaceName[namespace] = make(map[string][]cloudapi.Service)
 		}
-		if _, ok := r.servicesByClusterAndNamespaceName[svc.Namespace.Cluster.Name][svc.Namespace.Name]; !ok {
-			r.servicesByClusterAndNamespaceName[svc.Namespace.Cluster.Name][svc.Namespace.Name] = make(map[string]cloudapi.Service)
+		r.servicesByNamespaceName[namespace][svc.Name] = append(r.servicesByNamespaceName[namespace][svc.Name], svc)
+
+		if _, ok := r.servicesByClusterAndNamespaceName[cluster]; !ok {
+			r.servicesByClusterAndNamespaceName[cluster] = make(map[string]map[string]cloudapi.Service)
 		}
-		r.servicesByClusterAndNamespaceName[svc.Namespace.Cluster.Name][svc.Namespace.Name][svc.Name] = svc
+		if _, ok := r.servicesByClusterAndNamespaceName[cluster][namespace]; !ok {
+			r.servicesByClusterAndNamespaceName[cluster][namespace] = make(map[string]cloudapi.Service)
+		}
+		r.servicesByClusterAndNamespaceName[cluster][namespace][svc.Name] = svc
 	}
 
 	return nil
+}
+
+func errorLogMatchingServices(svcs []cloudapi.Service) {
+	logrus.Error("The following matching services were found:")
+	for _, s := range svcs {
+		logrus.Errorf("  - %s.%s.%s (%s)", s.Name, lo.FromPtr(s.Namespace).Name, lo.FromPtr(s.Namespace).Cluster.Name, s.Id)
+	}
 }
 
 func (r *ServicesResolver) ResolveServiceID(nameOrID string) (string, error) {
@@ -65,7 +78,9 @@ func (r *ServicesResolver) ResolveServiceID(nameOrID string) (string, error) {
 		// service
 		if svc, ok := r.servicesByName[nameOrID]; ok {
 			if len(svc) > 1 {
-				return "", fmt.Errorf("multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
+				logrus.Error("multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
+				errorLogMatchingServices(svc)
+				return "", errors.New("multiple matching services found")
 			}
 			return svc[0].Id, nil
 		}
@@ -74,7 +89,9 @@ func (r *ServicesResolver) ResolveServiceID(nameOrID string) (string, error) {
 		name, namespace := parts[0], parts[1]
 		if svc, ok := r.servicesByNamespaceName[namespace][name]; ok {
 			if len(svc) > 1 {
-				return "", fmt.Errorf("multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
+				logrus.Error("multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
+				errorLogMatchingServices(svc)
+				return "", errors.New("multiple matching services found")
 			}
 			return svc[0].Id, nil
 		}

@@ -2,10 +2,12 @@ package resources
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/samber/lo"
+	"github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -37,13 +39,22 @@ func (r *NamespacesResolver) LoadNamespaces(ctx context.Context) error {
 		r.namespacesByID[ns.Id] = ns
 		r.namespacesByName[ns.Name] = append(r.namespacesByName[ns.Name], ns)
 
-		if _, ok := r.namespaceByClusterAndName[ns.Cluster.Name]; !ok {
-			r.namespaceByClusterAndName[ns.Cluster.Name] = make(map[string]cloudapi.Namespace)
+		cluster := ns.Cluster.Name
+
+		if _, ok := r.namespaceByClusterAndName[cluster]; !ok {
+			r.namespaceByClusterAndName[cluster] = make(map[string]cloudapi.Namespace)
 		}
-		r.namespaceByClusterAndName[ns.Cluster.Name][ns.Name] = ns
+		r.namespaceByClusterAndName[cluster][ns.Name] = ns
 	}
 
 	return nil
+}
+
+func errorLogMatchingNamespaces(namespaces []cloudapi.Namespace) {
+	logrus.Error("The following matching namespaces were found:")
+	for _, ns := range namespaces {
+		logrus.Errorf("  - %s.%s (%s)", ns.Name, ns.Cluster.Name, ns.Id)
+	}
 }
 
 func (r *NamespacesResolver) ResolveNamespaceID(nameOrID string) (string, error) {
@@ -56,7 +67,9 @@ func (r *NamespacesResolver) ResolveNamespaceID(nameOrID string) (string, error)
 		// namespace
 		if ns, ok := r.namespacesByName[nameOrID]; ok {
 			if len(ns) > 1 {
-				return "", fmt.Errorf("multiple namespaces found with name '%s'; consider using full namespace name (namespace.cluster)", nameOrID)
+				logrus.Errorf("Multiple namespaces found with name '%s'; consider using full namespace name (namespace.cluster)", nameOrID)
+				errorLogMatchingNamespaces(ns)
+				return "", errors.New("multiple matching namespaces found")
 			}
 			return ns[0].Id, nil
 		}
