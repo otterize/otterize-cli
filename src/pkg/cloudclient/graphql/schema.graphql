@@ -603,6 +603,7 @@ enum EdgeAccessStatusReason {
 	INTENTS_OPERATOR_NOT_ENFORCING_MISSING_APPLIED_INTENT
 	INTENTS_OPERATOR_NOT_ENFORCING_KAFKA_INTENTS_NOT_REQUIRED_FOR_TOPIC
 	MISSING_APPLIED_INTENT
+	MISSING_APPLIED_CLOUD_RESOURCE_INTENT
 	NOT_IN_PROTECTED_SERVICES
 	INTENTS_OPERATOR_NEVER_CONNECTED
 	NETWORK_MAPPER_NEVER_CONNECTED
@@ -710,15 +711,20 @@ input ExternallyManagedPolicyWorkloadInput {
 type FeatureFlags {
 	isCloudServicesDetectionEnabled: Boolean
 	isCloudSecurityEnabled: Boolean
+	useClientIntentsV2: Boolean
 }
 
 type Finding {
 	hash: String!
 	service: BasicEntity!
+	serviceNamespace: BasicEntity
 	server: BasicEntity!
 	cluster: BasicEntity!
+	intentsOperatorState: IntentsOperatorState
+	clusterRelatedServices: [Service!]
 	reason: String!
 	status: FindingStatus!
+	ignoredReason: String
 	type: FindingType!
 }
 
@@ -973,6 +979,7 @@ input InputAccessLogFilter {
 input InputFeatureFlags {
 	isCloudServicesDetectionEnabled: Boolean
 	isCloudSecurityEnabled: Boolean
+	useClientIntentsV2: Boolean
 }
 
 """ Findings filter """
@@ -993,6 +1000,8 @@ input InputFindingFilter {
 	environmentIds: InputIDFilterValue
 """ Findings filter """
 	findingTypes: InputIDFilterValue
+""" Findings filter """
+	hashes: InputIDFilterValue
 }
 
 input InputIDFilterValue {
@@ -1604,8 +1613,15 @@ type Mutation {
 		component: Component
 		errors: [Error!]!
 	): Boolean!
-	toggleIgnoreFindings(
+	setFindingsIgnoredByHashes(
 		hashes: [String!]!
+		ignored: Boolean!
+		reason: String
+	): Boolean!
+	setFindingsIgnoredByControlIds(
+		controlIds: [RegulationCode!]!
+		ignored: Boolean!
+		reason: String
 	): Boolean!
 """Create a new generic integration"""
 	createGenericIntegration(
@@ -1801,11 +1817,6 @@ type Mutation {
 		id: ID!
 		userId: ID!
 	): ID!
-"""Ignore domain for organization"""
-	ignoreOrganizationDomain(
-		id: ID!
-		domain: String!
-	): Organization!
 	reportProtectedServicesSnapshot(
 		namespace: String!
 		services: [ProtectedServiceInput!]!
@@ -1980,6 +1991,13 @@ type Query {
 		enableInternetIntents: Boolean
 		featureFlags: InputFeatureFlags
 	): ServiceClientIntents!
+""" Get service ClientIntents by filter """
+	clientIntents(
+		filter: InputServiceFilter!
+		lastSeenAfter: Time
+		clusterIds: [ID!]
+		featureFlags: InputFeatureFlags
+	): [ClientIntentsFileRepresentation!]!
 """Get access log"""
 	accessLog(
 		filter: InputAccessLogFilter

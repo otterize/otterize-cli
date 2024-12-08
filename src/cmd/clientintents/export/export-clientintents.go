@@ -15,6 +15,10 @@ const (
 	OutputLocationKey       = "output"
 	OutputLocationShorthand = "o"
 	OutputTypeKey           = "output-type"
+	OutputVersionKey          = "output-version"
+	OutputVersionShortHand    = "v"
+	OutputVersionV1           = "v1"
+	OutputVersionV2           = "v2"
 
 	ClustersKey         = "clusters"
 	ClustersShortHand   = "c"
@@ -45,11 +49,16 @@ var ExportClientIntentsCmd = &cobra.Command{
 			filter.ServiceIds = lo.ToPtr(append(lo.FromPtr(filter.ServiceIds), serviceID))
 		}
 
+		featureFlags := cloudapi.InputFeatureFlags{}
+		if viper.GetString(OutputVersionKey) == OutputVersionV2 {
+			featureFlags.UseClientIntentsV2 = lo.ToPtr(true)
+		}
+
 		r, err := c.ClientIntentsQueryWithResponse(ctxTimeout, cloudapi.ClientIntentsQueryJSONRequestBody{
 			ClusterIds:    filter.ClusterIds,
 			Filter:        filter,
 			LastSeenAfter: nil,
-			FeatureFlags:  nil,
+			FeatureFlags:  &featureFlags,
 		})
 		if err != nil {
 			return err
@@ -85,6 +94,7 @@ func servicesFilterFromFlags() cloudapi.InputServiceFilter {
 func init() {
 	ExportClientIntentsCmd.Flags().StringP(OutputLocationKey, OutputLocationShorthand, "", "file or dir path to write the output into")
 	ExportClientIntentsCmd.Flags().String(OutputTypeKey, OutputTypeSingleFile, fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
+	ExportClientIntentsCmd.Flags().StringP(OutputVersionKey, OutputVersionShortHand, OutputVersionV1, fmt.Sprintf("Output ClientIntents api version - %s/%s", OutputVersionV1, OutputVersionV2))
 
 	ExportClientIntentsCmd.Flags().StringSliceP(ClustersKey, ClustersShortHand, nil, "filter for specific clusters")
 	ExportClientIntentsCmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter for specific namespaces")
