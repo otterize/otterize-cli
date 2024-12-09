@@ -78,7 +78,7 @@ func (r *ServicesResolver) ResolveServiceID(nameOrID string) (string, error) {
 		// service
 		if svc, ok := r.servicesByName[nameOrID]; ok {
 			if len(svc) > 1 {
-				logrus.Error("multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
+				logrus.Errorf("Multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
 				errorLogMatchingServices(svc)
 				return "", errors.New("multiple matching services found")
 			}
@@ -89,7 +89,7 @@ func (r *ServicesResolver) ResolveServiceID(nameOrID string) (string, error) {
 		name, namespace := parts[0], parts[1]
 		if svc, ok := r.servicesByNamespaceName[namespace][name]; ok {
 			if len(svc) > 1 {
-				logrus.Error("multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
+				logrus.Errorf("multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
 				errorLogMatchingServices(svc)
 				return "", errors.New("multiple matching services found")
 			}
