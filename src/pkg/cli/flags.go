@@ -14,8 +14,8 @@ const (
 )
 
 func RegisterStandardFilterFlags(cmd *cobra.Command) {
-	cmd.Flags().StringSliceP(ClustersKey, ClustersShortHand, nil, "filter by clusters")
-	cmd.Flags().StringSliceP(EnvironmentsKey, EnvironmentsShorthand, nil, "filter by environments")
-	cmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter by namespaces")
-	cmd.Flags().StringSliceP(ServicesKey, ServicesShorthand, nil, "filter by services")
+	cmd.Flags().StringSliceP(ClustersKey, ClustersShortHand, nil, "filter by cluster IDs or names")
+	cmd.Flags().StringSliceP(EnvironmentsKey, EnvironmentsShorthand, nil, "filter by environment IDs or names")
+	cmd.Flags().StringSliceP(NamespacesKey, NamespacesShorthand, nil, "filter by namespace IDs or names")
+	cmd.Flags().StringSliceP(ServicesKey, ServicesShorthand, nil, "filter by service IDs or names")
 }
