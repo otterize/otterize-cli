@@ -790,6 +790,9 @@
           "fileName": {
             "type": "string"
           },
+          "namespacedFileName": {
+            "type": "string"
+          },
           "rows": {
             "items": {
               "$ref": "#/components/schemas/ClientIntentsRow"
@@ -810,6 +813,7 @@
         },
         "required": [
           "fileName",
+          "namespacedFileName",
           "service",
           "rows",
           "content"
@@ -1511,6 +1515,9 @@
       },
       "FeatureFlags": {
         "properties": {
+          "enableFindingsV2": {
+            "type": "boolean"
+          },
           "isCloudSecurityEnabled": {
             "type": "boolean"
           },
@@ -1518,6 +1525,9 @@
             "type": "boolean"
           },
           "useClientIntentsV2": {
+            "type": "boolean"
+          },
+          "useTypedIntentsCTE": {
             "type": "boolean"
           }
         },
@@ -1928,6 +1938,9 @@
       },
       "InputFeatureFlags": {
         "properties": {
+          "enableFindingsV2": {
+            "type": "boolean"
+          },
           "isCloudSecurityEnabled": {
             "type": "boolean"
           },
@@ -1935,6 +1948,9 @@
             "type": "boolean"
           },
           "useClientIntentsV2": {
+            "type": "boolean"
+          },
+          "useTypedIntentsCTE": {
             "type": "boolean"
           }
         },
@@ -3537,7 +3553,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "282405d818bdec5386a77301294342aa9f697470"
+    "x-revision": "b0ff6bf9ec56bed973c393d950da21da0a90a9b3"
   },
   "openapi": "3.0.0",
   "paths": {

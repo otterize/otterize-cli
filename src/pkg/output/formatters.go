@@ -254,7 +254,7 @@ func formatRow(row cloudapi.ClientIntentsRow, withDiffComments bool) string {
 
 func FormatClientIntentsFiles(clientIntentsFiles []cloudapi.ClientIntentsFileRepresentation, withDiffComments bool) string {
 	contents := lo.Map(clientIntentsFiles, func(file cloudapi.ClientIntentsFileRepresentation, _ int) string {
-		header := fmt.Sprintf("# ClientIntents for Otterize service ID %s; filename: %s", file.Service.Id, file.FileName)
+		header := fmt.Sprintf("# ClientIntents for Otterize service ID %s; filename: %s", file.Service.Id, file.NamespacedFileName)
 
 		rows := lo.Map(file.Rows, func(row cloudapi.ClientIntentsRow, _ int) string {
 			return formatRow(row, withDiffComments)
