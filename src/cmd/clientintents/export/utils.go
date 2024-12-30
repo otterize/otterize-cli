@@ -63,18 +63,18 @@ func (w *IntentsWriter) WriteExportedIntents(files []cloudapi.ClientIntentsFileR
 
 func (w *IntentsWriter) filterDuplicateFilenames(files []cloudapi.ClientIntentsFileRepresentation) []cloudapi.ClientIntentsFileRepresentation {
 	filesByFilename := lo.GroupBy(files, func(file cloudapi.ClientIntentsFileRepresentation) string {
-		return file.FileName
+		return file.NamespacedFileName
 	})
 
 	hasUniqueFilename := func(file cloudapi.ClientIntentsFileRepresentation, _ int) bool {
-		return len(filesByFilename[file.FileName]) == 1
+		return len(filesByFilename[file.NamespacedFileName]) == 1
 	}
 	filesWithUniqueFilename := lo.Filter(files, hasUniqueFilename)
 	filesWithDuplicateFilenames := lo.Reject(files, hasUniqueFilename)
 
 	if len(filesWithDuplicateFilenames) > 0 {
 		duplicateFilenames := lo.Uniq(lo.Map(filesWithDuplicateFilenames, func(file cloudapi.ClientIntentsFileRepresentation, _ int) string {
-			return file.FileName
+			return file.NamespacedFileName
 		}))
 		output.PrintStderr("Duplicate filenames detected, omitting the following files:")
 		for _, filename := range duplicateFilenames {
@@ -99,7 +99,7 @@ func (w *IntentsWriter) writeIntentsToDir(dirPath string, files []cloudapi.Clien
 	}
 
 	for _, file := range files {
-		filePath := filepath.Join(dirPath, file.FileName)
+		filePath := filepath.Join(dirPath, file.NamespacedFileName)
 		err := w.writeIntentsToFile(filePath, []cloudapi.ClientIntentsFileRepresentation{file})
 		if err != nil {
 			return err

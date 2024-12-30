@@ -577,10 +577,11 @@ type ClientIntentStatus struct {
 
 // ClientIntentsFileRepresentation defines model for ClientIntentsFileRepresentation.
 type ClientIntentsFileRepresentation struct {
-	Content  string             `json:"content"`
-	FileName string             `json:"fileName"`
-	Rows     []ClientIntentsRow `json:"rows"`
-	Service  struct {
+	Content            string             `json:"content"`
+	FileName           string             `json:"fileName"`
+	NamespacedFileName string             `json:"namespacedFileName"`
+	Rows               []ClientIntentsRow `json:"rows"`
+	Service            struct {
 		Id string `json:"id"`
 	} `json:"service"`
 }
@@ -788,9 +789,11 @@ type Error struct {
 
 // FeatureFlags defines model for FeatureFlags.
 type FeatureFlags struct {
+	EnableFindingsV2                *bool `json:"enableFindingsV2,omitempty"`
 	IsCloudSecurityEnabled          *bool `json:"isCloudSecurityEnabled,omitempty"`
 	IsCloudServicesDetectionEnabled *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
 	UseClientIntentsV2              *bool `json:"useClientIntentsV2,omitempty"`
+	UseTypedIntentsCTE              *bool `json:"useTypedIntentsCTE,omitempty"`
 }
 
 // GCPInfo defines model for GCPInfo.
@@ -903,9 +906,11 @@ type InputAccessLogFilter struct {
 
 // InputFeatureFlags defines model for InputFeatureFlags.
 type InputFeatureFlags struct {
+	EnableFindingsV2                *bool `json:"enableFindingsV2,omitempty"`
 	IsCloudSecurityEnabled          *bool `json:"isCloudSecurityEnabled,omitempty"`
 	IsCloudServicesDetectionEnabled *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
 	UseClientIntentsV2              *bool `json:"useClientIntentsV2,omitempty"`
+	UseTypedIntentsCTE              *bool `json:"useTypedIntentsCTE,omitempty"`
 }
 
 // InputServiceFilter  Service filter
