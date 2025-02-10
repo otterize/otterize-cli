@@ -9,7 +9,7 @@ import (
 	"github.com/goccy/go-graphviz/cgraph"
 	"github.com/nfnt/resize"
 	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
-	"github.com/otterize/otterize-cli/src/pkg/output"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"image"
@@ -148,7 +148,7 @@ func (v *Visualizer) RenderOutputToFile() error {
 		return err
 	}
 
-	output.PrintStderr("Exported graph as %s format to path %s", v.graphFormat, v.outputFilepath)
+	prints.PrintCliStderr("Exported graph as %s format to path %s", v.graphFormat, v.outputFilepath)
 	return nil
 }
 

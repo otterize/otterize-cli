@@ -12,6 +12,7 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
 	"github.com/otterize/otterize-cli/src/pkg/output"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
@@ -123,7 +124,7 @@ func exportIntents(intents []v2alpha1.ClientIntents) error {
 			if err != nil {
 				return err
 			}
-			output.PrintStderr("Successfully wrote intents into %s", viper.GetString(OutputLocationKey))
+			prints.PrintCliStderr("Successfully wrote intents into %s", viper.GetString(OutputLocationKey))
 		case outputTypeVal == OutputTypeDirectory:
 			err := os.MkdirAll(viper.GetString(OutputLocationKey), 0700)
 			if err != nil {
@@ -138,7 +139,7 @@ func exportIntents(intents []v2alpha1.ClientIntents) error {
 					return err
 				}
 			}
-			output.PrintStderr("Successfully wrote intents into %s", viper.GetString(OutputLocationKey))
+			prints.PrintCliStderr("Successfully wrote intents into %s", viper.GetString(OutputLocationKey))
 		default:
 			return fmt.Errorf("unexpected output type %s, use one of (%s, %s)", outputTypeVal, OutputTypeSingleFile, OutputTypeDirectory)
 		}
@@ -147,7 +148,7 @@ func exportIntents(intents []v2alpha1.ClientIntents) error {
 		if err != nil {
 			return err
 		}
-		output.PrintStdout(formatted)
+		prints.PrintCliOutput(formatted)
 	}
 
 	return nil

@@ -7,7 +7,7 @@ import (
 	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
-	"github.com/otterize/otterize-cli/src/pkg/output"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"strings"
@@ -81,7 +81,7 @@ func QueryIntents() ([]v2alpha1.ClientIntents, error) {
 	}
 
 	if len(mapperIntents) == 0 {
-		output.PrintStderr("No connections found.")
+		prints.PrintCliStderr("No connections found.")
 		return []v2alpha1.ClientIntents{}, nil
 	}
 
