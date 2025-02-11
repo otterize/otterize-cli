@@ -2,12 +2,12 @@ package intentslister
 
 import (
 	"fmt"
-	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
+	"github.com/otterize/intents-operator/src/operator/api/v2beta1"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"strings"
 )
 
-func ListFormattedIntents(intents []v2alpha1.ClientIntents) {
+func ListFormattedIntents(intents []v2beta1.ClientIntents) {
 	for _, intent := range intents {
 		prints.PrintCliOutput("%s in namespace %s calls:", intent.Name, intent.Namespace)
 		for _, call := range intent.GetTargetList() {

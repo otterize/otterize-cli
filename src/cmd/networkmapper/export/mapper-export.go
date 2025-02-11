@@ -5,13 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/otterize/intents-operator/src/operator/api/v1alpha3"
-	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
+	"github.com/otterize/intents-operator/src/operator/api/v2beta1"
 	mappershared "github.com/otterize/otterize-cli/src/cmd/networkmapper/shared"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
-	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -59,7 +58,7 @@ var ExportCmd = &cobra.Command{
 	},
 }
 
-func getFormattedIntents(intentList []v2alpha1.ClientIntents) (string, error) {
+func getFormattedIntents(intentList []v2beta1.ClientIntents) (string, error) {
 	switch outputFormatVal := viper.GetString(config.OutputFormatKey); {
 	case outputFormatVal == config.OutputFormatJSON:
 		formatted, err := json.MarshalIndent(intentList, "", "  ")
@@ -99,7 +98,7 @@ func getFormattedIntents(intentList []v2alpha1.ClientIntents) (string, error) {
 	}
 }
 
-func writeIntentsFile(filePath string, intents []v2alpha1.ClientIntents) error {
+func writeIntentsFile(filePath string, intents []v2beta1.ClientIntents) error {
 	f, err := os.Create(filePath)
 	if err != nil {
 		return err
@@ -116,7 +115,7 @@ func writeIntentsFile(filePath string, intents []v2alpha1.ClientIntents) error {
 	return nil
 }
 
-func exportIntents(intents []v2alpha1.ClientIntents) error {
+func exportIntents(intents []v2beta1.ClientIntents) error {
 	if viper.GetString(OutputLocationKey) != "" {
 		switch outputTypeVal := viper.GetString(OutputTypeKey); {
 		case outputTypeVal == OutputTypeSingleFile:
@@ -134,7 +133,7 @@ func exportIntents(intents []v2alpha1.ClientIntents) error {
 			for _, intent := range intents {
 				filePath := fmt.Sprintf("%s.%s.yaml", intent.GetWorkloadName(), intent.Namespace)
 				filePath = filepath.Join(viper.GetString(OutputLocationKey), filePath)
-				err := writeIntentsFile(filePath, []v2alpha1.ClientIntents{intent})
+				err := writeIntentsFile(filePath, []v2beta1.ClientIntents{intent})
 				if err != nil {
 					return err
 				}
