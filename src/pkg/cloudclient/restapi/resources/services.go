@@ -6,8 +6,8 @@ import (
 	"fmt"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
-	"github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -62,9 +62,9 @@ func (r *ServicesResolver) LoadServices(ctx context.Context) error {
 }
 
 func errorLogMatchingServices(svcs []cloudapi.Service) {
-	logrus.Error("The following matching services were found:")
+	prints.PrintCliStderr("The following matching services were found:")
 	for _, s := range svcs {
-		logrus.Errorf("  - %s.%s.%s (%s)", s.Name, lo.FromPtr(s.Namespace).Name, lo.FromPtr(s.Namespace).Cluster.Name, s.Id)
+		prints.PrintCliStderr("  - %s.%s.%s (%s)", s.Name, lo.FromPtr(s.Namespace).Name, lo.FromPtr(s.Namespace).Cluster.Name, s.Id)
 	}
 }
 
@@ -78,7 +78,7 @@ func (r *ServicesResolver) ResolveServiceID(nameOrID string) (string, error) {
 		// service
 		if svc, ok := r.servicesByName[nameOrID]; ok {
 			if len(svc) > 1 {
-				logrus.Errorf("Multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
+				prints.PrintCliStderr("Multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
 				errorLogMatchingServices(svc)
 				return "", errors.New("multiple matching services found")
 			}
@@ -89,7 +89,7 @@ func (r *ServicesResolver) ResolveServiceID(nameOrID string) (string, error) {
 		name, namespace := parts[0], parts[1]
 		if svc, ok := r.servicesByNamespaceName[namespace][name]; ok {
 			if len(svc) > 1 {
-				logrus.Errorf("multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
+				prints.PrintCliStderr("multiple services found with name '%s'; consider using full service name (service.namespace.cluster)", nameOrID)
 				errorLogMatchingServices(svc)
 				return "", errors.New("multiple matching services found")
 			}

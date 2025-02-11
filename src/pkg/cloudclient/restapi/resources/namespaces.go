@@ -6,8 +6,8 @@ import (
 	"fmt"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
-	"github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -51,9 +51,9 @@ func (r *NamespacesResolver) LoadNamespaces(ctx context.Context) error {
 }
 
 func errorLogMatchingNamespaces(namespaces []cloudapi.Namespace) {
-	logrus.Error("The following matching namespaces were found:")
+	prints.PrintCliStderr("The following matching namespaces were found:")
 	for _, ns := range namespaces {
-		logrus.Errorf("  - %s.%s (%s)", ns.Name, ns.Cluster.Name, ns.Id)
+		prints.PrintCliStderr("  - %s.%s (%s)", ns.Name, ns.Cluster.Name, ns.Id)
 	}
 }
 
@@ -67,7 +67,7 @@ func (r *NamespacesResolver) ResolveNamespaceID(nameOrID string) (string, error)
 		// namespace
 		if ns, ok := r.namespacesByName[nameOrID]; ok {
 			if len(ns) > 1 {
-				logrus.Errorf("Multiple namespaces found with name '%s'; consider using full namespace name (namespace.cluster)", nameOrID)
+				prints.PrintCliStderr("Multiple namespaces found with name '%s'; consider using full namespace name (namespace.cluster)", nameOrID)
 				errorLogMatchingNamespaces(ns)
 				return "", errors.New("multiple matching namespaces found")
 			}
