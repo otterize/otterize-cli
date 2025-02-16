@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/amit7itz/goset"
-	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
+	"github.com/otterize/intents-operator/src/operator/api/v2beta1"
 	"github.com/otterize/otterize-cli/src/pkg/intentsoutput"
 	"github.com/otterize/otterize-cli/src/pkg/mapperclient"
-	"github.com/otterize/otterize-cli/src/pkg/output"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"strings"
@@ -31,7 +31,7 @@ func InitMapperQueryFlags(cmd *cobra.Command) {
 	cmd.Flags().Bool(ExportKubernetesServiceKey, false, "(EXPERIMENTAL) Export Kubernetes service name instead of Otterize service name, when detected connection is to Kubernetes service instead of pod.")
 }
 
-func QueryIntents() ([]v2alpha1.ClientIntents, error) {
+func QueryIntents() ([]v2beta1.ClientIntents, error) {
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -81,23 +81,23 @@ func QueryIntents() ([]v2alpha1.ClientIntents, error) {
 	}
 
 	if len(mapperIntents) == 0 {
-		output.PrintStderr("No connections found.")
-		return []v2alpha1.ClientIntents{}, nil
+		prints.PrintCliStderr("No connections found.")
+		return []v2beta1.ClientIntents{}, nil
 	}
 
 	return intentsoutput.MapperIntentsToAPIIntents(mapperIntents, distinctByLabel, exportKubernetesService), nil
 }
 
-func RemoveExcludedServices(intents []v2alpha1.ClientIntents, excludedServices []string) []v2alpha1.ClientIntents {
+func RemoveExcludedServices(intents []v2beta1.ClientIntents, excludedServices []string) []v2beta1.ClientIntents {
 	excludedServicesSet := goset.FromSlice(excludedServices)
-	cleanIntents := make([]v2alpha1.ClientIntents, 0)
+	cleanIntents := make([]v2beta1.ClientIntents, 0)
 
 	for _, intent := range intents {
 		if excludedServicesSet.Contains(intent.GetWorkloadName()) {
 			continue
 		}
 
-		targets := make([]v2alpha1.Target, 0)
+		targets := make([]v2beta1.Target, 0)
 		for _, target := range intent.GetTargetList() {
 			namespacedName := strings.Split(target.GetTargetServerName(), ".")
 			if excludedServicesSet.Contains(target.GetTargetServerName()) || (len(namespacedName) == 2 && excludedServicesSet.Contains(namespacedName[0])) {

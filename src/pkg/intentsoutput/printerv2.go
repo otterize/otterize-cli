@@ -1,7 +1,7 @@
 package intentsoutput
 
 import (
-	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
+	"github.com/otterize/intents-operator/src/operator/api/v2beta1"
 	"io"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sync/atomic"
@@ -83,40 +83,40 @@ spec:
 var crdTemplateParsed = template.Must(template.New("intents").Parse(crdTemplate))
 
 // Keep this bit here so we have a compile time check that the structure the template assumes is correct.
-var _ = v2alpha1.ClientIntents{
+var _ = v2beta1.ClientIntents{
 	TypeMeta:   v1.TypeMeta{Kind: "", APIVersion: ""},
 	ObjectMeta: v1.ObjectMeta{Name: "", Namespace: ""},
-	Spec: &v2alpha1.IntentsSpec{
-		Workload: v2alpha1.Workload{Name: ""},
-		Targets: []v2alpha1.Target{{
-			Kubernetes: &v2alpha1.KubernetesTarget{
+	Spec: &v2beta1.IntentsSpec{
+		Workload: v2beta1.Workload{Name: ""},
+		Targets: []v2beta1.Target{{
+			Kubernetes: &v2beta1.KubernetesTarget{
 				Name: "",
-				HTTP: []v2alpha1.HTTPTarget{{
+				HTTP: []v2beta1.HTTPTarget{{
 					Path:    "",
-					Methods: []v2alpha1.HTTPMethod{},
+					Methods: []v2beta1.HTTPMethod{},
 				},
 				},
 			},
-			Service: &v2alpha1.ServiceTarget{
+			Service: &v2beta1.ServiceTarget{
 				Name: "",
-				HTTP: []v2alpha1.HTTPTarget{{
+				HTTP: []v2beta1.HTTPTarget{{
 					Path:    "",
-					Methods: []v2alpha1.HTTPMethod{},
+					Methods: []v2beta1.HTTPMethod{},
 				},
 				},
 			},
-			Kafka: &v2alpha1.KafkaTarget{
+			Kafka: &v2beta1.KafkaTarget{
 				Name: "",
-				Topics: []v2alpha1.KafkaTopic{{
+				Topics: []v2beta1.KafkaTopic{{
 					Name:       "",
-					Operations: []v2alpha1.KafkaOperation{},
+					Operations: []v2beta1.KafkaOperation{},
 				}},
 			},
 		}},
 	},
 }
 
-func (p *IntentsPrinterV2) PrintObj(intents *v2alpha1.ClientIntents, w io.Writer) error {
+func (p *IntentsPrinterV2) PrintObj(intents *v2beta1.ClientIntents, w io.Writer) error {
 	count := atomic.AddInt64(&p.printCount, 1)
 	if count > 1 {
 		if _, err := w.Write([]byte("\n---\n")); err != nil {

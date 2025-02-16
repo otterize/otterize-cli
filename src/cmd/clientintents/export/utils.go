@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/output"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
 	"os"
 	"path/filepath"
@@ -31,7 +32,7 @@ func NewIntentsWriter(outputLocation string, outputType string, withDiffComments
 func (w *IntentsWriter) WriteExportedIntents(files []cloudapi.ClientIntentsFileRepresentation) error {
 	files = w.filterDuplicateFilenames(files)
 	if len(files) == 0 {
-		output.PrintStderr("No intent files to write.")
+		prints.PrintCliStderr("No intent files to write.")
 		return nil
 	}
 
@@ -46,14 +47,14 @@ func (w *IntentsWriter) WriteExportedIntents(files []cloudapi.ClientIntentsFileR
 		if err != nil {
 			return err
 		}
-		output.PrintStderr("Successfully wrote intents into %s", w.OutputLocation)
+		prints.PrintCliStderr("Successfully wrote intents into %s", w.OutputLocation)
 	case OutputTypeDirectory:
 		err := w.writeIntentsToDir(w.OutputLocation, files)
 		if err != nil {
 			return err
 		}
 
-		output.PrintStderr("Successfully wrote intents into %s", w.OutputLocation)
+		prints.PrintCliStderr("Successfully wrote intents into %s", w.OutputLocation)
 	default:
 		return fmt.Errorf("unexpected output type %s, use one of (%s, %s)", w.OutputType, OutputTypeSingleFile, OutputTypeDirectory)
 	}
@@ -76,12 +77,12 @@ func (w *IntentsWriter) filterDuplicateFilenames(files []cloudapi.ClientIntentsF
 		duplicateFilenames := lo.Uniq(lo.Map(filesWithDuplicateFilenames, func(file cloudapi.ClientIntentsFileRepresentation, _ int) string {
 			return file.NamespacedFileName
 		}))
-		output.PrintStderr("Duplicate filenames detected, omitting the following files:")
+		prints.PrintCliStderr("Duplicate filenames detected, omitting the following files:")
 		for _, filename := range duplicateFilenames {
-			output.PrintStderr("- %s", filename)
+			prints.PrintCliStderr("- %s", filename)
 		}
 
-		output.PrintStderr("Consider filtering by clusters, namespaces, or services to avoid duplicate filenames.")
+		prints.PrintCliStderr("Consider filtering by clusters, namespaces, or services to avoid duplicate filenames.")
 	}
 
 	return filesWithUniqueFilename
@@ -89,7 +90,7 @@ func (w *IntentsWriter) filterDuplicateFilenames(files []cloudapi.ClientIntentsF
 
 func (w *IntentsWriter) printIntentFilesToStdout(files []cloudapi.ClientIntentsFileRepresentation) {
 	formatted := output.FormatClientIntentsFiles(files, w.WithDiffComments)
-	output.PrintStdout(formatted)
+	prints.PrintCliOutput(formatted)
 }
 
 func (w *IntentsWriter) writeIntentsToDir(dirPath string, files []cloudapi.ClientIntentsFileRepresentation) error {

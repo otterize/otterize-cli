@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/oriser/regroup"
-	"github.com/otterize/intents-operator/src/operator/api/v2alpha1"
+	"github.com/otterize/intents-operator/src/operator/api/v2beta1"
 	"github.com/otterize/otterize-cli/src/pkg/consts"
 	"github.com/samber/lo"
 	corev1 "k8s.io/api/core/v1"
@@ -90,13 +90,13 @@ func (m *Mapper) MapKafkaAuthorizerLogs(ctx context.Context, serverName string, 
 	return nil
 }
 
-func (r AuthorizerRecord) ToIntent(serverName string, serverNamespace string) (v2alpha1.ClientIntents, error) {
+func (r AuthorizerRecord) ToIntent(serverName string, serverNamespace string) (v2beta1.ClientIntents, error) {
 	op, err := KafkaOpFromText(r.Operation)
 	if err != nil {
-		return v2alpha1.ClientIntents{}, err
+		return v2beta1.ClientIntents{}, err
 	}
 
-	intent := v2alpha1.ClientIntents{
+	intent := v2beta1.ClientIntents{
 		TypeMeta: v1.TypeMeta{
 			Kind:       consts.IntentsKind,
 			APIVersion: consts.IntentsAPIVersion,
@@ -105,18 +105,18 @@ func (r AuthorizerRecord) ToIntent(serverName string, serverNamespace string) (v
 			Name:      r.ServiceName,
 			Namespace: r.Namespace,
 		},
-		Spec: &v2alpha1.IntentsSpec{
-			Workload: v2alpha1.Workload{
+		Spec: &v2beta1.IntentsSpec{
+			Workload: v2beta1.Workload{
 				Name: fmt.Sprintf("%s.%s", r.ServiceName, r.Namespace),
 			},
-			Targets: []v2alpha1.Target{
+			Targets: []v2beta1.Target{
 				{
-					Kafka: &v2alpha1.KafkaTarget{
+					Kafka: &v2beta1.KafkaTarget{
 						Name: fmt.Sprintf("%s.%s", serverName, serverNamespace),
-						Topics: []v2alpha1.KafkaTopic{
+						Topics: []v2beta1.KafkaTopic{
 							{
 								Name:       r.Topic,
-								Operations: []v2alpha1.KafkaOperation{op},
+								Operations: []v2beta1.KafkaOperation{op},
 							},
 						},
 					},
@@ -128,12 +128,12 @@ func (r AuthorizerRecord) ToIntent(serverName string, serverNamespace string) (v
 	return intent, nil
 }
 
-func mergeTopics(intent v2alpha1.Target, newTopic v2alpha1.KafkaTopic) v2alpha1.Target {
+func mergeTopics(intent v2beta1.Target, newTopic v2beta1.KafkaTopic) v2beta1.Target {
 	topicFound := false
 	if intent.Kafka == nil {
 		return intent
 	}
-	newTopics := lo.Map(intent.Kafka.Topics, func(existingTopic v2alpha1.KafkaTopic, _ int) v2alpha1.KafkaTopic {
+	newTopics := lo.Map(intent.Kafka.Topics, func(existingTopic v2beta1.KafkaTopic, _ int) v2beta1.KafkaTopic {
 		if existingTopic.Name != newTopic.Name {
 			return existingTopic
 		}
@@ -149,14 +149,14 @@ func mergeTopics(intent v2alpha1.Target, newTopic v2alpha1.KafkaTopic) v2alpha1.
 	return intent
 }
 
-func mergeIntents(existingIntents v2alpha1.ClientIntents, newIntent v2alpha1.Target) v2alpha1.ClientIntents {
+func mergeIntents(existingIntents v2beta1.ClientIntents, newIntent v2beta1.Target) v2beta1.ClientIntents {
 	if newIntent.Kafka == nil || len(newIntent.Kafka.Topics) == 0 {
 		return existingIntents
 	}
 	newTopic := newIntent.Kafka.Topics[0] // assumption: only one topic in newIntent
 
 	serverCallFound := false
-	newCalls := lo.Map(existingIntents.Spec.Targets, func(existingCall v2alpha1.Target, _ int) v2alpha1.Target {
+	newCalls := lo.Map(existingIntents.Spec.Targets, func(existingCall v2beta1.Target, _ int) v2beta1.Target {
 		if existingCall.GetTargetServerName() != newIntent.GetTargetServerName() {
 			return existingCall
 		}
@@ -172,8 +172,8 @@ func mergeIntents(existingIntents v2alpha1.ClientIntents, newIntent v2alpha1.Tar
 	return existingIntents
 }
 
-func (m *Mapper) LoadIntents(ctx context.Context, serverName string, serverNamespace string) ([]v2alpha1.ClientIntents, error) {
-	intentsByClient := map[string]v2alpha1.ClientIntents{}
+func (m *Mapper) LoadIntents(ctx context.Context, serverName string, serverNamespace string) ([]v2beta1.ClientIntents, error) {
+	intentsByClient := map[string]v2beta1.ClientIntents{}
 
 	mapperFn := func(r AuthorizerRecord) error {
 		newIntent, err := r.ToIntent(serverName, serverNamespace)
