@@ -175,5 +175,5 @@ func init() {
 	ExportCmd.Flags().String(OutputTypeKey, "", fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
 	ExportCmd.Flags().String(config.OutputFormatKey, config.OutputFormatYAML, fmt.Sprintf("Output format - %s/%s", config.OutputFormatYAML, config.OutputFormatJSON))
 	ExportCmd.Flags().String(mappershared.ServerKey, "", "Export only intents that call this server - <server-name>.<namespace>")
-	ExportCmd.Flags().String(OutputVersionKey, OutputVersionV1, fmt.Sprintf("Output ClientIntents api version - %s/%s", OutputVersionV1, OutputVersionV2))
+	ExportCmd.Flags().String(OutputVersionKey, OutputVersionV2, fmt.Sprintf("Output ClientIntents api version - %s/%s", OutputVersionV1, OutputVersionV2))
 }
