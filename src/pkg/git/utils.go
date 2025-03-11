@@ -31,16 +31,12 @@ func GetGitRepoInformation(workingDir string) (*LocalGitInformation, error) {
 
 	headRef, err := repo.Head()
 	if err != nil {
-		if err != nil {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	gitRoot, err := GetGitRoot(repo)
 	if err != nil {
-		if err != nil {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	var gitInfo LocalGitInformation
