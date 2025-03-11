@@ -378,6 +378,9 @@
               "id"
             ],
             "type": "object"
+          },
+          "traffic": {
+            "$ref": "#/components/schemas/TrafficLevel"
           }
         },
         "required": [
@@ -387,7 +390,8 @@
           "appliedIntents",
           "accessStatus",
           "accessStatuses",
-          "findings"
+          "findings",
+          "traffic"
         ],
         "type": "object"
       },
@@ -717,6 +721,33 @@
         ],
         "type": "object"
       },
+      "ClientIntentAccessStatus": {
+        "properties": {
+          "allowed": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "blocked": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "total": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "wouldBeBlocked": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "allowed",
+          "blocked",
+          "wouldBeBlocked"
+        ],
+        "type": "object"
+      },
       "ClientIntentEvent": {
         "properties": {
           "count": {
@@ -858,6 +889,17 @@
         ],
         "type": "object"
       },
+      "CloudIam": {
+        "properties": {
+          "awsRoles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "Cluster": {
         "properties": {
           "components": {
@@ -953,6 +995,9 @@
           "istioGlobalDefaultDeny": {
             "type": "boolean"
           },
+          "linkerdGlobalDefaultDeny": {
+            "type": "boolean"
+          },
           "useAWSIAMInAccessGraphStates": {
             "type": "boolean"
           },
@@ -971,6 +1016,9 @@
           "useKafkaACLsInAccessGraphStates": {
             "type": "boolean"
           },
+          "useLinkerdPoliciesInAccessGraphStates": {
+            "type": "boolean"
+          },
           "useNetworkPoliciesInAccessGraphStates": {
             "type": "boolean"
           }
@@ -978,8 +1026,10 @@
         "required": [
           "globalDefaultDeny",
           "istioGlobalDefaultDeny",
+          "linkerdGlobalDefaultDeny",
           "useNetworkPoliciesInAccessGraphStates",
           "useIstioPoliciesInAccessGraphStates",
+          "useLinkerdPoliciesInAccessGraphStates",
           "useKafkaACLsInAccessGraphStates",
           "useAWSIAMInAccessGraphStates",
           "useGCPIAMInAccessGraphStates",
@@ -1000,6 +1050,9 @@
           "istioGlobalDefaultDeny": {
             "type": "boolean"
           },
+          "linkerdGlobalDefaultDeny": {
+            "type": "boolean"
+          },
           "useAWSIAMInAccessGraphStates": {
             "type": "boolean"
           },
@@ -1018,6 +1071,9 @@
           "useKafkaACLsInAccessGraphStates": {
             "type": "boolean"
           },
+          "useLinkerdPoliciesInAccessGraphStates": {
+            "type": "boolean"
+          },
           "useNetworkPoliciesInAccessGraphStates": {
             "type": "boolean"
           }
@@ -1026,6 +1082,7 @@
           "globalDefaultDeny",
           "useNetworkPoliciesInAccessGraphStates",
           "useIstioPoliciesInAccessGraphStates",
+          "useLinkerdPoliciesInAccessGraphStates",
           "useKafkaACLsInAccessGraphStates"
         ],
         "type": "object"
@@ -1285,6 +1342,26 @@
         },
         "type": "object"
       },
+      "DefaultIntentsApprovalActionByEnv": {
+        "properties": {
+          "action": {
+            "enum": [
+              "AUTO_APPROVE",
+              "AUTO_DENY",
+              "REQUIRE_APPROVAL"
+            ],
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "environmentId",
+          "action"
+        ],
+        "type": "object"
+      },
       "DetectedCloudServer": {
         "properties": {
           "cloudProvider": {
@@ -1397,6 +1474,9 @@
           "useKafkaPoliciesInAccessGraphStates": {
             "type": "boolean"
           },
+          "useLinkerdPoliciesInAccessGraphStates": {
+            "type": "boolean"
+          },
           "useNetworkPoliciesInAccessGraphStates": {
             "type": "boolean"
           },
@@ -1414,6 +1494,7 @@
         "required": [
           "useNetworkPoliciesInAccessGraphStates",
           "useIstioPoliciesInAccessGraphStates",
+          "useLinkerdPoliciesInAccessGraphStates",
           "useKafkaPoliciesInAccessGraphStates",
           "verdict",
           "reason",
@@ -1441,6 +1522,9 @@
           "kafkaACLs": {
             "$ref": "#/components/schemas/EdgeAccessStatus"
           },
+          "linkerdPolicies": {
+            "$ref": "#/components/schemas/EdgeAccessStatus"
+          },
           "networkPolicies": {
             "$ref": "#/components/schemas/EdgeAccessStatus"
           }
@@ -1452,7 +1536,8 @@
           "awsIam",
           "gcpIam",
           "azureIAM",
-          "database"
+          "database",
+          "linkerdPolicies"
         ],
         "type": "object"
       },
@@ -1516,6 +1601,12 @@
       "FeatureFlags": {
         "properties": {
           "enableFindingsV2": {
+            "type": "boolean"
+          },
+          "enableIAMIntentsSuggestions": {
+            "type": "boolean"
+          },
+          "enableInternetIntentsSuggestions": {
             "type": "boolean"
           },
           "isCloudSecurityEnabled": {
@@ -1694,6 +1785,9 @@
       },
       "GitHubSettings": {
         "properties": {
+          "enableAutoMerge": {
+            "type": "boolean"
+          },
           "isActive": {
             "type": "boolean"
           },
@@ -1706,12 +1800,16 @@
         },
         "required": [
           "isActive",
-          "repoFilterPairs"
+          "repoFilterPairs",
+          "enableAutoMerge"
         ],
         "type": "object"
       },
       "GitHubSettingsInput": {
         "properties": {
+          "enableAutoMerge": {
+            "type": "boolean"
+          },
           "isActive": {
             "type": "boolean"
           },
@@ -1936,9 +2034,35 @@
         },
         "type": "object"
       },
+      "InputDefaultIntentsApprovalActionByEnv": {
+        "properties": {
+          "action": {
+            "enum": [
+              "AUTO_APPROVE",
+              "AUTO_DENY",
+              "REQUIRE_APPROVAL"
+            ],
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "environmentId",
+          "action"
+        ],
+        "type": "object"
+      },
       "InputFeatureFlags": {
         "properties": {
           "enableFindingsV2": {
+            "type": "boolean"
+          },
+          "enableIAMIntentsSuggestions": {
+            "type": "boolean"
+          },
+          "enableInternetIntentsSuggestions": {
             "type": "boolean"
           },
           "isCloudSecurityEnabled": {
@@ -2082,6 +2206,71 @@
             "type": "object"
           }
         },
+        "type": "object"
+      },
+      "InputTerraformAwsPolicyInfo": {
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "arn": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "arn",
+          "address"
+        ],
+        "type": "object"
+      },
+      "InputTerraformAwsRoleInfo": {
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "arn": {
+            "type": "string"
+          },
+          "attachedPolicies": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "inlinePolicy": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "arn",
+          "address",
+          "inlinePolicy"
+        ],
+        "type": "object"
+      },
+      "InputTerraformResourceInfo": {
+        "properties": {
+          "awsRoles": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "gitCommitHash": {
+            "type": "string"
+          },
+          "gitOriginUrl": {
+            "type": "string"
+          },
+          "modulePath": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "modulePath",
+          "gitOriginUrl",
+          "gitCommitHash"
+        ],
         "type": "object"
       },
       "InputTimeFilterValue": {
@@ -2309,7 +2498,8 @@
               "SUCCESS",
               "FAILURE",
               "PENDING",
-              "WARNING"
+              "WARNING",
+              "DISABLED"
             ],
             "type": "string"
           }
@@ -2343,6 +2533,9 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "awsRole": {
+            "type": "string"
           },
           "azureActions": {
             "items": {
@@ -2522,6 +2715,9 @@
           "kafkaACLEnforcementEnabled": {
             "type": "boolean"
           },
+          "linkerdPolicyEnforcementEnabled": {
+            "type": "boolean"
+          },
           "networkPolicyEnforcementEnabled": {
             "type": "boolean"
           },
@@ -2548,6 +2744,7 @@
           "networkPolicyEnforcementEnabled",
           "kafkaACLEnforcementEnabled",
           "istioPolicyEnforcementEnabled",
+          "linkerdPolicyEnforcementEnabled",
           "awsIAMPolicyEnforcementEnabled",
           "gcpIAMPolicyEnforcementEnabled",
           "azureIAMPolicyEnforcementEnabled",
@@ -2929,11 +3126,15 @@
           },
           "settings": {
             "$ref": "#/components/schemas/OrganizationSettings"
+          },
+          "uniqueName": {
+            "type": "string"
           }
         },
         "required": [
           "id",
           "name",
+          "uniqueName",
           "settings",
           "created"
         ],
@@ -2941,6 +3142,12 @@
       },
       "OrganizationSettings": {
         "properties": {
+          "defaultIntentsApprovalActionByEnv": {
+            "items": {
+              "$ref": "#/components/schemas/DefaultIntentsApprovalActionByEnv"
+            },
+            "type": "array"
+          },
           "domains": {
             "items": {
               "type": "string"
@@ -2960,10 +3167,19 @@
             "type": "array"
           }
         },
+        "required": [
+          "defaultIntentsApprovalActionByEnv"
+        ],
         "type": "object"
       },
       "OrganizationSettingsInput": {
         "properties": {
+          "defaultIntentsApprovalActionByEnv": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
           "domains": {
             "items": {
               "type": "string"
@@ -3130,6 +3346,9 @@
           "certificateInformation": {
             "$ref": "#/components/schemas/CertificateInformation"
           },
+          "cloudIam": {
+            "$ref": "#/components/schemas/CloudIam"
+          },
           "databaseIntegration": {
             "properties": {
               "id": {
@@ -3281,6 +3500,9 @@
           "useKafkaACLsInAccessGraphStates": {
             "type": "boolean"
           },
+          "useLinkerdPoliciesInAccessGraphStates": {
+            "type": "boolean"
+          },
           "useNetworkPoliciesInAccessGraphStates": {
             "type": "boolean"
           }
@@ -3289,6 +3511,7 @@
           "useNetworkPoliciesInAccessGraphStates",
           "useKafkaACLsInAccessGraphStates",
           "useIstioPoliciesInAccessGraphStates",
+          "useLinkerdPoliciesInAccessGraphStates",
           "protectionStatus",
           "protectionStatuses",
           "blockingStatus",
@@ -3310,8 +3533,14 @@
           "asClient": {
             "$ref": "#/components/schemas/ClientIntentsFiles"
           },
+          "asClientStatus": {
+            "$ref": "#/components/schemas/ClientIntentAccessStatus"
+          },
           "asServer": {
             "$ref": "#/components/schemas/ClientIntentsFiles"
+          },
+          "asServerStatus": {
+            "$ref": "#/components/schemas/ClientIntentAccessStatus"
           }
         },
         "type": "object"
@@ -3451,6 +3680,71 @@
         ],
         "type": "object"
       },
+      "TerraformAwsPolicyInfo": {
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "arn": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "arn",
+          "address"
+        ],
+        "type": "object"
+      },
+      "TerraformAwsRoleInfo": {
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "arn": {
+            "type": "string"
+          },
+          "attachedPolicies": {
+            "items": {
+              "$ref": "#/components/schemas/TerraformAwsPolicyInfo"
+            },
+            "type": "array"
+          },
+          "inlinePolicy": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "arn",
+          "address",
+          "inlinePolicy"
+        ],
+        "type": "object"
+      },
+      "TerraformResourceInfo": {
+        "properties": {
+          "awsRoles": {
+            "items": {
+              "$ref": "#/components/schemas/TerraformAwsRoleInfo"
+            },
+            "type": "array"
+          },
+          "gitCommitHash": {
+            "type": "string"
+          },
+          "gitOriginUrl": {
+            "type": "string"
+          },
+          "modulePath": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "modulePath",
+          "gitOriginUrl",
+          "gitCommitHash"
+        ],
+        "type": "object"
+      },
       "TimeFilterValue": {
         "properties": {
           "operator": {
@@ -3496,6 +3790,28 @@
         },
         "type": "object"
       },
+      "TrafficLevel": {
+        "properties": {
+          "dataBytesPerSecond": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "flowsCountPerSecond": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "lastReportedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dataBytesPerSecond",
+          "flowsCountPerSecond",
+          "lastReportedAt"
+        ],
+        "type": "object"
+      },
       "User": {
         "properties": {
           "authProviderUserId": {
@@ -3531,6 +3847,12 @@
         "name": "access_token",
         "type": "apiKey"
       },
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "description": "Otterize user JWT token.",
+        "scheme": "bearer",
+        "type": "http"
+      },
       "oauth2": {
         "description": "Use client ID and client secret from an Otterize integration to authenticate.",
         "flows": {
@@ -3553,7 +3875,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "b0ff6bf9ec56bed973c393d950da21da0a90a9b3"
+    "x-revision": "e38121fccedf11461372912ac6f3a211e9a1137a"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -3781,6 +4103,74 @@
           }
         },
         "summary": " Get service ClientIntents ",
+        "tags": [
+          "access graph"
+        ]
+      }
+    },
+    "/access-graph/service-incoming-internet-connections/{targetServiceId}": {
+      "get": {
+        "description": " Get service incoming internet connections ",
+        "operationId": "serviceIncomingInternetConnections_query",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "targetServiceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lastSeenAfter",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": " Get service incoming internet connections "
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": " Get service incoming internet connections ",
         "tags": [
           "access graph"
         ]
@@ -8068,6 +8458,71 @@
         ]
       }
     },
+    "/terraform-resources/": {
+      "post": {
+        "description": "report terraform resources from Otterize CLI",
+        "operationId": "reportTerraformResources_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "resourceInfo": {
+                    "$ref": "#/components/schemas/InputTerraformResourceInfo"
+                  }
+                },
+                "required": [
+                  "resourceInfo"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TerraformResourceInfo"
+                }
+              }
+            },
+            "description": "report terraform resources from Otterize CLI"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "report terraform resources from Otterize CLI",
+        "tags": [
+          "terraform_resources"
+        ]
+      }
+    },
     "/users": {
       "get": {
         "description": "List users",
@@ -8186,6 +8641,12 @@
     },
     {
       "accessTokenCookie": [
+      ],
+      "organizationHeader": [
+      ]
+    },
+    {
+      "bearerAuth": [
       ],
       "organizationHeader": [
       ]

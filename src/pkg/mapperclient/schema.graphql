@@ -39,10 +39,23 @@ type GroupVersionKind {
     kind: String!
 }
 
+type IdentityResolutionData {
+    host: String
+    podHostname: String
+    procfsHostname: String
+    port: Int
+    isService: Boolean
+    uptime: String
+    lastSeen: String
+    extraInfo: String
+    hasLinkerdSidecar: Boolean
+}
+
 type OtterizeServiceIdentity {
     name: String!
     namespace: String!
     labels: [PodLabel!]
+    resolutionData: IdentityResolutionData
     """
     If the service identity was resolved from a pod owner, the GroupVersionKind of the pod owner.
     """
@@ -101,6 +114,7 @@ type Intent {
     client: OtterizeServiceIdentity!
     server: OtterizeServiceIdentity!
     type: IntentType
+    resolutionData: String
     kafkaTopics: [KafkaConfig!]
     httpResources: [HttpResource!]
     awsActions: [String!]
@@ -139,10 +153,17 @@ input IstioConnectionResults {
     results: [IstioConnection!]!
 }
 
+input NamespacedName {
+    name: String!
+    namespace: String!
+}
+
 input AWSOperation {
     resource: String!
     actions: [String!]!
-    srcIp: String!
+    srcIp: String
+    iamRole: String
+    client: NamespacedName
 }
 
 input ServerFilter {
@@ -156,6 +177,18 @@ input AzureOperation {
     dataActions: [String!]!
     clientName: String!
     clientNamespace: String!
+}
+
+input TrafficLevelResult {
+    srcIP: String!
+    dstIP: String!
+
+    bytesSent: Int!
+    flows: Int!
+}
+
+input TrafficLevelResults {
+    results: [TrafficLevelResult!]!
 }
 
 type Query {
@@ -195,4 +228,5 @@ type Mutation {
     reportIstioConnectionResults(results: IstioConnectionResults!): Boolean!
     reportAWSOperation(operation: [AWSOperation!]!): Boolean!
     reportAzureOperation(operation: [AzureOperation!]!): Boolean!
+    reportTrafficLevelResults(results: TrafficLevelResults!): Boolean!
 }

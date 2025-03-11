@@ -20,6 +20,7 @@ import (
 
 const (
 	AccessTokenCookieScopes  = "accessTokenCookie.Scopes"
+	BearerAuthScopes         = "bearerAuth.Scopes"
 	Oauth2Scopes             = "oauth2.Scopes"
 	OrganizationHeaderScopes = "organizationHeader.Scopes"
 )
@@ -109,6 +110,13 @@ const (
 // Defines values for DatabaseVisibilitySettingsSource.
 const (
 	GCPPUBSUB DatabaseVisibilitySettingsSource = "GCP_PUBSUB"
+)
+
+// Defines values for DefaultIntentsApprovalActionByEnvAction.
+const (
+	AUTOAPPROVE     DefaultIntentsApprovalActionByEnvAction = "AUTO_APPROVE"
+	AUTODENY        DefaultIntentsApprovalActionByEnvAction = "AUTO_DENY"
+	REQUIREAPPROVAL DefaultIntentsApprovalActionByEnvAction = "REQUIRE_APPROVAL"
 )
 
 // Defines values for EdgeAccessStatusReason.
@@ -240,10 +248,11 @@ const (
 
 // Defines values for IntegrationStatusState.
 const (
-	IntegrationStatusStateFAILURE IntegrationStatusState = "FAILURE"
-	IntegrationStatusStatePENDING IntegrationStatusState = "PENDING"
-	IntegrationStatusStateSUCCESS IntegrationStatusState = "SUCCESS"
-	IntegrationStatusStateWARNING IntegrationStatusState = "WARNING"
+	IntegrationStatusStateDISABLED IntegrationStatusState = "DISABLED"
+	IntegrationStatusStateFAILURE  IntegrationStatusState = "FAILURE"
+	IntegrationStatusStatePENDING  IntegrationStatusState = "PENDING"
+	IntegrationStatusStateSUCCESS  IntegrationStatusState = "SUCCESS"
+	IntegrationStatusStateWARNING  IntegrationStatusState = "WARNING"
 )
 
 // Defines values for IntentsOperatorComponentType.
@@ -466,6 +475,7 @@ type AccessGraphEdge struct {
 	Server   struct {
 		Id string `json:"id"`
 	} `json:"server"`
+	Traffic TrafficLevel `json:"traffic"`
 }
 
 // AccessGraphFilter  Access graph filter
@@ -555,6 +565,14 @@ type CertificateInformation struct {
 	Ttl        *int32    `json:"ttl,omitempty"`
 }
 
+// ClientIntentAccessStatus defines model for ClientIntentAccessStatus.
+type ClientIntentAccessStatus struct {
+	Allowed        int32 `json:"allowed"`
+	Blocked        int32 `json:"blocked"`
+	Total          int32 `json:"total"`
+	WouldBeBlocked int32 `json:"wouldBeBlocked"`
+}
+
 // ClientIntentEvent defines model for ClientIntentEvent.
 type ClientIntentEvent struct {
 	Count              int32      `json:"count"`
@@ -602,6 +620,11 @@ type ClientIntentsRow struct {
 // ClientIntentsRowDiff defines model for ClientIntentsRow.Diff.
 type ClientIntentsRowDiff string
 
+// CloudIam defines model for CloudIam.
+type CloudIam struct {
+	AwsRoles *[]string `json:"awsRoles,omitempty"`
+}
+
 // Cluster defines model for Cluster.
 type Cluster struct {
 	Components         IntegrationComponents `json:"components"`
@@ -629,12 +652,14 @@ type ClusterConfiguration struct {
 	ClusterFormSettings                   ClusterFormSettings `json:"clusterFormSettings"`
 	GlobalDefaultDeny                     bool                `json:"globalDefaultDeny"`
 	IstioGlobalDefaultDeny                bool                `json:"istioGlobalDefaultDeny"`
+	LinkerdGlobalDefaultDeny              bool                `json:"linkerdGlobalDefaultDeny"`
 	UseAWSIAMInAccessGraphStates          bool                `json:"useAWSIAMInAccessGraphStates"`
 	UseAzureIAMInAccessGraphStates        bool                `json:"useAzureIAMInAccessGraphStates"`
 	UseDatabaseInAccessGraphStates        bool                `json:"useDatabaseInAccessGraphStates"`
 	UseGCPIAMInAccessGraphStates          bool                `json:"useGCPIAMInAccessGraphStates"`
 	UseIstioPoliciesInAccessGraphStates   bool                `json:"useIstioPoliciesInAccessGraphStates"`
 	UseKafkaACLsInAccessGraphStates       bool                `json:"useKafkaACLsInAccessGraphStates"`
+	UseLinkerdPoliciesInAccessGraphStates bool                `json:"useLinkerdPoliciesInAccessGraphStates"`
 	UseNetworkPoliciesInAccessGraphStates bool                `json:"useNetworkPoliciesInAccessGraphStates"`
 }
 
@@ -643,12 +668,14 @@ type ClusterConfigurationInput struct {
 	ClusterFormSettings                   *map[string]interface{} `json:"clusterFormSettings,omitempty"`
 	GlobalDefaultDeny                     bool                    `json:"globalDefaultDeny"`
 	IstioGlobalDefaultDeny                *bool                   `json:"istioGlobalDefaultDeny,omitempty"`
+	LinkerdGlobalDefaultDeny              *bool                   `json:"linkerdGlobalDefaultDeny,omitempty"`
 	UseAWSIAMInAccessGraphStates          *bool                   `json:"useAWSIAMInAccessGraphStates,omitempty"`
 	UseAzureIAMInAccessGraphStates        *bool                   `json:"useAzureIAMInAccessGraphStates,omitempty"`
 	UseDatabaseInAccessGraphStates        *bool                   `json:"useDatabaseInAccessGraphStates,omitempty"`
 	UseGCPIAMInAccessGraphStates          *bool                   `json:"useGCPIAMInAccessGraphStates,omitempty"`
 	UseIstioPoliciesInAccessGraphStates   bool                    `json:"useIstioPoliciesInAccessGraphStates"`
 	UseKafkaACLsInAccessGraphStates       bool                    `json:"useKafkaACLsInAccessGraphStates"`
+	UseLinkerdPoliciesInAccessGraphStates bool                    `json:"useLinkerdPoliciesInAccessGraphStates"`
 	UseNetworkPoliciesInAccessGraphStates bool                    `json:"useNetworkPoliciesInAccessGraphStates"`
 }
 
@@ -733,6 +760,15 @@ type DatabaseVisibilitySettings struct {
 // DatabaseVisibilitySettingsSource defines model for DatabaseVisibilitySettings.Source.
 type DatabaseVisibilitySettingsSource string
 
+// DefaultIntentsApprovalActionByEnv defines model for DefaultIntentsApprovalActionByEnv.
+type DefaultIntentsApprovalActionByEnv struct {
+	Action        DefaultIntentsApprovalActionByEnvAction `json:"action"`
+	EnvironmentId string                                  `json:"environmentId"`
+}
+
+// DefaultIntentsApprovalActionByEnvAction defines model for DefaultIntentsApprovalActionByEnv.Action.
+type DefaultIntentsApprovalActionByEnvAction string
+
 // DetectedCloudServer defines model for DetectedCloudServer.
 type DetectedCloudServer struct {
 	CloudProvider string `json:"cloudProvider"`
@@ -746,6 +782,7 @@ type EdgeAccessStatus struct {
 	Reasons                               []EdgeAccessStatusReasons `json:"reasons"`
 	UseIstioPoliciesInAccessGraphStates   bool                      `json:"useIstioPoliciesInAccessGraphStates"`
 	UseKafkaPoliciesInAccessGraphStates   bool                      `json:"useKafkaPoliciesInAccessGraphStates"`
+	UseLinkerdPoliciesInAccessGraphStates bool                      `json:"useLinkerdPoliciesInAccessGraphStates"`
 	UseNetworkPoliciesInAccessGraphStates bool                      `json:"useNetworkPoliciesInAccessGraphStates"`
 	Verdict                               EdgeAccessStatusVerdict   `json:"verdict"`
 }
@@ -767,6 +804,7 @@ type EdgeAccessStatuses struct {
 	GcpIam          EdgeAccessStatus `json:"gcpIam"`
 	IstioPolicies   EdgeAccessStatus `json:"istioPolicies"`
 	KafkaACLs       EdgeAccessStatus `json:"kafkaACLs"`
+	LinkerdPolicies EdgeAccessStatus `json:"linkerdPolicies"`
 	NetworkPolicies EdgeAccessStatus `json:"networkPolicies"`
 }
 
@@ -789,11 +827,13 @@ type Error struct {
 
 // FeatureFlags defines model for FeatureFlags.
 type FeatureFlags struct {
-	EnableFindingsV2                *bool `json:"enableFindingsV2,omitempty"`
-	IsCloudSecurityEnabled          *bool `json:"isCloudSecurityEnabled,omitempty"`
-	IsCloudServicesDetectionEnabled *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
-	UseClientIntentsV2              *bool `json:"useClientIntentsV2,omitempty"`
-	UseTypedIntentsCTE              *bool `json:"useTypedIntentsCTE,omitempty"`
+	EnableFindingsV2                 *bool `json:"enableFindingsV2,omitempty"`
+	EnableIAMIntentsSuggestions      *bool `json:"enableIAMIntentsSuggestions,omitempty"`
+	EnableInternetIntentsSuggestions *bool `json:"enableInternetIntentsSuggestions,omitempty"`
+	IsCloudSecurityEnabled           *bool `json:"isCloudSecurityEnabled,omitempty"`
+	IsCloudServicesDetectionEnabled  *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
+	UseClientIntentsV2               *bool `json:"useClientIntentsV2,omitempty"`
+	UseTypedIntentsCTE               *bool `json:"useTypedIntentsCTE,omitempty"`
 }
 
 // GCPInfo defines model for GCPInfo.
@@ -839,12 +879,14 @@ type GitHubRepoInfo struct {
 
 // GitHubSettings defines model for GitHubSettings.
 type GitHubSettings struct {
+	EnableAutoMerge bool                   `json:"enableAutoMerge"`
 	IsActive        bool                   `json:"isActive"`
 	RepoFilterPairs []GitHubRepoFilterPair `json:"repoFilterPairs"`
 }
 
 // GitHubSettingsInput defines model for GitHubSettingsInput.
 type GitHubSettingsInput struct {
+	EnableAutoMerge *bool                    `json:"enableAutoMerge,omitempty"`
 	IsActive        bool                     `json:"isActive"`
 	RepoFilterPairs []map[string]interface{} `json:"repoFilterPairs"`
 }
@@ -906,11 +948,13 @@ type InputAccessLogFilter struct {
 
 // InputFeatureFlags defines model for InputFeatureFlags.
 type InputFeatureFlags struct {
-	EnableFindingsV2                *bool `json:"enableFindingsV2,omitempty"`
-	IsCloudSecurityEnabled          *bool `json:"isCloudSecurityEnabled,omitempty"`
-	IsCloudServicesDetectionEnabled *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
-	UseClientIntentsV2              *bool `json:"useClientIntentsV2,omitempty"`
-	UseTypedIntentsCTE              *bool `json:"useTypedIntentsCTE,omitempty"`
+	EnableFindingsV2                 *bool `json:"enableFindingsV2,omitempty"`
+	EnableIAMIntentsSuggestions      *bool `json:"enableIAMIntentsSuggestions,omitempty"`
+	EnableInternetIntentsSuggestions *bool `json:"enableInternetIntentsSuggestions,omitempty"`
+	IsCloudSecurityEnabled           *bool `json:"isCloudSecurityEnabled,omitempty"`
+	IsCloudServicesDetectionEnabled  *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
+	UseClientIntentsV2               *bool `json:"useClientIntentsV2,omitempty"`
+	UseTypedIntentsCTE               *bool `json:"useTypedIntentsCTE,omitempty"`
 }
 
 // InputServiceFilter  Service filter
@@ -922,6 +966,14 @@ type InputServiceFilter struct {
 	Search         *string                 `json:"search,omitempty"`
 	ServiceIds     *[]string               `json:"serviceIds,omitempty"`
 	ServiceType    *map[string]interface{} `json:"serviceType,omitempty"`
+}
+
+// InputTerraformResourceInfo defines model for InputTerraformResourceInfo.
+type InputTerraformResourceInfo struct {
+	AwsRoles      *[]map[string]interface{} `json:"awsRoles,omitempty"`
+	GitCommitHash string                    `json:"gitCommitHash"`
+	GitOriginUrl  string                    `json:"gitOriginUrl"`
+	ModulePath    string                    `json:"modulePath"`
 }
 
 // Integration defines model for Integration.
@@ -1028,6 +1080,7 @@ type IntentsOperatorConfiguration struct {
 	GlobalEnforcementEnabled              bool      `json:"globalEnforcementEnabled"`
 	IstioPolicyEnforcementEnabled         bool      `json:"istioPolicyEnforcementEnabled"`
 	KafkaACLEnforcementEnabled            bool      `json:"kafkaACLEnforcementEnabled"`
+	LinkerdPolicyEnforcementEnabled       bool      `json:"linkerdPolicyEnforcementEnabled"`
 	NetworkPolicyEnforcementEnabled       bool      `json:"networkPolicyEnforcementEnabled"`
 	ProtectedServices                     []struct {
 		Id string `json:"id"`
@@ -1134,25 +1187,28 @@ type NetworkMapperComponentType string
 
 // Organization defines model for Organization.
 type Organization struct {
-	Created  time.Time            `json:"created"`
-	Id       string               `json:"id"`
-	ImageURL *string              `json:"imageURL,omitempty"`
-	Name     string               `json:"name"`
-	Settings OrganizationSettings `json:"settings"`
+	Created    time.Time            `json:"created"`
+	Id         string               `json:"id"`
+	ImageURL   *string              `json:"imageURL,omitempty"`
+	Name       string               `json:"name"`
+	Settings   OrganizationSettings `json:"settings"`
+	UniqueName string               `json:"uniqueName"`
 }
 
 // OrganizationSettings defines model for OrganizationSettings.
 type OrganizationSettings struct {
-	Domains             *[]string `json:"domains,omitempty"`
-	EnforcedRegulations *[]string `json:"enforcedRegulations,omitempty"`
-	IgnoredCloudDomains *[]string `json:"ignoredCloudDomains,omitempty"`
+	DefaultIntentsApprovalActionByEnv []DefaultIntentsApprovalActionByEnv `json:"defaultIntentsApprovalActionByEnv"`
+	Domains                           *[]string                           `json:"domains,omitempty"`
+	EnforcedRegulations               *[]string                           `json:"enforcedRegulations,omitempty"`
+	IgnoredCloudDomains               *[]string                           `json:"ignoredCloudDomains,omitempty"`
 }
 
 // OrganizationSettingsInput defines model for OrganizationSettingsInput.
 type OrganizationSettingsInput struct {
-	Domains             *[]string `json:"domains,omitempty"`
-	EnforcedRegulations *[]string `json:"enforcedRegulations,omitempty"`
-	IgnoredCloudDomains *[]string `json:"ignoredCloudDomains,omitempty"`
+	DefaultIntentsApprovalActionByEnv *[]map[string]interface{} `json:"defaultIntentsApprovalActionByEnv,omitempty"`
+	Domains                           *[]string                 `json:"domains,omitempty"`
+	EnforcedRegulations               *[]string                 `json:"enforcedRegulations,omitempty"`
+	IgnoredCloudDomains               *[]string                 `json:"ignoredCloudDomains,omitempty"`
 }
 
 // PaginationInput defines model for PaginationInput.
@@ -1210,6 +1266,7 @@ type Service struct {
 	AwsVisibility          *AWSVisibility          `json:"awsVisibility,omitempty"`
 	AzureResource          *AzureResource          `json:"azureResource,omitempty"`
 	CertificateInformation *CertificateInformation `json:"certificateInformation,omitempty"`
+	CloudIam               *CloudIam               `json:"cloudIam,omitempty"`
 	DatabaseIntegration    *struct {
 		Id string `json:"id"`
 	} `json:"databaseIntegration,omitempty"`
@@ -1252,15 +1309,18 @@ type ServiceAccessStatus struct {
 	ProtectionStatuses                    ServerProtectionStatuses `json:"protectionStatuses"`
 	UseIstioPoliciesInAccessGraphStates   bool                     `json:"useIstioPoliciesInAccessGraphStates"`
 	UseKafkaACLsInAccessGraphStates       bool                     `json:"useKafkaACLsInAccessGraphStates"`
+	UseLinkerdPoliciesInAccessGraphStates bool                     `json:"useLinkerdPoliciesInAccessGraphStates"`
 	UseNetworkPoliciesInAccessGraphStates bool                     `json:"useNetworkPoliciesInAccessGraphStates"`
 }
 
 // ServiceClientIntents defines model for ServiceClientIntents.
 type ServiceClientIntents struct {
-	AppliedIntentEvents *[]ClientIntentEvent `json:"appliedIntentEvents,omitempty"`
-	AppliedIntentStatus *ClientIntentStatus  `json:"appliedIntentStatus,omitempty"`
-	AsClient            *ClientIntentsFiles  `json:"asClient,omitempty"`
-	AsServer            *ClientIntentsFiles  `json:"asServer,omitempty"`
+	AppliedIntentEvents *[]ClientIntentEvent      `json:"appliedIntentEvents,omitempty"`
+	AppliedIntentStatus *ClientIntentStatus       `json:"appliedIntentStatus,omitempty"`
+	AsClient            *ClientIntentsFiles       `json:"asClient,omitempty"`
+	AsClientStatus      *ClientIntentAccessStatus `json:"asClientStatus,omitempty"`
+	AsServer            *ClientIntentsFiles       `json:"asServer,omitempty"`
+	AsServerStatus      *ClientIntentAccessStatus `json:"asServerStatus,omitempty"`
 }
 
 // ServicesResponse defines model for ServicesResponse.
@@ -1303,6 +1363,28 @@ type SlackSettingsInput struct {
 	IsActive                 bool                      `json:"isActive"`
 }
 
+// TerraformAwsPolicyInfo defines model for TerraformAwsPolicyInfo.
+type TerraformAwsPolicyInfo struct {
+	Address string `json:"address"`
+	Arn     string `json:"arn"`
+}
+
+// TerraformAwsRoleInfo defines model for TerraformAwsRoleInfo.
+type TerraformAwsRoleInfo struct {
+	Address          string                    `json:"address"`
+	Arn              string                    `json:"arn"`
+	AttachedPolicies *[]TerraformAwsPolicyInfo `json:"attachedPolicies,omitempty"`
+	InlinePolicy     string                    `json:"inlinePolicy"`
+}
+
+// TerraformResourceInfo defines model for TerraformResourceInfo.
+type TerraformResourceInfo struct {
+	AwsRoles      *[]TerraformAwsRoleInfo `json:"awsRoles,omitempty"`
+	GitCommitHash string                  `json:"gitCommitHash"`
+	GitOriginUrl  string                  `json:"gitOriginUrl"`
+	ModulePath    string                  `json:"modulePath"`
+}
+
 // TimeFilterValue defines model for TimeFilterValue.
 type TimeFilterValue struct {
 	Operator TimeFilterValueOperator `json:"operator"`
@@ -1316,6 +1398,13 @@ type TimeFilterValueOperator string
 type TimeRange struct {
 	From *time.Time `json:"from,omitempty"`
 	To   *time.Time `json:"to,omitempty"`
+}
+
+// TrafficLevel defines model for TrafficLevel.
+type TrafficLevel struct {
+	DataBytesPerSecond  int32     `json:"dataBytesPerSecond"`
+	FlowsCountPerSecond int32     `json:"flowsCountPerSecond"`
+	LastReportedAt      time.Time `json:"lastReportedAt"`
 }
 
 // User defines model for User.
@@ -1373,6 +1462,11 @@ type ServiceClientIntentsQueryJSONBody struct {
 	EnableInternetIntents *bool              `json:"enableInternetIntents,omitempty"`
 	FeatureFlags          *InputFeatureFlags `json:"featureFlags,omitempty"`
 	LastSeenAfter         *time.Time         `json:"lastSeenAfter,omitempty"`
+}
+
+// ServiceIncomingInternetConnectionsQueryParams defines parameters for ServiceIncomingInternetConnectionsQuery.
+type ServiceIncomingInternetConnectionsQueryParams struct {
+	LastSeenAfter time.Time `form:"lastSeenAfter" json:"lastSeenAfter"`
 }
 
 // AccessLogQueryJSONBody defines parameters for AccessLogQuery.
@@ -1664,6 +1758,11 @@ type UpdateServiceMutationJSONBody struct {
 	Tags *[]string `json:"tags,omitempty"`
 }
 
+// ReportTerraformResourcesMutationJSONBody defines parameters for ReportTerraformResourcesMutation.
+type ReportTerraformResourcesMutationJSONBody struct {
+	ResourceInfo InputTerraformResourceInfo `json:"resourceInfo"`
+}
+
 // AccessGraphQueryJSONRequestBody defines body for AccessGraphQuery for application/json ContentType.
 type AccessGraphQueryJSONRequestBody AccessGraphQueryJSONBody
 
@@ -1769,6 +1868,9 @@ type UpdateOrganizationMutationJSONRequestBody UpdateOrganizationMutationJSONBod
 // UpdateServiceMutationJSONRequestBody defines body for UpdateServiceMutation for application/json ContentType.
 type UpdateServiceMutationJSONRequestBody UpdateServiceMutationJSONBody
 
+// ReportTerraformResourcesMutationJSONRequestBody defines body for ReportTerraformResourcesMutation for application/json ContentType.
+type ReportTerraformResourcesMutationJSONRequestBody ReportTerraformResourcesMutationJSONBody
+
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
@@ -1856,6 +1958,9 @@ type ClientInterface interface {
 	ServiceClientIntentsQueryWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	ServiceClientIntentsQuery(ctx context.Context, id string, body ServiceClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ServiceIncomingInternetConnectionsQuery request
+	ServiceIncomingInternetConnectionsQuery(ctx context.Context, targetServiceId string, params *ServiceIncomingInternetConnectionsQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AccessLogQuery request with any body
 	AccessLogQueryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -2104,6 +2209,11 @@ type ClientInterface interface {
 
 	UpdateServiceMutation(ctx context.Context, id string, body UpdateServiceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ReportTerraformResourcesMutation request with any body
+	ReportTerraformResourcesMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ReportTerraformResourcesMutation(ctx context.Context, body ReportTerraformResourcesMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// UsersQuery request
 	UsersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -2173,6 +2283,18 @@ func (c *Client) ServiceClientIntentsQueryWithBody(ctx context.Context, id strin
 
 func (c *Client) ServiceClientIntentsQuery(ctx context.Context, id string, body ServiceClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewServiceClientIntentsQueryRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ServiceIncomingInternetConnectionsQuery(ctx context.Context, targetServiceId string, params *ServiceIncomingInternetConnectionsQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewServiceIncomingInternetConnectionsQueryRequest(c.Server, targetServiceId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -3299,6 +3421,30 @@ func (c *Client) UpdateServiceMutation(ctx context.Context, id string, body Upda
 	return c.Client.Do(req)
 }
 
+func (c *Client) ReportTerraformResourcesMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReportTerraformResourcesMutationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ReportTerraformResourcesMutation(ctx context.Context, body ReportTerraformResourcesMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReportTerraformResourcesMutationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) UsersQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUsersQueryRequest(c.Server)
 	if err != nil {
@@ -3446,6 +3592,56 @@ func NewServiceClientIntentsQueryRequestWithBody(server string, id string, conte
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewServiceIncomingInternetConnectionsQueryRequest generates requests for ServiceIncomingInternetConnectionsQuery
+func NewServiceIncomingInternetConnectionsQueryRequest(server string, targetServiceId string, params *ServiceIncomingInternetConnectionsQueryParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "targetServiceId", runtime.ParamLocationPath, targetServiceId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/access-graph/service-incoming-internet-connections/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "lastSeenAfter", runtime.ParamLocationQuery, params.LastSeenAfter); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -6286,6 +6482,46 @@ func NewUpdateServiceMutationRequestWithBody(server string, id string, contentTy
 	return req, nil
 }
 
+// NewReportTerraformResourcesMutationRequest calls the generic ReportTerraformResourcesMutation builder with application/json body
+func NewReportTerraformResourcesMutationRequest(server string, body ReportTerraformResourcesMutationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewReportTerraformResourcesMutationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewReportTerraformResourcesMutationRequestWithBody generates requests for ReportTerraformResourcesMutation with any type of body
+func NewReportTerraformResourcesMutationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/terraform-resources/")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewUsersQueryRequest generates requests for UsersQuery
 func NewUsersQueryRequest(server string) (*http.Request, error) {
 	var err error
@@ -6404,6 +6640,9 @@ type ClientWithResponsesInterface interface {
 	ServiceClientIntentsQueryWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ServiceClientIntentsQueryResponse, error)
 
 	ServiceClientIntentsQueryWithResponse(ctx context.Context, id string, body ServiceClientIntentsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*ServiceClientIntentsQueryResponse, error)
+
+	// ServiceIncomingInternetConnectionsQuery request
+	ServiceIncomingInternetConnectionsQueryWithResponse(ctx context.Context, targetServiceId string, params *ServiceIncomingInternetConnectionsQueryParams, reqEditors ...RequestEditorFn) (*ServiceIncomingInternetConnectionsQueryResponse, error)
 
 	// AccessLogQuery request with any body
 	AccessLogQueryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AccessLogQueryResponse, error)
@@ -6652,6 +6891,11 @@ type ClientWithResponsesInterface interface {
 
 	UpdateServiceMutationWithResponse(ctx context.Context, id string, body UpdateServiceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateServiceMutationResponse, error)
 
+	// ReportTerraformResourcesMutation request with any body
+	ReportTerraformResourcesMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReportTerraformResourcesMutationResponse, error)
+
+	ReportTerraformResourcesMutationWithResponse(ctx context.Context, body ReportTerraformResourcesMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*ReportTerraformResourcesMutationResponse, error)
+
 	// UsersQuery request
 	UsersQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*UsersQueryResponse, error)
 
@@ -6743,6 +6987,36 @@ func (r ServiceClientIntentsQueryResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r ServiceClientIntentsQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ServiceIncomingInternetConnectionsQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]string
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ServiceIncomingInternetConnectionsQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ServiceIncomingInternetConnectionsQueryResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -8579,6 +8853,36 @@ func (r UpdateServiceMutationResponse) StatusCode() int {
 	return 0
 }
 
+type ReportTerraformResourcesMutationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TerraformResourceInfo
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ReportTerraformResourcesMutationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ReportTerraformResourcesMutationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type UsersQueryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -8688,6 +8992,15 @@ func (c *ClientWithResponses) ServiceClientIntentsQueryWithResponse(ctx context.
 		return nil, err
 	}
 	return ParseServiceClientIntentsQueryResponse(rsp)
+}
+
+// ServiceIncomingInternetConnectionsQueryWithResponse request returning *ServiceIncomingInternetConnectionsQueryResponse
+func (c *ClientWithResponses) ServiceIncomingInternetConnectionsQueryWithResponse(ctx context.Context, targetServiceId string, params *ServiceIncomingInternetConnectionsQueryParams, reqEditors ...RequestEditorFn) (*ServiceIncomingInternetConnectionsQueryResponse, error) {
+	rsp, err := c.ServiceIncomingInternetConnectionsQuery(ctx, targetServiceId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseServiceIncomingInternetConnectionsQueryResponse(rsp)
 }
 
 // AccessLogQueryWithBodyWithResponse request with arbitrary body returning *AccessLogQueryResponse
@@ -9495,6 +9808,23 @@ func (c *ClientWithResponses) UpdateServiceMutationWithResponse(ctx context.Cont
 	return ParseUpdateServiceMutationResponse(rsp)
 }
 
+// ReportTerraformResourcesMutationWithBodyWithResponse request with arbitrary body returning *ReportTerraformResourcesMutationResponse
+func (c *ClientWithResponses) ReportTerraformResourcesMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReportTerraformResourcesMutationResponse, error) {
+	rsp, err := c.ReportTerraformResourcesMutationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseReportTerraformResourcesMutationResponse(rsp)
+}
+
+func (c *ClientWithResponses) ReportTerraformResourcesMutationWithResponse(ctx context.Context, body ReportTerraformResourcesMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*ReportTerraformResourcesMutationResponse, error) {
+	rsp, err := c.ReportTerraformResourcesMutation(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseReportTerraformResourcesMutationResponse(rsp)
+}
+
 // UsersQueryWithResponse request returning *UsersQueryResponse
 func (c *ClientWithResponses) UsersQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*UsersQueryResponse, error) {
 	rsp, err := c.UsersQuery(ctx, reqEditors...)
@@ -9693,6 +10023,88 @@ func ParseServiceClientIntentsQueryResponse(rsp *http.Response) (*ServiceClientI
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest ServiceClientIntents
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseServiceIncomingInternetConnectionsQueryResponse parses an HTTP response from a ServiceIncomingInternetConnectionsQueryWithResponse call
+func ParseServiceIncomingInternetConnectionsQueryResponse(rsp *http.Response) (*ServiceIncomingInternetConnectionsQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ServiceIncomingInternetConnectionsQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []string
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -14695,6 +15107,88 @@ func ParseUpdateServiceMutationResponse(rsp *http.Response) (*UpdateServiceMutat
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Service
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseReportTerraformResourcesMutationResponse parses an HTTP response from a ReportTerraformResourcesMutationWithResponse call
+func ParseReportTerraformResourcesMutationResponse(rsp *http.Response) (*ReportTerraformResourcesMutationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ReportTerraformResourcesMutationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TerraformResourceInfo
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
