@@ -2,7 +2,6 @@ package terraform
 
 import (
 	"errors"
-	"fmt"
 	"github.com/hashicorp/terraform-exec/tfexec"
 	"os"
 	"os/exec"
@@ -29,8 +28,7 @@ func GetTerraformClient(workingDir string) (*tfexec.Terraform, error) {
 
 	tf, err := tfexec.NewTerraform(workingDir, terraformPath)
 	if err != nil {
-		fmt.Println("Error initializing Terraform:", err)
-		os.Exit(1)
+		return nil, err
 	}
 
 	return tf, nil

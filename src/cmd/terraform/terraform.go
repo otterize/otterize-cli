@@ -20,5 +20,5 @@ func init() {
 	cloudclient.RegisterAPIFlags(TerraformCmd)
 	TerraformCmd.PersistentFlags().BoolVar(&debug, "dry-run", false, "Simulate the command without making changes")
 
-	TerraformCmd.AddCommand(parse.ParseTfStateCmd)
+	TerraformCmd.AddCommand(parse.UploadResourceInfoCmd)
 }
