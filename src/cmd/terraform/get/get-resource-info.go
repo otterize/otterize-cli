@@ -50,7 +50,7 @@ var GetResourceInfoCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		prints.PrintCliStderr(string(prettyJSON.Bytes()))
+		prints.PrintCliStderr(prettyJSON.String())
 
 		return nil
 	},
