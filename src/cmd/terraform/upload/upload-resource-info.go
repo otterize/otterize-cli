@@ -1,4 +1,4 @@
-package parse
+package upload
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 )
 
 var UploadResourceInfoCmd = &cobra.Command{
-	Use:          "upload-resource-info <tfstate path>",
+	Use:          "upload-resource-info",
 	Short:        "Parses the tf state and uploads the iam information to the Otterize cloud",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {

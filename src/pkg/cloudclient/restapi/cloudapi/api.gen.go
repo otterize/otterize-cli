@@ -1758,6 +1758,13 @@ type UpdateServiceMutationJSONBody struct {
 	Tags *[]string `json:"tags,omitempty"`
 }
 
+// TerraformResourceByIdentityQueryParams defines parameters for TerraformResourceByIdentityQuery.
+type TerraformResourceByIdentityQueryParams struct {
+	ModulePath    string `form:"modulePath" json:"modulePath"`
+	GitOriginUrl  string `form:"gitOriginUrl" json:"gitOriginUrl"`
+	GitCommitHash string `form:"gitCommitHash" json:"gitCommitHash"`
+}
+
 // ReportTerraformResourcesMutationJSONBody defines parameters for ReportTerraformResourcesMutation.
 type ReportTerraformResourcesMutationJSONBody struct {
 	ResourceInfo InputTerraformResourceInfo `json:"resourceInfo"`
@@ -2208,6 +2215,9 @@ type ClientInterface interface {
 	UpdateServiceMutationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateServiceMutation(ctx context.Context, id string, body UpdateServiceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// TerraformResourceByIdentityQuery request
+	TerraformResourceByIdentityQuery(ctx context.Context, params *TerraformResourceByIdentityQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ReportTerraformResourcesMutation request with any body
 	ReportTerraformResourcesMutationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -3411,6 +3421,18 @@ func (c *Client) UpdateServiceMutationWithBody(ctx context.Context, id string, c
 
 func (c *Client) UpdateServiceMutation(ctx context.Context, id string, body UpdateServiceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateServiceMutationRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) TerraformResourceByIdentityQuery(ctx context.Context, params *TerraformResourceByIdentityQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewTerraformResourceByIdentityQueryRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -6482,6 +6504,73 @@ func NewUpdateServiceMutationRequestWithBody(server string, id string, contentTy
 	return req, nil
 }
 
+// NewTerraformResourceByIdentityQueryRequest generates requests for TerraformResourceByIdentityQuery
+func NewTerraformResourceByIdentityQueryRequest(server string, params *TerraformResourceByIdentityQueryParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/terraform-resources/")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "modulePath", runtime.ParamLocationQuery, params.ModulePath); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "gitOriginUrl", runtime.ParamLocationQuery, params.GitOriginUrl); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "gitCommitHash", runtime.ParamLocationQuery, params.GitCommitHash); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewReportTerraformResourcesMutationRequest calls the generic ReportTerraformResourcesMutation builder with application/json body
 func NewReportTerraformResourcesMutationRequest(server string, body ReportTerraformResourcesMutationJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -6890,6 +6979,9 @@ type ClientWithResponsesInterface interface {
 	UpdateServiceMutationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateServiceMutationResponse, error)
 
 	UpdateServiceMutationWithResponse(ctx context.Context, id string, body UpdateServiceMutationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateServiceMutationResponse, error)
+
+	// TerraformResourceByIdentityQuery request
+	TerraformResourceByIdentityQueryWithResponse(ctx context.Context, params *TerraformResourceByIdentityQueryParams, reqEditors ...RequestEditorFn) (*TerraformResourceByIdentityQueryResponse, error)
 
 	// ReportTerraformResourcesMutation request with any body
 	ReportTerraformResourcesMutationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReportTerraformResourcesMutationResponse, error)
@@ -8853,6 +8945,36 @@ func (r UpdateServiceMutationResponse) StatusCode() int {
 	return 0
 }
 
+type TerraformResourceByIdentityQueryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TerraformResourceInfo
+	JSON400      *Error
+	JSON401      *Error
+	JSON403      *Error
+	JSON404      *Error
+	JSON409      *Error
+	JSON422      *Error
+	JSON500      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r TerraformResourceByIdentityQueryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r TerraformResourceByIdentityQueryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type ReportTerraformResourcesMutationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -9806,6 +9928,15 @@ func (c *ClientWithResponses) UpdateServiceMutationWithResponse(ctx context.Cont
 		return nil, err
 	}
 	return ParseUpdateServiceMutationResponse(rsp)
+}
+
+// TerraformResourceByIdentityQueryWithResponse request returning *TerraformResourceByIdentityQueryResponse
+func (c *ClientWithResponses) TerraformResourceByIdentityQueryWithResponse(ctx context.Context, params *TerraformResourceByIdentityQueryParams, reqEditors ...RequestEditorFn) (*TerraformResourceByIdentityQueryResponse, error) {
+	rsp, err := c.TerraformResourceByIdentityQuery(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseTerraformResourceByIdentityQueryResponse(rsp)
 }
 
 // ReportTerraformResourcesMutationWithBodyWithResponse request with arbitrary body returning *ReportTerraformResourcesMutationResponse
@@ -15107,6 +15238,88 @@ func ParseUpdateServiceMutationResponse(rsp *http.Response) (*UpdateServiceMutat
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Service
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseTerraformResourceByIdentityQueryResponse parses an HTTP response from a TerraformResourceByIdentityQueryWithResponse call
+func ParseTerraformResourceByIdentityQueryResponse(rsp *http.Response) (*TerraformResourceByIdentityQueryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &TerraformResourceByIdentityQueryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TerraformResourceInfo
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

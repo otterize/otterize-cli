@@ -3875,7 +3875,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "e38121fccedf11461372912ac6f3a211e9a1137a"
+    "x-revision": "8322427a9dfa0aca93d9117002d3cac871d85cbd"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -8459,6 +8459,76 @@
       }
     },
     "/terraform-resources/": {
+      "get": {
+        "description": "get terraform resource by git identity",
+        "operationId": "terraformResourceByIdentity_query",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "modulePath",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gitOriginUrl",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gitCommitHash",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TerraformResourceInfo"
+                }
+              }
+            },
+            "description": "get terraform resource by git identity"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "get terraform resource by git identity",
+        "tags": [
+          "terraform_resources"
+        ]
+      },
       "post": {
         "description": "report terraform resources from Otterize CLI",
         "operationId": "reportTerraformResources_mutation",

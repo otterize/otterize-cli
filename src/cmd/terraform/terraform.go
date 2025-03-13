@@ -2,7 +2,8 @@ package terraform
 
 import (
 	"github.com/otterize/otterize-cli/src/cmd/groups"
-	"github.com/otterize/otterize-cli/src/cmd/terraform/parse"
+	"github.com/otterize/otterize-cli/src/cmd/terraform/get"
+	"github.com/otterize/otterize-cli/src/cmd/terraform/upload"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient"
 	"github.com/spf13/cobra"
 )
@@ -20,5 +21,6 @@ func init() {
 	cloudclient.RegisterAPIFlags(TerraformCmd)
 	TerraformCmd.PersistentFlags().BoolVar(&debug, "dry-run", false, "Simulate the command without making changes")
 
-	TerraformCmd.AddCommand(parse.UploadResourceInfoCmd)
+	TerraformCmd.AddCommand(get.GetResourceInfoCmd)
+	TerraformCmd.AddCommand(upload.UploadResourceInfoCmd)
 }

@@ -2416,6 +2416,12 @@ type Query {
 	serviceByIdentity(
 		identity: ServiceIdentityInput!
 	): Service!
+"""get terraform resource by git identity"""
+	terraformResourceByIdentity(
+		modulePath: String!
+		gitOriginUrl: String!
+		gitCommitHash: String!
+	): TerraformResourceInfo!
 """List users"""
 	users: [User!]!
 """Get user"""
