@@ -76,6 +76,9 @@ var UploadResourceInfoCmd = &cobra.Command{
 
 		prints.PrintCliStderr("Resources reported:")
 		jsonData, err := json.MarshalIndent(resourceInfo, "", "  ")
+		if err != nil {
+			return err
+		}
 		prints.PrintCliStderr(string(jsonData))
 
 		return nil
