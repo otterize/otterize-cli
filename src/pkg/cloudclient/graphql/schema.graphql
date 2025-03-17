@@ -446,11 +446,6 @@ type ClientIntentsRow {
 	calledServerId: ID
 }
 
-type CloudAccessEntry {
-	identity: String!
-	resourceActions: [ResourceActions!]!
-}
-
 type CloudIam {
 	awsRoles: [String!]
 }
@@ -943,12 +938,14 @@ type GitHubRepoInfo {
 	repository: String!
 	baseBranch: String!
 	intentsPath: String!
+	terraformPath: String!
 }
 
 input GitHubRepoInfoInput {
 	repository: String!
 	baseBranch: String!
 	intentsPath: String!
+	terraformPath: String!
 }
 
 type GitHubSettings {
@@ -983,6 +980,7 @@ input GitLabRepoInfoInput {
 	projectPath: String!
 	baseBranch: String!
 	intentsPath: String!
+	terraformPath: String!
 }
 
 type GitLabSettings {
@@ -2223,9 +2221,6 @@ type Query {
 	accessGraphServices(
 		filter: InputAccessGraphFilter
 	): [Service!]!
-	accessGraphCloudIam(
-		filter: InputAccessGraphFilter
-	): [CloudAccessEntry!]!
 	serviceAccessGraph(
 		id: ID!
 	): ServiceAccessGraph!
@@ -2482,11 +2477,6 @@ type Resource {
 	service: Service!
 	types: [ServiceType!]!
 	inboundStatus: ServerProtectionStatusVerdict!
-}
-
-type ResourceActions {
-	resource: String!
-	actions: [String!]!
 }
 
 enum RowDiff {

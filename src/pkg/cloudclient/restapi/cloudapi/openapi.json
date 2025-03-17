@@ -1755,12 +1755,16 @@
           },
           "repository": {
             "type": "string"
+          },
+          "terraformPath": {
+            "type": "string"
           }
         },
         "required": [
           "repository",
           "baseBranch",
-          "intentsPath"
+          "intentsPath",
+          "terraformPath"
         ],
         "type": "object"
       },
@@ -1774,12 +1778,16 @@
           },
           "repository": {
             "type": "string"
+          },
+          "terraformPath": {
+            "type": "string"
           }
         },
         "required": [
           "repository",
           "baseBranch",
-          "intentsPath"
+          "intentsPath",
+          "terraformPath"
         ],
         "type": "object"
       },
@@ -1885,12 +1893,16 @@
           },
           "projectPath": {
             "type": "string"
+          },
+          "terraformPath": {
+            "type": "string"
           }
         },
         "required": [
           "projectPath",
           "baseBranch",
-          "intentsPath"
+          "intentsPath",
+          "terraformPath"
         ],
         "type": "object"
       },
@@ -3875,7 +3887,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "8322427a9dfa0aca93d9117002d3cac871d85cbd"
+    "x-revision": "f97e9b3f3a576688a040df645fbe73be8ccbe002"
   },
   "openapi": "3.0.0",
   "paths": {

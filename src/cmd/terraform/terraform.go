@@ -14,12 +14,12 @@ var TerraformCmd = &cobra.Command{
 	Use:     "terraform",
 	GroupID: groups.IntegrationsGroup.ID,
 	Aliases: []string{"terraform", "tf"},
-	Short:   "Integrate with Terraform state",
+	Short:   "Terraform Integration",
 }
 
 func init() {
 	cloudclient.RegisterAPIFlags(TerraformCmd)
-	TerraformCmd.PersistentFlags().BoolVar(&debug, "dry-run", false, "Simulate the command without making changes")
+	TerraformCmd.PersistentFlags().BoolVar(&debug, "dry-run", false, "Simulate the command without making any requests to Otterize Cloud")
 
 	TerraformCmd.AddCommand(get.GetResourceInfoCmd)
 	TerraformCmd.AddCommand(upload.UploadResourceInfoCmd)

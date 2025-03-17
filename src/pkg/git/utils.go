@@ -15,8 +15,12 @@ func GetGitRoot(repo *git.Repository) (string, error) {
 }
 
 func GetGitRepoInformation(workingDir string) (*LocalGitInformation, error) {
+	var err error
 	if workingDir == "" {
-		workingDir = os.Getenv("PWD")
+		workingDir, err = os.Getwd()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	repo, err := git.PlainOpenWithOptions(workingDir, &git.PlainOpenOptions{DetectDotGit: true})

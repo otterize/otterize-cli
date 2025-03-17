@@ -872,9 +872,10 @@ type GitHubRepoFilterPair struct {
 
 // GitHubRepoInfo defines model for GitHubRepoInfo.
 type GitHubRepoInfo struct {
-	BaseBranch  string `json:"baseBranch"`
-	IntentsPath string `json:"intentsPath"`
-	Repository  string `json:"repository"`
+	BaseBranch    string `json:"baseBranch"`
+	IntentsPath   string `json:"intentsPath"`
+	Repository    string `json:"repository"`
+	TerraformPath string `json:"terraformPath"`
 }
 
 // GitHubSettings defines model for GitHubSettings.

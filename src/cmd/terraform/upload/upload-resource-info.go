@@ -3,10 +3,10 @@ package upload
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/errors"
 	"github.com/otterize/otterize-cli/src/pkg/git"
 	"github.com/otterize/otterize-cli/src/pkg/terraform"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
@@ -19,22 +19,25 @@ var UploadResourceInfoCmd = &cobra.Command{
 	Short:        "Parses the tf state and uploads the iam information to the Otterize cloud",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
+		defer cancel()
+
 		dryRun, _ := cmd.Flags().GetBool("dry-run")
 		workingDir, _ := cmd.Flags().GetString("tf-dir")
 
 		tfClient, err := terraform.GetTerraformClient(workingDir)
 		if err != nil {
-			return fmt.Errorf("error Initializing terraform client: %w", err)
+			return errors.Errorf("error initializing terraform client: %w", err)
 		}
 
-		state, err := tfClient.Show(context.Background())
+		state, err := tfClient.Show(ctxTimeout)
 		if err != nil {
-			return fmt.Errorf("error pulling Terraform state: %w", err)
+			return errors.Errorf("error pulling Terraform state: %w", err)
 		}
 
 		gitInfo, err := git.GetGitRepoInformation(workingDir)
 		if err != nil {
-			return fmt.Errorf("error getting git information: %w", err)
+			return errors.Errorf("error getting git information: %w", err)
 		}
 
 		terraformIamInfo := terraform.TerraformResourceInfo{}
@@ -52,37 +55,42 @@ var UploadResourceInfoCmd = &cobra.Command{
 		}
 
 		if !dryRun {
-			prints.PrintCliStderr("Uploading Terraform AWS role & policy information to Otterize Cloud...")
-
-			ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
-			defer cancel()
-
-			c, err := cloudclient.NewClient(ctxTimeout)
-			if err != nil {
-				return err
-			}
-
-			_, err = c.ReportTerraformResourcesMutationWithResponse(ctxTimeout,
-				cloudapi.ReportTerraformResourcesMutationJSONRequestBody{
-					ResourceInfo: resourceInfo,
-				},
-			)
+			prints.PrintCliOutput("Uploading Terraform AWS role & policy information to Otterize Cloud...")
+			err := reportTerraformResourcesToCloud(ctxTimeout, resourceInfo)
 			if err != nil {
 				return err
 			}
 		} else {
-			prints.PrintCliStderr("Skipping upload...")
+			prints.PrintCliOutput("Dry run enabled: not uploading data to Otterize Cloud")
 		}
 
-		prints.PrintCliStderr("Resources reported:")
+		prints.PrintCliOutput("Resources reported:")
 		jsonData, err := json.MarshalIndent(resourceInfo, "", "  ")
 		if err != nil {
 			return err
 		}
-		prints.PrintCliStderr(string(jsonData))
+		prints.PrintCliOutput(string(jsonData))
 
 		return nil
 	},
+}
+
+func reportTerraformResourcesToCloud(ctx context.Context, resourceInfo cloudapi.InputTerraformResourceInfo) error {
+	c, err := cloudclient.NewClient(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = c.ReportTerraformResourcesMutationWithResponse(ctx,
+		cloudapi.ReportTerraformResourcesMutationJSONRequestBody{
+			ResourceInfo: resourceInfo,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func init() {

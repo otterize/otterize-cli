@@ -3,6 +3,7 @@ package terraform
 import (
 	"encoding/json"
 	tfjson "github.com/hashicorp/terraform-json"
+	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 )
 
 func ExtractAwsRoleAndPolicies(state *tfjson.State) []AwsRoleInfo {
@@ -15,16 +16,28 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) []AwsRoleInfo {
 	}
 
 	for _, resource := range state.Values.RootModule.Resources {
-		extractAwsIamRoleInfo(resource, roleIdToInfo)
-		extractAwsIamPolicyInfo(resource, policyArnToInfo)
-		extractAwsIamRolePolicyAttachmentInfo(resource, roleIdToPolicies)
+		if resource.Type == "aws_iam_role" {
+			extractAwsIamRoleInfo(resource, roleIdToInfo)
+		}
+		if resource.Type == "aws_iam_policy" {
+			extractAwsIamPolicyInfo(resource, policyArnToInfo)
+		}
+		if resource.Type == "aws_iam_role_policy_attachment" {
+			extractAwsIamRolePolicyAttachmentInfo(resource, roleIdToPolicies)
+		}
 	}
 
 	for _, childModule := range state.Values.RootModule.ChildModules {
 		for _, resource := range childModule.Resources {
-			extractAwsIamRoleInfo(resource, roleIdToInfo)
-			extractAwsIamPolicyInfo(resource, policyArnToInfo)
-			extractAwsIamRolePolicyAttachmentInfo(resource, roleIdToPolicies)
+			if resource.Type == "aws_iam_role" {
+				extractAwsIamRoleInfo(resource, roleIdToInfo)
+			}
+			if resource.Type == "aws_iam_policy" {
+				extractAwsIamPolicyInfo(resource, policyArnToInfo)
+			}
+			if resource.Type == "aws_iam_role_policy_attachment" {
+				extractAwsIamRolePolicyAttachmentInfo(resource, roleIdToPolicies)
+			}
 		}
 	}
 
@@ -37,6 +50,8 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) []AwsRoleInfo {
 			for _, policyArn := range policies {
 				if policyInfo, ok := policyArnToInfo[policyArn]; ok {
 					roleInfo.AttachedPolicies = append(roleInfo.AttachedPolicies, policyInfo)
+				} else {
+					prints.PrintCliOutput("Did not find policy matching ARN '%s', deleted in this version?", policyArn)
 				}
 			}
 		}
@@ -48,17 +63,13 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) []AwsRoleInfo {
 }
 
 func extractAwsIamRoleInfo(resource *tfjson.StateResource, roleIdToArn map[string]AwsRoleInfo) {
-	if resource.Type != "aws_iam_role" {
-		return
-	}
-
 	inlinePolicy, err := json.Marshal(resource.AttributeValues["inline_policy"])
 	if err != nil {
 		inlinePolicy = []byte{}
 	}
 
-	id, _ := resource.AttributeValues["id"].(string)
-	arn, _ := resource.AttributeValues["arn"].(string)
+	id := resource.AttributeValues["id"].(string)
+	arn := resource.AttributeValues["arn"].(string)
 	roleIdToArn[id] = AwsRoleInfo{
 		Arn:          arn,
 		Address:      resource.Address,
@@ -67,26 +78,13 @@ func extractAwsIamRoleInfo(resource *tfjson.StateResource, roleIdToArn map[strin
 }
 
 func extractAwsIamRolePolicyAttachmentInfo(resource *tfjson.StateResource, roleIdToPolicies map[string][]string) {
-	if resource.Type != "aws_iam_role_policy_attachment" {
-		return
-	}
-
 	roleId := resource.AttributeValues["role"].(string)
 	policyArn := resource.AttributeValues["policy_arn"].(string)
 
-	_, ok := roleIdToPolicies[roleId]
-	if ok {
-		roleIdToPolicies[roleId] = append(roleIdToPolicies[roleId], policyArn)
-	} else {
-		roleIdToPolicies[roleId] = []string{policyArn}
-	}
+	roleIdToPolicies[roleId] = append(roleIdToPolicies[roleId], policyArn)
 }
 
 func extractAwsIamPolicyInfo(resource *tfjson.StateResource, policyArnToInfo map[string]AwsPolicyInfo) {
-	if resource.Type != "aws_iam_policy" {
-		return
-	}
-
 	policyArn := resource.AttributeValues["arn"].(string)
 	policyArnToInfo[policyArn] = AwsPolicyInfo{
 		Arn:     policyArn,

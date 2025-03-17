@@ -17,8 +17,12 @@ func GetTerraformPath() (string, error) {
 }
 
 func GetTerraformClient(workingDir string) (*tfexec.Terraform, error) {
+	var err error
 	if workingDir == "" {
-		workingDir = os.Getenv("PWD")
+		workingDir, err = os.Getwd()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	terraformPath, err := GetTerraformPath()
