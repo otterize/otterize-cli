@@ -23,18 +23,21 @@ func init() {
 	}
 }
 
-func ExtractAwsRoleAndPolicies(state *tfjson.State) []AwsRoleInfo {
+func ExtractAwsRoleAndPolicies(state *tfjson.State) ([]AwsRoleInfo, error) {
 	roleIdToInfo := make(map[string]AwsRoleInfo)
 	policyArnToInfo := make(map[string]AwsPolicyInfo)
 	roleIdToPolicies := make(map[string][]string)
 
 	if state.Values == nil {
-		return []AwsRoleInfo{}
+		return []AwsRoleInfo{}, nil
 	}
 
 	for _, resource := range state.Values.RootModule.Resources {
 		if resource.Type == "aws_iam_role" {
-			extractAwsIamRoleInfo(resource, roleIdToInfo)
+			err := extractAwsIamRoleInfo(resource, roleIdToInfo)
+			if err != nil {
+				return nil, err
+			}
 		}
 		if resource.Type == "aws_iam_policy" {
 			extractAwsIamPolicyInfo(resource, policyArnToInfo)
@@ -47,7 +50,10 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) []AwsRoleInfo {
 	for _, childModule := range state.Values.RootModule.ChildModules {
 		for _, resource := range childModule.Resources {
 			if resource.Type == "aws_iam_role" {
-				extractAwsIamRoleInfo(resource, roleIdToInfo)
+				err := extractAwsIamRoleInfo(resource, roleIdToInfo)
+				if err != nil {
+					return nil, err
+				}
 			}
 			if resource.Type == "aws_iam_policy" {
 				extractAwsIamPolicyInfo(resource, policyArnToInfo)
@@ -79,13 +85,13 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) []AwsRoleInfo {
 		roleInfoList = append(roleInfoList, roleInfo)
 	}
 
-	return roleInfoList
+	return roleInfoList, nil
 }
 
-func extractAwsIamRoleInfo(resource *tfjson.StateResource, roleIdToArn map[string]AwsRoleInfo) {
+func extractAwsIamRoleInfo(resource *tfjson.StateResource, roleIdToArn map[string]AwsRoleInfo) error {
 	inlinePolicy, err := json.Marshal(resource.AttributeValues["inline_policy"])
 	if err != nil {
-		inlinePolicy = []byte{}
+		return err
 	}
 
 	id := resource.AttributeValues["id"].(string)
@@ -95,6 +101,8 @@ func extractAwsIamRoleInfo(resource *tfjson.StateResource, roleIdToArn map[strin
 		Address:      resource.Address,
 		InlinePolicy: string(inlinePolicy),
 	}
+
+	return nil
 }
 
 func extractAwsIamRolePolicyAttachmentInfo(resource *tfjson.StateResource, roleIdToPolicies map[string][]string) {

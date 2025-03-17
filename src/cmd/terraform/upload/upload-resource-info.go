@@ -41,7 +41,10 @@ var UploadResourceInfoCmd = &cobra.Command{
 		}
 
 		terraformIamInfo := terraform.TerraformResourceInfo{}
-		terraformIamInfo.AwsRoles = terraform.ExtractAwsRoleAndPolicies(state)
+		terraformIamInfo.AwsRoles, err = terraform.ExtractAwsRoleAndPolicies(state)
+		if err != nil {
+			return err
+		}
 
 		// Generate the resource info
 		awsRoles := lo.Map(terraformIamInfo.AwsRoles, func(info terraform.AwsRoleInfo, _ int) map[string]interface{} {
