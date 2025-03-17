@@ -3,8 +3,25 @@ package terraform
 import (
 	"encoding/json"
 	tfjson "github.com/hashicorp/terraform-json"
+	"github.com/otterize/otterize-cli/src/data"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
+	"github.com/sirupsen/logrus"
 )
+
+var AwsManagedPolicies map[string]bool
+
+func init() {
+	var policyList []string
+	err := json.Unmarshal(data.AwsManagedPolicies, &policyList)
+	if err != nil {
+		logrus.Fatalf("Failed to unmarshal AWS managed policies: %v", err)
+	}
+
+	AwsManagedPolicies = make(map[string]bool)
+	for _, policy := range policyList {
+		AwsManagedPolicies[policy] = true
+	}
+}
 
 func ExtractAwsRoleAndPolicies(state *tfjson.State) []AwsRoleInfo {
 	roleIdToInfo := make(map[string]AwsRoleInfo)
@@ -51,7 +68,10 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) []AwsRoleInfo {
 				if policyInfo, ok := policyArnToInfo[policyArn]; ok {
 					roleInfo.AttachedPolicies = append(roleInfo.AttachedPolicies, policyInfo)
 				} else {
-					prints.PrintCliOutput("Did not find policy matching ARN '%s', deleted in this version?", policyArn)
+					_, isManagedPolicy := AwsManagedPolicies[policyArn]
+					if !isManagedPolicy {
+						prints.PrintCliOutput("Did not find policy matching ARN '%s', deleted in this version?", policyArn)
+					}
 				}
 			}
 		}
