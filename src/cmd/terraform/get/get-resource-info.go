@@ -15,7 +15,7 @@ import (
 
 var GetResourceInfoCmd = &cobra.Command{
 	Use:          "get-resource-info",
-	Short:        "Queries the cloud for the given module's saved Terraform resource information",
+	Short:        "Queries Otterize Cloud for the given module's saved Terraform resource information",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		workingDir, _ := cmd.Flags().GetString("tf-dir")
@@ -30,7 +30,7 @@ var GetResourceInfoCmd = &cobra.Command{
 
 		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
-			return err
+			return errors.Wrap(err)
 		}
 
 		resp, err := c.TerraformResourceByIdentityQueryWithResponse(ctxTimeout,
@@ -41,14 +41,14 @@ var GetResourceInfoCmd = &cobra.Command{
 			},
 		)
 		if err != nil {
-			return err
+			return errors.Wrap(err)
 		}
 
 		prints.PrintCliOutput("Resources found for current tfmodule:")
 		var prettyJSON bytes.Buffer
 		err = json.Indent(&prettyJSON, resp.Body, "", "  ")
 		if err != nil {
-			return err
+			return errors.Wrap(err)
 		}
 		prints.PrintCliOutput(prettyJSON.String())
 

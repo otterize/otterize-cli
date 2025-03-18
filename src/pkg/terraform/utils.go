@@ -1,8 +1,8 @@
 package terraform
 
 import (
-	"errors"
 	"github.com/hashicorp/terraform-exec/tfexec"
+	"github.com/otterize/otterize-cli/src/pkg/errors"
 	"os"
 	"os/exec"
 )
@@ -24,12 +24,12 @@ func GetTerraformClient(workingDir string) (*tfexec.Terraform, error) {
 
 	terraformPath, err := GetTerraformPath()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err)
 	}
 
 	tf, err := tfexec.NewTerraform(workingDir, terraformPath)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err)
 	}
 
 	return tf, nil

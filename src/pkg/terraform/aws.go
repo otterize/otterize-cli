@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	tfjson "github.com/hashicorp/terraform-json"
 	"github.com/otterize/otterize-cli/src/data"
+	"github.com/otterize/otterize-cli/src/pkg/errors"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/sirupsen/logrus"
 )
@@ -36,7 +37,7 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) ([]AwsRoleInfo, error) {
 		if resource.Type == "aws_iam_role" {
 			err := extractAwsIamRoleInfo(resource, roleIdToInfo)
 			if err != nil {
-				return nil, err
+				return nil, errors.Wrap(err)
 			}
 		}
 		if resource.Type == "aws_iam_policy" {
@@ -52,7 +53,7 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) ([]AwsRoleInfo, error) {
 			if resource.Type == "aws_iam_role" {
 				err := extractAwsIamRoleInfo(resource, roleIdToInfo)
 				if err != nil {
-					return nil, err
+					return nil, errors.Wrap(err)
 				}
 			}
 			if resource.Type == "aws_iam_policy" {
@@ -91,7 +92,7 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) ([]AwsRoleInfo, error) {
 func extractAwsIamRoleInfo(resource *tfjson.StateResource, roleIdToArn map[string]AwsRoleInfo) error {
 	inlinePolicy, err := json.Marshal(resource.AttributeValues["inline_policy"])
 	if err != nil {
-		return err
+		return errors.Wrap(err)
 	}
 
 	id := resource.AttributeValues["id"].(string)

@@ -16,7 +16,7 @@ import (
 
 var UploadResourceInfoCmd = &cobra.Command{
 	Use:          "upload-resource-info",
-	Short:        "Parses the tf state and uploads the iam information to the Otterize cloud",
+	Short:        "Creates a mapping between Terraform-configured AWS IAM roles and policies and their actual ARNs on AWS based on the Terraform state, and uploads it to Otterize Cloud",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
@@ -43,7 +43,7 @@ var UploadResourceInfoCmd = &cobra.Command{
 		terraformIamInfo := terraform.TerraformResourceInfo{}
 		terraformIamInfo.AwsRoles, err = terraform.ExtractAwsRoleAndPolicies(state)
 		if err != nil {
-			return err
+			return errors.Wrap(err)
 		}
 
 		// Generate the resource info
@@ -61,7 +61,7 @@ var UploadResourceInfoCmd = &cobra.Command{
 			prints.PrintCliOutput("Uploading Terraform AWS role & policy information to Otterize Cloud...")
 			err := reportTerraformResourcesToCloud(ctxTimeout, resourceInfo)
 			if err != nil {
-				return err
+				return errors.Wrap(err)
 			}
 		} else {
 			prints.PrintCliOutput("Dry run enabled: not uploading data to Otterize Cloud")
@@ -70,7 +70,7 @@ var UploadResourceInfoCmd = &cobra.Command{
 		prints.PrintCliOutput("Resources reported:")
 		jsonData, err := json.MarshalIndent(resourceInfo, "", "  ")
 		if err != nil {
-			return err
+			return errors.Wrap(err)
 		}
 		prints.PrintCliOutput(string(jsonData))
 
@@ -81,7 +81,7 @@ var UploadResourceInfoCmd = &cobra.Command{
 func reportTerraformResourcesToCloud(ctx context.Context, resourceInfo cloudapi.InputTerraformResourceInfo) error {
 	c, err := cloudclient.NewClient(ctx)
 	if err != nil {
-		return err
+		return errors.Wrap(err)
 	}
 
 	_, err = c.ReportTerraformResourcesMutationWithResponse(ctx,
@@ -90,7 +90,7 @@ func reportTerraformResourcesToCloud(ctx context.Context, resourceInfo cloudapi.
 		},
 	)
 	if err != nil {
-		return err
+		return errors.Wrap(err)
 	}
 
 	return nil
