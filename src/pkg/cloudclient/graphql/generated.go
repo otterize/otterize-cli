@@ -186,7 +186,7 @@ type __SendCLITelemetryInput struct {
 // GetTelemetry returns __SendCLITelemetryInput.Telemetry, and is useful for accessing the field via an interface.
 func (v *__SendCLITelemetryInput) GetTelemetry() CLITelemetry { return v.Telemetry }
 
-// The query or mutation executed by CreateUserFromAuth0User.
+// The mutation executed by CreateUserFromAuth0User.
 const CreateUserFromAuth0User_Operation = `
 mutation CreateUserFromAuth0User {
 	me {
@@ -210,15 +210,14 @@ fragment MeFields on Me {
 func CreateUserFromAuth0User(
 	ctx_ context.Context,
 	client_ graphql.Client,
-) (*CreateUserFromAuth0UserResponse, error) {
+) (data_ *CreateUserFromAuth0UserResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "CreateUserFromAuth0User",
 		Query:  CreateUserFromAuth0User_Operation,
 	}
-	var err_ error
 
-	var data_ CreateUserFromAuth0UserResponse
-	resp_ := &graphql.Response{Data: &data_}
+	data_ = &CreateUserFromAuth0UserResponse{}
+	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
 		ctx_,
@@ -226,10 +225,10 @@ func CreateUserFromAuth0User(
 		resp_,
 	)
 
-	return &data_, err_
+	return data_, err_
 }
 
-// The query or mutation executed by SendCLITelemetry.
+// The mutation executed by SendCLITelemetry.
 const SendCLITelemetry_Operation = `
 mutation SendCLITelemetry ($telemetry: CLITelemetry!) {
 	sendCLITelemetries(telemetries: [$telemetry])
@@ -240,7 +239,7 @@ func SendCLITelemetry(
 	ctx_ context.Context,
 	client_ graphql.Client,
 	telemetry CLITelemetry,
-) (*SendCLITelemetryResponse, error) {
+) (data_ *SendCLITelemetryResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "SendCLITelemetry",
 		Query:  SendCLITelemetry_Operation,
@@ -248,10 +247,9 @@ func SendCLITelemetry(
 			Telemetry: telemetry,
 		},
 	}
-	var err_ error
 
-	var data_ SendCLITelemetryResponse
-	resp_ := &graphql.Response{Data: &data_}
+	data_ = &SendCLITelemetryResponse{}
+	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
 		ctx_,
@@ -259,5 +257,5 @@ func SendCLITelemetry(
 		resp_,
 	)
 
-	return &data_, err_
+	return data_, err_
 }
