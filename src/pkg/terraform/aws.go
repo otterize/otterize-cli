@@ -42,7 +42,10 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) ([]AwsRoleInfo, error) {
 			}
 		}
 		if resource.Type == "aws_iam_policy" {
-			extractAwsIamPolicyInfo(resource, policyArnToInfo)
+			err := extractAwsIamPolicyInfo(resource, policyArnToInfo)
+			if err != nil {
+				return nil, errors.Wrap(err)
+			}
 		}
 		if resource.Type == "aws_iam_role_policy_attachment" {
 			extractAwsIamRolePolicyAttachmentInfo(resource, roleIdToPolicies)
@@ -58,7 +61,10 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) ([]AwsRoleInfo, error) {
 				}
 			}
 			if resource.Type == "aws_iam_policy" {
-				extractAwsIamPolicyInfo(resource, policyArnToInfo)
+				err := extractAwsIamPolicyInfo(resource, policyArnToInfo)
+				if err != nil {
+					return nil, errors.Wrap(err)
+				}
 			}
 			if resource.Type == "aws_iam_role_policy_attachment" {
 				extractAwsIamRolePolicyAttachmentInfo(resource, roleIdToPolicies)
