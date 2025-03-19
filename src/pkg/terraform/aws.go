@@ -1,6 +1,7 @@
 package terraform
 
 import (
+	"bytes"
 	"encoding/json"
 	tfjson "github.com/hashicorp/terraform-json"
 	"github.com/otterize/otterize-cli/src/data"
@@ -90,7 +91,13 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) ([]AwsRoleInfo, error) {
 }
 
 func extractAwsIamRoleInfo(resource *tfjson.StateResource, roleIdToArn map[string]AwsRoleInfo) error {
-	inlinePolicy, err := json.Marshal(resource.AttributeValues["inline_policy"])
+	inlinePolicyBytes, err := json.Marshal(resource.AttributeValues["inline_policy"])
+	if err != nil {
+		return errors.Wrap(err)
+	}
+
+	var inlinePolicies []AwsInlinePolicyInfo
+	err = json.Unmarshal(inlinePolicyBytes, &inlinePolicies)
 	if err != nil {
 		return errors.Wrap(err)
 	}
@@ -100,7 +107,7 @@ func extractAwsIamRoleInfo(resource *tfjson.StateResource, roleIdToArn map[strin
 	roleIdToArn[id] = AwsRoleInfo{
 		Arn:          arn,
 		Address:      resource.Address,
-		InlinePolicy: string(inlinePolicy),
+		InlinePolicy: inlinePolicies,
 	}
 
 	return nil
@@ -113,10 +120,20 @@ func extractAwsIamRolePolicyAttachmentInfo(resource *tfjson.StateResource, roleI
 	roleIdToPolicies[roleId] = append(roleIdToPolicies[roleId], policyArn)
 }
 
-func extractAwsIamPolicyInfo(resource *tfjson.StateResource, policyArnToInfo map[string]AwsPolicyInfo) {
+func extractAwsIamPolicyInfo(resource *tfjson.StateResource, policyArnToInfo map[string]AwsPolicyInfo) error {
 	policyArn := resource.AttributeValues["arn"].(string)
+
+	policyBuffer := &bytes.Buffer{}
+	policyString := resource.AttributeValues["policy"].(string)
+	if err := json.Compact(policyBuffer, []byte(policyString)); err != nil {
+		panic(err)
+	}
+
 	policyArnToInfo[policyArn] = AwsPolicyInfo{
 		Arn:     policyArn,
+		Policy:  policyBuffer.String(),
 		Address: resource.Address,
 	}
+
+	return nil
 }

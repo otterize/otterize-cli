@@ -2220,6 +2220,21 @@
         },
         "type": "object"
       },
+      "InputTerraformAwsInlinePolicyInfo": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "policy": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "policy"
+        ],
+        "type": "object"
+      },
       "InputTerraformAwsPolicyInfo": {
         "properties": {
           "address": {
@@ -2227,10 +2242,14 @@
           },
           "arn": {
             "type": "string"
+          },
+          "policy": {
+            "type": "string"
           }
         },
         "required": [
           "arn",
+          "policy",
           "address"
         ],
         "type": "object"
@@ -2250,13 +2269,15 @@
             "type": "array"
           },
           "inlinePolicy": {
-            "type": "string"
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
           }
         },
         "required": [
           "arn",
-          "address",
-          "inlinePolicy"
+          "address"
         ],
         "type": "object"
       },
@@ -3692,6 +3713,21 @@
         ],
         "type": "object"
       },
+      "TerraformAwsInlinePolicyInfo": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "policy": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "policy"
+        ],
+        "type": "object"
+      },
       "TerraformAwsPolicyInfo": {
         "properties": {
           "address": {
@@ -3699,10 +3735,14 @@
           },
           "arn": {
             "type": "string"
+          },
+          "policy": {
+            "type": "string"
           }
         },
         "required": [
           "arn",
+          "policy",
           "address"
         ],
         "type": "object"
@@ -3722,13 +3762,15 @@
             "type": "array"
           },
           "inlinePolicy": {
-            "type": "string"
+            "items": {
+              "$ref": "#/components/schemas/TerraformAwsInlinePolicyInfo"
+            },
+            "type": "array"
           }
         },
         "required": [
           "arn",
-          "address",
-          "inlinePolicy"
+          "address"
         ],
         "type": "object"
       },
@@ -3743,7 +3785,10 @@
           "gitCommitHash": {
             "type": "string"
           },
-          "gitOriginUrl": {
+          "gitOrigin": {
+            "type": "string"
+          },
+          "gitPlatform": {
             "type": "string"
           },
           "modulePath": {
@@ -3752,7 +3797,8 @@
         },
         "required": [
           "modulePath",
-          "gitOriginUrl",
+          "gitPlatform",
+          "gitOrigin",
           "gitCommitHash"
         ],
         "type": "object"
@@ -3887,7 +3933,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "f97e9b3f3a576688a040df645fbe73be8ccbe002"
+    "x-revision": "8a776694fb7705cc78a601c7b476f8f813dfbe3c"
   },
   "openapi": "3.0.0",
   "paths": {

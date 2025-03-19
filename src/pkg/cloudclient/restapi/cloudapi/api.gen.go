@@ -1364,25 +1364,33 @@ type SlackSettingsInput struct {
 	IsActive                 bool                      `json:"isActive"`
 }
 
+// TerraformAwsInlinePolicyInfo defines model for TerraformAwsInlinePolicyInfo.
+type TerraformAwsInlinePolicyInfo struct {
+	Name   string `json:"name"`
+	Policy string `json:"policy"`
+}
+
 // TerraformAwsPolicyInfo defines model for TerraformAwsPolicyInfo.
 type TerraformAwsPolicyInfo struct {
 	Address string `json:"address"`
 	Arn     string `json:"arn"`
+	Policy  string `json:"policy"`
 }
 
 // TerraformAwsRoleInfo defines model for TerraformAwsRoleInfo.
 type TerraformAwsRoleInfo struct {
-	Address          string                    `json:"address"`
-	Arn              string                    `json:"arn"`
-	AttachedPolicies *[]TerraformAwsPolicyInfo `json:"attachedPolicies,omitempty"`
-	InlinePolicy     string                    `json:"inlinePolicy"`
+	Address          string                          `json:"address"`
+	Arn              string                          `json:"arn"`
+	AttachedPolicies *[]TerraformAwsPolicyInfo       `json:"attachedPolicies,omitempty"`
+	InlinePolicy     *[]TerraformAwsInlinePolicyInfo `json:"inlinePolicy,omitempty"`
 }
 
 // TerraformResourceInfo defines model for TerraformResourceInfo.
 type TerraformResourceInfo struct {
 	AwsRoles      *[]TerraformAwsRoleInfo `json:"awsRoles,omitempty"`
 	GitCommitHash string                  `json:"gitCommitHash"`
-	GitOriginUrl  string                  `json:"gitOriginUrl"`
+	GitOrigin     string                  `json:"gitOrigin"`
+	GitPlatform   string                  `json:"gitPlatform"`
 	ModulePath    string                  `json:"modulePath"`
 }
 

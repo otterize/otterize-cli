@@ -1214,15 +1214,21 @@ input InputServiceFilter {
 	integrationIds: [ID!]
 }
 
+input InputTerraformAwsInlinePolicyInfo {
+	name: String!
+	policy: String!
+}
+
 input InputTerraformAwsPolicyInfo {
 	arn: String!
+	policy: String!
 	address: String!
 }
 
 input InputTerraformAwsRoleInfo {
 	arn: String!
 	address: String!
-	inlinePolicy: String!
+	inlinePolicy: [InputTerraformAwsInlinePolicyInfo!]
 	attachedPolicies: [InputTerraformAwsPolicyInfo!]
 }
 
@@ -2752,21 +2758,28 @@ input TelemetryInput {
 	data: TelemetryData!
 }
 
+type TerraformAwsInlinePolicyInfo {
+	name: String!
+	policy: String!
+}
+
 type TerraformAwsPolicyInfo {
 	arn: String!
+	policy: String!
 	address: String!
 }
 
 type TerraformAwsRoleInfo {
 	arn: String!
 	address: String!
-	inlinePolicy: String!
+	inlinePolicy: [TerraformAwsInlinePolicyInfo!]
 	attachedPolicies: [TerraformAwsPolicyInfo!]
 }
 
 type TerraformResourceInfo {
 	modulePath: String!
-	gitOriginUrl: String!
+	gitPlatform: String!
+	gitOrigin: String!
 	gitCommitHash: String!
 	awsRoles: [TerraformAwsRoleInfo!]
 }
