@@ -8,9 +8,11 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/resources"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/errors"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"time"
 )
 
 const (
@@ -22,6 +24,9 @@ const (
 	OutputVersionShortHand    = "v"
 	OutputVersionV1           = "v1"
 	OutputVersionV2           = "v2"
+	TimeFilterKey             = "time-filter"
+	TimeFilterShortHand       = "t"
+	TimeFilterDefault         = "1h"
 )
 
 var ExportClientIntentsCmd = &cobra.Command{
@@ -35,12 +40,18 @@ var ExportClientIntentsCmd = &cobra.Command{
 
 		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
-			return err
+			return errors.Wrap(err)
 		}
 
 		filter, err := servicesFilterFromFlags(ctxTimeout, c)
 		if err != nil {
-			return err
+			return errors.Wrap(err)
+		}
+
+		timeFilter := viper.GetDuration(TimeFilterKey)
+		lastSeenAfter := time.Now().Add(-1 * timeFilter)
+		if lastSeenAfter.Before(time.Now().Add(-48 * time.Hour)) {
+			return errors.Errorf("time filter is too large, maximum allowed is 48h")
 		}
 
 		if len(args) == 1 {
@@ -57,11 +68,11 @@ var ExportClientIntentsCmd = &cobra.Command{
 		r, err := c.ClientIntentsQueryWithResponse(ctxTimeout, cloudapi.ClientIntentsQueryJSONRequestBody{
 			ClusterIds:    filter.ClusterIds,
 			Filter:        filter,
-			LastSeenAfter: nil,
+			LastSeenAfter: &lastSeenAfter,
 			FeatureFlags:  &featureFlags,
 		})
 		if err != nil {
-			return err
+			return errors.Wrap(err)
 		}
 
 		outputLocation := viper.GetString(OutputLocationKey)
@@ -103,7 +114,9 @@ func init() {
 	ExportClientIntentsCmd.Flags().StringP(OutputLocationKey, OutputLocationShorthand, "", "file or dir path to write the output into")
 	ExportClientIntentsCmd.Flags().String(OutputTypeKey, OutputTypeSingleFile, fmt.Sprintf("whether to write output to file or dir: %s/%s", OutputTypeSingleFile, OutputTypeDirectory))
 	ExportClientIntentsCmd.Flags().Bool(OutputWithDiffCommentsKey, false, "include applied vs discovered comments in output intents")
-	ExportClientIntentsCmd.Flags().StringP(OutputVersionKey, OutputVersionShortHand, OutputVersionV2, fmt.Sprintf("Output ClientIntents api version - %s/%s", OutputVersionV1, OutputVersionV2))
+	ExportClientIntentsCmd.Flags().StringP(OutputVersionKey, OutputVersionShortHand, OutputVersionV2, fmt.Sprintf("output ClientIntents API version - %s/%s", OutputVersionV1, OutputVersionV2))
+	// Time filter flags
+	ExportClientIntentsCmd.Flags().DurationP(TimeFilterKey, TimeFilterShortHand, 1*time.Hour, fmt.Sprintf("The amount of time to query when looking for client intents. The default is '%s'. The format is a Go duration string, e.g., 1h, 30m, 15s.", TimeFilterDefault))
 
 	cli.RegisterStandardFilterFlags(ExportClientIntentsCmd)
 }
