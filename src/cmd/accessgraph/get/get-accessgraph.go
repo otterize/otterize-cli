@@ -13,6 +13,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
 	"slices"
 	"time"
 )
@@ -45,9 +46,12 @@ var GetAccessGraph = &cobra.Command{
 	Short:        "Get access graph",
 	SilenceUsage: true,
 	Args:         cobra.NoArgs,
-	RunE: func(_ *cobra.Command, args []string) error {
+	RunE: func(c *cobra.Command, args []string) error {
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), config.DefaultTimeout)
 		defer cancel()
+		c.Context()
+		// current wd
+		os.Getwd()
 		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
 			return err
