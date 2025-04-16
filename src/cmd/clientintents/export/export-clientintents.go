@@ -8,6 +8,7 @@ import (
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/resources"
 	"github.com/otterize/otterize-cli/src/pkg/config"
+	"github.com/otterize/otterize-cli/src/pkg/errors"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -39,12 +40,18 @@ var ExportClientIntentsCmd = &cobra.Command{
 
 		c, err := cloudclient.NewClient(ctxTimeout)
 		if err != nil {
-			return err
+			return errors.Wrap(err)
 		}
 
 		filter, err := servicesFilterFromFlags(ctxTimeout, c)
 		if err != nil {
-			return err
+			return errors.Wrap(err)
+		}
+
+		timeFilter := viper.GetDuration(TimeFilterKey)
+		lastSeenAfter := time.Now().Add(-1 * timeFilter)
+		if lastSeenAfter.Before(time.Now().Add(-48 * time.Hour)) {
+			return errors.Errorf("time filter is too large, maximum allowed is 48h")
 		}
 
 		if len(args) == 1 {
@@ -58,16 +65,14 @@ var ExportClientIntentsCmd = &cobra.Command{
 			featureFlags.UseClientIntentsV2 = lo.ToPtr(true)
 		}
 
-		timeFilter := viper.GetDuration(TimeFilterKey)
-
 		r, err := c.ClientIntentsQueryWithResponse(ctxTimeout, cloudapi.ClientIntentsQueryJSONRequestBody{
 			ClusterIds:    filter.ClusterIds,
 			Filter:        filter,
-			LastSeenAfter: lo.ToPtr(time.Now().Add(-1 * timeFilter)),
+			LastSeenAfter: &lastSeenAfter,
 			FeatureFlags:  &featureFlags,
 		})
 		if err != nil {
-			return err
+			return errors.Wrap(err)
 		}
 
 		outputLocation := viper.GetString(OutputLocationKey)
