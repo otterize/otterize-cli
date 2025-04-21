@@ -63,7 +63,7 @@ func (loginCtx *LoginContext) EnsureUserRegistered() error {
 }
 
 func (loginCtx *LoginContext) SelectOrg(preSelectedOrgId string, switchOrg bool) (string, error) {
-	organizations := loginCtx.me.Organizations
+	organizations := loginCtx.me.UserOrganizations
 	selectedOrg := ""
 	if len(organizations) == 0 {
 		orgId, err := loginCtx.createOrJoinOrgFromUserInput()
@@ -73,7 +73,7 @@ func (loginCtx *LoginContext) SelectOrg(preSelectedOrgId string, switchOrg bool)
 		selectedOrg = orgId
 	} else if len(organizations) == 1 {
 		prints.PrintCliStderr("Only 1 organization found - auto-selecting this organization for use.")
-		selectedOrg = organizations[0].Id
+		selectedOrg = organizations[0].Org.Id
 	} else {
 		orgId, err := loginCtx.interactiveSelectOrg(preSelectedOrgId, switchOrg)
 		if err != nil {
@@ -161,7 +161,9 @@ func (loginCtx *LoginContext) createNewOrg() (string, error) {
 }
 
 func (loginCtx *LoginContext) interactiveSelectOrg(preSelectedOrgId string, switchOrg bool) (string, error) {
-	organizations := loginCtx.me.Organizations
+	organizations := lo.Map(loginCtx.me.UserOrganizations, func(userOrg cloudapi.UserOrganizationAssociation, _ int) cloudapi.Organization {
+		return userOrg.Org
+	})
 
 	prints.PrintCliStderr("You belong to the following organizations:")
 	output.FormatOrganizations(organizations)
