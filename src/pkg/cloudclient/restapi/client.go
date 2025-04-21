@@ -14,6 +14,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"net/http"
+	"time"
 )
 
 var ErrNoOrganization = errors.New("no organization exists in config or as parameter")
@@ -86,8 +87,15 @@ type ResponseBody struct {
 }
 
 func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
+	before := time.Now()
 	logrus.WithField("method", req.Method).WithField("url", req.URL).Debug("HTTP request")
 	resp, err := d.doer.Do(req)
+
+	after := time.Now()
+	duration := after.Sub(before)
+	logrus.WithField("method", req.Method).WithField("url", req.URL).
+		WithField("duration", duration).
+		Debug("HTTP request done")
 	if err != nil {
 		return resp, err
 	}
