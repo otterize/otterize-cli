@@ -20,6 +20,7 @@ import (
 
 const (
 	AccessTokenCookieScopes  = "accessTokenCookie.Scopes"
+	BearerAuthScopes         = "bearerAuth.Scopes"
 	Oauth2Scopes             = "oauth2.Scopes"
 	OrganizationHeaderScopes = "organizationHeader.Scopes"
 )
@@ -1209,7 +1210,6 @@ type LabelValueTuple struct {
 // Me defines model for Me.
 type Me struct {
 	Invites           []Invite                      `json:"invites"`
-	Organizations     []Organization                `json:"organizations"`
 	User              User                          `json:"user"`
 	UserOrganizations []UserOrganizationAssociation `json:"userOrganizations"`
 }
@@ -1569,10 +1569,8 @@ type User struct {
 // UserOrganizationAssociation defines model for UserOrganizationAssociation.
 type UserOrganizationAssociation struct {
 	Membership OrganizationMembership `json:"membership"`
-	Org        struct {
-		Id string `json:"id"`
-	} `json:"org"`
-	User struct {
+	Org        Organization           `json:"org"`
+	User       struct {
 		Id string `json:"id"`
 	} `json:"user"`
 }

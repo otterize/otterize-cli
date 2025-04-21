@@ -3078,12 +3078,6 @@
             },
             "type": "array"
           },
-          "organizations": {
-            "items": {
-              "$ref": "#/components/schemas/Organization"
-            },
-            "type": "array"
-          },
           "user": {
             "$ref": "#/components/schemas/User",
             "description": "The logged-in user details."
@@ -3097,7 +3091,6 @@
         },
         "required": [
           "user",
-          "organizations",
           "userOrganizations",
           "invites"
         ],
@@ -3224,6 +3217,14 @@
       },
       "NetworkPolicy": {
         "properties": {
+          "allowedHits": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "blockedHits": {
+            "format": "int32",
+            "type": "integer"
+          },
           "cluster": {
             "properties": {
               "id": {
@@ -3301,10 +3302,11 @@
           "cluster",
           "environment",
           "hits",
+          "allowedHits",
+          "blockedHits",
           "workloads",
           "workloadsAffected",
-          "spec",
-          "lastUsed"
+          "spec"
         ],
         "type": "object"
       },
@@ -4362,15 +4364,7 @@
             "$ref": "#/components/schemas/OrganizationMembership"
           },
           "org": {
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id"
-            ],
-            "type": "object"
+            "$ref": "#/components/schemas/Organization"
           },
           "user": {
             "properties": {
@@ -4399,6 +4393,12 @@
         "name": "access_token",
         "type": "apiKey"
       },
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "description": "Otterize user JWT token.",
+        "scheme": "bearer",
+        "type": "http"
+      },
       "oauth2": {
         "description": "Use client ID and client secret from an Otterize integration to authenticate.",
         "flows": {
@@ -4421,7 +4421,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "95610758a402a0e201f9daa38874bc3bab3b9877"
+    "x-revision": "c1aac8f2598857722fe628d9b7816e99bb60c9c3"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -9681,6 +9681,12 @@
     },
     {
       "accessTokenCookie": [
+      ],
+      "organizationHeader": [
+      ]
+    },
+    {
+      "bearerAuth": [
       ],
       "organizationHeader": [
       ]

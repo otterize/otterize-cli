@@ -845,6 +845,7 @@ input ExternalTrafficIntentInput {
 	clientName: String!
 	target: DNSIPPairInput!
 	connectionsCount: ConnectionsCount
+	ttl: Time
 }
 
 input ExternallyAccessibleServiceInput {
@@ -1257,6 +1258,10 @@ input InputNetworkPolicyFilter {
 """ Network policies filter """
 	policyKinds: InputIDFilterValue
 """ Network policies filter """
+	since: InputTimeFilterValue
+}
+
+input InputNetworkPolicyHitsFilter {
 	since: InputTimeFilterValue
 }
 
@@ -2142,9 +2147,10 @@ type Mutation {
 		labels: [LabelInput!]
 	): Boolean!
 	reportNetworkPolicies(
-		namespace: String!
+		namespace: String
 		networkPolicies: [NetworkPolicyInput!]
 	): Boolean!
+	computeNetworkPoliciesForOrg: Boolean!
 """Create a new organization"""
 	createOrganization(
 		name: String
@@ -2203,6 +2209,9 @@ type Mutation {
 	saveOnboardingFeedback(
 		userEmail: String!
 		feedback: String!
+	): Boolean!
+	saveOrgMemberships(
+		memberships: [UserOrgMembershipInput!]!
 	): Boolean!
 	createOrActivateTutorial(
 		tutorialName: TutorialName!
@@ -2273,10 +2282,12 @@ type NetworkPolicy {
 	namespace: Namespace
 	environment: Environment!
 	hits: Int!
+	allowedHits: Int!
+	blockedHits: Int!
 	workloads: [NetworkPolicyWorkload!]!
 	workloadsAffected: Int!
 	spec: String!
-	lastUsed: Time!
+	lastUsed: Time
 }
 
 input NetworkPolicyInput {
@@ -2329,11 +2340,19 @@ type Organization {
 type OrganizationMembership {
 	role: AuthRole!
 	restrictions: OrganizationMembershipRestrictions
+	restrictionResources: OrganizationMembershipRestrictionResources
 }
 
 input OrganizationMembershipInput {
 	role: AuthRole!
 	restrictions: OrganizationMembershipRestrictionsInput
+}
+
+type OrganizationMembershipRestrictionResources {
+	clusters: [Cluster!]!
+	services: [Service!]!
+	namespaces: [Namespace!]!
+	environments: [Environment!]!
 }
 
 type OrganizationMembershipRestrictions {
@@ -2570,6 +2589,7 @@ type Query {
 	): Namespace!
 	networkPolicy(
 		id: ID!
+		filter: InputNetworkPolicyHitsFilter
 	): NetworkPolicy
 	networkPolicies(
 		filter: InputNetworkPolicyFilter
@@ -2623,6 +2643,8 @@ type Query {
 	): TerraformResourceInfo!
 """List users"""
 	users: [User!]!
+"""List users with restriction resources"""
+	orgUsersWithRestrictionResources: UsersWithRestrictionResources!
 	orgUsers: [UserOrganizationAssociation!]!
 """Get user"""
 	user(
@@ -2895,6 +2917,8 @@ input ServiceMetadataInput {
 	tags: [String!]
 	awsRoles: [String!]
 	labels: [LabelInput!]
+	podIps: [String!]
+	serviceIps: [String!]
 }
 
 enum ServiceType {
@@ -3134,6 +3158,11 @@ enum UserErrorType {
 	TIMEOUT
 }
 
+input UserOrgMembershipInput {
+	userId: ID!
+	membership: OrganizationMembershipInput!
+}
+
 type UserOrganizationAssociation {
 	org: Organization!
 	user: User!
@@ -3150,6 +3179,11 @@ type UserTutorial {
 	isCompleted: Boolean!
 	step: String!
 	stepSeen: String!
+}
+
+type UsersWithRestrictionResources {
+	orgUsers: [UserOrganizationAssociation!]!
+	restrictionResources: OrganizationMembershipRestrictionResources
 }
 
 """ Used to validate ID based filters """
