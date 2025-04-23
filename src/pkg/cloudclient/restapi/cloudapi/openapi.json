@@ -4393,12 +4393,6 @@
         "name": "access_token",
         "type": "apiKey"
       },
-      "bearerAuth": {
-        "bearerFormat": "JWT",
-        "description": "Otterize user JWT token.",
-        "scheme": "bearer",
-        "type": "http"
-      },
       "oauth2": {
         "description": "Use client ID and client secret from an Otterize integration to authenticate.",
         "flows": {
@@ -4421,7 +4415,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "c1aac8f2598857722fe628d9b7816e99bb60c9c3"
+    "x-revision": "fed83e7133faef5e9b8ed7a801c3fb39b681efaa"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -9681,12 +9675,6 @@
     },
     {
       "accessTokenCookie": [
-      ],
-      "organizationHeader": [
-      ]
-    },
-    {
-      "bearerAuth": [
       ],
       "organizationHeader": [
       ]

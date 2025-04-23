@@ -159,12 +159,11 @@ func FormatClusters(clusters []cloudapi.Cluster) {
 }
 
 func FormatNamespaces(namespaces []cloudapi.Namespace) {
-	columns := []string{"ID", "NAME", "CLUSTER", "CLUSTER ID", "ENVIRONMENT ID", "SERVICE COUNT"}
+	columns := []string{"ID", "NAME", "CLUSTER ID", "ENVIRONMENT ID", "SERVICE COUNT"}
 	getColumnData := func(ns cloudapi.Namespace) []map[string]string {
 		return []map[string]string{{
 			"ID":             ns.Id,
 			"NAME":           ns.Name,
-			"CLUSTER":        ns.Cluster.Name,
 			"CLUSTER ID":     ns.Cluster.Id,
 			"ENVIRONMENT ID": ns.Environment.Id,
 			"SERVICE COUNT":  fmt.Sprintf("%d", ns.ServiceCount),
@@ -218,7 +217,7 @@ func enumToString(enumStr string) string {
 }
 
 func FormatServices(services []cloudapi.Service) {
-	columns := []string{"ID", "NAME", "NAMESPACE", "NAMESPACE ID", "ENVIRONMENT ID"}
+	columns := []string{"ID", "NAME", "NAMESPACE", "NAMESPACE ID", "CLUSTER_ID", "ENVIRONMENT ID"}
 	getColumnData := func(s cloudapi.Service) []map[string]string {
 		serviceColumns := map[string]string{
 			"ID":             s.Id,
@@ -229,6 +228,7 @@ func FormatServices(services []cloudapi.Service) {
 		if s.Namespace != nil {
 			serviceColumns["NAMESPACE"] = s.Namespace.Name
 			serviceColumns["NAMESPACE ID"] = s.Namespace.Id
+			serviceColumns["CLUSTER ID"] = s.Namespace.Cluster.Id
 		}
 
 		return []map[string]string{serviceColumns}

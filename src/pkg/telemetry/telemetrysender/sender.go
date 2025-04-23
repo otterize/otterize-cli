@@ -3,7 +3,7 @@ package telemetrysender
 import (
 	"context"
 	genqlientgraphql "github.com/Khan/genqlient/graphql"
-	cloudgraphql "github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
+	cloudgraphql "github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"

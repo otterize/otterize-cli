@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/deepmap/oapi-codegen/pkg/util"
+	"github.com/google/uuid"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/auth"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
@@ -87,14 +88,17 @@ type ResponseBody struct {
 }
 
 func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
+	id := uuid.New().String()
 	before := time.Now()
-	logrus.WithField("method", req.Method).WithField("url", req.URL).Debug("HTTP request")
+	logrus.WithField("method", req.Method).WithField("url", req.URL).
+		WithField("id", id).
+		Debug("HTTP request")
 	resp, err := d.doer.Do(req)
 
 	after := time.Now()
 	duration := after.Sub(before)
 	logrus.WithField("method", req.Method).WithField("url", req.URL).
-		WithField("duration", duration).
+		WithField("id", id).WithField("duration", duration).
 		Debug("HTTP request done")
 	if err != nil {
 		return resp, err

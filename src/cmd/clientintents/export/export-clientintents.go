@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/cli"
+	cloudclientgql "github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/resources"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/resources"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/errors"
 	"github.com/samber/lo"
@@ -43,7 +44,7 @@ var ExportClientIntentsCmd = &cobra.Command{
 			return errors.Wrap(err)
 		}
 
-		filter, err := servicesFilterFromFlags(ctxTimeout, c)
+		filter, err := servicesFilterFromFlags(ctxTimeout)
 		if err != nil {
 			return errors.Wrap(err)
 		}
@@ -85,29 +86,61 @@ var ExportClientIntentsCmd = &cobra.Command{
 	},
 }
 
-func servicesFilterFromFlags(ctx context.Context, c *cloudclient.Client) (cloudapi.InputServiceFilter, error) {
-	resolver := resources.NewResolver(c).WithContext(ctx)
+func toPtrIfNonEmpty(items []string) *[]string {
+	if len(items) == 0 {
+		return nil
+	}
+	return lo.ToPtr(items)
+}
+
+func servicesFilterFromFlags(ctx context.Context) (cloudapi.InputServiceFilter, error) {
+	gqlClient, err := cloudclientgql.NewClient(ctx)
+	if err != nil {
+		return cloudapi.InputServiceFilter{}, err
+	}
+
+	resolver := resources.NewResolver(gqlClient)
+	if err := resolver.LoadOrgResources(ctx); err != nil {
+		return cloudapi.InputServiceFilter{}, err
+	}
+
+	filter := cloudapi.InputServiceFilter{}
 	if viper.IsSet(cli.ClustersKey) {
-		if err := resolver.LoadClusters(viper.GetStringSlice(cli.ClustersKey)); err != nil {
+		clusterIds, err := resolver.ResolveClusters(viper.GetStringSlice(cli.ClustersKey))
+		if err != nil {
 			return cloudapi.InputServiceFilter{}, err
 		}
+		filter.ClusterIds = toPtrIfNonEmpty(clusterIds)
 	}
+
 	if viper.IsSet(cli.EnvironmentsKey) {
-		if err := resolver.LoadEnvironments(viper.GetStringSlice(cli.EnvironmentsKey)); err != nil {
+		environmentIds, err := resolver.ResolveEnvironments(viper.GetStringSlice(cli.EnvironmentsKey))
+		if err != nil {
 			return cloudapi.InputServiceFilter{}, err
 		}
+		filter.EnvironmentIds = toPtrIfNonEmpty(environmentIds)
 	}
+
 	if viper.IsSet(cli.NamespacesKey) {
-		if err := resolver.LoadNamespaces(viper.GetStringSlice(cli.NamespacesKey)); err != nil {
+		namespaceIds, err := resolver.ResolveNamespaces(viper.GetStringSlice(cli.NamespacesKey))
+		if err != nil {
 			return cloudapi.InputServiceFilter{}, err
 		}
+		filter.NamespaceIds = toPtrIfNonEmpty(namespaceIds)
 	}
+
 	if viper.IsSet(cli.ServicesKey) {
-		if err := resolver.LoadServices(viper.GetStringSlice(cli.ServicesKey)); err != nil {
+		if err := resolver.LoadServices(ctx); err != nil {
 			return cloudapi.InputServiceFilter{}, err
 		}
+
+		serviceIds, err := resolver.ResolveServices(viper.GetStringSlice(cli.ServicesKey))
+		if err != nil {
+			return cloudapi.InputServiceFilter{}, err
+		}
+		filter.ServiceIds = toPtrIfNonEmpty(serviceIds)
 	}
-	return resolver.BuildServicesFilter(), nil
+	return filter, nil
 }
 
 func init() {

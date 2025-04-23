@@ -20,7 +20,6 @@ import (
 
 const (
 	AccessTokenCookieScopes  = "accessTokenCookie.Scopes"
-	BearerAuthScopes         = "bearerAuth.Scopes"
 	Oauth2Scopes             = "oauth2.Scopes"
 	OrganizationHeaderScopes = "organizationHeader.Scopes"
 )

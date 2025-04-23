@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/cli"
+	cloudclientgql "github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
+	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/resources"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/resources"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
 	"github.com/otterize/otterize-cli/src/pkg/utils/must"
@@ -53,7 +54,7 @@ var GetAccessGraph = &cobra.Command{
 			return err
 		}
 
-		filter, err := accessGraphFilterFromFlags(ctxTimeout, c)
+		filter, err := accessGraphFilterFromFlags(ctxTimeout)
 		if err != nil {
 			return err
 		}
@@ -68,37 +69,65 @@ var GetAccessGraph = &cobra.Command{
 	},
 }
 
-func accessGraphFilterFromFlags(ctx context.Context, c *cloudclient.Client) (cloudapi.InputAccessGraphFilter, error) {
-	resolver := resources.NewResolver(c).WithContext(ctx)
+func toIncludeFilterIfNonEmpty(items []string) *map[string]any {
+	if len(items) == 0 {
+		return nil
+	}
+	return &map[string]any{
+		"include": lo.ToPtr(items),
+	}
+}
+
+func accessGraphFilterFromFlags(ctx context.Context) (cloudapi.InputAccessGraphFilter, error) {
+	gqlClient, err := cloudclientgql.NewClient(ctx)
+	if err != nil {
+		return cloudapi.InputAccessGraphFilter{}, err
+	}
+
+	resolver := resources.NewResolver(gqlClient)
+	if err := resolver.LoadOrgResources(ctx); err != nil {
+		return cloudapi.InputAccessGraphFilter{}, err
+	}
+
+	filter := cloudapi.InputAccessGraphFilter{}
 	if viper.IsSet(cli.ClustersKey) || viper.IsSet(clustersIdsKey) {
 		clusters := slices.Concat(viper.GetStringSlice(cli.ClustersKey), viper.GetStringSlice(clustersIdsKey))
-		if err := resolver.LoadClusters(clusters); err != nil {
+		clusterIds, err := resolver.ResolveClusters(clusters)
+		if err != nil {
 			return cloudapi.InputAccessGraphFilter{}, err
 		}
+		filter.ClusterIds = toIncludeFilterIfNonEmpty(clusterIds)
 	}
 
 	if viper.IsSet(cli.EnvironmentsKey) || viper.IsSet(envIdsKey) {
 		envs := slices.Concat(viper.GetStringSlice(cli.EnvironmentsKey), viper.GetStringSlice(envIdsKey))
-		if err := resolver.LoadEnvironments(envs); err != nil {
+		envIds, err := resolver.ResolveEnvironments(envs)
+		if err != nil {
 			return cloudapi.InputAccessGraphFilter{}, err
 		}
+		filter.EnvironmentIds = toIncludeFilterIfNonEmpty(envIds)
 	}
 
 	if viper.IsSet(cli.NamespacesKey) || viper.IsSet(namespacesIdsKey) {
 		namespaces := slices.Concat(viper.GetStringSlice(cli.NamespacesKey), viper.GetStringSlice(namespacesIdsKey))
-		if err := resolver.LoadNamespaces(namespaces); err != nil {
+		namespaceIds, err := resolver.ResolveNamespaces(namespaces)
+		if err != nil {
 			return cloudapi.InputAccessGraphFilter{}, err
 		}
+		filter.NamespaceIds = toIncludeFilterIfNonEmpty(namespaceIds)
 	}
 
 	if viper.IsSet(cli.ServicesKey) || viper.IsSet(servicesIdsKey) {
-		services := slices.Concat(viper.GetStringSlice(cli.ServicesKey), viper.GetStringSlice(servicesIdsKey))
-		if err := resolver.LoadServices(services); err != nil {
+		if err := resolver.LoadServices(ctx); err != nil {
 			return cloudapi.InputAccessGraphFilter{}, err
 		}
+		services := slices.Concat(viper.GetStringSlice(cli.ServicesKey), viper.GetStringSlice(servicesIdsKey))
+		serviceIds, err := resolver.ResolveServices(services)
+		if err != nil {
+			return cloudapi.InputAccessGraphFilter{}, err
+		}
+		filter.ServiceIds = toIncludeFilterIfNonEmpty(serviceIds)
 	}
-
-	filter := resolver.BuildAccessGraphFilter()
 
 	lastSeenFilter, err := getInputTimeFilterValueFromViper(lastSeenAfterKey)
 	if err != nil {
