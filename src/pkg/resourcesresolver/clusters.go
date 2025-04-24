@@ -48,10 +48,10 @@ func (r *ClustersResolver) ResolveClusterIDs(namesOrIDs []string) ([]string, err
 	return clusterIDs, nil
 }
 
-func (r *ClustersResolver) GetClusterName(clusterID string) (string, error) {
+func (r *ClustersResolver) GetClusterName(clusterID string) (string, bool) {
 	if c, ok := r.clustersByID[clusterID]; ok {
-		return c.Name, nil
+		return c.Name, true
 	}
 
-	return "", fmt.Errorf("cluster '%s' not found", clusterID)
+	return "", false
 }

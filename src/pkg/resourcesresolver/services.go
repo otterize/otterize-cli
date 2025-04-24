@@ -55,12 +55,12 @@ func (r *ServicesResolver) LoadServices(services []cloudapi.MinimalServiceFields
 func (r *ServicesResolver) errorLogMatchingServices(svcs []cloudapi.MinimalServiceFields) {
 	prints.PrintCliStderr("The following matching services were found:")
 	for _, s := range svcs {
-		namespaceName, err := r.namespaces.GetNamespaceName(s.Namespace.Id)
-		if err != nil {
+		namespaceName, ok := r.namespaces.GetNamespaceName(s.Namespace.Id)
+		if !ok {
 			namespaceName = s.Namespace.Id
 		}
-		clusterName, err := r.clusters.GetClusterName(s.Namespace.Cluster.Id)
-		if err != nil {
+		clusterName, ok := r.clusters.GetClusterName(s.Namespace.Cluster.Id)
+		if !ok {
 			clusterName = s.Namespace.Cluster.Id
 		}
 		prints.PrintCliStderr("  - %s.%s.%s (%s)", s.Name, namespaceName, clusterName, s.Id)

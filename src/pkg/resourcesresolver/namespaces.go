@@ -41,8 +41,8 @@ func (r *NamespacesResolver) LoadNamespaces(namespaces []cloudapi.MinimalNamespa
 func (r *NamespacesResolver) errorLogMatchingNamespaces(namespaces []cloudapi.MinimalNamespaceFields) {
 	prints.PrintCliStderr("The following matching namespaces were found:")
 	for _, ns := range namespaces {
-		clusterName, err := r.clusters.GetClusterName(ns.Cluster.Id)
-		if err != nil {
+		clusterName, ok := r.clusters.GetClusterName(ns.Cluster.Id)
+		if !ok {
 			clusterName = ns.Cluster.Id
 		}
 		prints.PrintCliStderr("  - %s.%s (%s)", ns.Name, clusterName, ns.Id)
@@ -94,10 +94,10 @@ func (r *NamespacesResolver) ResolveNamespaceIDs(namesOrIDs []string) ([]string,
 	return namespaceIDs, nil
 }
 
-func (r *NamespacesResolver) GetNamespaceName(namespaceID string) (string, error) {
+func (r *NamespacesResolver) GetNamespaceName(namespaceID string) (string, bool) {
 	if c, ok := r.namespacesByID[namespaceID]; ok {
-		return c.Name, nil
+		return c.Name, true
 	}
 
-	return "", fmt.Errorf("namespace '%s' not found", namespaceID)
+	return "", false
 }
