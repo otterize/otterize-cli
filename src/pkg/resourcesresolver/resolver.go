@@ -6,8 +6,7 @@ import (
 )
 
 type Resolver struct {
-	client       *cloudclient.Client
-	orgResources *cloudclient.OrgResources
+	client *cloudclient.Client
 
 	clusters     *ClustersResolver
 	environments *EnvironmentsResolver
@@ -35,8 +34,6 @@ func (r *Resolver) LoadOrgResources(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-
-	r.orgResources = &resources
 
 	r.clusters.LoadClusters(resources.Clusters)
 	r.environments.LoadEnvironments(resources.Environments)
