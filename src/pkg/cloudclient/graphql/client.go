@@ -1,21 +1,14 @@
 package graphql
 
 import (
-	"bytes"
 	"context"
 	genqlientgraphql "github.com/Khan/genqlient/graphql"
-	"github.com/google/uuid"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/auth"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/cloudapi"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/samber/lo"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
-	"io"
-	"net/http"
-	"time"
 )
 
 type Client struct {
@@ -24,67 +17,29 @@ type Client struct {
 }
 
 func NewClient(ctx context.Context) (*Client, error) {
-	orgID, found := restapi.ResolveOrgID() // TODO: move to shared location
-	if !found {                            // Shouldn't happen after login
-		return nil, restapi.ErrNoOrganization
-	}
-
-	token := auth.GetAPIToken(ctx)
-	tokenSrc := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-
-	return NewClientFromTokenSourceAndOrgID(viper.GetString(config.OtterizeAPIAddressKey), tokenSrc, orgID), nil
-}
-
-func NewClientFromToken(address string, token string) *Client {
-	oauth2Token := &oauth2.Token{AccessToken: token}
-	return NewClientFromTokenSource(address, oauth2.StaticTokenSource(oauth2Token))
-}
-
-type SetOrgHeaderDoer struct {
-	orgID  string
-	client genqlientgraphql.Doer
-}
-
-func (d *SetOrgHeaderDoer) Do(req *http.Request) (*http.Response, error) {
-	id := uuid.New().String()
-	before := time.Now()
-	body, err := io.ReadAll(req.Body)
+	orgID, err := config.ResolveOrgID()
 	if err != nil {
 		return nil, err
 	}
-	logrus.WithField("method", req.Method).WithField("url", req.URL).
-		WithField("id", id).WithField("req", string(body)).
-		Debug("GraphQL request")
 
-	req.Body = io.NopCloser(bytes.NewBuffer(body))
-	req.Header.Set("X-Otterize-Organization", d.orgID)
-	res, err := d.client.Do(req)
+	token := auth.GetAPIToken(ctx)
 
-	after := time.Now()
-	duration := after.Sub(before)
-	logrus.WithField("method", req.Method).WithField("url", req.URL).
-		WithField("id", id).WithField("duration", duration).
-		Debug("GraphQL request done")
-
-	return res, err
+	return NewClientFromToken(ctx, viper.GetString(config.OtterizeAPIAddressKey), token, orgID), nil
 }
 
-func NewClientFromTokenSourceAndOrgID(address string, tokenSrc oauth2.TokenSource, orgID string) *Client {
+func NewClientFromToken(ctx context.Context, address string, token string, organizationID string) *Client {
+	tokenSrc := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
+	return NewClientFromTokenSourceAndOrgID(ctx, address, tokenSrc, organizationID)
+}
+
+func NewClientFromTokenSourceAndOrgID(ctx context.Context, address string, tokenSrc oauth2.TokenSource, orgID string) *Client {
 	address = address + "/graphql/v1beta"
-	oauth2client := oauth2.NewClient(context.Background(), tokenSrc)
-	setHeader := SetOrgHeaderDoer{orgID: orgID, client: oauth2client}
+	oauth2client := oauth2.NewClient(ctx, tokenSrc)
+	client := HTTPClientWithSetOrgHeaderDoer{orgID: orgID, client: oauth2client}
 
 	return &Client{
 		Address: address,
-		Client:  genqlientgraphql.NewClient(address, &setHeader),
-	}
-}
-
-func NewClientFromTokenSource(address string, tokenSrc oauth2.TokenSource) *Client {
-	address = address + "/graphql/v1beta"
-	return &Client{
-		Address: address,
-		Client:  genqlientgraphql.NewClient(address, oauth2.NewClient(context.Background(), tokenSrc)),
+		Client:  genqlientgraphql.NewClient(address, &client),
 	}
 }
 

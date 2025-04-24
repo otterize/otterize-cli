@@ -3,7 +3,6 @@ package restapi
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/deepmap/oapi-codegen/pkg/util"
@@ -18,8 +17,6 @@ import (
 	"time"
 )
 
-var ErrNoOrganization = errors.New("no organization exists in config or as parameter")
-
 type Client struct {
 	*cloudapi.ClientWithResponses
 	restApiURL string
@@ -30,9 +27,9 @@ type Doer interface {
 }
 
 func NewClient(ctx context.Context) (*Client, error) {
-	orgID, found := ResolveOrgID()
-	if !found { // Shouldn't happen after login
-		return nil, ErrNoOrganization
+	orgID, err := config.ResolveOrgID()
+	if err != nil {
+		return nil, err
 	}
 	return NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), auth.GetAPIToken(ctx), orgID)
 }
