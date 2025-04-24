@@ -1,9 +1,8 @@
-package resources
+package resourcesresolver
 
 import (
 	"errors"
 	"fmt"
-	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/utils/prints"
 	"github.com/samber/lo"
@@ -11,7 +10,6 @@ import (
 )
 
 type ServicesResolver struct {
-	client                                          *cloudclient.Client
 	clusters                                        *ClustersResolver
 	namespaces                                      *NamespacesResolver
 	servicesByID                                    map[string]cloudapi.MinimalServiceFields
@@ -20,9 +18,8 @@ type ServicesResolver struct {
 	servicesByClusterIdAndNamespaceIdAndServiceName map[string]map[string]map[string]cloudapi.MinimalServiceFields
 }
 
-func NewServicesResolver(client *cloudclient.Client, clusters *ClustersResolver, namespaces *NamespacesResolver) *ServicesResolver {
+func NewServicesResolver(clusters *ClustersResolver, namespaces *NamespacesResolver) *ServicesResolver {
 	return &ServicesResolver{
-		client:                              client,
 		clusters:                            clusters,
 		namespaces:                          namespaces,
 		servicesByID:                        make(map[string]cloudapi.MinimalServiceFields),

@@ -1,4 +1,4 @@
-package resources
+package resourcesresolver
 
 import (
 	"context"
@@ -19,7 +19,7 @@ func NewResolver(client *cloudclient.Client) *Resolver {
 	environments := NewEnvironmentsResolver()
 	clusters := NewClustersResolver()
 	namespaces := NewNamespacesResolver(clusters)
-	services := NewServicesResolver(client, clusters, namespaces)
+	services := NewServicesResolver(clusters, namespaces)
 
 	return &Resolver{
 		client:       client,

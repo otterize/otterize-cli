@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/cli"
 	cloudclientgql "github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/resources"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/output"
+	"github.com/otterize/otterize-cli/src/pkg/resourcesresolver"
 	"github.com/otterize/otterize-cli/src/pkg/utils/must"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
@@ -84,7 +84,7 @@ func accessGraphFilterFromFlags(ctx context.Context) (cloudapi.InputAccessGraphF
 		return cloudapi.InputAccessGraphFilter{}, err
 	}
 
-	resolver := resources.NewResolver(gqlClient)
+	resolver := resourcesresolver.NewResolver(gqlClient)
 	if err := resolver.LoadOrgResources(ctx); err != nil {
 		return cloudapi.InputAccessGraphFilter{}, err
 	}

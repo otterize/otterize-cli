@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/otterize/otterize-cli/src/pkg/cli"
 	cloudclientgql "github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql"
-	"github.com/otterize/otterize-cli/src/pkg/cloudclient/graphql/resources"
 	cloudclient "github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
 	"github.com/otterize/otterize-cli/src/pkg/errors"
+	"github.com/otterize/otterize-cli/src/pkg/resourcesresolver"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -99,7 +99,7 @@ func servicesFilterFromFlags(ctx context.Context) (cloudapi.InputServiceFilter, 
 		return cloudapi.InputServiceFilter{}, err
 	}
 
-	resolver := resources.NewResolver(gqlClient)
+	resolver := resourcesresolver.NewResolver(gqlClient)
 	if err := resolver.LoadOrgResources(ctx); err != nil {
 		return cloudapi.InputServiceFilter{}, err
 	}
