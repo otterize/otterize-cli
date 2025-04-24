@@ -1,0 +1,71 @@
+fragment MeFields on Me {
+    user {
+        id
+        email
+        name
+    }
+    organizations {
+        id
+    }
+}
+
+
+mutation CreateUserFromAuth0User {
+    me {
+        registerUser {
+            ...MeFields
+        }
+    }
+}
+
+mutation SendCLITelemetry($telemetry: CLITelemetry!) {
+    sendCLITelemetries(telemetries: [$telemetry])
+}
+
+fragment MinimalClusterFields on Cluster {
+    id
+    name
+}
+
+fragment MinimalNamespaceFields on Namespace {
+    id
+    name
+    cluster {
+        ...MinimalClusterFields
+    }
+}
+
+fragment MinimalServiceFields on Service {
+    id
+    name
+    # @genqlient(pointer: true)
+    namespace {
+        ...MinimalNamespaceFields
+    }
+}
+
+
+fragment MinimalEnvironmentFields on Environment {
+    id
+    name
+}
+
+query LoadOrgResources {
+    clusters {
+        ...MinimalClusterFields
+    }
+    namespaces {
+        ...MinimalNamespaceFields
+    }
+    environments {
+        ...MinimalEnvironmentFields
+    }
+    # services are not pre-loaded as there may be wayyy too many
+}
+
+
+query ListServices {
+    services {
+        ...MinimalServiceFields
+    }
+}

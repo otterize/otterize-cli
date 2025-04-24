@@ -1,4 +1,4 @@
-package graphql
+package cloudapi
 
 import _ "github.com/suessflorian/gqlfetch"
 

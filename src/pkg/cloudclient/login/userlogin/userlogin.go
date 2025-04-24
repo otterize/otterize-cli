@@ -22,13 +22,13 @@ type LoginContext struct {
 	me        *cloudapi.Me
 }
 
-func NewContext(apiAddress string, accessToken string) (*LoginContext, error) {
+func NewContext(ctx context.Context, apiAddress string, accessToken string) (*LoginContext, error) {
 	apiClient, err := restapi.NewClientFromToken(apiAddress, accessToken, "")
 	if err != nil {
 		return nil, err
 	}
 
-	gqlClient := graphql.NewClientFromToken(apiAddress, accessToken)
+	gqlClient := graphql.NewClientFromToken(ctx, apiAddress, accessToken, "")
 
 	return &LoginContext{apiClient: apiClient, gqlClient: gqlClient}, nil
 }
