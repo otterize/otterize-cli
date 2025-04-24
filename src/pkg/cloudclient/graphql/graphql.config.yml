@@ -1,0 +1,2 @@
+schema:
+  - ./cloudapi/schema.graphql

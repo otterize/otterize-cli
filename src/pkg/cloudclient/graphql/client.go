@@ -52,50 +52,6 @@ func (c *Client) RegisterAuth0User(ctx context.Context) (cloudapi.MeFields, erro
 	return createUserResponse.Me.RegisterUser.MeFields, nil
 }
 
-func (c *Client) ListClusters(ctx context.Context) ([]cloudapi.MinimalClusterFields, error) {
-	response, err := cloudapi.ListCluster(ctx, c.Client)
-	if err != nil {
-		return nil, err
-	}
-
-	return lo.Map(response.Clusters, func(c cloudapi.ListClusterClustersCluster, _ int) cloudapi.MinimalClusterFields {
-		return c.MinimalClusterFields
-	}), nil
-}
-
-func (c *Client) ListNamespaces(ctx context.Context) ([]cloudapi.MinimalNamespaceFields, error) {
-	response, err := cloudapi.ListNamespaces(ctx, c.Client)
-	if err != nil {
-		return nil, err
-	}
-
-	return lo.Map(response.Namespaces, func(ns cloudapi.ListNamespacesNamespacesNamespace, _ int) cloudapi.MinimalNamespaceFields {
-		return ns.MinimalNamespaceFields
-	}), nil
-}
-
-func (c *Client) ListServices(ctx context.Context) ([]cloudapi.MinimalServiceFields, error) {
-	response, err := cloudapi.ListServices(ctx, c.Client)
-	if err != nil {
-		return nil, err
-	}
-
-	return lo.Map(response.Services, func(s cloudapi.ListServicesServicesService, _ int) cloudapi.MinimalServiceFields {
-		return s.MinimalServiceFields
-	}), nil
-}
-
-func (c *Client) ListEnvironments(ctx context.Context) ([]cloudapi.MinimalEnvironmentFields, error) {
-	response, err := cloudapi.ListEnvironments(ctx, c.Client)
-	if err != nil {
-		return nil, err
-	}
-
-	return lo.Map(response.Environments, func(e cloudapi.ListEnvironmentsEnvironmentsEnvironment, _ int) cloudapi.MinimalEnvironmentFields {
-		return e.MinimalEnvironmentFields
-	}), nil
-}
-
 type OrgResources struct {
 	Environments []cloudapi.MinimalEnvironmentFields
 	Clusters     []cloudapi.MinimalClusterFields
@@ -121,4 +77,15 @@ func (c *Client) LoadOrgResources(ctx context.Context) (OrgResources, error) {
 	})
 
 	return r, nil
+}
+
+func (c *Client) ListServices(ctx context.Context) ([]cloudapi.MinimalServiceFields, error) {
+	response, err := cloudapi.ListServices(ctx, c.Client)
+	if err != nil {
+		return nil, err
+	}
+
+	return lo.Map(response.Services, func(s cloudapi.ListServicesServicesService, _ int) cloudapi.MinimalServiceFields {
+		return s.MinimalServiceFields
+	}), nil
 }

@@ -27,23 +27,11 @@ fragment MinimalClusterFields on Cluster {
     name
 }
 
-query ListCluster {
-    clusters {
-        ...MinimalClusterFields
-    }
-}
-
 fragment MinimalNamespaceFields on Namespace {
     id
     name
     cluster {
         ...MinimalClusterFields
-    }
-}
-
-query ListNamespaces {
-    namespaces {
-        ...MinimalNamespaceFields
     }
 }
 
@@ -56,21 +44,10 @@ fragment MinimalServiceFields on Service {
     }
 }
 
-query ListServices {
-    services {
-        ...MinimalServiceFields
-    }
-}
 
 fragment MinimalEnvironmentFields on Environment {
     id
     name
-}
-
-query ListEnvironments {
-    environments {
-        ...MinimalEnvironmentFields
-    }
 }
 
 query LoadOrgResources {
@@ -83,5 +60,12 @@ query LoadOrgResources {
     environments {
         ...MinimalEnvironmentFields
     }
-    # services are not pre-loaded as there may be wayy too many
+    # services are not pre-loaded as there may be wayyy too many
+}
+
+
+query ListServices {
+    services {
+        ...MinimalServiceFields
+    }
 }
