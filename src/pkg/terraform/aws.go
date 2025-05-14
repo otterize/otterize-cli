@@ -50,6 +50,11 @@ func ExtractAwsRoleAndPolicies(state *tfjson.State) ([]AwsRoleInfo, error) {
 		if resource.Type == "aws_iam_role_policy_attachment" {
 			extractAwsIamRolePolicyAttachmentInfo(resource, roleIdToPolicies)
 		}
+
+		// Support older format
+		if resource.Type == "aws_iam_policy_attachment" {
+			extractAwsIamPolicyAttachmentInfo(resource, roleIdToPolicies)
+		}
 	}
 
 	for _, childModule := range state.Values.RootModule.ChildModules {
@@ -124,6 +129,16 @@ func extractAwsIamRolePolicyAttachmentInfo(resource *tfjson.StateResource, roleI
 	policyArn := resource.AttributeValues["policy_arn"].(string)
 
 	roleIdToPolicies[roleId] = append(roleIdToPolicies[roleId], policyArn)
+}
+
+func extractAwsIamPolicyAttachmentInfo(resource *tfjson.StateResource, roleIdToPolicies map[string][]string) {
+	policyArn := resource.AttributeValues["policy_arn"].(string)
+
+	roles := resource.AttributeValues["roles"].([]interface{})
+	for _, role := range roles {
+		roleId := role.(string)
+		roleIdToPolicies[roleId] = append(roleIdToPolicies[roleId], policyArn)
+	}
 }
 
 func extractAwsIamPolicyInfo(resource *tfjson.StateResource, policyArnToInfo map[string]AwsPolicyInfo) error {
