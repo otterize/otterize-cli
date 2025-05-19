@@ -3,10 +3,10 @@ package restapi
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/deepmap/oapi-codegen/pkg/util"
+	"github.com/google/uuid"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/auth"
 	"github.com/otterize/otterize-cli/src/pkg/cloudclient/restapi/cloudapi"
 	"github.com/otterize/otterize-cli/src/pkg/config"
@@ -14,9 +14,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"net/http"
+	"time"
 )
-
-var ErrNoOrganization = errors.New("no organization exists in config or as parameter")
 
 type Client struct {
 	*cloudapi.ClientWithResponses
@@ -28,9 +27,9 @@ type Doer interface {
 }
 
 func NewClient(ctx context.Context) (*Client, error) {
-	orgID, found := ResolveOrgID()
-	if !found { // Shouldn't happen after login
-		return nil, ErrNoOrganization
+	orgID, err := config.ResolveOrgID()
+	if err != nil {
+		return nil, err
 	}
 	return NewClientFromToken(viper.GetString(config.OtterizeAPIAddressKey), auth.GetAPIToken(ctx), orgID)
 }
@@ -86,8 +85,18 @@ type ResponseBody struct {
 }
 
 func (d *doerWithErrorCheck) Do(req *http.Request) (*http.Response, error) {
-	logrus.WithField("method", req.Method).WithField("url", req.URL).Debug("HTTP request")
+	id := uuid.New().String()
+	before := time.Now()
+	logrus.WithField("method", req.Method).WithField("url", req.URL).
+		WithField("id", id).
+		Debug("HTTP request")
 	resp, err := d.doer.Do(req)
+
+	after := time.Now()
+	duration := after.Sub(before)
+	logrus.WithField("method", req.Method).WithField("url", req.URL).
+		WithField("id", id).WithField("duration", duration).
+		Debug("HTTP request done")
 	if err != nil {
 		return resp, err
 	}

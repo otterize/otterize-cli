@@ -154,7 +154,6 @@ input AWSVisibilitySettingsInput {
 
 type AccessApprovalRuleset {
 	id: ID!
-	order: Int!
 	origin: AccessApprovalRulesetFilter!
 	target: AccessApprovalRulesetFilter!
 	action: AccessApprovalRulesetAction!
@@ -300,11 +299,6 @@ type AppliedIntentsRequestWithDetails {
 enum AuthRole {
 	ADMIN
 	VIEWER
-}
-
-type AutoApproveMoreRestrictiveIntentsByEnv {
-	environmentId: ID!
-	enabled: Boolean!
 }
 
 enum AutomateThirdPartyNetworkPolicy {
@@ -741,8 +735,6 @@ enum EdgeAccessStatusReason {
 	ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE
 	ALLOWED_BY_APPLIED_INTENTS_DATABASE_OVERLY_PERMISSIVE
 	ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY
-	ALLOWED_BY_INTERNET_EGRESS_NETWORK_POLICY
-	ALLOWED_BY_INTERNET_INGRESS_NETWORK_POLICY
 	WOULD_BE_ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY
 	BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE
 	BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH
@@ -754,8 +746,6 @@ enum EdgeAccessStatusReason {
 	BLOCKED_BY_APPLIED_INTENTS_DATABASE_UNDER_PERMISSIVE
 	BLOCKED_BY_APPLIED_INTENTS_DATABASE_RESOURCE_MISMATCH
 	BLOCKED_BY_DATABASE_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS
-	BLOCKED_BY_INTERNET_EGRESS_NETWORK_POLICY
-	BLOCKED_BY_INTERNET_INGRESS_NETWORK_POLICY
 	BLOCKED_BY_DEFAULT_DENY
 	SHARED_SERVICE_ACCOUNT
 	CLIENT_ISTIO_SIDECAR_MISSING
@@ -890,7 +880,6 @@ type FeatureFlags {
 	useTypedIntentsCTE: Boolean
 	enableInternetIntentsSuggestions: Boolean
 	enableIAMIntentsSuggestions: Boolean
-	enableNetworkPoliciesInAccessGraph: Boolean
 }
 
 type Finding {
@@ -1011,14 +1000,12 @@ type GitHubRepoInfo {
 	repository: String!
 	baseBranch: String!
 	intentsPath: String!
-	terraformPath: String
 }
 
 input GitHubRepoInfoInput {
 	repository: String!
 	baseBranch: String!
 	intentsPath: String!
-	terraformPath: String
 }
 
 type GitHubSettings {
@@ -1053,7 +1040,6 @@ input GitLabRepoInfoInput {
 	projectPath: String!
 	baseBranch: String!
 	intentsPath: String!
-	terraformPath: String
 }
 
 type GitLabSettings {
@@ -1108,12 +1094,6 @@ enum IPFamily {
 	UNKNOWN
 }
 
-"""IP filters"""
-type IPFilterValue {
-	cidr: String!
-	exclude: [String!]
-}
-
 input IncomingInternetSourceInput {
 	ip: String!
 }
@@ -1127,7 +1107,6 @@ input IncomingTrafficIntentInput {
 	serverName: String!
 	namespace: String!
 	source: IncomingInternetSourceInput!
-	connectionsCount: ConnectionsCount
 }
 
 input IngressControllerConfigInput {
@@ -1140,8 +1119,6 @@ input IngressControllerConfigInput {
 input InputAccessApprovalRuleset {
 """Ruleset"""
 	id: ID!
-"""Ruleset"""
-	order: Int!
 """Ruleset"""
 	origin: InputAccessApprovalRulesetConfigFilter!
 """Ruleset"""
@@ -1221,11 +1198,6 @@ input InputAppliedIntentsRequestFilter {
 	approvalStatuses: InputIDFilterValue
 }
 
-input InputAutoApproveMoreRestrictiveIntentsByEnv {
-	environmentId: ID!
-	enabled: Boolean!
-}
-
 input InputDefaultIntentsApprovalActionByEnv {
 	environmentId: ID!
 	action: AccessApprovalRulesetAction!
@@ -1239,7 +1211,6 @@ input InputFeatureFlags {
 	useTypedIntentsCTE: Boolean
 	enableInternetIntentsSuggestions: Boolean
 	enableIAMIntentsSuggestions: Boolean
-	enableNetworkPoliciesInAccessGraph: Boolean
 }
 
 """ Findings filter """
@@ -1308,11 +1279,6 @@ input InputNumericFilterValue {
 	operator: NumericFilterOperators!
 }
 
-input InputOffsetPagination {
-	page: Int
-	size: Int
-}
-
 input InputResourceInventoryFilter {
 	serviceIds: InputIDFilterValue
 	environmentIds: InputIDFilterValue
@@ -1336,21 +1302,15 @@ input InputServiceFilter {
 	integrationIds: [ID!]
 }
 
-input InputTerraformAwsInlinePolicyInfo {
-	name: String!
-	policy: String!
-}
-
 input InputTerraformAwsPolicyInfo {
 	arn: String!
-	policy: String!
 	address: String!
 }
 
 input InputTerraformAwsRoleInfo {
 	arn: String!
 	address: String!
-	inlinePolicy: [InputTerraformAwsInlinePolicyInfo!]
+	inlinePolicy: String!
 	attachedPolicies: [InputTerraformAwsPolicyInfo!]
 }
 
@@ -1629,11 +1589,6 @@ type Invite {
 	status: InviteStatus!
 }
 
-input InviteOrgMembershipInput {
-	inviteId: ID!
-	membership: OrganizationMembershipInput!
-}
-
 enum InviteStatus {
 	PENDING
 	ACCEPTED
@@ -1901,7 +1856,6 @@ or, for users with a single organization, this is that single selected organizat
 This is selected by the X-Otterize-Organization header,
 or, for users with a single organization, this is that single selected organization."""
 	selectedUserOrganization: UserOrganizationAssociation!
-	selectedOrganizationRestrictionResources: OrganizationMembershipRestrictionResources
 }
 
 type MeMutation {
@@ -2173,9 +2127,6 @@ type Mutation {
 	acceptInvite(
 		id: ID!
 	): Invite!
-	saveInviteOrgMemberships(
-		memberships: [InviteOrgMembershipInput!]!
-	): Boolean!
 	reportK8sServices(
 		namespace: String!
 		services: [K8sServiceInput!]!
@@ -2317,11 +2268,6 @@ type NetworkMapperComponent {
 	status: ComponentStatus!
 }
 
-type NetworkPoliciesPage {
-	data: [NetworkPolicy!]!
-	meta: PaginationMeta
-}
-
 enum NetworkPoliciesStep {
 """Connect cluster"""
 	CREATE_CLUSTER
@@ -2351,7 +2297,6 @@ type NetworkPolicy {
 	workloadsAffected: Int!
 	spec: String!
 	lastUsed: Time
-	metadata: NetworkPolicyMetadata
 }
 
 input NetworkPolicyInput {
@@ -2364,12 +2309,6 @@ enum NetworkPolicyKind {
 	NETWORK_POLICY_MANAGED_BY_OTTERIZE
 	CILIUM_NETWORK_POLICY
 	CILIUM_CLUSTER_WIDE_NETWORK_POLICY
-}
-
-type NetworkPolicyMetadata {
-	isEgress: Boolean!
-	isIngress: Boolean!
-	hasIpBlocks: Boolean!
 }
 
 enum NetworkPolicyScope {
@@ -2408,7 +2347,6 @@ type Organization {
 }
 
 type OrganizationMembership {
-	organizationId: ID!
 	role: AuthRole!
 	restrictions: OrganizationMembershipRestrictions
 	restrictionResources: OrganizationMembershipRestrictionResources
@@ -2447,8 +2385,6 @@ type OrganizationSettings {
 	defaultIntentsApprovalActionByEnv: [DefaultIntentsApprovalActionByEnv!]!
 	ignoreInternetIntents: Boolean
 	domainsDefaultRole: AuthRole!
-	defaultInviteMembership: OrganizationMembership!
-	autoApproveMoreRestrictiveIntentsByEnv: [AutoApproveMoreRestrictiveIntentsByEnv!]!
 }
 
 input OrganizationSettingsInput {
@@ -2457,8 +2393,6 @@ input OrganizationSettingsInput {
 	ignoredCloudDomains: [String!]
 	defaultIntentsApprovalActionByEnv: [InputDefaultIntentsApprovalActionByEnv!]
 	ignoreInternetIntents: Boolean
-	defaultInviteMembership: OrganizationMembershipInput
-	autoApproveMoreRestrictiveIntentsByEnv: [InputAutoApproveMoreRestrictiveIntentsByEnv!]
 }
 
 input PaginationInput {
@@ -2668,8 +2602,7 @@ type Query {
 	): NetworkPolicy
 	networkPolicies(
 		filter: InputNetworkPolicyFilter
-		pagination: InputOffsetPagination
-	): NetworkPoliciesPage
+	): [NetworkPolicy!]!
 """List organizations"""
 	organizations: [Organization!]!
 """Get organization"""
@@ -2719,6 +2652,8 @@ type Query {
 	): TerraformResourceInfo!
 """List users"""
 	users: [User!]!
+"""List users with restriction resources"""
+	orgUsersWithRestrictionResources: UsersWithRestrictionResources!
 	orgUsers: [UserOrganizationAssociation!]!
 """Get user"""
 	user(
@@ -3009,7 +2944,6 @@ enum ServiceType {
 	KUBERNETES_LOAD_BALANCER
 	AWS_VISIBILITY_EKS
 	DETECTED_CLOUD_SERVER
-	CONTROL_PLANE
 }
 
 type ServicesResponse {
@@ -3088,13 +3022,13 @@ scalar String
 
 type TLSConfiguration {
 	caCertificate: String
-	certificate: String
+	certificate: String!
 }
 
 input TLSConfigurationInput {
 	caCertificate: String
-	certificate: String
-	key: String
+	certificate: String!
+	key: String!
 }
 
 enum TelemetryComponentType {
@@ -3117,28 +3051,21 @@ input TelemetryInput {
 	data: TelemetryData!
 }
 
-type TerraformAwsInlinePolicyInfo {
-	name: String!
-	policy: String!
-}
-
 type TerraformAwsPolicyInfo {
 	arn: String!
-	policy: String!
 	address: String!
 }
 
 type TerraformAwsRoleInfo {
 	arn: String!
 	address: String!
-	inlinePolicy: [TerraformAwsInlinePolicyInfo!]
+	inlinePolicy: String!
 	attachedPolicies: [TerraformAwsPolicyInfo!]
 }
 
 type TerraformResourceInfo {
 	modulePath: String!
-	gitPlatform: String!
-	gitOrigin: String!
+	gitOriginUrl: String!
 	gitCommitHash: String!
 	awsRoles: [TerraformAwsRoleInfo!]
 }
@@ -3261,6 +3188,11 @@ type UserTutorial {
 	isCompleted: Boolean!
 	step: String!
 	stepSeen: String!
+}
+
+type UsersWithRestrictionResources {
+	orgUsers: [UserOrganizationAssociation!]!
+	restrictionResources: OrganizationMembershipRestrictionResources
 }
 
 """ Used to validate ID based filters """

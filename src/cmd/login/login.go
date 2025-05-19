@@ -46,7 +46,7 @@ var LoginCmd = &cobra.Command{
 		prints.PrintCliStderr("Login completed successfully! logged in as: %s", authResult.Profile["email"])
 
 		apiAddress := viper.GetString(config.OtterizeAPIAddressKey)
-		loginCtx, err := userlogin.NewContext(apiAddress, authResult.AccessToken)
+		loginCtx, err := userlogin.NewContext(getConfCtxTimeout, apiAddress, authResult.AccessToken)
 		if err != nil {
 			return err
 		}

@@ -22,13 +22,13 @@ type LoginContext struct {
 	me        *cloudapi.Me
 }
 
-func NewContext(apiAddress string, accessToken string) (*LoginContext, error) {
+func NewContext(ctx context.Context, apiAddress string, accessToken string) (*LoginContext, error) {
 	apiClient, err := restapi.NewClientFromToken(apiAddress, accessToken, "")
 	if err != nil {
 		return nil, err
 	}
 
-	gqlClient := graphql.NewClientFromToken(apiAddress, accessToken)
+	gqlClient := graphql.NewClientFromToken(ctx, apiAddress, accessToken, "")
 
 	return &LoginContext{apiClient: apiClient, gqlClient: gqlClient}, nil
 }
@@ -63,10 +63,7 @@ func (loginCtx *LoginContext) EnsureUserRegistered() error {
 }
 
 func (loginCtx *LoginContext) SelectOrg(preSelectedOrgId string, switchOrg bool) (string, error) {
-	organizations := lo.Map(loginCtx.me.UserOrganizations, func(userOrg cloudapi.UserOrganizationAssociation, _ int) cloudapi.Organization {
-		return userOrg.Org
-	})
-
+	organizations := loginCtx.me.UserOrganizations
 	selectedOrg := ""
 	if len(organizations) == 0 {
 		orgId, err := loginCtx.createOrJoinOrgFromUserInput()
@@ -76,7 +73,7 @@ func (loginCtx *LoginContext) SelectOrg(preSelectedOrgId string, switchOrg bool)
 		selectedOrg = orgId
 	} else if len(organizations) == 1 {
 		prints.PrintCliStderr("Only 1 organization found - auto-selecting this organization for use.")
-		selectedOrg = organizations[0].Id
+		selectedOrg = organizations[0].Org.Id
 	} else {
 		orgId, err := loginCtx.interactiveSelectOrg(preSelectedOrgId, switchOrg)
 		if err != nil {
