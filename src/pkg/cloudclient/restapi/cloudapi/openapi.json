@@ -71,6 +71,16 @@
         },
         "description": "Not Found"
       },
+      "TIMEOUT": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Request Timeout"
+      },
       "UNAUTHENTICATED": {
         "content": {
           "application/json": {
@@ -407,6 +417,9 @@
           "featureFlags": {
             "$ref": "#/components/schemas/FeatureFlags"
           },
+          "hits": {
+            "$ref": "#/components/schemas/NumericFilterValue"
+          },
           "includeOnlyClientsMatchingFilter": {
             "type": "boolean"
           },
@@ -545,6 +558,21 @@
         ],
         "type": "object"
       },
+      "AutoApproveMoreRestrictiveIntentsByEnv": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "environmentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "environmentId",
+          "enabled"
+        ],
+        "type": "object"
+      },
       "AzureInfo": {
         "properties": {
           "aksClusterName": {
@@ -665,7 +693,9 @@
               "ZERO_TRUST_DEFAULT_DENY",
               "ZERO_TRUST_EGRESS_ACCESS_COVERED",
               "ZERO_TRUST_EXTERNAL_INGRESS_TAGGED",
-              "ZERO_TRUST_ALL_INTRA_CLUSTER_ACCESS_COVERED"
+              "ZERO_TRUST_ALL_INTRA_CLUSTER_ACCESS_COVERED",
+              "THREAT_INTELLIGENCE",
+              "THREAT_INTELLIGENCE_KNOWN_IOCS"
             ],
             "type": "string"
           },
@@ -677,7 +707,8 @@
               "PCI_4_0",
               "PII",
               "HIPAA",
-              "ZERO_TRUST"
+              "ZERO_TRUST",
+              "THREAT_INTELLIGENCE"
             ],
             "type": "string"
           }
@@ -1195,6 +1226,25 @@
         ],
         "type": "object"
       },
+      "CreateSIEMIntegrationResponse": {
+        "properties": {
+          "integration": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "integration"
+        ],
+        "type": "object"
+      },
       "CreateSlackIntegrationResponse": {
         "properties": {
           "integration": {
@@ -1391,6 +1441,8 @@
               "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
               "ALLOWED_BY_APPLIED_INTENTS_DATABASE_OVERLY_PERMISSIVE",
               "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
+              "ALLOWED_BY_INTERNET_EGRESS_NETWORK_POLICY",
+              "ALLOWED_BY_INTERNET_INGRESS_NETWORK_POLICY",
               "WOULD_BE_ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
               "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
               "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
@@ -1402,6 +1454,8 @@
               "BLOCKED_BY_APPLIED_INTENTS_DATABASE_UNDER_PERMISSIVE",
               "BLOCKED_BY_APPLIED_INTENTS_DATABASE_RESOURCE_MISMATCH",
               "BLOCKED_BY_DATABASE_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS",
+              "BLOCKED_BY_INTERNET_EGRESS_NETWORK_POLICY",
+              "BLOCKED_BY_INTERNET_INGRESS_NETWORK_POLICY",
               "BLOCKED_BY_DEFAULT_DENY",
               "SHARED_SERVICE_ACCOUNT",
               "CLIENT_ISTIO_SIDECAR_MISSING",
@@ -1420,7 +1474,9 @@
               "INTERNET_INTENTS_ENFORCEMENT_DISABLED",
               "BLOCKED_BY_DEFAULT_DENY_MISSING_EXTERNAL_TRAFFIC_POLICY",
               "BLOCKED_BY_APPLIED_INTENTS_MISSING_EXTERNAL_TRAFFIC_POLICY",
-              "ALLOWED_BY_EXTERNALLY_MANAGED_NETWORK_POLICY"
+              "ALLOWED_BY_EXTERNALLY_MANAGED_NETWORK_POLICY",
+              "ALLOWED_BY_METRICS_COLLECTION_TRAFFIC_NETWORK_POLICY",
+              "WOULD_BE_ALLOWED_BY_METRICS_COLLECTION_TRAFFIC_NETWORK_POLICY"
             ],
             "type": "string"
           },
@@ -1433,6 +1489,8 @@
                 "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
                 "ALLOWED_BY_APPLIED_INTENTS_DATABASE_OVERLY_PERMISSIVE",
                 "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
+                "ALLOWED_BY_INTERNET_EGRESS_NETWORK_POLICY",
+                "ALLOWED_BY_INTERNET_INGRESS_NETWORK_POLICY",
                 "WOULD_BE_ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
                 "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
                 "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
@@ -1444,6 +1502,8 @@
                 "BLOCKED_BY_APPLIED_INTENTS_DATABASE_UNDER_PERMISSIVE",
                 "BLOCKED_BY_APPLIED_INTENTS_DATABASE_RESOURCE_MISMATCH",
                 "BLOCKED_BY_DATABASE_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS",
+                "BLOCKED_BY_INTERNET_EGRESS_NETWORK_POLICY",
+                "BLOCKED_BY_INTERNET_INGRESS_NETWORK_POLICY",
                 "BLOCKED_BY_DEFAULT_DENY",
                 "SHARED_SERVICE_ACCOUNT",
                 "CLIENT_ISTIO_SIDECAR_MISSING",
@@ -1462,7 +1522,9 @@
                 "INTERNET_INTENTS_ENFORCEMENT_DISABLED",
                 "BLOCKED_BY_DEFAULT_DENY_MISSING_EXTERNAL_TRAFFIC_POLICY",
                 "BLOCKED_BY_APPLIED_INTENTS_MISSING_EXTERNAL_TRAFFIC_POLICY",
-                "ALLOWED_BY_EXTERNALLY_MANAGED_NETWORK_POLICY"
+                "ALLOWED_BY_EXTERNALLY_MANAGED_NETWORK_POLICY",
+                "ALLOWED_BY_METRICS_COLLECTION_TRAFFIC_NETWORK_POLICY",
+                "WOULD_BE_ALLOWED_BY_METRICS_COLLECTION_TRAFFIC_NETWORK_POLICY"
               ],
               "type": "string"
             },
@@ -1607,6 +1669,9 @@
             "type": "boolean"
           },
           "enableInternetIntentsSuggestions": {
+            "type": "boolean"
+          },
+          "enableNetworkPoliciesInAccessGraph": {
             "type": "boolean"
           },
           "isCloudSecurityEnabled": {
@@ -1763,8 +1828,7 @@
         "required": [
           "repository",
           "baseBranch",
-          "intentsPath",
-          "terraformPath"
+          "intentsPath"
         ],
         "type": "object"
       },
@@ -1786,8 +1850,7 @@
         "required": [
           "repository",
           "baseBranch",
-          "intentsPath",
-          "terraformPath"
+          "intentsPath"
         ],
         "type": "object"
       },
@@ -1901,8 +1964,7 @@
         "required": [
           "projectPath",
           "baseBranch",
-          "intentsPath",
-          "terraformPath"
+          "intentsPath"
         ],
         "type": "object"
       },
@@ -1998,6 +2060,9 @@
           "featureFlags": {
             "type": "object"
           },
+          "hits": {
+            "type": "object"
+          },
           "includeOnlyClientsMatchingFilter": {
             "type": "boolean"
           },
@@ -2046,6 +2111,21 @@
         },
         "type": "object"
       },
+      "InputAutoApproveMoreRestrictiveIntentsByEnv": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "environmentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "environmentId",
+          "enabled"
+        ],
+        "type": "object"
+      },
       "InputDefaultIntentsApprovalActionByEnv": {
         "properties": {
           "action": {
@@ -2075,6 +2155,9 @@
             "type": "boolean"
           },
           "enableInternetIntentsSuggestions": {
+            "type": "boolean"
+          },
+          "enableNetworkPoliciesInAccessGraph": {
             "type": "boolean"
           },
           "isCloudSecurityEnabled": {
@@ -2174,8 +2257,49 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "targets": {
+            "items": {
+              "enum": [
+                "KUBERNETES",
+                "HTTP",
+                "KAFKA",
+                "DATABASE",
+                "AWS",
+                "GCP",
+                "AZURE",
+                "S3",
+                "INTERNET"
+              ],
+              "type": "string"
+            },
+            "type": "array"
           }
         },
+        "type": "object"
+      },
+      "InputNumericFilterValue": {
+        "properties": {
+          "operator": {
+            "enum": [
+              "EQUAL",
+              "NOT_EQUAL",
+              "GREATER_THAN",
+              "GREATER_THAN_OR_EQUAL",
+              "LESS_THAN",
+              "LESS_THAN_OR_EQUAL"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value",
+          "operator"
+        ],
         "type": "object"
       },
       "InputServiceFilter": {
@@ -2385,6 +2509,9 @@
           "organizationId": {
             "type": "string"
           },
+          "siemSettings": {
+            "$ref": "#/components/schemas/SIEMSettings"
+          },
           "slackSettings": {
             "$ref": "#/components/schemas/SlackSettings"
           },
@@ -2402,7 +2529,8 @@
               "GITLAB",
               "AZURE",
               "SLACK",
-              "AWS_VISIBILITY"
+              "AWS_VISIBILITY",
+              "SIEM"
             ],
             "type": "string"
           }
@@ -2470,6 +2598,23 @@
           },
           "serviceIds": {
             "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "targets": {
+            "items": {
+              "enum": [
+                "KUBERNETES",
+                "HTTP",
+                "KAFKA",
+                "DATABASE",
+                "AWS",
+                "GCP",
+                "AZURE",
+                "S3",
+                "INTERNET"
+              ],
               "type": "string"
             },
             "type": "array"
@@ -2651,6 +2796,7 @@
           },
           "type": {
             "enum": [
+              "KUBERNETES",
               "HTTP",
               "KAFKA",
               "DATABASE",
@@ -2856,6 +3002,9 @@
             ],
             "type": "object"
           },
+          "organizationMembership": {
+            "$ref": "#/components/schemas/OrganizationMembership"
+          },
           "status": {
             "enum": [
               "PENDING",
@@ -2868,6 +3017,7 @@
           "id",
           "email",
           "organization",
+          "organizationMembership",
           "inviter",
           "created",
           "status"
@@ -2971,9 +3121,6 @@
             "type": "string"
           },
           "value": {
-            "example": "label value",
-            "format": "non-empty",
-            "pattern": ".+",
             "type": "string"
           }
         },
@@ -3005,20 +3152,23 @@
             },
             "type": "array"
           },
-          "organizations": {
-            "items": {
-              "$ref": "#/components/schemas/Organization"
-            },
-            "type": "array"
+          "selectedOrganizationRestrictionResources": {
+            "$ref": "#/components/schemas/OrganizationMembershipRestrictionResources"
           },
           "user": {
             "$ref": "#/components/schemas/User",
             "description": "The logged-in user details."
+          },
+          "userOrganizations": {
+            "items": {
+              "$ref": "#/components/schemas/UserOrganizationAssociation"
+            },
+            "type": "array"
           }
         },
         "required": [
           "user",
-          "organizations",
+          "userOrganizations",
           "invites"
         ],
         "type": "object"
@@ -3142,6 +3292,175 @@
         ],
         "type": "object"
       },
+      "NetworkPolicy": {
+        "properties": {
+          "allowedHits": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "blockedHits": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "cluster": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "environment": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "hits": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "NETWORK_POLICY",
+              "NETWORK_POLICY_MANAGED_BY_OTTERIZE",
+              "CILIUM_NETWORK_POLICY",
+              "CILIUM_CLUSTER_WIDE_NETWORK_POLICY"
+            ],
+            "type": "string"
+          },
+          "lastUsed": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/NetworkPolicyMetadata"
+          },
+          "name": {
+            "type": "string"
+          },
+          "namespace": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "spec": {
+            "type": "string"
+          },
+          "workloads": {
+            "items": {
+              "$ref": "#/components/schemas/NetworkPolicyWorkload"
+            },
+            "type": "array"
+          },
+          "workloadsAffected": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "cluster",
+          "environment",
+          "hits",
+          "allowedHits",
+          "blockedHits",
+          "workloads",
+          "workloadsAffected",
+          "spec"
+        ],
+        "type": "object"
+      },
+      "NetworkPolicyMetadata": {
+        "properties": {
+          "hasIpBlocks": {
+            "type": "boolean"
+          },
+          "isEgress": {
+            "type": "boolean"
+          },
+          "isIngress": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isEgress",
+          "isIngress",
+          "hasIpBlocks"
+        ],
+        "type": "object"
+      },
+      "NetworkPolicyWorkload": {
+        "properties": {
+          "scope": {
+            "enum": [
+              "PRIMARY",
+              "EGRESS",
+              "INGRESS"
+            ],
+            "type": "string"
+          },
+          "service": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "scope",
+          "service"
+        ],
+        "type": "object"
+      },
+      "NumericFilterValue": {
+        "properties": {
+          "operator": {
+            "enum": [
+              "EQUAL",
+              "NOT_EQUAL",
+              "GREATER_THAN",
+              "GREATER_THAN_OR_EQUAL",
+              "LESS_THAN",
+              "LESS_THAN_OR_EQUAL"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value",
+          "operator"
+        ],
+        "type": "object"
+      },
       "Organization": {
         "properties": {
           "created": {
@@ -3173,13 +3492,163 @@
         ],
         "type": "object"
       },
+      "OrganizationMembership": {
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "restrictions": {
+            "$ref": "#/components/schemas/OrganizationMembershipRestrictions"
+          },
+          "role": {
+            "enum": [
+              "ADMIN",
+              "VIEWER"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "organizationId",
+          "role"
+        ],
+        "type": "object"
+      },
+      "OrganizationMembershipInput": {
+        "properties": {
+          "restrictions": {
+            "type": "object"
+          },
+          "role": {
+            "enum": [
+              "ADMIN",
+              "VIEWER"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "role"
+        ],
+        "type": "object"
+      },
+      "OrganizationMembershipRestrictionResources": {
+        "properties": {
+          "clusters": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "environments": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "namespaces": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "services": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "clusters",
+          "services",
+          "namespaces",
+          "environments"
+        ],
+        "type": "object"
+      },
+      "OrganizationMembershipRestrictions": {
+        "properties": {
+          "clusterIds": {
+            "$ref": "#/components/schemas/IDFilterValue"
+          },
+          "environmentIds": {
+            "$ref": "#/components/schemas/IDFilterValue"
+          },
+          "namespaceIds": {
+            "$ref": "#/components/schemas/IDFilterValue"
+          },
+          "serviceIds": {
+            "$ref": "#/components/schemas/IDFilterValue"
+          }
+        },
+        "type": "object"
+      },
+      "OrganizationMembershipRestrictionsInput": {
+        "properties": {
+          "clusterIds": {
+            "type": "object"
+          },
+          "environmentIds": {
+            "type": "object"
+          },
+          "namespaceIds": {
+            "type": "object"
+          },
+          "serviceIds": {
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
       "OrganizationSettings": {
         "properties": {
+          "autoApproveMoreRestrictiveIntentsByEnv": {
+            "items": {
+              "$ref": "#/components/schemas/AutoApproveMoreRestrictiveIntentsByEnv"
+            },
+            "type": "array"
+          },
           "defaultIntentsApprovalActionByEnv": {
             "items": {
               "$ref": "#/components/schemas/DefaultIntentsApprovalActionByEnv"
             },
             "type": "array"
+          },
+          "defaultInviteMembership": {
+            "$ref": "#/components/schemas/OrganizationMembership"
           },
           "domains": {
             "items": {
@@ -3187,11 +3656,21 @@
             },
             "type": "array"
           },
+          "domainsDefaultRole": {
+            "enum": [
+              "ADMIN",
+              "VIEWER"
+            ],
+            "type": "string"
+          },
           "enforcedRegulations": {
             "items": {
               "type": "string"
             },
             "type": "array"
+          },
+          "ignoreInternetIntents": {
+            "type": "boolean"
           },
           "ignoredCloudDomains": {
             "items": {
@@ -3201,17 +3680,29 @@
           }
         },
         "required": [
-          "defaultIntentsApprovalActionByEnv"
+          "defaultIntentsApprovalActionByEnv",
+          "domainsDefaultRole",
+          "defaultInviteMembership",
+          "autoApproveMoreRestrictiveIntentsByEnv"
         ],
         "type": "object"
       },
       "OrganizationSettingsInput": {
         "properties": {
+          "autoApproveMoreRestrictiveIntentsByEnv": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
           "defaultIntentsApprovalActionByEnv": {
             "items": {
               "type": "object"
             },
             "type": "array"
+          },
+          "defaultInviteMembership": {
+            "type": "object"
           },
           "domains": {
             "items": {
@@ -3224,6 +3715,9 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "ignoreInternetIntents": {
+            "type": "boolean"
           },
           "ignoredCloudDomains": {
             "items": {
@@ -3255,6 +3749,142 @@
             "type": "integer"
           }
         },
+        "type": "object"
+      },
+      "SIEMIntegrationTrigger": {
+        "properties": {
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isActive"
+        ],
+        "type": "object"
+      },
+      "SIEMIntegrationTriggerInput": {
+        "properties": {
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isActive"
+        ],
+        "type": "object"
+      },
+      "SIEMSettings": {
+        "properties": {
+          "findingTriggers": {
+            "items": {
+              "$ref": "#/components/schemas/SIEMTrigger"
+            },
+            "type": "array"
+          },
+          "integrationTriggers": {
+            "$ref": "#/components/schemas/SIEMIntegrationTrigger"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "serviceTriggers": {
+            "items": {
+              "$ref": "#/components/schemas/SIEMTrigger"
+            },
+            "type": "array"
+          },
+          "syslogFacility": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "syslogHostname": {
+            "type": "string"
+          },
+          "syslogPort": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "tlsConfiguration": {
+            "$ref": "#/components/schemas/TLSConfiguration"
+          }
+        },
+        "required": [
+          "isActive",
+          "syslogHostname",
+          "syslogPort",
+          "syslogFacility",
+          "serviceTriggers",
+          "findingTriggers",
+          "integrationTriggers"
+        ],
+        "type": "object"
+      },
+      "SIEMSettingsInput": {
+        "properties": {
+          "findingTriggers": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "integrationTriggers": {
+            "type": "object"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "serviceTriggers": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "syslogFacility": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "syslogHostname": {
+            "type": "string"
+          },
+          "syslogPort": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "tlsConfiguration": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "isActive",
+          "syslogHostname",
+          "syslogPort",
+          "syslogFacility",
+          "serviceTriggers",
+          "findingTriggers",
+          "integrationTriggers"
+        ],
+        "type": "object"
+      },
+      "SIEMTrigger": {
+        "properties": {
+          "filter": {
+            "$ref": "#/components/schemas/IntegrationAccessGraphFilter"
+          }
+        },
+        "required": [
+          "filter"
+        ],
+        "type": "object"
+      },
+      "SIEMTriggerInput": {
+        "properties": {
+          "filter": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "filter"
+        ],
         "type": "object"
       },
       "ServerAlias": {
@@ -3434,6 +4064,20 @@
           "namespace": {
             "$ref": "#/components/schemas/Namespace"
           },
+          "networkPolicies": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
           "serviceAccount": {
             "type": "string"
           },
@@ -3497,7 +4141,8 @@
                 "DATABASE_USER",
                 "KUBERNETES_LOAD_BALANCER",
                 "AWS_VISIBILITY_EKS",
-                "DETECTED_CLOUD_SERVER"
+                "DETECTED_CLOUD_SERVER",
+                "CONTROL_PLANE"
               ],
               "type": "string"
             },
@@ -3713,6 +4358,31 @@
         ],
         "type": "object"
       },
+      "TLSConfiguration": {
+        "properties": {
+          "caCertificate": {
+            "type": "string"
+          },
+          "certificate": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TLSConfigurationInput": {
+        "properties": {
+          "caCertificate": {
+            "type": "string"
+          },
+          "certificate": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "TerraformAwsInlinePolicyInfo": {
         "properties": {
           "name": {
@@ -3896,6 +4566,33 @@
           "authProviderUserId"
         ],
         "type": "object"
+      },
+      "UserOrganizationAssociation": {
+        "properties": {
+          "membership": {
+            "$ref": "#/components/schemas/OrganizationMembership"
+          },
+          "org": {
+            "$ref": "#/components/schemas/Organization"
+          },
+          "user": {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "org",
+          "user",
+          "membership"
+        ],
+        "type": "object"
       }
     },
     "securitySchemes": {
@@ -3904,12 +4601,6 @@
         "in": "cookie",
         "name": "access_token",
         "type": "apiKey"
-      },
-      "bearerAuth": {
-        "bearerFormat": "JWT",
-        "description": "Otterize user JWT token.",
-        "scheme": "bearer",
-        "type": "http"
       },
       "oauth2": {
         "description": "Use client ID and client secret from an Otterize integration to authenticate.",
@@ -3933,7 +4624,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "8a776694fb7705cc78a601c7b476f8f813dfbe3c"
+    "x-revision": "da79d06c3db3865027b8106013dae6bbcd6515e7"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -3979,6 +4670,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -4060,6 +4754,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -4147,6 +4844,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -4215,6 +4915,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -4277,6 +4980,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -4335,6 +5041,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -4397,6 +5106,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -4464,6 +5176,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -4523,6 +5238,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -4579,6 +5297,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -4657,6 +5378,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -4715,6 +5439,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -4793,6 +5520,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -4865,6 +5595,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -4924,6 +5657,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -4980,6 +5716,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -5061,6 +5800,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -5137,6 +5879,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -5207,6 +5952,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -5246,7 +5994,8 @@
                 "GITLAB",
                 "AZURE",
                 "SLACK",
-                "AWS_VISIBILITY"
+                "AWS_VISIBILITY",
+                "SIEM"
               ],
               "type": "string"
             }
@@ -5308,6 +6057,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -5358,7 +6110,8 @@
                 "GITLAB",
                 "AZURE",
                 "SLACK",
-                "AWS_VISIBILITY"
+                "AWS_VISIBILITY",
+                "SIEM"
               ],
               "type": "string"
             }
@@ -5411,6 +6164,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -5495,6 +6251,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -5561,6 +6320,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -5639,6 +6401,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -5705,6 +6470,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -5783,6 +6551,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -5849,6 +6620,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -5921,6 +6695,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -6001,6 +6778,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -6078,6 +6858,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -6144,6 +6927,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -6212,6 +6998,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -6288,6 +7077,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -6368,6 +7160,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -6434,6 +7229,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -6514,6 +7312,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -6580,6 +7381,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -6655,6 +7459,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -6738,6 +7545,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -6752,6 +7562,164 @@
           }
         },
         "summary": "Update Kubernetes integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/integrations/siem": {
+      "post": {
+        "description": "Create a new SIEM integration",
+        "operationId": "createSIEMIntegration_mutation",
+        "parameters": [
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "siemSettings": {
+                    "$ref": "#/components/schemas/SIEMSettingsInput"
+                  }
+                },
+                "required": [
+                  "name",
+                  "siemSettings"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSIEMIntegrationResponse"
+                }
+              }
+            },
+            "description": "Create a new SIEM integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Create a new SIEM integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/integrations/siem/{id}": {
+      "patch": {
+        "description": "Update SIEM integration",
+        "operationId": "updateSIEMIntegration_mutation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "example": "obj_12345",
+              "format": "id",
+              "pattern": "^[A-Za-z_]+_[a-z0-9]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "example": "Object name",
+                    "format": "custom-name",
+                    "pattern": "^[A-Za-z][A-Za-z0-9- _]{0,61}[A-Za-z0-9]$",
+                    "type": "string"
+                  },
+                  "siemSettings": {
+                    "$ref": "#/components/schemas/SIEMSettingsInput"
+                  }
+                },
+                "required": [
+                  "name",
+                  "siemSettings"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integration"
+                }
+              }
+            },
+            "description": "Update SIEM integration"
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "Update SIEM integration",
         "tags": [
           "integrations"
         ]
@@ -6813,6 +7781,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -6881,6 +7852,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -6940,6 +7914,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -6996,6 +7973,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -7065,6 +8045,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -7138,6 +8121,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -7169,6 +8155,9 @@
                   "email": {
                     "format": "email",
                     "type": "string"
+                  },
+                  "organizationMembership": {
+                    "$ref": "#/components/schemas/OrganizationMembershipInput"
                   }
                 },
                 "required": [
@@ -7201,6 +8190,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -7261,6 +8253,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -7317,6 +8312,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -7386,6 +8384,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -7433,6 +8434,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -7514,6 +8518,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -7607,6 +8614,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -7665,6 +8675,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -7742,6 +8755,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -7758,6 +8774,60 @@
         "summary": "Associate namespace to environment",
         "tags": [
           "namespaces"
+        ]
+      }
+    },
+    "/org-users": {
+      "get": {
+        "description": "",
+        "operationId": "orgUsers_query",
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UserOrganizationAssociation"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "$ref": "#/components/responses/APPLIED_INTENTS_ERROR"
+          },
+          "401": {
+            "$ref": "#/components/responses/UNAUTHENTICATED"
+          },
+          "403": {
+            "$ref": "#/components/responses/FORBIDDEN"
+          },
+          "404": {
+            "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
+          "409": {
+            "$ref": "#/components/responses/CONFLICT"
+          },
+          "422": {
+            "$ref": "#/components/responses/BAD_USER_INPUT"
+          },
+          "500": {
+            "$ref": "#/components/responses/INTERNAL_SERVER_ERROR"
+          },
+          "default": {
+            "$ref": "#/components/responses/UNEXPECTED_ERROR"
+          }
+        },
+        "summary": "",
+        "tags": [
+          "users"
         ]
       }
     },
@@ -7792,6 +8862,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -7853,6 +8926,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -7911,6 +8987,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -7993,6 +9072,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -8062,6 +9144,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -8135,6 +9220,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -8182,6 +9270,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -8263,6 +9354,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -8364,6 +9458,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -8422,6 +9519,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -8497,6 +9597,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -8569,6 +9672,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -8632,6 +9738,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -8682,6 +9791,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
+          },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
           },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
@@ -8742,6 +9854,9 @@
           "404": {
             "$ref": "#/components/responses/NOT_FOUND"
           },
+          "408": {
+            "$ref": "#/components/responses/TIMEOUT"
+          },
           "409": {
             "$ref": "#/components/responses/CONFLICT"
           },
@@ -8769,12 +9884,6 @@
     },
     {
       "accessTokenCookie": [
-      ],
-      "organizationHeader": [
-      ]
-    },
-    {
-      "bearerAuth": [
       ],
       "organizationHeader": [
       ]
