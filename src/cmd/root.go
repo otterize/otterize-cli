@@ -14,6 +14,7 @@ import (
 	"github.com/otterize/otterize-cli/src/cmd/networkmapper"
 	"github.com/otterize/otterize-cli/src/cmd/organizations"
 	"github.com/otterize/otterize-cli/src/cmd/services"
+	"github.com/otterize/otterize-cli/src/cmd/terraform"
 	"github.com/otterize/otterize-cli/src/cmd/users"
 	"github.com/otterize/otterize-cli/src/cmd/version"
 	"github.com/otterize/otterize-cli/src/pkg/config"
@@ -125,6 +126,9 @@ func init() {
 	RootCmd.AddCommand(namespaces.NamespacesCmd)
 	RootCmd.AddCommand(accessgraph.AccessGraphCmd)
 	RootCmd.AddCommand(clientintents.ClientIntentsCmd)
+
+	RootCmd.AddGroup(groups.IntegrationsGroup)
+	RootCmd.AddCommand(terraform.TerraformCmd)
 
 	RootCmd.AddGroup(groups.OSSGroup)
 	RootCmd.AddCommand(networkmapper.MapperCmd)

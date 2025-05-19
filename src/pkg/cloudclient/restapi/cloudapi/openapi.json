@@ -558,6 +558,21 @@
         ],
         "type": "object"
       },
+      "AutoApproveMoreRestrictiveIntentsByEnv": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "environmentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "environmentId",
+          "enabled"
+        ],
+        "type": "object"
+      },
       "AzureInfo": {
         "properties": {
           "aksClusterName": {
@@ -1426,6 +1441,8 @@
               "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
               "ALLOWED_BY_APPLIED_INTENTS_DATABASE_OVERLY_PERMISSIVE",
               "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
+              "ALLOWED_BY_INTERNET_EGRESS_NETWORK_POLICY",
+              "ALLOWED_BY_INTERNET_INGRESS_NETWORK_POLICY",
               "WOULD_BE_ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
               "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
               "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
@@ -1437,6 +1454,8 @@
               "BLOCKED_BY_APPLIED_INTENTS_DATABASE_UNDER_PERMISSIVE",
               "BLOCKED_BY_APPLIED_INTENTS_DATABASE_RESOURCE_MISMATCH",
               "BLOCKED_BY_DATABASE_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS",
+              "BLOCKED_BY_INTERNET_EGRESS_NETWORK_POLICY",
+              "BLOCKED_BY_INTERNET_INGRESS_NETWORK_POLICY",
               "BLOCKED_BY_DEFAULT_DENY",
               "SHARED_SERVICE_ACCOUNT",
               "CLIENT_ISTIO_SIDECAR_MISSING",
@@ -1470,6 +1489,8 @@
                 "ALLOWED_BY_APPLIED_INTENTS_KAFKA_OVERLY_PERMISSIVE",
                 "ALLOWED_BY_APPLIED_INTENTS_DATABASE_OVERLY_PERMISSIVE",
                 "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
+                "ALLOWED_BY_INTERNET_EGRESS_NETWORK_POLICY",
+                "ALLOWED_BY_INTERNET_INGRESS_NETWORK_POLICY",
                 "WOULD_BE_ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY",
                 "BLOCKED_BY_APPLIED_INTENTS_UNDER_PERMISSIVE",
                 "BLOCKED_BY_APPLIED_INTENTS_RESOURCE_MISMATCH",
@@ -1481,6 +1502,8 @@
                 "BLOCKED_BY_APPLIED_INTENTS_DATABASE_UNDER_PERMISSIVE",
                 "BLOCKED_BY_APPLIED_INTENTS_DATABASE_RESOURCE_MISMATCH",
                 "BLOCKED_BY_DATABASE_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS",
+                "BLOCKED_BY_INTERNET_EGRESS_NETWORK_POLICY",
+                "BLOCKED_BY_INTERNET_INGRESS_NETWORK_POLICY",
                 "BLOCKED_BY_DEFAULT_DENY",
                 "SHARED_SERVICE_ACCOUNT",
                 "CLIENT_ISTIO_SIDECAR_MISSING",
@@ -1648,6 +1671,9 @@
           "enableInternetIntentsSuggestions": {
             "type": "boolean"
           },
+          "enableNetworkPoliciesInAccessGraph": {
+            "type": "boolean"
+          },
           "isCloudSecurityEnabled": {
             "type": "boolean"
           },
@@ -1794,6 +1820,9 @@
           },
           "repository": {
             "type": "string"
+          },
+          "terraformPath": {
+            "type": "string"
           }
         },
         "required": [
@@ -1812,6 +1841,9 @@
             "type": "string"
           },
           "repository": {
+            "type": "string"
+          },
+          "terraformPath": {
             "type": "string"
           }
         },
@@ -1923,6 +1955,9 @@
             "type": "string"
           },
           "projectPath": {
+            "type": "string"
+          },
+          "terraformPath": {
             "type": "string"
           }
         },
@@ -2076,6 +2111,21 @@
         },
         "type": "object"
       },
+      "InputAutoApproveMoreRestrictiveIntentsByEnv": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "environmentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "environmentId",
+          "enabled"
+        ],
+        "type": "object"
+      },
       "InputDefaultIntentsApprovalActionByEnv": {
         "properties": {
           "action": {
@@ -2105,6 +2155,9 @@
             "type": "boolean"
           },
           "enableInternetIntentsSuggestions": {
+            "type": "boolean"
+          },
+          "enableNetworkPoliciesInAccessGraph": {
             "type": "boolean"
           },
           "isCloudSecurityEnabled": {
@@ -2291,6 +2344,21 @@
         },
         "type": "object"
       },
+      "InputTerraformAwsInlinePolicyInfo": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "policy": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "policy"
+        ],
+        "type": "object"
+      },
       "InputTerraformAwsPolicyInfo": {
         "properties": {
           "address": {
@@ -2298,10 +2366,14 @@
           },
           "arn": {
             "type": "string"
+          },
+          "policy": {
+            "type": "string"
           }
         },
         "required": [
           "arn",
+          "policy",
           "address"
         ],
         "type": "object"
@@ -2321,13 +2393,15 @@
             "type": "array"
           },
           "inlinePolicy": {
-            "type": "string"
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
           }
         },
         "required": [
           "arn",
-          "address",
-          "inlinePolicy"
+          "address"
         ],
         "type": "object"
       },
@@ -3078,6 +3152,9 @@
             },
             "type": "array"
           },
+          "selectedOrganizationRestrictionResources": {
+            "$ref": "#/components/schemas/OrganizationMembershipRestrictionResources"
+          },
           "user": {
             "$ref": "#/components/schemas/User",
             "description": "The logged-in user details."
@@ -3267,6 +3344,9 @@
             "format": "date-time",
             "type": "string"
           },
+          "metadata": {
+            "$ref": "#/components/schemas/NetworkPolicyMetadata"
+          },
           "name": {
             "type": "string"
           },
@@ -3307,6 +3387,25 @@
           "workloads",
           "workloadsAffected",
           "spec"
+        ],
+        "type": "object"
+      },
+      "NetworkPolicyMetadata": {
+        "properties": {
+          "hasIpBlocks": {
+            "type": "boolean"
+          },
+          "isEgress": {
+            "type": "boolean"
+          },
+          "isIngress": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isEgress",
+          "isIngress",
+          "hasIpBlocks"
         ],
         "type": "object"
       },
@@ -3395,6 +3494,9 @@
       },
       "OrganizationMembership": {
         "properties": {
+          "organizationId": {
+            "type": "string"
+          },
           "restrictions": {
             "$ref": "#/components/schemas/OrganizationMembershipRestrictions"
           },
@@ -3407,6 +3509,7 @@
           }
         },
         "required": [
+          "organizationId",
           "role"
         ],
         "type": "object"
@@ -3426,6 +3529,73 @@
         },
         "required": [
           "role"
+        ],
+        "type": "object"
+      },
+      "OrganizationMembershipRestrictionResources": {
+        "properties": {
+          "clusters": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "environments": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "namespaces": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "services": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "clusters",
+          "services",
+          "namespaces",
+          "environments"
         ],
         "type": "object"
       },
@@ -3465,11 +3635,20 @@
       },
       "OrganizationSettings": {
         "properties": {
+          "autoApproveMoreRestrictiveIntentsByEnv": {
+            "items": {
+              "$ref": "#/components/schemas/AutoApproveMoreRestrictiveIntentsByEnv"
+            },
+            "type": "array"
+          },
           "defaultIntentsApprovalActionByEnv": {
             "items": {
               "$ref": "#/components/schemas/DefaultIntentsApprovalActionByEnv"
             },
             "type": "array"
+          },
+          "defaultInviteMembership": {
+            "$ref": "#/components/schemas/OrganizationMembership"
           },
           "domains": {
             "items": {
@@ -3502,17 +3681,28 @@
         },
         "required": [
           "defaultIntentsApprovalActionByEnv",
-          "domainsDefaultRole"
+          "domainsDefaultRole",
+          "defaultInviteMembership",
+          "autoApproveMoreRestrictiveIntentsByEnv"
         ],
         "type": "object"
       },
       "OrganizationSettingsInput": {
         "properties": {
+          "autoApproveMoreRestrictiveIntentsByEnv": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
           "defaultIntentsApprovalActionByEnv": {
             "items": {
               "type": "object"
             },
             "type": "array"
+          },
+          "defaultInviteMembership": {
+            "type": "object"
           },
           "domains": {
             "items": {
@@ -3951,7 +4141,8 @@
                 "DATABASE_USER",
                 "KUBERNETES_LOAD_BALANCER",
                 "AWS_VISIBILITY_EKS",
-                "DETECTED_CLOUD_SERVER"
+                "DETECTED_CLOUD_SERVER",
+                "CONTROL_PLANE"
               ],
               "type": "string"
             },
@@ -4176,9 +4367,6 @@
             "type": "string"
           }
         },
-        "required": [
-          "certificate"
-        ],
         "type": "object"
       },
       "TLSConfigurationInput": {
@@ -4193,9 +4381,20 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "TerraformAwsInlinePolicyInfo": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "policy": {
+            "type": "string"
+          }
+        },
         "required": [
-          "certificate",
-          "key"
+          "name",
+          "policy"
         ],
         "type": "object"
       },
@@ -4206,10 +4405,14 @@
           },
           "arn": {
             "type": "string"
+          },
+          "policy": {
+            "type": "string"
           }
         },
         "required": [
           "arn",
+          "policy",
           "address"
         ],
         "type": "object"
@@ -4229,13 +4432,15 @@
             "type": "array"
           },
           "inlinePolicy": {
-            "type": "string"
+            "items": {
+              "$ref": "#/components/schemas/TerraformAwsInlinePolicyInfo"
+            },
+            "type": "array"
           }
         },
         "required": [
           "arn",
-          "address",
-          "inlinePolicy"
+          "address"
         ],
         "type": "object"
       },
@@ -4250,7 +4455,10 @@
           "gitCommitHash": {
             "type": "string"
           },
-          "gitOriginUrl": {
+          "gitOrigin": {
+            "type": "string"
+          },
+          "gitPlatform": {
             "type": "string"
           },
           "modulePath": {
@@ -4259,7 +4467,8 @@
         },
         "required": [
           "modulePath",
-          "gitOriginUrl",
+          "gitPlatform",
+          "gitOrigin",
           "gitCommitHash"
         ],
         "type": "object"
@@ -4415,7 +4624,7 @@
   "info": {
     "title": "Otterize API Server",
     "version": "v1beta",
-    "x-revision": "fed83e7133faef5e9b8ed7a801c3fb39b681efaa"
+    "x-revision": "da79d06c3db3865027b8106013dae6bbcd6515e7"
   },
   "openapi": "3.0.0",
   "paths": {

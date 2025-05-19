@@ -130,6 +130,8 @@ const (
 	EdgeAccessStatusReasonALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE                    EdgeAccessStatusReason = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
 	EdgeAccessStatusReasonALLOWEDBYEXTERNALLYMANAGEDNETWORKPOLICY                    EdgeAccessStatusReason = "ALLOWED_BY_EXTERNALLY_MANAGED_NETWORK_POLICY"
 	EdgeAccessStatusReasonALLOWEDBYEXTERNALTRAFFICNETWORKPOLICY                      EdgeAccessStatusReason = "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY"
+	EdgeAccessStatusReasonALLOWEDBYINTERNETEGRESSNETWORKPOLICY                       EdgeAccessStatusReason = "ALLOWED_BY_INTERNET_EGRESS_NETWORK_POLICY"
+	EdgeAccessStatusReasonALLOWEDBYINTERNETINGRESSNETWORKPOLICY                      EdgeAccessStatusReason = "ALLOWED_BY_INTERNET_INGRESS_NETWORK_POLICY"
 	EdgeAccessStatusReasonALLOWEDBYMETRICSCOLLECTIONTRAFFICNETWORKPOLICY             EdgeAccessStatusReason = "ALLOWED_BY_METRICS_COLLECTION_TRAFFIC_NETWORK_POLICY"
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSDATABASERESOURCEMISMATCH            EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_DATABASE_RESOURCE_MISMATCH"
 	EdgeAccessStatusReasonBLOCKEDBYAPPLIEDINTENTSDATABASEUNDERPERMISSIVE             EdgeAccessStatusReason = "BLOCKED_BY_APPLIED_INTENTS_DATABASE_UNDER_PERMISSIVE"
@@ -143,6 +145,8 @@ const (
 	EdgeAccessStatusReasonBLOCKEDBYDATABASEENFORCEMENTCONFIGMISSINGAPPLIEDINTENTS    EdgeAccessStatusReason = "BLOCKED_BY_DATABASE_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS"
 	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENY                                       EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY"
 	EdgeAccessStatusReasonBLOCKEDBYDEFAULTDENYMISSINGEXTERNALTRAFFICPOLICY           EdgeAccessStatusReason = "BLOCKED_BY_DEFAULT_DENY_MISSING_EXTERNAL_TRAFFIC_POLICY"
+	EdgeAccessStatusReasonBLOCKEDBYINTERNETEGRESSNETWORKPOLICY                       EdgeAccessStatusReason = "BLOCKED_BY_INTERNET_EGRESS_NETWORK_POLICY"
+	EdgeAccessStatusReasonBLOCKEDBYINTERNETINGRESSNETWORKPOLICY                      EdgeAccessStatusReason = "BLOCKED_BY_INTERNET_INGRESS_NETWORK_POLICY"
 	EdgeAccessStatusReasonBLOCKEDBYKAFKAENFORCEMENTCONFIGMISSINGAPPLIEDINTENTS       EdgeAccessStatusReason = "BLOCKED_BY_KAFKA_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS"
 	EdgeAccessStatusReasonCLIENTISTIOSIDECARMISSING                                  EdgeAccessStatusReason = "CLIENT_ISTIO_SIDECAR_MISSING"
 	EdgeAccessStatusReasonIGNOREDINCALCULATION                                       EdgeAccessStatusReason = "IGNORED_IN_CALCULATION"
@@ -172,6 +176,8 @@ const (
 	EdgeAccessStatusReasonsALLOWEDBYAPPLIEDINTENTSOVERLYPERMISSIVE                    EdgeAccessStatusReasons = "ALLOWED_BY_APPLIED_INTENTS_OVERLY_PERMISSIVE"
 	EdgeAccessStatusReasonsALLOWEDBYEXTERNALLYMANAGEDNETWORKPOLICY                    EdgeAccessStatusReasons = "ALLOWED_BY_EXTERNALLY_MANAGED_NETWORK_POLICY"
 	EdgeAccessStatusReasonsALLOWEDBYEXTERNALTRAFFICNETWORKPOLICY                      EdgeAccessStatusReasons = "ALLOWED_BY_EXTERNAL_TRAFFIC_NETWORK_POLICY"
+	EdgeAccessStatusReasonsALLOWEDBYINTERNETEGRESSNETWORKPOLICY                       EdgeAccessStatusReasons = "ALLOWED_BY_INTERNET_EGRESS_NETWORK_POLICY"
+	EdgeAccessStatusReasonsALLOWEDBYINTERNETINGRESSNETWORKPOLICY                      EdgeAccessStatusReasons = "ALLOWED_BY_INTERNET_INGRESS_NETWORK_POLICY"
 	EdgeAccessStatusReasonsALLOWEDBYMETRICSCOLLECTIONTRAFFICNETWORKPOLICY             EdgeAccessStatusReasons = "ALLOWED_BY_METRICS_COLLECTION_TRAFFIC_NETWORK_POLICY"
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSDATABASERESOURCEMISMATCH            EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_DATABASE_RESOURCE_MISMATCH"
 	EdgeAccessStatusReasonsBLOCKEDBYAPPLIEDINTENTSDATABASEUNDERPERMISSIVE             EdgeAccessStatusReasons = "BLOCKED_BY_APPLIED_INTENTS_DATABASE_UNDER_PERMISSIVE"
@@ -185,6 +191,8 @@ const (
 	EdgeAccessStatusReasonsBLOCKEDBYDATABASEENFORCEMENTCONFIGMISSINGAPPLIEDINTENTS    EdgeAccessStatusReasons = "BLOCKED_BY_DATABASE_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS"
 	EdgeAccessStatusReasonsBLOCKEDBYDEFAULTDENY                                       EdgeAccessStatusReasons = "BLOCKED_BY_DEFAULT_DENY"
 	EdgeAccessStatusReasonsBLOCKEDBYDEFAULTDENYMISSINGEXTERNALTRAFFICPOLICY           EdgeAccessStatusReasons = "BLOCKED_BY_DEFAULT_DENY_MISSING_EXTERNAL_TRAFFIC_POLICY"
+	EdgeAccessStatusReasonsBLOCKEDBYINTERNETEGRESSNETWORKPOLICY                       EdgeAccessStatusReasons = "BLOCKED_BY_INTERNET_EGRESS_NETWORK_POLICY"
+	EdgeAccessStatusReasonsBLOCKEDBYINTERNETINGRESSNETWORKPOLICY                      EdgeAccessStatusReasons = "BLOCKED_BY_INTERNET_INGRESS_NETWORK_POLICY"
 	EdgeAccessStatusReasonsBLOCKEDBYKAFKAENFORCEMENTCONFIGMISSINGAPPLIEDINTENTS       EdgeAccessStatusReasons = "BLOCKED_BY_KAFKA_ENFORCEMENT_CONFIG_MISSING_APPLIED_INTENTS"
 	EdgeAccessStatusReasonsCLIENTISTIOSIDECARMISSING                                  EdgeAccessStatusReasons = "CLIENT_ISTIO_SIDECAR_MISSING"
 	EdgeAccessStatusReasonsIGNOREDINCALCULATION                                       EdgeAccessStatusReasons = "IGNORED_IN_CALCULATION"
@@ -381,6 +389,7 @@ const (
 	ServiceAccessGraphTypesAWS                    ServiceAccessGraphTypes = "AWS"
 	ServiceAccessGraphTypesAWSVISIBILITYEKS       ServiceAccessGraphTypes = "AWS_VISIBILITY_EKS"
 	ServiceAccessGraphTypesAZURE                  ServiceAccessGraphTypes = "AZURE"
+	ServiceAccessGraphTypesCONTROLPLANE           ServiceAccessGraphTypes = "CONTROL_PLANE"
 	ServiceAccessGraphTypesDATABASE               ServiceAccessGraphTypes = "DATABASE"
 	ServiceAccessGraphTypesDATABASEUSER           ServiceAccessGraphTypes = "DATABASE_USER"
 	ServiceAccessGraphTypesDETECTEDCLOUDSERVER    ServiceAccessGraphTypes = "DETECTED_CLOUD_SERVER"
@@ -570,6 +579,12 @@ type AccessLogEdge struct {
 		Id string `json:"id"`
 	} `json:"server"`
 	Timestamp time.Time `json:"timestamp"`
+}
+
+// AutoApproveMoreRestrictiveIntentsByEnv defines model for AutoApproveMoreRestrictiveIntentsByEnv.
+type AutoApproveMoreRestrictiveIntentsByEnv struct {
+	Enabled       bool   `json:"enabled"`
+	EnvironmentId string `json:"environmentId"`
 }
 
 // AzureInfo defines model for AzureInfo.
@@ -885,13 +900,14 @@ type Error struct {
 
 // FeatureFlags defines model for FeatureFlags.
 type FeatureFlags struct {
-	EnableFindingsV2                 *bool `json:"enableFindingsV2,omitempty"`
-	EnableIAMIntentsSuggestions      *bool `json:"enableIAMIntentsSuggestions,omitempty"`
-	EnableInternetIntentsSuggestions *bool `json:"enableInternetIntentsSuggestions,omitempty"`
-	IsCloudSecurityEnabled           *bool `json:"isCloudSecurityEnabled,omitempty"`
-	IsCloudServicesDetectionEnabled  *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
-	UseClientIntentsV2               *bool `json:"useClientIntentsV2,omitempty"`
-	UseTypedIntentsCTE               *bool `json:"useTypedIntentsCTE,omitempty"`
+	EnableFindingsV2                   *bool `json:"enableFindingsV2,omitempty"`
+	EnableIAMIntentsSuggestions        *bool `json:"enableIAMIntentsSuggestions,omitempty"`
+	EnableInternetIntentsSuggestions   *bool `json:"enableInternetIntentsSuggestions,omitempty"`
+	EnableNetworkPoliciesInAccessGraph *bool `json:"enableNetworkPoliciesInAccessGraph,omitempty"`
+	IsCloudSecurityEnabled             *bool `json:"isCloudSecurityEnabled,omitempty"`
+	IsCloudServicesDetectionEnabled    *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
+	UseClientIntentsV2                 *bool `json:"useClientIntentsV2,omitempty"`
+	UseTypedIntentsCTE                 *bool `json:"useTypedIntentsCTE,omitempty"`
 }
 
 // GCPInfo defines model for GCPInfo.
@@ -930,9 +946,10 @@ type GitHubRepoFilterPair struct {
 
 // GitHubRepoInfo defines model for GitHubRepoInfo.
 type GitHubRepoInfo struct {
-	BaseBranch  string `json:"baseBranch"`
-	IntentsPath string `json:"intentsPath"`
-	Repository  string `json:"repository"`
+	BaseBranch    string  `json:"baseBranch"`
+	IntentsPath   string  `json:"intentsPath"`
+	Repository    string  `json:"repository"`
+	TerraformPath *string `json:"terraformPath,omitempty"`
 }
 
 // GitHubSettings defines model for GitHubSettings.
@@ -1007,13 +1024,14 @@ type InputAccessLogFilter struct {
 
 // InputFeatureFlags defines model for InputFeatureFlags.
 type InputFeatureFlags struct {
-	EnableFindingsV2                 *bool `json:"enableFindingsV2,omitempty"`
-	EnableIAMIntentsSuggestions      *bool `json:"enableIAMIntentsSuggestions,omitempty"`
-	EnableInternetIntentsSuggestions *bool `json:"enableInternetIntentsSuggestions,omitempty"`
-	IsCloudSecurityEnabled           *bool `json:"isCloudSecurityEnabled,omitempty"`
-	IsCloudServicesDetectionEnabled  *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
-	UseClientIntentsV2               *bool `json:"useClientIntentsV2,omitempty"`
-	UseTypedIntentsCTE               *bool `json:"useTypedIntentsCTE,omitempty"`
+	EnableFindingsV2                   *bool `json:"enableFindingsV2,omitempty"`
+	EnableIAMIntentsSuggestions        *bool `json:"enableIAMIntentsSuggestions,omitempty"`
+	EnableInternetIntentsSuggestions   *bool `json:"enableInternetIntentsSuggestions,omitempty"`
+	EnableNetworkPoliciesInAccessGraph *bool `json:"enableNetworkPoliciesInAccessGraph,omitempty"`
+	IsCloudSecurityEnabled             *bool `json:"isCloudSecurityEnabled,omitempty"`
+	IsCloudServicesDetectionEnabled    *bool `json:"isCloudServicesDetectionEnabled,omitempty"`
+	UseClientIntentsV2                 *bool `json:"useClientIntentsV2,omitempty"`
+	UseTypedIntentsCTE                 *bool `json:"useTypedIntentsCTE,omitempty"`
 }
 
 // InputServiceFilter  Service filter
@@ -1208,9 +1226,10 @@ type LabelValueTuple struct {
 
 // Me defines model for Me.
 type Me struct {
-	Invites           []Invite                      `json:"invites"`
-	User              User                          `json:"user"`
-	UserOrganizations []UserOrganizationAssociation `json:"userOrganizations"`
+	Invites                                  []Invite                                    `json:"invites"`
+	SelectedOrganizationRestrictionResources *OrganizationMembershipRestrictionResources `json:"selectedOrganizationRestrictionResources,omitempty"`
+	User                                     User                                        `json:"user"`
+	UserOrganizations                        []UserOrganizationAssociation               `json:"userOrganizations"`
 }
 
 // MergedYAMLFile defines model for MergedYAMLFile.
@@ -1271,8 +1290,9 @@ type Organization struct {
 
 // OrganizationMembership defines model for OrganizationMembership.
 type OrganizationMembership struct {
-	Restrictions *OrganizationMembershipRestrictions `json:"restrictions,omitempty"`
-	Role         OrganizationMembershipRole          `json:"role"`
+	OrganizationId string                              `json:"organizationId"`
+	Restrictions   *OrganizationMembershipRestrictions `json:"restrictions,omitempty"`
+	Role           OrganizationMembershipRole          `json:"role"`
 }
 
 // OrganizationMembershipRole defines model for OrganizationMembership.Role.
@@ -1287,6 +1307,22 @@ type OrganizationMembershipInput struct {
 // OrganizationMembershipInputRole defines model for OrganizationMembershipInput.Role.
 type OrganizationMembershipInputRole string
 
+// OrganizationMembershipRestrictionResources defines model for OrganizationMembershipRestrictionResources.
+type OrganizationMembershipRestrictionResources struct {
+	Clusters []struct {
+		Id string `json:"id"`
+	} `json:"clusters"`
+	Environments []struct {
+		Id string `json:"id"`
+	} `json:"environments"`
+	Namespaces []struct {
+		Id string `json:"id"`
+	} `json:"namespaces"`
+	Services []struct {
+		Id string `json:"id"`
+	} `json:"services"`
+}
+
 // OrganizationMembershipRestrictions defines model for OrganizationMembershipRestrictions.
 type OrganizationMembershipRestrictions struct {
 	ClusterIds     *IDFilterValue `json:"clusterIds,omitempty"`
@@ -1297,12 +1333,14 @@ type OrganizationMembershipRestrictions struct {
 
 // OrganizationSettings defines model for OrganizationSettings.
 type OrganizationSettings struct {
-	DefaultIntentsApprovalActionByEnv []DefaultIntentsApprovalActionByEnv    `json:"defaultIntentsApprovalActionByEnv"`
-	Domains                           *[]string                              `json:"domains,omitempty"`
-	DomainsDefaultRole                OrganizationSettingsDomainsDefaultRole `json:"domainsDefaultRole"`
-	EnforcedRegulations               *[]string                              `json:"enforcedRegulations,omitempty"`
-	IgnoreInternetIntents             *bool                                  `json:"ignoreInternetIntents,omitempty"`
-	IgnoredCloudDomains               *[]string                              `json:"ignoredCloudDomains,omitempty"`
+	AutoApproveMoreRestrictiveIntentsByEnv []AutoApproveMoreRestrictiveIntentsByEnv `json:"autoApproveMoreRestrictiveIntentsByEnv"`
+	DefaultIntentsApprovalActionByEnv      []DefaultIntentsApprovalActionByEnv      `json:"defaultIntentsApprovalActionByEnv"`
+	DefaultInviteMembership                OrganizationMembership                   `json:"defaultInviteMembership"`
+	Domains                                *[]string                                `json:"domains,omitempty"`
+	DomainsDefaultRole                     OrganizationSettingsDomainsDefaultRole   `json:"domainsDefaultRole"`
+	EnforcedRegulations                    *[]string                                `json:"enforcedRegulations,omitempty"`
+	IgnoreInternetIntents                  *bool                                    `json:"ignoreInternetIntents,omitempty"`
+	IgnoredCloudDomains                    *[]string                                `json:"ignoredCloudDomains,omitempty"`
 }
 
 // OrganizationSettingsDomainsDefaultRole defines model for OrganizationSettings.DomainsDefaultRole.
@@ -1310,11 +1348,13 @@ type OrganizationSettingsDomainsDefaultRole string
 
 // OrganizationSettingsInput defines model for OrganizationSettingsInput.
 type OrganizationSettingsInput struct {
-	DefaultIntentsApprovalActionByEnv *[]map[string]interface{} `json:"defaultIntentsApprovalActionByEnv,omitempty"`
-	Domains                           *[]string                 `json:"domains,omitempty"`
-	EnforcedRegulations               *[]string                 `json:"enforcedRegulations,omitempty"`
-	IgnoreInternetIntents             *bool                     `json:"ignoreInternetIntents,omitempty"`
-	IgnoredCloudDomains               *[]string                 `json:"ignoredCloudDomains,omitempty"`
+	AutoApproveMoreRestrictiveIntentsByEnv *[]map[string]interface{} `json:"autoApproveMoreRestrictiveIntentsByEnv,omitempty"`
+	DefaultIntentsApprovalActionByEnv      *[]map[string]interface{} `json:"defaultIntentsApprovalActionByEnv,omitempty"`
+	DefaultInviteMembership                *map[string]interface{}   `json:"defaultInviteMembership,omitempty"`
+	Domains                                *[]string                 `json:"domains,omitempty"`
+	EnforcedRegulations                    *[]string                 `json:"enforcedRegulations,omitempty"`
+	IgnoreInternetIntents                  *bool                     `json:"ignoreInternetIntents,omitempty"`
+	IgnoredCloudDomains                    *[]string                 `json:"ignoredCloudDomains,omitempty"`
 }
 
 // PaginationInput defines model for PaginationInput.
@@ -1509,28 +1549,36 @@ type SlackSettingsInput struct {
 // TLSConfiguration defines model for TLSConfiguration.
 type TLSConfiguration struct {
 	CaCertificate *string `json:"caCertificate,omitempty"`
-	Certificate   string  `json:"certificate"`
+	Certificate   *string `json:"certificate,omitempty"`
+}
+
+// TerraformAwsInlinePolicyInfo defines model for TerraformAwsInlinePolicyInfo.
+type TerraformAwsInlinePolicyInfo struct {
+	Name   string `json:"name"`
+	Policy string `json:"policy"`
 }
 
 // TerraformAwsPolicyInfo defines model for TerraformAwsPolicyInfo.
 type TerraformAwsPolicyInfo struct {
 	Address string `json:"address"`
 	Arn     string `json:"arn"`
+	Policy  string `json:"policy"`
 }
 
 // TerraformAwsRoleInfo defines model for TerraformAwsRoleInfo.
 type TerraformAwsRoleInfo struct {
-	Address          string                    `json:"address"`
-	Arn              string                    `json:"arn"`
-	AttachedPolicies *[]TerraformAwsPolicyInfo `json:"attachedPolicies,omitempty"`
-	InlinePolicy     string                    `json:"inlinePolicy"`
+	Address          string                          `json:"address"`
+	Arn              string                          `json:"arn"`
+	AttachedPolicies *[]TerraformAwsPolicyInfo       `json:"attachedPolicies,omitempty"`
+	InlinePolicy     *[]TerraformAwsInlinePolicyInfo `json:"inlinePolicy,omitempty"`
 }
 
 // TerraformResourceInfo defines model for TerraformResourceInfo.
 type TerraformResourceInfo struct {
 	AwsRoles      *[]TerraformAwsRoleInfo `json:"awsRoles,omitempty"`
 	GitCommitHash string                  `json:"gitCommitHash"`
-	GitOriginUrl  string                  `json:"gitOriginUrl"`
+	GitOrigin     string                  `json:"gitOrigin"`
+	GitPlatform   string                  `json:"gitPlatform"`
 	ModulePath    string                  `json:"modulePath"`
 }
 
